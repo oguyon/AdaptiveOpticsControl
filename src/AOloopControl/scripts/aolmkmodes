@@ -1,0 +1,57 @@
+#! /bin/bash
+# args: <confindex> <maxCPA>
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE MODES FOR AO LOOP ----"
+  echo
+  echo "Usage: mkModes <maxCPA>"
+  echo
+  echo "  INPUT <maxCPA>     : maximum spatial frequency in cycles per aperture"
+  echo
+  echo "EXAMPLE: mkModes 2.0"
+  echo
+  echo "  OUTPUT: ./conf<confindex>/fmodes.fits"
+  echo "  OUTPUT: ./conf<confindex>/modescpa.fits"
+  echo
+  echo "NOTES :"
+  echo "  USES (OPTIONAL) : ./conf/TPmask.fits"
+  echo "                  Telescope pupil mask"
+  echo "  USES (OPTIONAL) : ./conf/TPind.fits"
+  echo "                  Modes to be excluded"
+  echo
+  exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+
+mkdir -p conf
+mkdir -p conf/Cmodes
+
+Cfits -n pname << EOF
+aolnb $loopnb
+loadfits "./conf/TPmask.fits" Mmask
+loadfits "./conf/TPind.fits" emodes
+readshmim aol${loopnb}_dmC
+imstats aol${loopnb}_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+od=0.42*imsize0
+id=0.13*imsize0
+aolmkmodes fmodes imsize0 $1 0.8 cx cy od id 0
+savefits fmodes "!./conf/Cmodes/fmodes_$1.fits"
+savefits modesfreqcpa "!./conf/Cmodes/modesfreqcpa_$1.fits"
+listim
+exit
+EOF

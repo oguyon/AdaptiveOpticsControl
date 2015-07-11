@@ -1,0 +1,28 @@
+#! /bin/bash
+
+EXPECTED_ARGS=3
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Measure zonal resp matrix ------"
+  echo
+  echo "  $0 <ampl[um]> <tdelay[sec]> <nb frames ave>"
+  echo
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+
+
+
+Cfits -n pname << EOF
+aolnb $loopnb
+aolmeaszrm $1 $2 $3 zrespmat wfsref wfsmap dmmap
+exit
+EOF
+

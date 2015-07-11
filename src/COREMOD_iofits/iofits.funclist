@@ -1,0 +1,8 @@
+*
+loadfits
+iofits.h
+"%s %s",str1,str2
+load_fits(str1,str2,data)
+load a fits file in memory
+str1 is the file name on disk and str2 is the file name in memory
+loadfits image.fits im1
