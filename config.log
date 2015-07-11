@@ -405,11 +405,11 @@ configure:11856: checking lex output file root
 configure:11870: result: lex.yy
 configure:11875: checking lex library
 configure:11889: gcc -o conftest -g -O2   conftest.c   >&5
-/tmp/ccnKcmc0.o: In function `input':
+/tmp/ccuf6e5j.o: In function `input':
 /home/guyon/src/AdaptiveOpticsControl/lex.yy.c:1186: undefined reference to `yywrap'
-/tmp/ccnKcmc0.o: In function `yylex':
+/tmp/ccuf6e5j.o: In function `yylex':
 /home/guyon/src/AdaptiveOpticsControl/lex.yy.c:884: undefined reference to `yywrap'
-/tmp/ccnKcmc0.o: In function `main':
+/tmp/ccuf6e5j.o: In function `main':
 /home/guyon/src/AdaptiveOpticsControl/conftest.l:17: undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:11889: $? = 1
@@ -2309,7 +2309,7 @@ configure:12260: $? = 0
 configure:12269: result: yes
 configure:12292: checking for library containing readline
 configure:12323: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-/tmp/cch2DNmJ.o: In function `main':
+/tmp/ccD3RBPd.o: In function `main':
 /home/guyon/src/AdaptiveOpticsControl/conftest.c:40: undefined reference to `readline'
 collect2: error: ld returned 1 exit status
 configure:12323: $? = 1

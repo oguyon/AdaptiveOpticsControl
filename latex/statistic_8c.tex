@@ -1,0 +1,120 @@
+\hypertarget{statistic_8c}{\section{src/statistic/statistic.c File Reference}
+\label{statistic_8c}\index{src/statistic/statistic.\+c@{src/statistic/statistic.\+c}}
+}
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$gsl/gsl\+\_\+randist.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}C\+L\+Icore.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}00\+C\+O\+R\+E/00\+C\+O\+R\+E.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+memory/\+C\+O\+R\+E\+M\+O\+D\+\_\+memory.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{statistic_8c_a4834ea9d216a2131e7ccd3943ff1478d}{put\+\_\+poisson\+\_\+noise} (char $\ast$I\+D\+\_\+in\+\_\+name, char $\ast$I\+D\+\_\+out\+\_\+name)
+\item 
+int \hyperlink{statistic_8c_a6e701b72ef08c2fa72e0a3949d96aa52}{statistic\+\_\+putphnoise\+\_\+cli} ()
+\item 
+int \hyperlink{statistic_8c_a59ebf0e0f900932d95f9527459783d7f}{init\+\_\+statistic} ()
+\item 
+double \hyperlink{statistic_8c_a0048e34c54d2da14cb96301fc8df1c0e}{ran1} ()
+\item 
+double \hyperlink{statistic_8c_a61ccd72f7e2d2f65912807eda4c8643c}{gauss} ()
+\item 
+double \hyperlink{statistic_8c_a37fe6b362a86eaa232c07dd86b3c21cf}{gauss\+\_\+trc} ()
+\item 
+long \hyperlink{statistic_8c_a17397c70ca495597e8232ffa61c9e605}{poisson} (double mu)
+\item 
+double \hyperlink{statistic_8c_a41dac042e765e1314159a6258ccd9ec8}{cfits\+\_\+gammaln} (double xx)
+\item 
+double \hyperlink{statistic_8c_ab7ac1e1d30224f2ad6b02a2bbc575153}{fast\+\_\+poisson} (double mu)
+\item 
+double \hyperlink{statistic_8c_a617f9bb1c07595bb869077d862cf4c73}{better\+\_\+poisson} (double mu)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structDATA}{D\+A\+T\+A} \hyperlink{statistic_8c_a9842752e03b4de9b4593f1a3b34364ab}{data}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{statistic_8c_a617f9bb1c07595bb869077d862cf4c73}{\index{statistic.\+c@{statistic.\+c}!better\+\_\+poisson@{better\+\_\+poisson}}
+\index{better\+\_\+poisson@{better\+\_\+poisson}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{better\+\_\+poisson}]{\setlength{\rightskip}{0pt plus 5cm}double better\+\_\+poisson (
+\begin{DoxyParamCaption}
+\item[{double}]{mu}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a617f9bb1c07595bb869077d862cf4c73}
+\hypertarget{statistic_8c_a41dac042e765e1314159a6258ccd9ec8}{\index{statistic.\+c@{statistic.\+c}!cfits\+\_\+gammaln@{cfits\+\_\+gammaln}}
+\index{cfits\+\_\+gammaln@{cfits\+\_\+gammaln}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{cfits\+\_\+gammaln}]{\setlength{\rightskip}{0pt plus 5cm}double cfits\+\_\+gammaln (
+\begin{DoxyParamCaption}
+\item[{double}]{xx}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a41dac042e765e1314159a6258ccd9ec8}
+\hypertarget{statistic_8c_ab7ac1e1d30224f2ad6b02a2bbc575153}{\index{statistic.\+c@{statistic.\+c}!fast\+\_\+poisson@{fast\+\_\+poisson}}
+\index{fast\+\_\+poisson@{fast\+\_\+poisson}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{fast\+\_\+poisson}]{\setlength{\rightskip}{0pt plus 5cm}double fast\+\_\+poisson (
+\begin{DoxyParamCaption}
+\item[{double}]{mu}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_ab7ac1e1d30224f2ad6b02a2bbc575153}
+\hypertarget{statistic_8c_a61ccd72f7e2d2f65912807eda4c8643c}{\index{statistic.\+c@{statistic.\+c}!gauss@{gauss}}
+\index{gauss@{gauss}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{gauss}]{\setlength{\rightskip}{0pt plus 5cm}double gauss (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a61ccd72f7e2d2f65912807eda4c8643c}
+\hypertarget{statistic_8c_a37fe6b362a86eaa232c07dd86b3c21cf}{\index{statistic.\+c@{statistic.\+c}!gauss\+\_\+trc@{gauss\+\_\+trc}}
+\index{gauss\+\_\+trc@{gauss\+\_\+trc}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{gauss\+\_\+trc}]{\setlength{\rightskip}{0pt plus 5cm}double gauss\+\_\+trc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a37fe6b362a86eaa232c07dd86b3c21cf}
+\hypertarget{statistic_8c_a59ebf0e0f900932d95f9527459783d7f}{\index{statistic.\+c@{statistic.\+c}!init\+\_\+statistic@{init\+\_\+statistic}}
+\index{init\+\_\+statistic@{init\+\_\+statistic}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{init\+\_\+statistic}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+statistic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a59ebf0e0f900932d95f9527459783d7f}
+\hypertarget{statistic_8c_a17397c70ca495597e8232ffa61c9e605}{\index{statistic.\+c@{statistic.\+c}!poisson@{poisson}}
+\index{poisson@{poisson}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{poisson}]{\setlength{\rightskip}{0pt plus 5cm}long poisson (
+\begin{DoxyParamCaption}
+\item[{double}]{mu}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a17397c70ca495597e8232ffa61c9e605}
+\hypertarget{statistic_8c_a4834ea9d216a2131e7ccd3943ff1478d}{\index{statistic.\+c@{statistic.\+c}!put\+\_\+poisson\+\_\+noise@{put\+\_\+poisson\+\_\+noise}}
+\index{put\+\_\+poisson\+\_\+noise@{put\+\_\+poisson\+\_\+noise}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{put\+\_\+poisson\+\_\+noise}]{\setlength{\rightskip}{0pt plus 5cm}int put\+\_\+poisson\+\_\+noise (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+in\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a4834ea9d216a2131e7ccd3943ff1478d}
+\hypertarget{statistic_8c_a0048e34c54d2da14cb96301fc8df1c0e}{\index{statistic.\+c@{statistic.\+c}!ran1@{ran1}}
+\index{ran1@{ran1}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{ran1}]{\setlength{\rightskip}{0pt plus 5cm}double ran1 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a0048e34c54d2da14cb96301fc8df1c0e}
+\hypertarget{statistic_8c_a6e701b72ef08c2fa72e0a3949d96aa52}{\index{statistic.\+c@{statistic.\+c}!statistic\+\_\+putphnoise\+\_\+cli@{statistic\+\_\+putphnoise\+\_\+cli}}
+\index{statistic\+\_\+putphnoise\+\_\+cli@{statistic\+\_\+putphnoise\+\_\+cli}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{statistic\+\_\+putphnoise\+\_\+cli}]{\setlength{\rightskip}{0pt plus 5cm}int statistic\+\_\+putphnoise\+\_\+cli (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{statistic_8c_a6e701b72ef08c2fa72e0a3949d96aa52}
+
+
+\subsection{Variable Documentation}
+\hypertarget{statistic_8c_a9842752e03b4de9b4593f1a3b34364ab}{\index{statistic.\+c@{statistic.\+c}!data@{data}}
+\index{data@{data}!statistic.\+c@{statistic.\+c}}
+\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}}\label{statistic_8c_a9842752e03b4de9b4593f1a3b34364ab}

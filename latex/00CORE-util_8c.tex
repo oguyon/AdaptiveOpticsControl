@@ -1,0 +1,96 @@
+\hypertarget{00CORE-util_8c}{\section{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E-\/util.c File Reference}
+\label{00CORE-util_8c}\index{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E-\/util.\+c@{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E-\/util.\+c}}
+}
+{\ttfamily \#include $<$sys/stat.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$Cfits.\+h$>$}\\*
+{\ttfamily \#include $<$00\+C\+O\+R\+E.\+h$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{00CORE-util_8c_a5c347013d2321007a39b35479a004a98}{cfits\+\_\+cmd\+\_\+system} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{00CORE-util_8c_adcad0b09bdc39ca886929037370e91e3}{cfits\+\_\+cmd\+\_\+help} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{00CORE-util_8c_aae63cebb1c60093a659435e992688824}{cfits\+\_\+cmd\+\_\+helpreadline} (struct lxrcmd $\ast$c)
+\item 
+int \hyperlink{00CORE-util_8c_af99a7b6fc82ebc9772ed71420e79e4ba}{cfits\+\_\+set\+\_\+default\+\_\+precision} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{00CORE-util_8c_a9f914b00beb9aca409d72a7e61b35cd8}{cfits\+\_\+cmd\+\_\+\+Cfitsinfo} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{00CORE-util_8c_a71ac14b0fd01ac9ec195dfaf9770051f}{cfits\+\_\+cmd\+\_\+exit} (struct lxrcmd $\ast$cmd)
+\item 
+P\+F \hyperlink{00CORE-util_8c_a73a58102b0bf4d2351ab96a614a25e87}{cfits\+\_\+cmd\+\_\+writepid} (struct lxrcmd $\ast$cmd)
+\item 
+P\+F \hyperlink{00CORE-util_8c_a41cdcd744da71a393cd0174d3554213b}{mod\+\_\+00\+C\+O\+R\+E\+\_\+init} (struct module $\ast$m)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct lxrcmd \hyperlink{00CORE-util_8c_a30a1fdbdb3486e487be580824d331721}{mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{00CORE-util_8c_a9f914b00beb9aca409d72a7e61b35cd8}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+\+Cfitsinfo@{cfits\+\_\+cmd\+\_\+\+Cfitsinfo}}
+\index{cfits\+\_\+cmd\+\_\+\+Cfitsinfo@{cfits\+\_\+cmd\+\_\+\+Cfitsinfo}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+\+Cfitsinfo}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+cmd\+\_\+\+Cfitsinfo (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_a9f914b00beb9aca409d72a7e61b35cd8}
+\hypertarget{00CORE-util_8c_a71ac14b0fd01ac9ec195dfaf9770051f}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+exit@{cfits\+\_\+cmd\+\_\+exit}}
+\index{cfits\+\_\+cmd\+\_\+exit@{cfits\+\_\+cmd\+\_\+exit}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+exit}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+cmd\+\_\+exit (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{cmd}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_a71ac14b0fd01ac9ec195dfaf9770051f}
+\hypertarget{00CORE-util_8c_adcad0b09bdc39ca886929037370e91e3}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+help@{cfits\+\_\+cmd\+\_\+help}}
+\index{cfits\+\_\+cmd\+\_\+help@{cfits\+\_\+cmd\+\_\+help}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+help}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+cmd\+\_\+help (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_adcad0b09bdc39ca886929037370e91e3}
+\hypertarget{00CORE-util_8c_aae63cebb1c60093a659435e992688824}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+helpreadline@{cfits\+\_\+cmd\+\_\+helpreadline}}
+\index{cfits\+\_\+cmd\+\_\+helpreadline@{cfits\+\_\+cmd\+\_\+helpreadline}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+helpreadline}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+cmd\+\_\+helpreadline (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_aae63cebb1c60093a659435e992688824}
+\hypertarget{00CORE-util_8c_a5c347013d2321007a39b35479a004a98}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+system@{cfits\+\_\+cmd\+\_\+system}}
+\index{cfits\+\_\+cmd\+\_\+system@{cfits\+\_\+cmd\+\_\+system}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+system}]{\setlength{\rightskip}{0pt plus 5cm}int cfits\+\_\+cmd\+\_\+system (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_a5c347013d2321007a39b35479a004a98}
+\hypertarget{00CORE-util_8c_a73a58102b0bf4d2351ab96a614a25e87}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+cmd\+\_\+writepid@{cfits\+\_\+cmd\+\_\+writepid}}
+\index{cfits\+\_\+cmd\+\_\+writepid@{cfits\+\_\+cmd\+\_\+writepid}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+cmd\+\_\+writepid}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+cmd\+\_\+writepid (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{cmd}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_a73a58102b0bf4d2351ab96a614a25e87}
+\hypertarget{00CORE-util_8c_af99a7b6fc82ebc9772ed71420e79e4ba}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!cfits\+\_\+set\+\_\+default\+\_\+precision@{cfits\+\_\+set\+\_\+default\+\_\+precision}}
+\index{cfits\+\_\+set\+\_\+default\+\_\+precision@{cfits\+\_\+set\+\_\+default\+\_\+precision}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{cfits\+\_\+set\+\_\+default\+\_\+precision}]{\setlength{\rightskip}{0pt plus 5cm}P\+F cfits\+\_\+set\+\_\+default\+\_\+precision (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_af99a7b6fc82ebc9772ed71420e79e4ba}
+\hypertarget{00CORE-util_8c_a41cdcd744da71a393cd0174d3554213b}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!mod\+\_\+00\+C\+O\+R\+E\+\_\+init@{mod\+\_\+00\+C\+O\+R\+E\+\_\+init}}
+\index{mod\+\_\+00\+C\+O\+R\+E\+\_\+init@{mod\+\_\+00\+C\+O\+R\+E\+\_\+init}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{mod\+\_\+00\+C\+O\+R\+E\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+00\+C\+O\+R\+E\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{struct module $\ast$}]{m}
+\end{DoxyParamCaption}
+)}}\label{00CORE-util_8c_a41cdcd744da71a393cd0174d3554213b}
+
+
+\subsection{Variable Documentation}
+\hypertarget{00CORE-util_8c_a30a1fdbdb3486e487be580824d331721}{\index{00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}!mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds@{mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds}}
+\index{mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds@{mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds}!00\+C\+O\+R\+E-\/util.\+c@{00\+C\+O\+R\+E-\/util.\+c}}
+\subsubsection[{mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds}]{\setlength{\rightskip}{0pt plus 5cm}struct lxrcmd mod\+\_\+00\+C\+O\+R\+E\+\_\+cmds\mbox{[}$\,$\mbox{]}}}\label{00CORE-util_8c_a30a1fdbdb3486e487be580824d331721}

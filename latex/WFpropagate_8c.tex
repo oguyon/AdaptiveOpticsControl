@@ -1,0 +1,135 @@
+\hypertarget{WFpropagate_8c}{\section{src/\+W\+Fpropagate/\+W\+Fpropagate.c File Reference}
+\label{WFpropagate_8c}\index{src/\+W\+Fpropagate/\+W\+Fpropagate.\+c@{src/\+W\+Fpropagate/\+W\+Fpropagate.\+c}}
+}
+{\ttfamily \#include $<$fitsio.\+h$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$ctype.\+h$>$}\\*
+{\ttfamily \#include $<$malloc.\+h$>$}\\*
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}C\+L\+Icore.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+memory/\+C\+O\+R\+E\+M\+O\+D\+\_\+memory.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+arith/\+C\+O\+R\+E\+M\+O\+D\+\_\+arith.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}fft/fft.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}image\+\_\+gen/image\+\_\+gen.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}W\+Fpropagate/\+W\+Fpropagate.\+h\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{WFpropagate_8c_a856e9c763f542a6a0b78587b2989c159}{S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E}~2000
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{WFpropagate_8c_a852eccee42cf709840f8a72a91e7b9cb}{Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli} ()
+\item 
+int \hyperlink{WFpropagate_8c_a575385602b80d05c0d60a189d15e9a83}{init\+\_\+\+W\+Fpropagate} ()
+\item 
+int \hyperlink{WFpropagate_8c_a9f6b46b2f3c8854184d92a3b110eefff}{Fresnel\+\_\+propagate\+\_\+wavefront} (char $\ast$in, char $\ast$out, double P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, double z, double lambda)
+\item 
+int \hyperlink{WFpropagate_8c_a89a1b7dae2efcb9a9d929e4360bb3c23}{Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront} (char $\ast$Cim, long size, double P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, double z, double lambda, double F\+P\+M\+A\+S\+K\+R\+A\+D)
+\item 
+int \hyperlink{WFpropagate_8c_a377c0d8bcd11e9a6a978daa7213029a7}{Fresnel\+\_\+propagate\+\_\+wavefront1} (char $\ast$in, char $\ast$out, char $\ast$Cin)
+\item 
+long \hyperlink{WFpropagate_8c_a51dd7497bf3731b8d15ba9b251ee33c1}{Fresnel\+\_\+propagate\+\_\+cube} (char $\ast$I\+Dcin\+\_\+name, char $\ast$I\+Dout\+\_\+name\+\_\+amp, char $\ast$I\+Dout\+\_\+name\+\_\+pha, double P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, double zstart, double zend, long N\+Bzpts, double lambda)
+\item 
+double \hyperlink{WFpropagate_8c_a99694a7d15d71ada276fac0c6910065f}{W\+Fpropagate\+\_\+\+Test\+Lyot} (long N\+Bmask, double $\ast$maskpos)
+\item 
+long \hyperlink{WFpropagate_8c_a0154c900f6865033703f7f5a3ceb73fb}{W\+Fpropagate\+\_\+run} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structDATA}{D\+A\+T\+A} \hyperlink{WFpropagate_8c_a9842752e03b4de9b4593f1a3b34364ab}{data}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{WFpropagate_8c_a856e9c763f542a6a0b78587b2989c159}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E@{S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E}}
+\index{S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E@{S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+B\+U\+F\+F\+E\+R\+S\+I\+Z\+E~2000}}\label{WFpropagate_8c_a856e9c763f542a6a0b78587b2989c159}
+
+
+\subsection{Function Documentation}
+\hypertarget{WFpropagate_8c_a51dd7497bf3731b8d15ba9b251ee33c1}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!Fresnel\+\_\+propagate\+\_\+cube@{Fresnel\+\_\+propagate\+\_\+cube}}
+\index{Fresnel\+\_\+propagate\+\_\+cube@{Fresnel\+\_\+propagate\+\_\+cube}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{Fresnel\+\_\+propagate\+\_\+cube}]{\setlength{\rightskip}{0pt plus 5cm}long Fresnel\+\_\+propagate\+\_\+cube (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+Dcin\+\_\+name, }
+\item[{char $\ast$}]{I\+Dout\+\_\+name\+\_\+amp, }
+\item[{char $\ast$}]{I\+Dout\+\_\+name\+\_\+pha, }
+\item[{double}]{P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, }
+\item[{double}]{zstart, }
+\item[{double}]{zend, }
+\item[{long}]{N\+Bzpts, }
+\item[{double}]{lambda}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a51dd7497bf3731b8d15ba9b251ee33c1}
+\hypertarget{WFpropagate_8c_a9f6b46b2f3c8854184d92a3b110eefff}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!Fresnel\+\_\+propagate\+\_\+wavefront@{Fresnel\+\_\+propagate\+\_\+wavefront}}
+\index{Fresnel\+\_\+propagate\+\_\+wavefront@{Fresnel\+\_\+propagate\+\_\+wavefront}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{Fresnel\+\_\+propagate\+\_\+wavefront}]{\setlength{\rightskip}{0pt plus 5cm}int Fresnel\+\_\+propagate\+\_\+wavefront (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in, }
+\item[{char $\ast$}]{out, }
+\item[{double}]{P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, }
+\item[{double}]{z, }
+\item[{double}]{lambda}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a9f6b46b2f3c8854184d92a3b110eefff}
+\hypertarget{WFpropagate_8c_a377c0d8bcd11e9a6a978daa7213029a7}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!Fresnel\+\_\+propagate\+\_\+wavefront1@{Fresnel\+\_\+propagate\+\_\+wavefront1}}
+\index{Fresnel\+\_\+propagate\+\_\+wavefront1@{Fresnel\+\_\+propagate\+\_\+wavefront1}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{Fresnel\+\_\+propagate\+\_\+wavefront1}]{\setlength{\rightskip}{0pt plus 5cm}int Fresnel\+\_\+propagate\+\_\+wavefront1 (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in, }
+\item[{char $\ast$}]{out, }
+\item[{char $\ast$}]{Cin}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a377c0d8bcd11e9a6a978daa7213029a7}
+\hypertarget{WFpropagate_8c_a852eccee42cf709840f8a72a91e7b9cb}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli@{Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli}}
+\index{Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli@{Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli}]{\setlength{\rightskip}{0pt plus 5cm}int Fresnel\+\_\+propagate\+\_\+wavefront\+\_\+cli (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a852eccee42cf709840f8a72a91e7b9cb}
+\hypertarget{WFpropagate_8c_a89a1b7dae2efcb9a9d929e4360bb3c23}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront@{Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront}}
+\index{Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront@{Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront}]{\setlength{\rightskip}{0pt plus 5cm}int Init\+\_\+\+Fresnel\+\_\+propagate\+\_\+wavefront (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{Cim, }
+\item[{long}]{size, }
+\item[{double}]{P\+U\+P\+I\+L\+\_\+\+S\+C\+A\+L\+E, }
+\item[{double}]{z, }
+\item[{double}]{lambda, }
+\item[{double}]{F\+P\+M\+A\+S\+K\+R\+A\+D}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a89a1b7dae2efcb9a9d929e4360bb3c23}
+\hypertarget{WFpropagate_8c_a575385602b80d05c0d60a189d15e9a83}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!init\+\_\+\+W\+Fpropagate@{init\+\_\+\+W\+Fpropagate}}
+\index{init\+\_\+\+W\+Fpropagate@{init\+\_\+\+W\+Fpropagate}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{init\+\_\+\+W\+Fpropagate}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+\+W\+Fpropagate (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a575385602b80d05c0d60a189d15e9a83}
+\hypertarget{WFpropagate_8c_a0154c900f6865033703f7f5a3ceb73fb}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!W\+Fpropagate\+\_\+run@{W\+Fpropagate\+\_\+run}}
+\index{W\+Fpropagate\+\_\+run@{W\+Fpropagate\+\_\+run}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{W\+Fpropagate\+\_\+run}]{\setlength{\rightskip}{0pt plus 5cm}long W\+Fpropagate\+\_\+run (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a0154c900f6865033703f7f5a3ceb73fb}
+\hypertarget{WFpropagate_8c_a99694a7d15d71ada276fac0c6910065f}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!W\+Fpropagate\+\_\+\+Test\+Lyot@{W\+Fpropagate\+\_\+\+Test\+Lyot}}
+\index{W\+Fpropagate\+\_\+\+Test\+Lyot@{W\+Fpropagate\+\_\+\+Test\+Lyot}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{W\+Fpropagate\+\_\+\+Test\+Lyot}]{\setlength{\rightskip}{0pt plus 5cm}double W\+Fpropagate\+\_\+\+Test\+Lyot (
+\begin{DoxyParamCaption}
+\item[{long}]{N\+Bmask, }
+\item[{double $\ast$}]{maskpos}
+\end{DoxyParamCaption}
+)}}\label{WFpropagate_8c_a99694a7d15d71ada276fac0c6910065f}
+
+
+\subsection{Variable Documentation}
+\hypertarget{WFpropagate_8c_a9842752e03b4de9b4593f1a3b34364ab}{\index{W\+Fpropagate.\+c@{W\+Fpropagate.\+c}!data@{data}}
+\index{data@{data}!W\+Fpropagate.\+c@{W\+Fpropagate.\+c}}
+\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}}\label{WFpropagate_8c_a9842752e03b4de9b4593f1a3b34364ab}

@@ -1,0 +1,191 @@
+\hypertarget{ZernikePolyn_8h}{\section{src/\+Zernike\+Polyn/\+Zernike\+Polyn.h File Reference}
+\label{ZernikePolyn_8h}\index{src/\+Zernike\+Polyn/\+Zernike\+Polyn.\+h@{src/\+Zernike\+Polyn/\+Zernike\+Polyn.\+h}}
+}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structZERNIKE}{Z\+E\+R\+N\+I\+K\+E}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{ZernikePolyn_8h_af7524858a2e89eb535d1afe4a573fc48}{fact} (int n)
+\item 
+int \hyperlink{ZernikePolyn_8h_a34e87076be4c021d3b0976438605bce6}{zernike\+\_\+init} ()
+\item 
+long \hyperlink{ZernikePolyn_8h_a88d525df12aad5d8ed62e9fa788adda2}{Zernike\+\_\+n} (long \hyperlink{calc__flex_8c_a139066bd9e344a8daae82c5ca919fffe}{i})
+\item 
+long \hyperlink{ZernikePolyn_8h_aa6e618809fd141131d7bcf5b4461148f}{Zernike\+\_\+m} (long \hyperlink{calc__flex_8c_a139066bd9e344a8daae82c5ca919fffe}{i})
+\item 
+double \hyperlink{ZernikePolyn_8h_a651851e4e65b70c8aed8ff5e5471e0fc}{Zernike\+\_\+value} (long j, double r, double P\+A)
+\item 
+long \hyperlink{ZernikePolyn_8h_a23edc5ac562c111891ca32e78fd5cf0c}{mk\+\_\+zer} (char $\ast$I\+D\+\_\+name, long S\+I\+Z\+E, long zer\+\_\+nb, float rpix)
+\item 
+long \hyperlink{ZernikePolyn_8h_a784ef1fa4c4c8cd702442f02118ce6d2}{mk\+\_\+zer\+\_\+unbounded} (char $\ast$I\+D\+\_\+name, long S\+I\+Z\+E, long zer\+\_\+nb, float rpix)
+\item 
+int \hyperlink{ZernikePolyn_8h_aa662334d11fb92e1defc17bb7ff53a63}{mk\+\_\+zer\+\_\+series} (char $\ast$I\+D\+\_\+name, long S\+I\+Z\+E, long zer\+\_\+nb, float rpix)
+\item 
+long \hyperlink{ZernikePolyn_8h_ab719b0ba2ffadeb43ab8db276048c07a}{mk\+\_\+zer\+\_\+seriescube} (char $\ast$I\+D\+\_\+namec, long S\+I\+Z\+E, long zer\+\_\+nb, float rpix)
+\item 
+double \hyperlink{ZernikePolyn_8h_a03035ee6527a3b7d97b6b8362ac7e87c}{get\+\_\+zer} (char $\ast$I\+D\+\_\+name, long zer\+\_\+nb, double radius)
+\item 
+double \hyperlink{ZernikePolyn_8h_a770f116120ebdcb6ec9ad3bd8f2dfe56}{get\+\_\+zer\+\_\+crop} (char $\ast$I\+D\+\_\+name, long zer\+\_\+nb, double radius, double radius1)
+\item 
+int \hyperlink{ZernikePolyn_8h_ada42d0131ca2bac013bc6cd4624f496d}{get\+\_\+zerns} (char $\ast$I\+D\+\_\+name, long max\+\_\+zer, double radius)
+\item 
+int \hyperlink{ZernikePolyn_8h_a3e1a222f3406c4f3d340a4826d5b54fb}{get\+\_\+zern\+\_\+array} (char $\ast$I\+D\+\_\+name, long max\+\_\+zer, double radius, double $\ast$array)
+\item 
+int \hyperlink{ZernikePolyn_8h_abe678bb95f12c2c7dc4a52c1e03c8c79}{remove\+\_\+zerns} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+name\+\_\+out, int max\+\_\+zer, double radius)
+\item 
+int \hyperlink{ZernikePolyn_8h_ae107e629cfc67b92728bcd803c89fd63}{remove\+\_\+\+T\+T\+F} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+name\+\_\+out, double radius)
+\item 
+double \hyperlink{ZernikePolyn_8h_addf3829d18a623fe26fd5129fdb020c6}{fit\+\_\+zer} (char $\ast$I\+D\+\_\+name, long maxzer\+\_\+nb, double radius, double $\ast$zvalue, double $\ast$residual)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{ZernikePolyn_8h_af7524858a2e89eb535d1afe4a573fc48}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!fact@{fact}}
+\index{fact@{fact}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{fact}]{\setlength{\rightskip}{0pt plus 5cm}double fact (
+\begin{DoxyParamCaption}
+\item[{int}]{n}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_af7524858a2e89eb535d1afe4a573fc48}
+\hypertarget{ZernikePolyn_8h_addf3829d18a623fe26fd5129fdb020c6}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!fit\+\_\+zer@{fit\+\_\+zer}}
+\index{fit\+\_\+zer@{fit\+\_\+zer}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{fit\+\_\+zer}]{\setlength{\rightskip}{0pt plus 5cm}double fit\+\_\+zer (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{maxzer\+\_\+nb, }
+\item[{double}]{radius, }
+\item[{double $\ast$}]{zvalue, }
+\item[{double $\ast$}]{residual}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_addf3829d18a623fe26fd5129fdb020c6}
+\hypertarget{ZernikePolyn_8h_a03035ee6527a3b7d97b6b8362ac7e87c}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!get\+\_\+zer@{get\+\_\+zer}}
+\index{get\+\_\+zer@{get\+\_\+zer}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{get\+\_\+zer}]{\setlength{\rightskip}{0pt plus 5cm}double get\+\_\+zer (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{double}]{radius}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a03035ee6527a3b7d97b6b8362ac7e87c}
+\hypertarget{ZernikePolyn_8h_a770f116120ebdcb6ec9ad3bd8f2dfe56}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!get\+\_\+zer\+\_\+crop@{get\+\_\+zer\+\_\+crop}}
+\index{get\+\_\+zer\+\_\+crop@{get\+\_\+zer\+\_\+crop}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{get\+\_\+zer\+\_\+crop}]{\setlength{\rightskip}{0pt plus 5cm}double get\+\_\+zer\+\_\+crop (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{double}]{radius, }
+\item[{double}]{radius1}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a770f116120ebdcb6ec9ad3bd8f2dfe56}
+\hypertarget{ZernikePolyn_8h_a3e1a222f3406c4f3d340a4826d5b54fb}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!get\+\_\+zern\+\_\+array@{get\+\_\+zern\+\_\+array}}
+\index{get\+\_\+zern\+\_\+array@{get\+\_\+zern\+\_\+array}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{get\+\_\+zern\+\_\+array}]{\setlength{\rightskip}{0pt plus 5cm}int get\+\_\+zern\+\_\+array (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{max\+\_\+zer, }
+\item[{double}]{radius, }
+\item[{double $\ast$}]{array}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a3e1a222f3406c4f3d340a4826d5b54fb}
+\hypertarget{ZernikePolyn_8h_ada42d0131ca2bac013bc6cd4624f496d}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!get\+\_\+zerns@{get\+\_\+zerns}}
+\index{get\+\_\+zerns@{get\+\_\+zerns}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{get\+\_\+zerns}]{\setlength{\rightskip}{0pt plus 5cm}int get\+\_\+zerns (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{max\+\_\+zer, }
+\item[{double}]{radius}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_ada42d0131ca2bac013bc6cd4624f496d}
+\hypertarget{ZernikePolyn_8h_a23edc5ac562c111891ca32e78fd5cf0c}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!mk\+\_\+zer@{mk\+\_\+zer}}
+\index{mk\+\_\+zer@{mk\+\_\+zer}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{mk\+\_\+zer}]{\setlength{\rightskip}{0pt plus 5cm}long mk\+\_\+zer (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{S\+I\+Z\+E, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{float}]{rpix}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a23edc5ac562c111891ca32e78fd5cf0c}
+\hypertarget{ZernikePolyn_8h_aa662334d11fb92e1defc17bb7ff53a63}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!mk\+\_\+zer\+\_\+series@{mk\+\_\+zer\+\_\+series}}
+\index{mk\+\_\+zer\+\_\+series@{mk\+\_\+zer\+\_\+series}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{mk\+\_\+zer\+\_\+series}]{\setlength{\rightskip}{0pt plus 5cm}int mk\+\_\+zer\+\_\+series (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{S\+I\+Z\+E, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{float}]{rpix}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_aa662334d11fb92e1defc17bb7ff53a63}
+\hypertarget{ZernikePolyn_8h_ab719b0ba2ffadeb43ab8db276048c07a}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!mk\+\_\+zer\+\_\+seriescube@{mk\+\_\+zer\+\_\+seriescube}}
+\index{mk\+\_\+zer\+\_\+seriescube@{mk\+\_\+zer\+\_\+seriescube}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{mk\+\_\+zer\+\_\+seriescube}]{\setlength{\rightskip}{0pt plus 5cm}long mk\+\_\+zer\+\_\+seriescube (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+namec, }
+\item[{long}]{S\+I\+Z\+E, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{float}]{rpix}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_ab719b0ba2ffadeb43ab8db276048c07a}
+\hypertarget{ZernikePolyn_8h_a784ef1fa4c4c8cd702442f02118ce6d2}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!mk\+\_\+zer\+\_\+unbounded@{mk\+\_\+zer\+\_\+unbounded}}
+\index{mk\+\_\+zer\+\_\+unbounded@{mk\+\_\+zer\+\_\+unbounded}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{mk\+\_\+zer\+\_\+unbounded}]{\setlength{\rightskip}{0pt plus 5cm}long mk\+\_\+zer\+\_\+unbounded (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{S\+I\+Z\+E, }
+\item[{long}]{zer\+\_\+nb, }
+\item[{float}]{rpix}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a784ef1fa4c4c8cd702442f02118ce6d2}
+\hypertarget{ZernikePolyn_8h_ae107e629cfc67b92728bcd803c89fd63}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!remove\+\_\+\+T\+T\+F@{remove\+\_\+\+T\+T\+F}}
+\index{remove\+\_\+\+T\+T\+F@{remove\+\_\+\+T\+T\+F}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{remove\+\_\+\+T\+T\+F}]{\setlength{\rightskip}{0pt plus 5cm}int remove\+\_\+\+T\+T\+F (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+out, }
+\item[{double}]{radius}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_ae107e629cfc67b92728bcd803c89fd63}
+\hypertarget{ZernikePolyn_8h_abe678bb95f12c2c7dc4a52c1e03c8c79}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!remove\+\_\+zerns@{remove\+\_\+zerns}}
+\index{remove\+\_\+zerns@{remove\+\_\+zerns}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{remove\+\_\+zerns}]{\setlength{\rightskip}{0pt plus 5cm}int remove\+\_\+zerns (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+out, }
+\item[{int}]{max\+\_\+zer, }
+\item[{double}]{radius}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_abe678bb95f12c2c7dc4a52c1e03c8c79}
+\hypertarget{ZernikePolyn_8h_a34e87076be4c021d3b0976438605bce6}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!zernike\+\_\+init@{zernike\+\_\+init}}
+\index{zernike\+\_\+init@{zernike\+\_\+init}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{zernike\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}int zernike\+\_\+init (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a34e87076be4c021d3b0976438605bce6}
+\hypertarget{ZernikePolyn_8h_aa6e618809fd141131d7bcf5b4461148f}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!Zernike\+\_\+m@{Zernike\+\_\+m}}
+\index{Zernike\+\_\+m@{Zernike\+\_\+m}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{Zernike\+\_\+m}]{\setlength{\rightskip}{0pt plus 5cm}long Zernike\+\_\+m (
+\begin{DoxyParamCaption}
+\item[{long}]{i}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_aa6e618809fd141131d7bcf5b4461148f}
+\hypertarget{ZernikePolyn_8h_a88d525df12aad5d8ed62e9fa788adda2}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!Zernike\+\_\+n@{Zernike\+\_\+n}}
+\index{Zernike\+\_\+n@{Zernike\+\_\+n}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{Zernike\+\_\+n}]{\setlength{\rightskip}{0pt plus 5cm}long Zernike\+\_\+n (
+\begin{DoxyParamCaption}
+\item[{long}]{i}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a88d525df12aad5d8ed62e9fa788adda2}
+\hypertarget{ZernikePolyn_8h_a651851e4e65b70c8aed8ff5e5471e0fc}{\index{Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}!Zernike\+\_\+value@{Zernike\+\_\+value}}
+\index{Zernike\+\_\+value@{Zernike\+\_\+value}!Zernike\+Polyn.\+h@{Zernike\+Polyn.\+h}}
+\subsubsection[{Zernike\+\_\+value}]{\setlength{\rightskip}{0pt plus 5cm}double Zernike\+\_\+value (
+\begin{DoxyParamCaption}
+\item[{long}]{j, }
+\item[{double}]{r, }
+\item[{double}]{P\+A}
+\end{DoxyParamCaption}
+)}}\label{ZernikePolyn_8h_a651851e4e65b70c8aed8ff5e5471e0fc}

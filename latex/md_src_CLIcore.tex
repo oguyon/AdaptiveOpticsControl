@@ -1,0 +1,174 @@
+Files \hyperlink{CLIcore_8c}{C\+L\+Icore.\+c} and \hyperlink{CLIcore_8h}{C\+L\+Icore.\+h} contain the source code for the command line interpreter (C\+L\+I)
+
+\subsubsection*{C\+O\+M\+M\+A\+N\+D L\+I\+N\+E O\+P\+T\+I\+O\+N\+S}
+
+\begin{DoxyVerb}  -h, --help 
+    print this message and exit
+  -i, --info
+    Print version, settings, info and exit
+  -j, --journal
+    keeps journal of commands - TO BE IMPLEMENTED 
+    Write all commands to file "cfits_cmdlog.txt" as they are entered
+  --verbose
+    be verbose
+  -d, --debug=DEBUGLEVEL
+    Set debug level at startup
+  -o, --overwrite 
+    Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
+  -l
+    Keeps a list of images in file imlist.txt
+  -m, --mmon=TTYDEVICE
+    open memory monitor on tty device
+    example:
+    <executable> -m /dev/tty2
+    <executable> --mmon=/dev/tty2
+  -n, --pname=<myprocessname>
+    rename process to <processname>
+  -p, --priority=<PR>
+    change process priority (0-99)
+    higher number: higher priority
+    example:
+    <executable> -p 90
+  -f, --fifo==FIFONAME
+        specify fifo name
+        example
+        <executable> -f /tmp/fifo24
+        <executable> --fifo=/tmp/fifo24
+  -s, --startup=STARTUPFILE
+        execute specified script on startup
+        requires the -f option, as the script is loaded into fifo
+\end{DoxyVerb}
+
+
+\subsection*{S\+Y\+N\+T\+A\+X R\+U\+L\+E\+S, P\+A\+R\+S\+E\+R}
+
+
+\begin{DoxyItemize}
+\item Spaces are used to separate arguments. Number of spaces irrelevant.
+\item Comments are written after the special character \#
+\item If a command is not found, the input string will be interpreted as an arithmetic operation (See A\+R\+I\+T\+H\+M\+E\+T\+I\+C O\+P\+E\+R\+A\+T\+I\+O\+N\+S below)
+\end{DoxyItemize}
+
+$<$command$>$ $<$arg1$>$ $<$arg2$>$ \# comment
+
+\subsection*{T\+A\+B C\+O\+M\+P\+L\+E\+T\+I\+O\+N}
+
+Tab completion is provided and behaves as follows\+:
+\begin{DoxyItemize}
+\item first argument\+: try to match command, then image, then filename
+\item additional arguments\+: try to match image, then filename
+\end{DoxyItemize}
+
+\subsection*{I\+N\+P\+U\+T}
+
+G\+N\+U readline used to read input. See G\+N\+U readline documentation on \href{http://tiswww.case.edu/php/chet/readline/rltop.html}{\tt http\+://tiswww.\+case.\+edu/php/chet/readline/rltop.\+html}. For a quick help on readline input, type\+: \begin{DoxyVerb}> helprl 
+\end{DoxyVerb}
+
+
+The command line interpreter (C\+L\+I) will take input from file cmdfile.\+txt if it exists. If file cmdfile.\+txt exists commands will be read one by one from top to bottom, and will be removed from the file as they are read, until the file is empty
+
+\subsection*{H\+E\+L\+P C\+O\+M\+M\+A\+N\+D\+S}
+
+\begin{DoxyVerb}> ?
+> help               
+    # print this help file
+> helprl             
+    # print readline quick help
+> lm?                        
+    # list all modules loaded
+> m? <module>               
+    # list all commands for a module
+> m?                    
+    # perform m? on all modules loaded
+> cmd? <command>              
+    # command description for <command>
+> cmd?                    
+    # command description for all commands
+> h? str                    
+    # search for string <str> in all commands and their descriptions
+\end{DoxyVerb}
+
+
+\subsection*{I\+M\+P\+O\+R\+T\+A\+N\+T C\+O\+M\+M\+A\+N\+D\+S}
+
+\begin{DoxyVerb}> ci
+    # compilation time and memory usage
+> listim 
+    # list all images in memory
+> listimf <filename> 
+    # list all images in memory and write output to file <filename>
+> !<syscommand>             
+    # execute system command
+> showhist                  
+    # prints history of all commands
+> quit                      
+    # exit Cfits (exit also works)
+
+> setdp <val>            
+    # set default precision to float (<val> = 0) or double (<val> = 1)
+> creaim <im> <xs> <ys>     
+    # creates a 2D image named <im>, size = <xs> x <ys> pixels
+\end{DoxyVerb}
+
+
+\subsection*{F\+I\+T\+S F\+I\+L\+E\+S I/\+O (see also modules C\+O\+R\+E\+M\+O\+D\+\_\+memory and C\+O\+R\+E\+M\+O\+D\+\_\+iofits}
+
+F\+I\+T\+S\+I\+O is used for F\+I\+T\+S files I/\+O, see F\+I\+T\+S\+I\+O documentation for more detailed instructions~\newline
+ \subsubsection*{L\+O\+A\+D\+I\+N\+G F\+I\+L\+E\+S}
+
+\begin{DoxyVerb}> loadfits <fname> <imname> 
+    # load FITS file <fname> into image <imname>
+> loadfits im1.fits imf1    
+    # load file im1.fits in memory with name imf1
+> loadfits im1.fits      
+    # load file im1.fits in memory with name im1 (default name is composed of all chars before first ".")
+> loadfits im1.fits.gz im1  
+    # load compressed file
+\end{DoxyVerb}
+
+
+\subsubsection*{S\+A\+V\+I\+N\+G F\+I\+L\+E\+S}
+
+\begin{DoxyVerb}> save_fl  <imname> <fname> 
+    # save image <imname> into FITS file <fname> (float)
+> save_fl im1 imf1.fits      
+    # write image im1 to disk file imf1.fits
+> save_fl im1
+    # write image im1 to disk file im1.fits (default file name = image name + ".fits")
+> save_fl im1 "!im1.fits"   
+    # overwrite file im1.fits if it exists
+> save_fl im1 "../dir2/im1.fits"
+    # specify full path
+> save_fl im1 im1.fits.gz   
+    # save compressed image
+\end{DoxyVerb}
+
+
+\subsection*{I\+N\+T\+E\+G\+R\+A\+T\+I\+O\+N W\+I\+T\+H S\+T\+A\+N\+D\+A\+R\+D L\+I\+N\+U\+X T\+O\+O\+L\+S A\+N\+D C\+O\+M\+M\+A\+N\+D\+S}
+
+U\+S\+I\+N\+G \char`\"{}cmdfile.\+txt\char`\"{} T\+O D\+R\+I\+V\+E C\+F\+I\+T\+S F\+R\+O\+M U\+N\+I\+X P\+R\+O\+M\+P\+T\+:
+
+Cfits can use standard linux tools and commands thanks to the cmdfile.\+txt file, which, if it exists, is executed as Cfits commands. For example, to load all im$\ast$.fits files in memory, you can type within Cfits\+:
+
+\begin{quote}
+!ls im$\ast$.fits $\vert$ xargs -\/\+I \{\} echo loadfits \{\} $>$ cmdfile.\+txt \end{quote}
+
+
+You can also drive Cfits from the unix command line if you are not in Cfits, but Cfits is running in the same directory. For example, the following command will load all im$\ast$.fits in Cfits from the unix command line\+:
+
+bash\$ ls im$\ast$.fits $\vert$ xargs -\/\+I \{\} echo loadfits \{\} $>$ cmdfile.\+txt
+
+U\+S\+I\+N\+G \char`\"{}imlist.\+txt\char`\"{} A\+N\+D \char`\"{}cmdfile.\+txt\char`\"{}
+
+If you start Cfits with the \char`\"{}-\/l\char`\"{} option, the file \char`\"{}imlist.\+txt\char`\"{} contains the list of images currently in memory in a A\+S\+C\+I\+I table. You can use standard unix tools to process this list and issue commands. For example, if you want to save all images with x size $>$ 200 onto disk as single precision F\+I\+T\+S files \+:
+
+\begin{quote}
+!awk '\{if (\$4$>$200) print \$2\}' imlist.\+txt$\vert$ xargs -\/\+I \{\} echo save\+\_\+fl \{\} \{\}\+\_\+tmp.\+fits $>$ cmdfile.\+txt \end{quote}
+
+
+\subsection*{A\+R\+I\+T\+H\+M\+E\+T\+I\+C O\+P\+E\+R\+A\+T\+I\+O\+N\+S}
+
+\begin{DoxyVerb}> im1=sqrt(im+2.0)          
+    # will perform an arithmetic operation on image im and store the result in image im1
+\end{DoxyVerb}
+ 

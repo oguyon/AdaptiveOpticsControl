@@ -1,0 +1,250 @@
+\hypertarget{fft_8h}{\section{src/fft/fft.h File Reference}
+\label{fft_8h}\index{src/fft/fft.\+h@{src/fft/fft.\+h}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{fft_8h_a0767c4e140bc8498e1984f927c16803f}{import\+\_\+wisdom} ()
+\item 
+int \hyperlink{fft_8h_ac5fe49a9ee1cf803e143c048bf97a8f2}{fft\+\_\+setoffsets} (long o1, long o2)
+\item 
+int \hyperlink{fft_8h_aed4645edc92289a31e972c925d067870}{init\+\_\+fftw\+\_\+plans} (int mode)
+\item 
+int \hyperlink{fft_8h_a7cabe8bcbce9b78d93438cd81bcbf55b}{init\+\_\+fftw\+\_\+plans0} ()
+\item 
+int \hyperlink{fft_8h_a05727be9438b2cfc5933ff196988f3d2}{export\+\_\+wisdom} ()
+\item 
+int \hyperlink{fft_8h_ac58e739ffc1de08f6a46c8596b07b09c}{permut} (char $\ast$I\+D\+\_\+name)
+\item 
+int \hyperlink{fft_8h_aad3a37213ce79f9ff45786ae5fb6eee3}{do1dfft} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_a4be7a41cf0892318829453cc44e01e2c}{do1drfft} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_a5fe7f7361239c261ccf71e8903fb3b6d}{do1dffti} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_ab6c5427b9e635128c50e04028d44dd94}{do2dfft} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_a50c12c71d5b035a83be67ed5eb2f4fd8}{do2dffti} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_a68cb6b8da900dbff60fa49fc48f5fc0f}{pupfft} (char $\ast$I\+D\+\_\+name\+\_\+ampl, char $\ast$I\+D\+\_\+name\+\_\+pha, char $\ast$I\+D\+\_\+name\+\_\+ampl\+\_\+out, char $\ast$I\+D\+\_\+name\+\_\+pha\+\_\+out, char $\ast$options)
+\item 
+int \hyperlink{fft_8h_ad8a2c495759e32ff53aca712a7cf7769}{do2drfft} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+int \hyperlink{fft_8h_a2b358183326aa75610049dac21fc1d4d}{do2drffti} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name)
+\item 
+long \hyperlink{fft_8h_ad30270e90e3563cf6f2e8b4c02c0cceb}{fft\+\_\+correlation} (char $\ast$I\+D\+\_\+name1, char $\ast$I\+D\+\_\+name2, char $\ast$I\+D\+\_\+nameout)
+\item 
+int \hyperlink{fft_8h_ac2b5d9d1a86ef48e9a5a0ea6810a126b}{autocorrelation} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+out)
+\item 
+int \hyperlink{fft_8h_ac423ae37aa46ae86dd79aa073b5b5e83}{fftzoom} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+out, long factor)
+\item 
+int \hyperlink{fft_8h_a93f505d49b892bae230d7582591e7b48}{fftczoom} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+out, long factor)
+\item 
+int \hyperlink{fft_8h_ab3fe145c0484fc3b208e8959ac572e40}{test\+\_\+fftspeed} (int nmax)
+\item 
+long \hyperlink{fft_8h_a9b330f51d4f25ca37351e07add1cb35e}{fft\+\_\+\+D\+F\+T} (char $\ast$I\+Din\+\_\+name, char $\ast$I\+Dinmask\+\_\+name, char $\ast$I\+Dout\+\_\+name, char $\ast$I\+Doutmask\+\_\+name, double Zfactor, int dir, long kin)
+\item 
+long \hyperlink{fft_8h_a158657be89e05f93441ab5fc6c85bce4}{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M} (char $\ast$pupin\+\_\+name, char $\ast$fpmz\+\_\+name, double zfactor, char $\ast$pupout\+\_\+name)
+\item 
+long \hyperlink{fft_8h_ab524cceb33e24feca8158ab537acd31b}{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re} (char $\ast$pupin\+\_\+name, char $\ast$fpmz\+\_\+name, double zfactor, char $\ast$pupout\+\_\+name)
+\item 
+int \hyperlink{fft_8h_aa4e7210e4d89462147f12e20d982973d}{fft\+\_\+image\+\_\+translate} (char $\ast$I\+D\+\_\+name, char $\ast$I\+D\+\_\+out, double xtransl, double ytransl)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{fft_8h_ac2b5d9d1a86ef48e9a5a0ea6810a126b}{\index{fft.\+h@{fft.\+h}!autocorrelation@{autocorrelation}}
+\index{autocorrelation@{autocorrelation}!fft.\+h@{fft.\+h}}
+\subsubsection[{autocorrelation}]{\setlength{\rightskip}{0pt plus 5cm}int autocorrelation (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+out}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ac2b5d9d1a86ef48e9a5a0ea6810a126b}
+\hypertarget{fft_8h_aad3a37213ce79f9ff45786ae5fb6eee3}{\index{fft.\+h@{fft.\+h}!do1dfft@{do1dfft}}
+\index{do1dfft@{do1dfft}!fft.\+h@{fft.\+h}}
+\subsubsection[{do1dfft}]{\setlength{\rightskip}{0pt plus 5cm}int do1dfft (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_aad3a37213ce79f9ff45786ae5fb6eee3}
+\hypertarget{fft_8h_a5fe7f7361239c261ccf71e8903fb3b6d}{\index{fft.\+h@{fft.\+h}!do1dffti@{do1dffti}}
+\index{do1dffti@{do1dffti}!fft.\+h@{fft.\+h}}
+\subsubsection[{do1dffti}]{\setlength{\rightskip}{0pt plus 5cm}int do1dffti (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a5fe7f7361239c261ccf71e8903fb3b6d}
+\hypertarget{fft_8h_a4be7a41cf0892318829453cc44e01e2c}{\index{fft.\+h@{fft.\+h}!do1drfft@{do1drfft}}
+\index{do1drfft@{do1drfft}!fft.\+h@{fft.\+h}}
+\subsubsection[{do1drfft}]{\setlength{\rightskip}{0pt plus 5cm}int do1drfft (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a4be7a41cf0892318829453cc44e01e2c}
+\hypertarget{fft_8h_ab6c5427b9e635128c50e04028d44dd94}{\index{fft.\+h@{fft.\+h}!do2dfft@{do2dfft}}
+\index{do2dfft@{do2dfft}!fft.\+h@{fft.\+h}}
+\subsubsection[{do2dfft}]{\setlength{\rightskip}{0pt plus 5cm}int do2dfft (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ab6c5427b9e635128c50e04028d44dd94}
+\hypertarget{fft_8h_a50c12c71d5b035a83be67ed5eb2f4fd8}{\index{fft.\+h@{fft.\+h}!do2dffti@{do2dffti}}
+\index{do2dffti@{do2dffti}!fft.\+h@{fft.\+h}}
+\subsubsection[{do2dffti}]{\setlength{\rightskip}{0pt plus 5cm}int do2dffti (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a50c12c71d5b035a83be67ed5eb2f4fd8}
+\hypertarget{fft_8h_ad8a2c495759e32ff53aca712a7cf7769}{\index{fft.\+h@{fft.\+h}!do2drfft@{do2drfft}}
+\index{do2drfft@{do2drfft}!fft.\+h@{fft.\+h}}
+\subsubsection[{do2drfft}]{\setlength{\rightskip}{0pt plus 5cm}int do2drfft (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ad8a2c495759e32ff53aca712a7cf7769}
+\hypertarget{fft_8h_a2b358183326aa75610049dac21fc1d4d}{\index{fft.\+h@{fft.\+h}!do2drffti@{do2drffti}}
+\index{do2drffti@{do2drffti}!fft.\+h@{fft.\+h}}
+\subsubsection[{do2drffti}]{\setlength{\rightskip}{0pt plus 5cm}int do2drffti (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{in\+\_\+name, }
+\item[{char $\ast$}]{out\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a2b358183326aa75610049dac21fc1d4d}
+\hypertarget{fft_8h_a05727be9438b2cfc5933ff196988f3d2}{\index{fft.\+h@{fft.\+h}!export\+\_\+wisdom@{export\+\_\+wisdom}}
+\index{export\+\_\+wisdom@{export\+\_\+wisdom}!fft.\+h@{fft.\+h}}
+\subsubsection[{export\+\_\+wisdom}]{\setlength{\rightskip}{0pt plus 5cm}int export\+\_\+wisdom (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a05727be9438b2cfc5933ff196988f3d2}
+\hypertarget{fft_8h_ad30270e90e3563cf6f2e8b4c02c0cceb}{\index{fft.\+h@{fft.\+h}!fft\+\_\+correlation@{fft\+\_\+correlation}}
+\index{fft\+\_\+correlation@{fft\+\_\+correlation}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+correlation}]{\setlength{\rightskip}{0pt plus 5cm}long fft\+\_\+correlation (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name1, }
+\item[{char $\ast$}]{I\+D\+\_\+name2, }
+\item[{char $\ast$}]{I\+D\+\_\+nameout}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ad30270e90e3563cf6f2e8b4c02c0cceb}
+\hypertarget{fft_8h_a9b330f51d4f25ca37351e07add1cb35e}{\index{fft.\+h@{fft.\+h}!fft\+\_\+\+D\+F\+T@{fft\+\_\+\+D\+F\+T}}
+\index{fft\+\_\+\+D\+F\+T@{fft\+\_\+\+D\+F\+T}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+\+D\+F\+T}]{\setlength{\rightskip}{0pt plus 5cm}long fft\+\_\+\+D\+F\+T (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+Din\+\_\+name, }
+\item[{char $\ast$}]{I\+Dinmask\+\_\+name, }
+\item[{char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{char $\ast$}]{I\+Doutmask\+\_\+name, }
+\item[{double}]{Zfactor, }
+\item[{int}]{dir, }
+\item[{long}]{kin}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a9b330f51d4f25ca37351e07add1cb35e}
+\hypertarget{fft_8h_a158657be89e05f93441ab5fc6c85bce4}{\index{fft.\+h@{fft.\+h}!fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M@{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M}}
+\index{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M@{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M}]{\setlength{\rightskip}{0pt plus 5cm}long fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{pupin\+\_\+name, }
+\item[{char $\ast$}]{fpmz\+\_\+name, }
+\item[{double}]{zfactor, }
+\item[{char $\ast$}]{pupout\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a158657be89e05f93441ab5fc6c85bce4}
+\hypertarget{fft_8h_ab524cceb33e24feca8158ab537acd31b}{\index{fft.\+h@{fft.\+h}!fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re@{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re}}
+\index{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re@{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re}]{\setlength{\rightskip}{0pt plus 5cm}long fft\+\_\+\+D\+F\+Tinsert\+F\+P\+M\+\_\+re (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{pupin\+\_\+name, }
+\item[{char $\ast$}]{fpmz\+\_\+name, }
+\item[{double}]{zfactor, }
+\item[{char $\ast$}]{pupout\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ab524cceb33e24feca8158ab537acd31b}
+\hypertarget{fft_8h_aa4e7210e4d89462147f12e20d982973d}{\index{fft.\+h@{fft.\+h}!fft\+\_\+image\+\_\+translate@{fft\+\_\+image\+\_\+translate}}
+\index{fft\+\_\+image\+\_\+translate@{fft\+\_\+image\+\_\+translate}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+image\+\_\+translate}]{\setlength{\rightskip}{0pt plus 5cm}int fft\+\_\+image\+\_\+translate (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+out, }
+\item[{double}]{xtransl, }
+\item[{double}]{ytransl}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_aa4e7210e4d89462147f12e20d982973d}
+\hypertarget{fft_8h_ac5fe49a9ee1cf803e143c048bf97a8f2}{\index{fft.\+h@{fft.\+h}!fft\+\_\+setoffsets@{fft\+\_\+setoffsets}}
+\index{fft\+\_\+setoffsets@{fft\+\_\+setoffsets}!fft.\+h@{fft.\+h}}
+\subsubsection[{fft\+\_\+setoffsets}]{\setlength{\rightskip}{0pt plus 5cm}int fft\+\_\+setoffsets (
+\begin{DoxyParamCaption}
+\item[{long}]{o1, }
+\item[{long}]{o2}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ac5fe49a9ee1cf803e143c048bf97a8f2}
+\hypertarget{fft_8h_a93f505d49b892bae230d7582591e7b48}{\index{fft.\+h@{fft.\+h}!fftczoom@{fftczoom}}
+\index{fftczoom@{fftczoom}!fft.\+h@{fft.\+h}}
+\subsubsection[{fftczoom}]{\setlength{\rightskip}{0pt plus 5cm}int fftczoom (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+out, }
+\item[{long}]{factor}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a93f505d49b892bae230d7582591e7b48}
+\hypertarget{fft_8h_ac423ae37aa46ae86dd79aa073b5b5e83}{\index{fft.\+h@{fft.\+h}!fftzoom@{fftzoom}}
+\index{fftzoom@{fftzoom}!fft.\+h@{fft.\+h}}
+\subsubsection[{fftzoom}]{\setlength{\rightskip}{0pt plus 5cm}int fftzoom (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{char $\ast$}]{I\+D\+\_\+out, }
+\item[{long}]{factor}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ac423ae37aa46ae86dd79aa073b5b5e83}
+\hypertarget{fft_8h_a0767c4e140bc8498e1984f927c16803f}{\index{fft.\+h@{fft.\+h}!import\+\_\+wisdom@{import\+\_\+wisdom}}
+\index{import\+\_\+wisdom@{import\+\_\+wisdom}!fft.\+h@{fft.\+h}}
+\subsubsection[{import\+\_\+wisdom}]{\setlength{\rightskip}{0pt plus 5cm}int import\+\_\+wisdom (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a0767c4e140bc8498e1984f927c16803f}
+\hypertarget{fft_8h_aed4645edc92289a31e972c925d067870}{\index{fft.\+h@{fft.\+h}!init\+\_\+fftw\+\_\+plans@{init\+\_\+fftw\+\_\+plans}}
+\index{init\+\_\+fftw\+\_\+plans@{init\+\_\+fftw\+\_\+plans}!fft.\+h@{fft.\+h}}
+\subsubsection[{init\+\_\+fftw\+\_\+plans}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+fftw\+\_\+plans (
+\begin{DoxyParamCaption}
+\item[{int}]{mode}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_aed4645edc92289a31e972c925d067870}
+\hypertarget{fft_8h_a7cabe8bcbce9b78d93438cd81bcbf55b}{\index{fft.\+h@{fft.\+h}!init\+\_\+fftw\+\_\+plans0@{init\+\_\+fftw\+\_\+plans0}}
+\index{init\+\_\+fftw\+\_\+plans0@{init\+\_\+fftw\+\_\+plans0}!fft.\+h@{fft.\+h}}
+\subsubsection[{init\+\_\+fftw\+\_\+plans0}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+fftw\+\_\+plans0 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a7cabe8bcbce9b78d93438cd81bcbf55b}
+\hypertarget{fft_8h_ac58e739ffc1de08f6a46c8596b07b09c}{\index{fft.\+h@{fft.\+h}!permut@{permut}}
+\index{permut@{permut}!fft.\+h@{fft.\+h}}
+\subsubsection[{permut}]{\setlength{\rightskip}{0pt plus 5cm}int permut (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ac58e739ffc1de08f6a46c8596b07b09c}
+\hypertarget{fft_8h_a68cb6b8da900dbff60fa49fc48f5fc0f}{\index{fft.\+h@{fft.\+h}!pupfft@{pupfft}}
+\index{pupfft@{pupfft}!fft.\+h@{fft.\+h}}
+\subsubsection[{pupfft}]{\setlength{\rightskip}{0pt plus 5cm}int pupfft (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+ampl, }
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+pha, }
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+ampl\+\_\+out, }
+\item[{char $\ast$}]{I\+D\+\_\+name\+\_\+pha\+\_\+out, }
+\item[{char $\ast$}]{options}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_a68cb6b8da900dbff60fa49fc48f5fc0f}
+\hypertarget{fft_8h_ab3fe145c0484fc3b208e8959ac572e40}{\index{fft.\+h@{fft.\+h}!test\+\_\+fftspeed@{test\+\_\+fftspeed}}
+\index{test\+\_\+fftspeed@{test\+\_\+fftspeed}!fft.\+h@{fft.\+h}}
+\subsubsection[{test\+\_\+fftspeed}]{\setlength{\rightskip}{0pt plus 5cm}int test\+\_\+fftspeed (
+\begin{DoxyParamCaption}
+\item[{int}]{nmax}
+\end{DoxyParamCaption}
+)}}\label{fft_8h_ab3fe145c0484fc3b208e8959ac572e40}

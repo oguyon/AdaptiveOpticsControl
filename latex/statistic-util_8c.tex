@@ -1,0 +1,57 @@
+\hypertarget{statistic-util_8c}{\section{src/statistic/statistic-\/util.c File Reference}
+\label{statistic-util_8c}\index{src/statistic/statistic-\/util.\+c@{src/statistic/statistic-\/util.\+c}}
+}
+{\ttfamily \#include $<$sys/stat.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$Cfits.\+h$>$}\\*
+{\ttfamily \#include $<$statistic.\+h$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+P\+F \hyperlink{statistic-util_8c_adf68f86d319ba00ac620d3468420f5d4}{mod\+\_\+statistic\+\_\+putphnoise} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{statistic-util_8c_aedea1c5063287d3e0ce501bf630a3b05}{mod\+\_\+statistic\+\_\+init} (struct module $\ast$m)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct lxrcmd \hyperlink{statistic-util_8c_a0adc435a6dca61c948182a0d8d2c9dc4}{mod\+\_\+statistic\+\_\+cmds} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{statistic-util_8c_aedea1c5063287d3e0ce501bf630a3b05}{\index{statistic-\/util.\+c@{statistic-\/util.\+c}!mod\+\_\+statistic\+\_\+init@{mod\+\_\+statistic\+\_\+init}}
+\index{mod\+\_\+statistic\+\_\+init@{mod\+\_\+statistic\+\_\+init}!statistic-\/util.\+c@{statistic-\/util.\+c}}
+\subsubsection[{mod\+\_\+statistic\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+statistic\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{struct module $\ast$}]{m}
+\end{DoxyParamCaption}
+)}}\label{statistic-util_8c_aedea1c5063287d3e0ce501bf630a3b05}
+\hypertarget{statistic-util_8c_adf68f86d319ba00ac620d3468420f5d4}{\index{statistic-\/util.\+c@{statistic-\/util.\+c}!mod\+\_\+statistic\+\_\+putphnoise@{mod\+\_\+statistic\+\_\+putphnoise}}
+\index{mod\+\_\+statistic\+\_\+putphnoise@{mod\+\_\+statistic\+\_\+putphnoise}!statistic-\/util.\+c@{statistic-\/util.\+c}}
+\subsubsection[{mod\+\_\+statistic\+\_\+putphnoise}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+statistic\+\_\+putphnoise (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{statistic-util_8c_adf68f86d319ba00ac620d3468420f5d4}
+
+
+\subsection{Variable Documentation}
+\hypertarget{statistic-util_8c_a0adc435a6dca61c948182a0d8d2c9dc4}{\index{statistic-\/util.\+c@{statistic-\/util.\+c}!mod\+\_\+statistic\+\_\+cmds@{mod\+\_\+statistic\+\_\+cmds}}
+\index{mod\+\_\+statistic\+\_\+cmds@{mod\+\_\+statistic\+\_\+cmds}!statistic-\/util.\+c@{statistic-\/util.\+c}}
+\subsubsection[{mod\+\_\+statistic\+\_\+cmds}]{\setlength{\rightskip}{0pt plus 5cm}struct lxrcmd mod\+\_\+statistic\+\_\+cmds\mbox{[}$\,$\mbox{]}}}\label{statistic-util_8c_a0adc435a6dca61c948182a0d8d2c9dc4}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+
+    \{    \textcolor{stringliteral}{"putphnoise"},
+         \hyperlink{statistic-util_8c_adf68f86d319ba00ac620d3468420f5d4}{mod\_statistic\_putphnoise},
+         \textcolor{stringliteral}{"put photon noise"},
+         \textcolor{stringliteral}{"str1 is input, str2 is output"},
+         \textcolor{stringliteral}{"putphnoise in out"},
+         \textcolor{stringliteral}{"%s %s %s"},
+         3,
+         \textcolor{stringliteral}{"put\_poisson\_noise"},
+    \},
+\}
+\end{DoxyCode}

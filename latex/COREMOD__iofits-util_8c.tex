@@ -1,0 +1,105 @@
+\hypertarget{COREMOD__iofits-util_8c}{\section{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.c File Reference}
+\label{COREMOD__iofits-util_8c}\index{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+}
+{\ttfamily \#include $<$sys/stat.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$Cfits.\+h$>$}\\*
+{\ttfamily \#include $<$C\+O\+R\+E\+M\+O\+D\+\_\+iofits.\+h$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_aeb9dca3f78d29aea5c3a6995ec867ad0}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a625ce3b17195d8e08f4319e4a6cac82d}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_afa228e6c874d72f2e486870e0f27a76a}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a3402a7c6e69aeae45f321efec080c91a}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a24e6f737b66283cfc8d8a2fa2e109e9c}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a9edb0bb8746624d5e245d460f334e3ec}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a651d22cbf69a99c25e305e370a5fed25}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a3b242840565361a6f520bab50325e4f5}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__iofits-util_8c_a41c5c637eb88eb38eff072058b58e0e5}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init} (struct module $\ast$m)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct lxrcmd \hyperlink{COREMOD__iofits-util_8c_a0a7c7f77e6eb17b31ea6125fdbf5dbe5}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{COREMOD__iofits-util_8c_a651d22cbf69a99c25e305e370a5fed25}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+breakcube (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a651d22cbf69a99c25e305e370a5fed25}
+\hypertarget{COREMOD__iofits-util_8c_a3b242840565361a6f520bab50325e4f5}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+img2cube (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a3b242840565361a6f520bab50325e4f5}
+\hypertarget{COREMOD__iofits-util_8c_a41c5c637eb88eb38eff072058b58e0e5}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{struct module $\ast$}]{m}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a41c5c637eb88eb38eff072058b58e0e5}
+\hypertarget{COREMOD__iofits-util_8c_a625ce3b17195d8e08f4319e4a6cac82d}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+loadfits (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a625ce3b17195d8e08f4319e4a6cac82d}
+\hypertarget{COREMOD__iofits-util_8c_aeb9dca3f78d29aea5c3a6995ec867ad0}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+readkey (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_aeb9dca3f78d29aea5c3a6995ec867ad0}
+\hypertarget{COREMOD__iofits-util_8c_a3402a7c6e69aeae45f321efec080c91a}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+db (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a3402a7c6e69aeae45f321efec080c91a}
+\hypertarget{COREMOD__iofits-util_8c_afa228e6c874d72f2e486870e0f27a76a}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+fl (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_afa228e6c874d72f2e486870e0f27a76a}
+\hypertarget{COREMOD__iofits-util_8c_a24e6f737b66283cfc8d8a2fa2e109e9c}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+save\+\_\+sh (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a24e6f737b66283cfc8d8a2fa2e109e9c}
+\hypertarget{COREMOD__iofits-util_8c_a9edb0bb8746624d5e245d460f334e3ec}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+saveall (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__iofits-util_8c_a9edb0bb8746624d5e245d460f334e3ec}
+
+
+\subsection{Variable Documentation}
+\hypertarget{COREMOD__iofits-util_8c_a0a7c7f77e6eb17b31ea6125fdbf5dbe5}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds}!C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+iofits-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds}]{\setlength{\rightskip}{0pt plus 5cm}struct lxrcmd mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits\+\_\+cmds\mbox{[}$\,$\mbox{]}}}\label{COREMOD__iofits-util_8c_a0a7c7f77e6eb17b31ea6125fdbf5dbe5}

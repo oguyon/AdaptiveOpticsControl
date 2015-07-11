@@ -1,0 +1,293 @@
+\hypertarget{kdtree_8h}{\section{src/kdtree/kdtree.h File Reference}
+\label{kdtree_8h}\index{src/kdtree/kdtree.\+h@{src/kdtree/kdtree.\+h}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{kdtree_8h_a3786e783ecc937350056466a1237208b}{init\+\_\+kdtree} ()
+\item 
+struct \hyperlink{structkdtree}{kdtree} $\ast$ \hyperlink{kdtree_8h_a0267f17ca84a70322af662b16a625c16}{kd\+\_\+create} (int k)
+\item 
+void \hyperlink{kdtree_8h_aafdee4d5c129970e12fd9fe6da45d6d1}{kd\+\_\+free} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree)
+\item 
+void \hyperlink{kdtree_8h_a354bb35c5b031992cd0972dc53ad5d4f}{kd\+\_\+clear} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree)
+\item 
+void \hyperlink{kdtree_8h_af2b7a413e4a0daf4add90cf982b954ec}{kd\+\_\+data\+\_\+destructor} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, void($\ast$destr)(void $\ast$))
+\item 
+int \hyperlink{kdtree_8h_afafddbe0ccd0ca2c41917fb6d79f3392}{kd\+\_\+insert} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const double $\ast$pos, void $\ast$\hyperlink{ZernikePolyn_8c_a9842752e03b4de9b4593f1a3b34364ab}{data})
+\item 
+int \hyperlink{kdtree_8h_ab64899a430280fc8affa205d82d07d10}{kd\+\_\+insertf} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const float $\ast$pos, void $\ast$\hyperlink{ZernikePolyn_8c_a9842752e03b4de9b4593f1a3b34364ab}{data})
+\item 
+int \hyperlink{kdtree_8h_a354954a360619c49f086402676b36e35}{kd\+\_\+insert3} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, double x, double y, double z, void $\ast$\hyperlink{ZernikePolyn_8c_a9842752e03b4de9b4593f1a3b34364ab}{data})
+\item 
+int \hyperlink{kdtree_8h_a9875b355df53d4545843f7471abb04f4}{kd\+\_\+insert3f} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, float x, float y, float z, void $\ast$\hyperlink{ZernikePolyn_8c_a9842752e03b4de9b4593f1a3b34364ab}{data})
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_a035f690066c2bd71caf4d38ff367a437}{kd\+\_\+nearest} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const double $\ast$pos)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_a62c3e2c5f4ee976a504d9e54080e332d}{kd\+\_\+nearestf} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const float $\ast$pos)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_ad5d009b99e7804547508048f49b79d30}{kd\+\_\+nearest3} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, double x, double y, double z)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_a9811ac60c0e418bd5d0537e3a3568b6f}{kd\+\_\+nearest3f} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, float x, float y, float z)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_ae7470d6cc3e640ff79c19fb60016763d}{kd\+\_\+nearest\+\_\+range} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const double $\ast$pos, double range)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_ac0425455c7c9b8b0a0058ab16d00b4a4}{kd\+\_\+nearest\+\_\+rangef} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, const float $\ast$pos, float range)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_a205361bbf9b2378819b17a1e101c1d23}{kd\+\_\+nearest\+\_\+range3} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, double x, double y, double z, double range)
+\item 
+struct \hyperlink{structkdres}{kdres} $\ast$ \hyperlink{kdtree_8h_a31785d1b48d785e7c8f178a40671d4f4}{kd\+\_\+nearest\+\_\+range3f} (struct \hyperlink{structkdtree}{kdtree} $\ast$tree, float x, float y, float z, float range)
+\item 
+void \hyperlink{kdtree_8h_ae783df8818133e4fb833e9203302f162}{kd\+\_\+res\+\_\+free} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\item 
+int \hyperlink{kdtree_8h_adb070dde37e9a978f231d730b7a24b53}{kd\+\_\+res\+\_\+size} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\item 
+void \hyperlink{kdtree_8h_a691ff69299aca39887ff3b4b2a0b81f6}{kd\+\_\+res\+\_\+rewind} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\item 
+int \hyperlink{kdtree_8h_a9c331a704388b658a8c8fa779f6c4fe9}{kd\+\_\+res\+\_\+end} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\item 
+int \hyperlink{kdtree_8h_ac2ef7750c902fd26a6d4e882e64df7f8}{kd\+\_\+res\+\_\+next} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\item 
+void $\ast$ \hyperlink{kdtree_8h_a5b0521aec4d2a2267bbab0f4408ec64a}{kd\+\_\+res\+\_\+item} (struct \hyperlink{structkdres}{kdres} $\ast$set, double $\ast$pos)
+\item 
+void $\ast$ \hyperlink{kdtree_8h_ae2d5802f669e14e245fc8ee6b8a3ff16}{kd\+\_\+res\+\_\+itemf} (struct \hyperlink{structkdres}{kdres} $\ast$set, float $\ast$pos)
+\item 
+void $\ast$ \hyperlink{kdtree_8h_a68e3356de97626347762c20a1f29b493}{kd\+\_\+res\+\_\+item3} (struct \hyperlink{structkdres}{kdres} $\ast$set, double $\ast$x, double $\ast$y, double $\ast$z)
+\item 
+void $\ast$ \hyperlink{kdtree_8h_a09a99deb44dd60393a72dc91ab936e98}{kd\+\_\+res\+\_\+item3f} (struct \hyperlink{structkdres}{kdres} $\ast$set, float $\ast$x, float $\ast$y, float $\ast$z)
+\item 
+void $\ast$ \hyperlink{kdtree_8h_abbff3a82caa304688020bc050d474d30}{kd\+\_\+res\+\_\+item\+\_\+data} (struct \hyperlink{structkdres}{kdres} $\ast$set)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{kdtree_8h_a3786e783ecc937350056466a1237208b}{\index{kdtree.\+h@{kdtree.\+h}!init\+\_\+kdtree@{init\+\_\+kdtree}}
+\index{init\+\_\+kdtree@{init\+\_\+kdtree}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{init\+\_\+kdtree}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+kdtree (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a3786e783ecc937350056466a1237208b}
+\hypertarget{kdtree_8h_a354bb35c5b031992cd0972dc53ad5d4f}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+clear@{kd\+\_\+clear}}
+\index{kd\+\_\+clear@{kd\+\_\+clear}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+clear}]{\setlength{\rightskip}{0pt plus 5cm}void kd\+\_\+clear (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a354bb35c5b031992cd0972dc53ad5d4f}
+\hypertarget{kdtree_8h_a0267f17ca84a70322af662b16a625c16}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+create@{kd\+\_\+create}}
+\index{kd\+\_\+create@{kd\+\_\+create}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+create}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdtree}$\ast$ kd\+\_\+create (
+\begin{DoxyParamCaption}
+\item[{int}]{k}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a0267f17ca84a70322af662b16a625c16}
+\hypertarget{kdtree_8h_af2b7a413e4a0daf4add90cf982b954ec}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+data\+\_\+destructor@{kd\+\_\+data\+\_\+destructor}}
+\index{kd\+\_\+data\+\_\+destructor@{kd\+\_\+data\+\_\+destructor}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+data\+\_\+destructor}]{\setlength{\rightskip}{0pt plus 5cm}void kd\+\_\+data\+\_\+destructor (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{void($\ast$)(void $\ast$)}]{destr}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_af2b7a413e4a0daf4add90cf982b954ec}
+\hypertarget{kdtree_8h_aafdee4d5c129970e12fd9fe6da45d6d1}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+free@{kd\+\_\+free}}
+\index{kd\+\_\+free@{kd\+\_\+free}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+free}]{\setlength{\rightskip}{0pt plus 5cm}void kd\+\_\+free (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_aafdee4d5c129970e12fd9fe6da45d6d1}
+\hypertarget{kdtree_8h_afafddbe0ccd0ca2c41917fb6d79f3392}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+insert@{kd\+\_\+insert}}
+\index{kd\+\_\+insert@{kd\+\_\+insert}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+insert}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+insert (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const double $\ast$}]{pos, }
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_afafddbe0ccd0ca2c41917fb6d79f3392}
+\hypertarget{kdtree_8h_a354954a360619c49f086402676b36e35}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+insert3@{kd\+\_\+insert3}}
+\index{kd\+\_\+insert3@{kd\+\_\+insert3}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+insert3}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+insert3 (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{double}]{x, }
+\item[{double}]{y, }
+\item[{double}]{z, }
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a354954a360619c49f086402676b36e35}
+\hypertarget{kdtree_8h_a9875b355df53d4545843f7471abb04f4}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+insert3f@{kd\+\_\+insert3f}}
+\index{kd\+\_\+insert3f@{kd\+\_\+insert3f}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+insert3f}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+insert3f (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{float}]{x, }
+\item[{float}]{y, }
+\item[{float}]{z, }
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a9875b355df53d4545843f7471abb04f4}
+\hypertarget{kdtree_8h_ab64899a430280fc8affa205d82d07d10}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+insertf@{kd\+\_\+insertf}}
+\index{kd\+\_\+insertf@{kd\+\_\+insertf}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+insertf}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+insertf (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const float $\ast$}]{pos, }
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ab64899a430280fc8affa205d82d07d10}
+\hypertarget{kdtree_8h_a035f690066c2bd71caf4d38ff367a437}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest@{kd\+\_\+nearest}}
+\index{kd\+\_\+nearest@{kd\+\_\+nearest}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const double $\ast$}]{pos}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a035f690066c2bd71caf4d38ff367a437}
+\hypertarget{kdtree_8h_ad5d009b99e7804547508048f49b79d30}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest3@{kd\+\_\+nearest3}}
+\index{kd\+\_\+nearest3@{kd\+\_\+nearest3}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest3}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest3 (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{double}]{x, }
+\item[{double}]{y, }
+\item[{double}]{z}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ad5d009b99e7804547508048f49b79d30}
+\hypertarget{kdtree_8h_a9811ac60c0e418bd5d0537e3a3568b6f}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest3f@{kd\+\_\+nearest3f}}
+\index{kd\+\_\+nearest3f@{kd\+\_\+nearest3f}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest3f}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest3f (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{float}]{x, }
+\item[{float}]{y, }
+\item[{float}]{z}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a9811ac60c0e418bd5d0537e3a3568b6f}
+\hypertarget{kdtree_8h_ae7470d6cc3e640ff79c19fb60016763d}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest\+\_\+range@{kd\+\_\+nearest\+\_\+range}}
+\index{kd\+\_\+nearest\+\_\+range@{kd\+\_\+nearest\+\_\+range}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest\+\_\+range}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest\+\_\+range (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const double $\ast$}]{pos, }
+\item[{double}]{range}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ae7470d6cc3e640ff79c19fb60016763d}
+\hypertarget{kdtree_8h_a205361bbf9b2378819b17a1e101c1d23}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest\+\_\+range3@{kd\+\_\+nearest\+\_\+range3}}
+\index{kd\+\_\+nearest\+\_\+range3@{kd\+\_\+nearest\+\_\+range3}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest\+\_\+range3}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest\+\_\+range3 (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{double}]{x, }
+\item[{double}]{y, }
+\item[{double}]{z, }
+\item[{double}]{range}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a205361bbf9b2378819b17a1e101c1d23}
+\hypertarget{kdtree_8h_a31785d1b48d785e7c8f178a40671d4f4}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest\+\_\+range3f@{kd\+\_\+nearest\+\_\+range3f}}
+\index{kd\+\_\+nearest\+\_\+range3f@{kd\+\_\+nearest\+\_\+range3f}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest\+\_\+range3f}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest\+\_\+range3f (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{float}]{x, }
+\item[{float}]{y, }
+\item[{float}]{z, }
+\item[{float}]{range}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a31785d1b48d785e7c8f178a40671d4f4}
+\hypertarget{kdtree_8h_ac0425455c7c9b8b0a0058ab16d00b4a4}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearest\+\_\+rangef@{kd\+\_\+nearest\+\_\+rangef}}
+\index{kd\+\_\+nearest\+\_\+rangef@{kd\+\_\+nearest\+\_\+rangef}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearest\+\_\+rangef}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearest\+\_\+rangef (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const float $\ast$}]{pos, }
+\item[{float}]{range}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ac0425455c7c9b8b0a0058ab16d00b4a4}
+\hypertarget{kdtree_8h_a62c3e2c5f4ee976a504d9e54080e332d}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+nearestf@{kd\+\_\+nearestf}}
+\index{kd\+\_\+nearestf@{kd\+\_\+nearestf}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+nearestf}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf kdres}$\ast$ kd\+\_\+nearestf (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdtree} $\ast$}]{tree, }
+\item[{const float $\ast$}]{pos}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a62c3e2c5f4ee976a504d9e54080e332d}
+\hypertarget{kdtree_8h_a9c331a704388b658a8c8fa779f6c4fe9}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+end@{kd\+\_\+res\+\_\+end}}
+\index{kd\+\_\+res\+\_\+end@{kd\+\_\+res\+\_\+end}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+end}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+res\+\_\+end (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a9c331a704388b658a8c8fa779f6c4fe9}
+\hypertarget{kdtree_8h_ae783df8818133e4fb833e9203302f162}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+free@{kd\+\_\+res\+\_\+free}}
+\index{kd\+\_\+res\+\_\+free@{kd\+\_\+res\+\_\+free}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+free}]{\setlength{\rightskip}{0pt plus 5cm}void kd\+\_\+res\+\_\+free (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ae783df8818133e4fb833e9203302f162}
+\hypertarget{kdtree_8h_a5b0521aec4d2a2267bbab0f4408ec64a}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+item@{kd\+\_\+res\+\_\+item}}
+\index{kd\+\_\+res\+\_\+item@{kd\+\_\+res\+\_\+item}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+item}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ kd\+\_\+res\+\_\+item (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set, }
+\item[{double $\ast$}]{pos}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a5b0521aec4d2a2267bbab0f4408ec64a}
+\hypertarget{kdtree_8h_a68e3356de97626347762c20a1f29b493}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+item3@{kd\+\_\+res\+\_\+item3}}
+\index{kd\+\_\+res\+\_\+item3@{kd\+\_\+res\+\_\+item3}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+item3}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ kd\+\_\+res\+\_\+item3 (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set, }
+\item[{double $\ast$}]{x, }
+\item[{double $\ast$}]{y, }
+\item[{double $\ast$}]{z}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a68e3356de97626347762c20a1f29b493}
+\hypertarget{kdtree_8h_a09a99deb44dd60393a72dc91ab936e98}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+item3f@{kd\+\_\+res\+\_\+item3f}}
+\index{kd\+\_\+res\+\_\+item3f@{kd\+\_\+res\+\_\+item3f}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+item3f}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ kd\+\_\+res\+\_\+item3f (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set, }
+\item[{float $\ast$}]{x, }
+\item[{float $\ast$}]{y, }
+\item[{float $\ast$}]{z}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a09a99deb44dd60393a72dc91ab936e98}
+\hypertarget{kdtree_8h_abbff3a82caa304688020bc050d474d30}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+item\+\_\+data@{kd\+\_\+res\+\_\+item\+\_\+data}}
+\index{kd\+\_\+res\+\_\+item\+\_\+data@{kd\+\_\+res\+\_\+item\+\_\+data}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+item\+\_\+data}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ kd\+\_\+res\+\_\+item\+\_\+data (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_abbff3a82caa304688020bc050d474d30}
+\hypertarget{kdtree_8h_ae2d5802f669e14e245fc8ee6b8a3ff16}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+itemf@{kd\+\_\+res\+\_\+itemf}}
+\index{kd\+\_\+res\+\_\+itemf@{kd\+\_\+res\+\_\+itemf}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+itemf}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ kd\+\_\+res\+\_\+itemf (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set, }
+\item[{float $\ast$}]{pos}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ae2d5802f669e14e245fc8ee6b8a3ff16}
+\hypertarget{kdtree_8h_ac2ef7750c902fd26a6d4e882e64df7f8}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+next@{kd\+\_\+res\+\_\+next}}
+\index{kd\+\_\+res\+\_\+next@{kd\+\_\+res\+\_\+next}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+next}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+res\+\_\+next (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_ac2ef7750c902fd26a6d4e882e64df7f8}
+\hypertarget{kdtree_8h_a691ff69299aca39887ff3b4b2a0b81f6}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+rewind@{kd\+\_\+res\+\_\+rewind}}
+\index{kd\+\_\+res\+\_\+rewind@{kd\+\_\+res\+\_\+rewind}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+rewind}]{\setlength{\rightskip}{0pt plus 5cm}void kd\+\_\+res\+\_\+rewind (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_a691ff69299aca39887ff3b4b2a0b81f6}
+\hypertarget{kdtree_8h_adb070dde37e9a978f231d730b7a24b53}{\index{kdtree.\+h@{kdtree.\+h}!kd\+\_\+res\+\_\+size@{kd\+\_\+res\+\_\+size}}
+\index{kd\+\_\+res\+\_\+size@{kd\+\_\+res\+\_\+size}!kdtree.\+h@{kdtree.\+h}}
+\subsubsection[{kd\+\_\+res\+\_\+size}]{\setlength{\rightskip}{0pt plus 5cm}int kd\+\_\+res\+\_\+size (
+\begin{DoxyParamCaption}
+\item[{struct {\bf kdres} $\ast$}]{set}
+\end{DoxyParamCaption}
+)}}\label{kdtree_8h_adb070dde37e9a978f231d730b7a24b53}

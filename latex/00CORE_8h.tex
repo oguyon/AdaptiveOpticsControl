@@ -1,0 +1,89 @@
+\hypertarget{00CORE_8h}{\section{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E.h File Reference}
+\label{00CORE_8h}\index{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E.\+h@{src/00\+C\+O\+R\+E/00\+C\+O\+R\+E.\+h}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{00CORE_8h_a1469340da3e86a14a43d8541390c19be}{init\+\_\+00\+C\+O\+R\+E} ()
+\item 
+int \hyperlink{00CORE_8h_a12386d38e0d7febb43df6adbff634fac}{print\+R\+E\+D} (char $\ast$string)
+\item 
+int \hyperlink{00CORE_8h_a0e4b54218786b34ffbe1f70de81bc52a}{print\+W\+A\+R\+N\+I\+N\+G} (const char $\ast$file, const char $\ast$func, int \hyperlink{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}{line}, char $\ast$warnmessage)
+\item 
+int \hyperlink{00CORE_8h_a3e77ac9461466e89a13b467f64a8df67}{print\+E\+R\+R\+O\+R} (const char $\ast$file, const char $\ast$func, int \hyperlink{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}{line}, char $\ast$errmessage)
+\item 
+int \hyperlink{00CORE_8h_a93e8d81fd1fe2de3159ddff15801af81}{set\+\_\+precision} (int vp)
+\item 
+int \hyperlink{00CORE_8h_ad2eef847a9eb4e38bd371170f5fdcf93}{C\+L\+I\+Write\+Pid} ()
+\item 
+struct timespec \hyperlink{00CORE_8h_acd8c1457583903d309e19adde6805717}{timespec\+\_\+diff} (struct timespec start, struct timespec end)
+\item 
+double \hyperlink{00CORE_8h_aa333aaba4981442f52ab55df43d76ac5}{timespec\+\_\+diff\+\_\+double} (struct timespec start, struct timespec end)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{00CORE_8h_ad2eef847a9eb4e38bd371170f5fdcf93}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!C\+L\+I\+Write\+Pid@{C\+L\+I\+Write\+Pid}}
+\index{C\+L\+I\+Write\+Pid@{C\+L\+I\+Write\+Pid}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{C\+L\+I\+Write\+Pid}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+I\+Write\+Pid (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_ad2eef847a9eb4e38bd371170f5fdcf93}
+\hypertarget{00CORE_8h_a1469340da3e86a14a43d8541390c19be}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!init\+\_\+00\+C\+O\+R\+E@{init\+\_\+00\+C\+O\+R\+E}}
+\index{init\+\_\+00\+C\+O\+R\+E@{init\+\_\+00\+C\+O\+R\+E}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{init\+\_\+00\+C\+O\+R\+E}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+00\+C\+O\+R\+E (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_a1469340da3e86a14a43d8541390c19be}
+\hypertarget{00CORE_8h_a3e77ac9461466e89a13b467f64a8df67}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!print\+E\+R\+R\+O\+R@{print\+E\+R\+R\+O\+R}}
+\index{print\+E\+R\+R\+O\+R@{print\+E\+R\+R\+O\+R}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{print\+E\+R\+R\+O\+R}]{\setlength{\rightskip}{0pt plus 5cm}int print\+E\+R\+R\+O\+R (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{file, }
+\item[{const char $\ast$}]{func, }
+\item[{int}]{line, }
+\item[{char $\ast$}]{errmessage}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_a3e77ac9461466e89a13b467f64a8df67}
+\hypertarget{00CORE_8h_a12386d38e0d7febb43df6adbff634fac}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!print\+R\+E\+D@{print\+R\+E\+D}}
+\index{print\+R\+E\+D@{print\+R\+E\+D}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{print\+R\+E\+D}]{\setlength{\rightskip}{0pt plus 5cm}int print\+R\+E\+D (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{string}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_a12386d38e0d7febb43df6adbff634fac}
+\hypertarget{00CORE_8h_a0e4b54218786b34ffbe1f70de81bc52a}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!print\+W\+A\+R\+N\+I\+N\+G@{print\+W\+A\+R\+N\+I\+N\+G}}
+\index{print\+W\+A\+R\+N\+I\+N\+G@{print\+W\+A\+R\+N\+I\+N\+G}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{print\+W\+A\+R\+N\+I\+N\+G}]{\setlength{\rightskip}{0pt plus 5cm}int print\+W\+A\+R\+N\+I\+N\+G (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{file, }
+\item[{const char $\ast$}]{func, }
+\item[{int}]{line, }
+\item[{char $\ast$}]{warnmessage}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_a0e4b54218786b34ffbe1f70de81bc52a}
+\hypertarget{00CORE_8h_a93e8d81fd1fe2de3159ddff15801af81}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!set\+\_\+precision@{set\+\_\+precision}}
+\index{set\+\_\+precision@{set\+\_\+precision}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{set\+\_\+precision}]{\setlength{\rightskip}{0pt plus 5cm}int set\+\_\+precision (
+\begin{DoxyParamCaption}
+\item[{int}]{vp}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_a93e8d81fd1fe2de3159ddff15801af81}
+\hypertarget{00CORE_8h_acd8c1457583903d309e19adde6805717}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!timespec\+\_\+diff@{timespec\+\_\+diff}}
+\index{timespec\+\_\+diff@{timespec\+\_\+diff}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{timespec\+\_\+diff}]{\setlength{\rightskip}{0pt plus 5cm}struct timespec timespec\+\_\+diff (
+\begin{DoxyParamCaption}
+\item[{struct timespec}]{start, }
+\item[{struct timespec}]{end}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_acd8c1457583903d309e19adde6805717}
+\hypertarget{00CORE_8h_aa333aaba4981442f52ab55df43d76ac5}{\index{00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}!timespec\+\_\+diff\+\_\+double@{timespec\+\_\+diff\+\_\+double}}
+\index{timespec\+\_\+diff\+\_\+double@{timespec\+\_\+diff\+\_\+double}!00\+C\+O\+R\+E.\+h@{00\+C\+O\+R\+E.\+h}}
+\subsubsection[{timespec\+\_\+diff\+\_\+double}]{\setlength{\rightskip}{0pt plus 5cm}double timespec\+\_\+diff\+\_\+double (
+\begin{DoxyParamCaption}
+\item[{struct timespec}]{start, }
+\item[{struct timespec}]{end}
+\end{DoxyParamCaption}
+)}}\label{00CORE_8h_aa333aaba4981442f52ab55df43d76ac5}

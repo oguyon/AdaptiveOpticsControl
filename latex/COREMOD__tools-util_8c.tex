@@ -1,0 +1,76 @@
+\hypertarget{COREMOD__tools-util_8c}{\section{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.c File Reference}
+\label{COREMOD__tools-util_8c}\index{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{src/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools/\+C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}}
+}
+{\ttfamily \#include $<$sys/stat.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$Cfits.\+h$>$}\\*
+{\ttfamily \#include $<$C\+O\+R\+E\+M\+O\+D\+\_\+tools.\+h$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+P\+F \hyperlink{COREMOD__tools-util_8c_a06f48d4a86a2fdc9584bf9dc2327e489}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__tools-util_8c_ac71b29b59c1655b692adec27db89a5dd}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file} (struct lxrcmd $\ast$c)
+\item 
+P\+F \hyperlink{COREMOD__tools-util_8c_aa4a40bdadb3c1cfa417640f3cee38a62}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init} (struct module $\ast$m)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct lxrcmd \hyperlink{COREMOD__tools-util_8c_adcd4eaaac246d65e6d23ad5e6f5d411d}{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{COREMOD__tools-util_8c_aa4a40bdadb3c1cfa417640f3cee38a62}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init}!C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{struct module $\ast$}]{m}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__tools-util_8c_aa4a40bdadb3c1cfa417640f3cee38a62}
+\hypertarget{COREMOD__tools-util_8c_a06f48d4a86a2fdc9584bf9dc2327e489}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile}!C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+mkcntfile (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__tools-util_8c_a06f48d4a86a2fdc9584bf9dc2327e489}
+\hypertarget{COREMOD__tools-util_8c_ac71b29b59c1655b692adec27db89a5dd}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file}!C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file}]{\setlength{\rightskip}{0pt plus 5cm}P\+F mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+writef2file (
+\begin{DoxyParamCaption}
+\item[{struct lxrcmd $\ast$}]{c}
+\end{DoxyParamCaption}
+)}}\label{COREMOD__tools-util_8c_ac71b29b59c1655b692adec27db89a5dd}
+
+
+\subsection{Variable Documentation}
+\hypertarget{COREMOD__tools-util_8c_adcd4eaaac246d65e6d23ad5e6f5d411d}{\index{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}!mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds}}
+\index{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds@{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds}!C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c@{C\+O\+R\+E\+M\+O\+D\+\_\+tools-\/util.\+c}}
+\subsubsection[{mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds}]{\setlength{\rightskip}{0pt plus 5cm}struct lxrcmd mod\+\_\+\+C\+O\+R\+E\+M\+O\+D\+\_\+tools\+\_\+cmds\mbox{[}$\,$\mbox{]}}}\label{COREMOD__tools-util_8c_adcd4eaaac246d65e6d23ad5e6f5d411d}
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+
+  \{    \textcolor{stringliteral}{"mkcntfile"},
+       \hyperlink{COREMOD__tools-util_8c_a06f48d4a86a2fdc9584bf9dc2327e489}{mod\_COREMOD\_tools\_mkcntfile},
+       \textcolor{stringliteral}{"create a counter file"},
+       \textcolor{stringliteral}{"str1 is the file name and l1 is the number of entries"},
+       \textcolor{stringliteral}{"mkcntfile cnt.txt 2048"},
+       \textcolor{stringliteral}{"%s %s %ld"},
+         3,
+       \textcolor{stringliteral}{"create\_counter\_file"},
+  \},
+  \{    \textcolor{stringliteral}{"writef2file"},
+       \hyperlink{COREMOD__tools-util_8c_ac71b29b59c1655b692adec27db89a5dd}{mod\_COREMOD\_tools\_writef2file},
+       \textcolor{stringliteral}{"write float to file"},
+       \textcolor{stringliteral}{"str1 is the file name and f1 is the float"},
+       \textcolor{stringliteral}{"writef2file result.log 3.42"},
+       \textcolor{stringliteral}{"%s %s %f"},
+       3,
+       \textcolor{stringliteral}{"write\_float\_file"},
+  \},
+  
+\}
+\end{DoxyCode}
