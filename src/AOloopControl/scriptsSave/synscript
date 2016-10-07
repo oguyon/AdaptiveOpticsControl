@@ -1,0 +1,37 @@
+#!/bin/bash
+
+NBARGS=0
+
+filelist="aolconf aolrun"
+
+printhelp ()
+{
+echo ""
+echo "------------------- SYNC AOloopControl scripts ------------------"
+echo " This function takes no argument"
+echo ""
+}
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+        printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+        exit
+fi
+
+echo ""
+echo "SYNCING AOloopControl scripts..."
+echo ""
+
+
+for file in ${filelist[*]}
+do
+	srcfile="$HOME/src/Cfits/src/AOloopControl/scripts/$file"
+	echo "syncing file $srcfile -> $file"
+	ln -fs $srcfile $file	
+done
+
+echo ""
+

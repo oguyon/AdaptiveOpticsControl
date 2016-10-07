@@ -1,0 +1,33 @@
+#! /bin/bash
+
+EXPECTED_ARGS=0
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Align Pyramid TT -------"
+  echo
+  echo "   no argument"
+  echo
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+echo "$pname"
+echo $$ > "pid_${pname}.txt"
+
+
+echo "readshmim aol${loopnb}_wfsdark" > alignTTpyr-startup.txt
+echo "cp aol${loopnb}_wfsdark wfsdark" >> alignTTpyr-startup.txt
+echo "readshmim aol${loopnb}_wfs" >> alignTTpyr-startup.txt
+echo "scexaopywfsttalign aol${loopnb}_wfs" >> alignTTpyr-startup.txt
+#echo "exit" >> ${pname}-fifo
+
+Cfits -n $pname --startup="alignTTpyr-startup.txt" -f ${pname}-fifo
+
+
+

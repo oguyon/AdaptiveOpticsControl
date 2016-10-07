@@ -1,0 +1,11 @@
+#!/bin/bash
+
+init="0"
+
+while [ -f $1 ]; do 
+if [ "$init" -eq "0" ]; then
+init="1"
+echo "waiting on file \"$1\""
+fi
+sleep 0.1; 
+done

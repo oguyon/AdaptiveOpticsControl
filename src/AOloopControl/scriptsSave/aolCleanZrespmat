@@ -1,0 +1,47 @@
+#! /bin/bash
+
+EXPECTED_ARGS=2
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Measure zonal resp matrix ------"
+  echo
+  echo "  $0 <rm ampl[um]> <normalize>"
+  echo
+  echo "Default output: "
+  echo "  zrespmat.fits : zonal response matrix"
+  echo "  wfsref0.fits   : wfs reference"
+  echo "  wfsmap.fits   : WFS response map"
+  echo "  dmmap.fits    : DM response map"
+  echo
+  echo "Cleans zonal response matrices in ./zresptmp/ directory"
+  echo "if images RMpixindex.fits RMHmat.fits exist, use Hadamard coding/decoding"
+  echo
+  echo
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname="aol${loopnb}zrespM"
+
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+loadfits "RMpokeCube.fits" RMpokeC
+loadfits "RMHmat.fits" Hmat
+loadfits "RMpixindex.fits" pixindexim
+aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1 $2
+savefits zrespmat "!zrespmat.fits"
+savefits wfsref0 "!wfsref0.fits"
+savefits wfsmap "!wfsmap.fits"
+savefits dmmap "!dmmap.fits"
+savefits wfsmask "!wfsmask.fits"
+savefits dmmask "!dmmask.fits"
+listim
+exit
+EOF
+
+

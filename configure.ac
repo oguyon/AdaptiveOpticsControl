@@ -1,7 +1,12 @@
 #
 # Process this file with autoconf to produce a configure script.
 #
-AC_INIT([AdaptiveOpticsControl], [1.0.00], [oliv.guyon@gmail.com])
+
+m4_define([PROGNAME], AdaptiveOpticsControl)
+m4_define([PVERSION], 1.5.00)
+
+AC_INIT([PROGNAME], [PVERSION], [oliv.guyon@gmail.com], [PROGNAME])
+
 AC_PREREQ(2.61)
 #AC_CONFIG_HEADER([config.h])
 
@@ -77,6 +82,12 @@ AC_CHECK_LIB([m],[main],
 		  exit 0;
 		])
 
+
+case "$host_os" in
+*darwin* | *rhapsody* | *macosx*)
+     AC_DEFINE_UNQUOTED(OSX,1,[This is an OS X system])
+     ;;
+*)
 AC_CHECK_LIB([rt], [clock],
 		[],
 		[ echo "Cannot find required library:rt";
@@ -84,6 +95,8 @@ AC_CHECK_LIB([rt], [clock],
 		  AC_MSG_FAILURE(["FATAL...Cannot find required library:rt"]);
 		  exit 0;
 		])
+;;
+esac
 
 
 AC_CHECK_LIB([pthread], [pthread_create].
@@ -290,7 +303,7 @@ if test  "$cudaval" = "yes"; then
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda/include/"
     CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
-    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas"
+    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas -lcusolver"
     NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
     NVCC="nvcc"
     AC_SUBST(NVCC)
@@ -307,9 +320,41 @@ fi
 
 
 
+#=================================================
+# Setup MAGMA
+
+
+# Check: enable MAGMA?
+AC_MSG_CHECKING([whether to use MAGMA library])
+AC_ARG_ENABLE(magma,
+    [AS_HELP_STRING(--enable-magma,enable MAGMA support)],
+    magmaval="yes",
+    magmaval="no")
+AC_MSG_RESULT([$magmaval])
+
+# check to see if CUDA been selected
+if test "$magmaval" == "no"; then
+    AC_MSG_WARN([Not using MAGMA!])
+fi
+
+if test  "$magmaval" = "yes"; then
+	MAGMA_LIBS="-lmagma "
+	MAGMA_CFLAGS="-DADD_ -I/usr/local/magma/include/"
+	MAGMA_LDFLAGS="-L/usr/local/magma/lib/"
+	AC_DEFINE([HAVE_MAGMA],[1],[Defined if MAGMA should be used])
+	eval "ARRAY${N}='-D_MAGMA'"
+    N=`expr $N + 1`
+    LIBS="$LIBS $MAGMA_LIBS"
+    LDFLAGS="$LDFLAGS $MAGMA_LDFLAGS"
+    CFLAGS="$CFLAGS $MAGMA_CFLAGS"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/magma/lib/"
+fi
+
+
+
 
 # Create our own a symbol for execname until we can find the right one
-EXECNAME=AdaptiveOpticsControl
+EXECNAME=PROGNAME
 AC_SUBST(EXECNAME)
 
 LIBS="$LIBS -lpthread"
@@ -319,6 +364,7 @@ LIBS="$LIBS -lpthread"
 #fi
 
 AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_tools/Makefile src/COREMOD_memory/Makefile src/COREMOD_iofits/Makefile src/COREMOD_arith/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/AOloopControl_DM/Makefile src/AOloopControl/Makefile src/cudacomp/Makefile )
+
 
 AC_OUTPUT
 

@@ -1,0 +1,55 @@
+#! /bin/bash
+
+
+
+# number of arguments to script
+NBARGS=0
+
+
+
+
+printhelp ()
+{
+	echo "--------------------------------------------------"
+	echo " script $0 : run AO control loop"
+	echo "--------------------------------------------------"	
+}
+
+
+
+NBARGS=0
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+	printhelp
+if [ "$#" -ne $NBARGS ] && [ ! "$1" == "help" ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+	echo "Illegal number of parameters ($NBARGS params required, $# entered)" > $errorfile
+fi
+	exit
+fi
+
+
+
+execname="Cfits"
+
+if [ ! -f "LOOPNUMBER" ]; then
+echo ""
+echo "ERROR: file LOOPNUMBER is missing"
+echo " File LOOPNUMBER must exist and contain a integer"
+echo ""
+exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+confnb=$(cat ./conf/conf_CONFNUMBER.txt)
+
+
+pname=aol${loopnb}run
+
+rm /tmp/aol${loopnb}_respM.im.shm
+$execname -n $pname << EOF
+aolnb $loopnb
+aolrun
+exit
+EOF
+

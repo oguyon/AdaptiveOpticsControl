@@ -1,0 +1,64 @@
+#!/bin/bash
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+function TestStartTurb {
+aoconflog "TEST START TURB, DMindex = ${DMindex}"
+sleep 1
+echo " ON" > ./status/testdm${DMindex}turbstatus.txt
+mkdir -p ./conf/turb
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
+echo "tmuxname = $tmuxname"
+sleep 5
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname 
+tmux send-keys -t $tmuxname "$execname -n dmturbrun" C-m
+if [ "$CPUconfRT" -eq "1" ]; then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "aoloopcontroldmturb ${DMindex}" C-m
+
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}turbctrl"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n dmturbctr" C-m
+if [ "$CPUconfRT" -eq "1" ]; then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} 0.1" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} 10000" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} 1.0" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
+
+}
+
+function TestStopTurb {
+aoconflog "TEST STOP TURB"
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}turbctrl "exit" C-m
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
+
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turb
+echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+if [ "$CPUconfRT" -eq "1" ]; then
+$execname << EOF
+csetpmove system
+readshmim dm${DMindex}disp10
+imzero dm${DMindex}disp10
+quit
+EOF
+else
+$execname << EOF
+readshmim dm${DMindex}disp10
+imzero dm${DMindex}disp10
+quit
+EOF
+fi
+}
+

@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# number of arguments to script
+NBARGS=4
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : SET MODE VALUE LIMITS $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo " n = mode number"
+echo " limit = lmin + lmax exp(-(n/n0)^alpha)"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 <lmin> <lmax> <n0> <alpha>"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <lmin>     floor value (for high order modes)"
+echo "     <lmax>     peak value (for low order modes)"
+echo "     <n0>       decay rate"
+echo "     <alpha>    exponent"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+
+
+Cfits << EOF
+readshmim aol${loopnb}_DMmode_LIMIT
+im2coord aol${loopnb}_DMmode_LIMIT 0 imx
+imout=$1+$2*exp(0-(imx/$3)^$4)
+cp imout aol${loopnb}_DMmode_LIMIT
+exit
+EOF

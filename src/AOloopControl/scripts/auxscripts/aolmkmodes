@@ -1,0 +1,95 @@
+#! /bin/bash
+# args: <confindex> <maxCPA>
+
+EXPECTED_ARGS=4
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE MODES FOR AO LOOP ----"
+  echo
+  echo "Usage: $0 <maxCPA> <Block> <SVDlim> <skip DMmodes>"
+  echo
+  echo "  INPUT <maxCPA>       : maximum spatial frequency in cycles per aperture"
+  echo "  INPUT <Block>        : if -1, perform full comp. Otherwise, update block number only"
+  echo "  INPUT <SVDlim>       : SVD limit, relative to strongest mode"
+  echo "  INPUT <skip DMmodes> : 1 if re-using previous DM modes, 0 otherwise"
+  echo
+  echo "EXAMPLE: $0 2.0 -1 0.03"
+  echo
+  echo " read from filesystem:"
+  echo "  INPUT: ./conf/aol#_dmslaved.fits"
+  echo "  INPUT: ./conf/aol#_zrepM.fits"
+  echo "  INPUT: ./conf/aol#_dmmaskRM.fits"
+  echo "  INPUT: ./conf/aol#_wfsmask.fits"
+  echo "  INPUT: ./conf/aol#_LOrespM.fits"
+  echo "  INPUT: ./conf/aol#_LODMmodes.fits"
+  echo
+  echo "  OUTPUT: ./mkmodestmp/fmodesall.fits"
+  echo "  OUTPUT: ./mkmodestmp/fmodesWFSall.fits"
+  echo "  OUTPUT: ./mkmodestmp/cmat.fits"
+  echo "  OUTPUT: ./mkmodestmp/fmodes_xx.fits.fits"
+  echo "  OUTPUT: ./mkmodestmp/respM_xx.fits.fits"
+  echo "  OUTPUT: ./mkmodestmp/contrM_xx.fits.fits"
+  echo "  OUTPUT: ./mkmodestmp/contrMc_xx.fits.fits"
+  echo "  OUTPUT: ./mkmodestmp/contrMcact_xx.fits.fits"
+  echo "  OUTPUT: dmmask.fits"
+  echo
+  echo "NOTES :"
+  echo "  USES (OPTIONAL) : ./conf/TPind.fits"
+  echo "                  Modes to be excluded"
+  echo
+  exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+pid=$$
+
+startupfile="clistartup$pid.txt"
+echo "a=1" > $startupfile
+fifoname="clififo$pid"
+
+
+
+execnamestring="Cfits -s $startupfile -f $fifoname"
+
+if [ "$4" -eq "1" ]; then
+echo "loadfits \"./mkmodestmp/fmodes2ball.fits\" fmodes2ball" >> $startupfile
+fi
+
+
+
+mkdir -p Cmodes
+mkdir -p tmp
+
+$execnamestring -n $pname << EOF
+aolnb $loopnb
+
+loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
+loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
+loadfits "./conf/aol${loopnb}_dmmaskRM.fits" dmmaskRM
+loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
+loadfits "./conf/aol${loopnb}_LOrespM.fits" RMMresp
+loadfits "./conf/aol${loopnb}_LODMmodes.fits" RMMmodes
+loadfits "./conf/TPind.fits" emodes
+readshmim aol${loopnb}_dmC
+imstats aol${loopnb}_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+od=0.42*imsize0
+id=0.13*imsize0
+aolmkmodes fmodes imsize0 imsize1 $1 0.8 cx cy od id 0 $2 $3
+exit
+EOF
+
+#rm $startupfile
+#rm $fifoname
+

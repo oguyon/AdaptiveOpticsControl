@@ -1,0 +1,37 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ AO Linear Simulator ------"
+  echo 
+  echo "uses response matrix to simulate linear AO system"
+  echo "Usage: $0 <GPUindex> <time interval>"
+  echo 
+  echo " INPUT <GPUindex>        : GPU index" 
+  echo 
+  echo 
+  echo "Example: $0 5"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+GPUindex=$1
+
+Cfits -n aol${loopnb}latency << EOF
+readshmim aol${loopnb}_wfsim
+readshmim aol${loopnb}_dmdisp
+readshmim aol${loopnb}_zrespM
+readshmim aol${loopnb}_wfsref
+listim
+cudacoeffo2map aol${loopnb}_zrespM aol${loopnb}_dmdisp ${GPUindex} aol${loopnb}_wfsim aol${loopnb}_wfsref
+exit
+EOF

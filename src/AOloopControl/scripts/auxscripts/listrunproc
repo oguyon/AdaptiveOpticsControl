@@ -1,0 +1,34 @@
+#!/bin/bash
+
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+bold=`tput bold`
+
+touch null.runproc # avoids error message
+
+while true;
+do
+clear
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+echo "DATE = $datestr"
+
+for file in *.runproc
+do
+line=$( cat $file )
+arr=($line)
+comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *[^ ][^ ]*  *//'`
+
+printf "%s    %40s   %40s    %s\n"   "${arr[0]}"  "${bold}${red}${arr[1]}${reset}"   "${bold}${green}${arr[2]}${reset}"  "$comment"
+done
+echo " "
+
+echo "locks :"
+ls -1 function*.lock 2>/dev/null
+
+
+sleep 1.0
+
+done
+

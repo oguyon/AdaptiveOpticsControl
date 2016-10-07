@@ -1,0 +1,136 @@
+#!/bin/bash
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+
+
+# =====================================================
+# ======== Make Modal Modes  ========================
+# =====================================================
+
+if [ $state = "menu_mkFModes" ]; then
+stateok=1
+#echo "entering menu_mkFmodes"
+
+menuname=" CONFIGURATION - Make Fourier based Modes (mode = $mkModesMODE)"
+rm tmp/*.fits
+menuitems=()
+menuitems+=( "00.2" "0.2 CPA (Tip/Tilt only)" )
+menuitems+=( "00.3" "0.3 CPA (Tip/Tilt + Focus)" )
+menuitems+=( "00.5" "0.5 CPA (Tip/Tilt + Focus + AST)" )
+for i in `seq 20 40 240 `;
+        do
+str0=$( echo $i|awk '{printf("%04.1f", $1*0.1)}')
+str1=$( echo $i|awk '{printf("%4.1f CPA", $1*0.1)}')
+menuitems+=( "$str0" "$str1" )
+done 
+
+cpamaxdefault="00.2"
+if [ -z "$cpamax" ]; then cpamax=${cpamaxdefault}; else echo "cpamax is set to '$cpamax'"; fi
+
+
+
+dialog --title "AO loop configuration" \
+--ok-label "Select" \
+--cancel-label "Main" \
+--help-button --help-label "Exit" \
+--default-item ${cpamax} \
+--menu "$menuname" \
+ 50 80 100 "${menuitems[@]}"  2> $tempfile
+
+retval=$?
+
+
+case $retval in
+   0) state="menucontrolmatrix"
+
+tmuxname="aol${LOOPNUMBER}mkmodes"
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolmkmodes" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
+mkdir -p DMmodes
+mkdir -p respM
+mkdir -p contrM
+mkdir -p contrMc
+mkdir -p contrMcact
+
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"zrespM\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmask\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
+
+cpamax=$(cat $tempfile)
+echo "$cpamax" > ./conf/conf_cpamax.txt
+
+#rm mkmodes.run
+tmux send-keys -t $tmuxname "echo \"./auxscripts/aolmkmodes ${cpamax} -1 ${SVDlimall} ${mkModesMODE}\" >> aolcmd.txt" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes ${cpamax} -1 ${SVDlimall} ${mkModesMODE}" C-m
+#tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
+#waitforfile mkmodes.run0
+#rm mkmodes.run0
+
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf/conf_DMmodes_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"respM/respM_${datestr}.fits\" > ./conf/conf_respM_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"contrM/contrM_${datestr}.fits\" > ./conf/conf_contrM_name.txt" C-m
+
+
+for i in `seq 0 99`;
+do
+i2=$(printf "%02d" "$i")
+fname="mkmodestmp/fmodes_${i2}.fits"
+if [ -e "$fname" ]; then
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf/conf_DMmodes${i2}_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"respM/respM${i2}_${datestr}.fits\" > ./conf/conf_respM${i2}_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf/conf_contrM${i2}_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf/conf_contrMc${i2}_name.txt" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf/conf_contrMcact${i2}_00_name.txt" C-m
+fi
+done
+
+
+tmux send-keys -t $tmuxname "rm aolmkmodes.runproc" C-m
+# tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run" C-m
+
+
+#waitforfile mkmodes.run
+
+
+#dialog --title "OKbox" --msgbox 'Type key to load new CM' 6 20
+
+#rm mkmodes.run
+;; # button 1:
+   1) state="menutop";;  
+   2) state="menuexit";; 
+   255) state="menuexit";;
+esac
+
+fi
+
+
+
+

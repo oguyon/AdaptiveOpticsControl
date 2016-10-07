@@ -1,0 +1,39 @@
+#!/bin/bash
+
+EXPECTED_ARGS=3
+
+# example :
+# ./auxscripts/aolARPF ./rec/modeval_ol.fits 0 2.7 4 
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ AO find optimal AR linear predictive filter ------"
+  echo 
+  echo "uses pseudo-open loop telemetry"
+  echo "Usage: $0 <telemetry log> <latency> <PForder>"
+  echo 
+  echo " INPUT <telemetry log>   : pseudo-open loop WFS telemetry" 
+  echo " INPUT <latency>         : latency [frame]"
+  echo " INPUT <PForder>         : filter order"
+  echo 
+  echo "Example: $0 wfsmodes_ol.fits 2.36 6"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+GPUindex=1
+
+Cfits -n aol${loopnb}scangain << EOF
+loadfits "$1" olwfsmeas
+mkARpfilt olwfsmeas $3 $2 0.0001 0.0 outPF 
+savefits outPF "!outPF.fits"
+listim
+exit
+EOF
+

@@ -1,0 +1,22 @@
+#! /bin/bash
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ cross-product of a data cube ------"
+  echo 
+  echo " Usage: $0 <FITS file>"
+  echo "    output: xp.fits"
+  echo
+exit
+fi
+
+Cfits << EOF
+loadfits "$1" im1
+loadfits "$1" im2
+aolcrossp im1 im2 xp
+savefits xp "!xp.fits"
+exit
+EOF

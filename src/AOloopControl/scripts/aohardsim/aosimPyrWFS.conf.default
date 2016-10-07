@@ -1,0 +1,30 @@
+
+LAMBDANM          800             # wavelength [nm]
+
+# ============== INPUT TYPE (OPD unit = um) ====================
+INMODE                   0                 # 0:stream, 1:file system (FITS)
+INSTREAMNAMEOPD          wf1opd            # input OPD stream
+INSTREAMNAMEAMP          wf1amp            # input AMP stream
+INSEMCHAN                5                 # input semaphore channel (using OPD input)
+INFITSFILENAMEOPD        inwfopd.fits      # input FITS file name (OPD)
+INFITSFILENAMEAMP        inwfamp.fits      # input FITS file name (AMP)
+INTRIGGERFILE            inwf.txt          # input trigger file
+
+# ============== OUTPUT TYPE ===================================
+OUTMODE                  0                 # 0: stream, 1: file system
+OUTSTREAMNAME            pWFSim            # output image stream name 
+OUTINSTSTREAMNAME        WFSinst           # output instantaneous image stream name 
+OUTFITSFILENAME          PyrWFS_im.fits    # FITS file name output (intensity)
+OUTTRIGGERFILE           outpyr.txt        # output trigger file
+
+# ============== FREQUENCY, GEOMETRY =============================
+ARRAYSIZE                256               # array size for computations
+PYRMODMODE               1                 # 0: no modulation, 1: modulation
+PYRMODAMP                0.0               # Modulation radius [l/D]
+PYRMODNBPT               1                 # number of pyramid modulation points
+PYRAPERTURE              50.0              # spatial filter aperture [l/D]
+PUPPIXDIAM               100.0             # pupil diameter [pix] - used to compute l/D scale
+PYRPUPSEP                1.2               # separation between pupil imagees (relative to pup diam)
+OUTBINFACT               2                 # output binning factor
+OUTARRAYSIZE             120               # output array size
+

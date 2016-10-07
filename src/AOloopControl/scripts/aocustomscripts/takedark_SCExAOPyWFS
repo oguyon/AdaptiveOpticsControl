@@ -1,0 +1,38 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Take Dark Image ------"
+  echo
+  echo "  INPUT : Number of frames" 
+  echo "  OUTPUT: dark.fits"
+  exit
+fi
+
+NBframes=$1
+
+loopnb=$(cat LOOPNUMBER)
+
+echo "moving filter wheel..."
+pywfs wheel 3
+sleep 10
+
+mkdir -p darks
+
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+Cfits -n takedark << EOF
+scexaoaveim aol${loopnb}_wfsim $NBframes dark 0
+savefits dark "!./darks/dark_${datestr}.fits"
+cpsh dark aol${loopnb}_wfsdark
+exit
+EOF
+
+echo "./darks/dark_${datestr}.fits" > conf/conf_wfsdark_fname.txt
+
+wn="1"
+pywfs wheel $wn
+

@@ -1,0 +1,39 @@
+#! /bin/bash
+
+EXPECTED_ARGS=5
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Measure zonal resp matrix ------"
+  echo
+  echo "  $0 <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize>"
+  echo
+  echo "Default output: "
+  echo "  zrespmat.fits : zonal response matrix"
+  echo "  wfsref0.fits   : wfs reference"
+  echo "  wfsmap.fits   : WFS response map"
+  echo "  dmmap.fits    : DM response map"
+  echo
+  echo "runs forever until killed"
+  echo "Default output files updated at each cycle" 
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname="aol${loopnb}zrespM"
+
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+loadfits RMpokeCube.fits RMpokeCube
+aolmeaszrm $1 $2 $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 
+savefits wfsmask "!wfsmask.fits"
+savefits dmmask "!dmmask.fits"
+listim
+exit
+EOF
+
+

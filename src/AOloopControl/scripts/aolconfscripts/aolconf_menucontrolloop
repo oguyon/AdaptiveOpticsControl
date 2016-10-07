@@ -1,0 +1,2020 @@
+#!/bin/bash
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+# is the loop control in ZONAL CM or MODAL CM mode ?
+CMMODEfile="conf/conf_CMMODE.txt"
+if [ -f $CMMODEfile ]; then
+CMMODE=$( cat ${CMMODEfile} )
+else
+CMMODE="MODAL"
+echo "$CMMODE" > $CMMODEfile
+fi
+
+
+# =====================================================
+# ======== CONTROL AO LOOP ============================
+# =====================================================
+if [ $state = "menucontrolloop" ]; then
+stateok=1
+menuname="CONTROL LOOP"
+
+
+
+
+
+
+file="./conf/conf_loopgain.txt"
+if [ -f $file ]; then
+loopgain=$(echo "$(cat $file)")
+else
+echo "0.0" > $file
+loopgain="0.0"
+fi
+
+file="./conf/conf_loopmaxlim.txt"
+if [ -f $file ]; then
+loopmaxlim=$(echo "$(cat ./conf/conf_loopmaxlim.txt)")
+else
+echo "0.0" > $file
+loopmaxlim="0.0"
+fi
+
+
+
+file="./conf/conf_loopmultcoeff.txt"
+if [ -f $file ]; then
+loopmultcoeff=$(echo "$(cat ./conf/conf_loopmultcoeff.txt)")
+else
+echo "0.99" > $file
+loopmultcoeff="0.99"
+fi
+
+
+
+if [ -f "./conf/conf_WFSnormalize.txt" ]; then
+WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
+else
+WFSnorm="0" # default
+fi
+
+
+if [ -f "./conf/conf_GPUdm2wfsrefM.txt" ]; then
+GPUdm2wfsrefM=$( cat ./conf/conf_GPUdm2wfsrefM.txt )
+else
+GPUdm2wfsrefM="0" # default
+fi
+
+if [ -f "./conf/conf_GPUdm2wfsrefZ.txt" ]; then
+GPUdm2wfsrefZ=$( cat ./conf/conf_GPUdm2wfsrefZ.txt )
+else
+GPUdm2wfsrefZ="0" # default
+fi
+
+
+
+
+
+stringcenter "HARDWARE RESOURCES ALLOCATION"
+menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+
+
+
+GPUmode=$( cat ./conf/conf_GPU.txt )
+if [[ -f "./conf/conf_GPU.txt" && ( "$GPUmode" = "0" || "$GPUmode" = "1" || "$GPUmode" = "2" || "$GPUmode" = "3" || "$GPUmode" = "4" || "$GPUmode" = "5" ) ]]; then
+echo "OK"
+else
+echo "0" > ./conf/conf_GPU.txt
+GPUmode=0
+fi
+
+echo "GPU mode = $GPUmode"
+
+if [ "${GPUmode}" = "0" ];
+then
+menuitems+=( "GPUsel" "[ GPU is OFF  ]    CONTROL MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU mode" )
+else
+menuitems+=( "GPUsel" " CONTROL MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmode \Zn GPU(S)" )
+fi
+
+
+
+if [ "0" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev0.txt"
+GPU0device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPU0device="0"
+fi
+menuitems+=( "GPU0" "            [ $GPU0device ]    GPU #0 device" )
+fi
+
+
+if [ "1" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev1.txt"
+GPU1device=$( cat $file )
+if [[ -f "$file" && ${GPU1device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "1" > $file
+GPU1device="1"
+fi
+menuitems+=( "GPU1" "            [ $GPU1device ]    GPU #1 device" )
+fi
+
+
+if [ "2" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev2.txt"
+GPU2device=$( cat $file )
+if [[ -f "$file" && ${GPU2device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "2" > $file
+GPU2device="2"
+fi
+menuitems+=( "GPU2" "            [ $GPU2device ]    GPU #2 device" )
+fi
+
+
+if [ "3" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev3.txt"
+GPU3device=$( cat $file )
+if [[ -f "$file" && ${GPU3device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "3" > $file
+GPU3device="3"
+fi
+menuitems+=( "GPU3" "            [ $GPU3device ]    GPU #3 device" )
+fi
+
+
+if [ "4" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev4.txt"
+GPU4device=$( cat $file )
+if [[ -f "$file" && ${GPU4device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "4" >  $file
+GPU4device="4"
+fi
+menuitems+=( "GPU4" "            [ $GPU4device ]    GPU #4 device" )
+fi
+
+
+if [ "5" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev5.txt"
+GPU5device=$( cat $file )
+if [[ -f "$file" && ${GPU5device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "5" > $file
+GPU5device="5"
+fi
+menuitems+=( "GPU5" "            [ $GPU5device ]    GPU #5 device" )
+fi
+
+
+if [ "6" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev6.txt"
+GPU6device=$( cat $file )
+if [[ -f "$file" && ${GPU6device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "6" > $file
+GPU6device="6"
+fi
+menuitems+=( "GPU6" "            [ $GPU6device ]    GPU #6 device" )
+fi
+
+
+if [ "7" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev7.txt"
+GPU7device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "7" > $file
+GPU7device="7"
+fi
+menuitems+=( "GPU7" "            [ $GPU7device ]    GPU #7 device" )
+fi
+
+
+if [ "8" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev8.txt"
+GPU8device=$( cat $file )
+if [[ -f "$file" && ${GPU8device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "8" > $file
+GPU8device="8"
+fi
+menuitems+=( "GPU8" "            [ $GPU8device ]    GPU #8 device" )
+fi
+
+
+if [ "9" -lt "$GPUmode" ]; then
+file="./conf/conf_GPUset0_dev9.txt"
+GPU9device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "9" > $file
+GPU9device="9"
+fi
+menuitems+=( "GPU9" "            [ $GPU9device ]    GPU #9 device" )
+fi
+
+
+
+
+if [ "${dm2dm_mode}" = "0" ]; then
+
+file="./conf/conf_GPUmodesextrwfs.txt"
+GPUmodesextrwfs=$( cat $file )
+if [[ -f "$file" && ${GPUmodesextrwfs} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "5" > $file
+GPUmodesextrwfs="5"
+fi
+menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
+
+
+#file="./conf/conf_GPUmodesextr1.txt"
+#GPUmodesextr1=$( cat $file )
+#if [[ -f "$file" && ${GPUmodesextr1} =~ [0-9]$ ]]; then
+#echo "OK"
+#else
+#echo "6" > $file
+#GPUmodesextr1="6"
+#fi
+#menuitems+=( "GPUme1" "[ $GPUmodesextr1 ]    Mode coefficient dmC extraction : GPU device" )
+
+
+file="./conf/conf_GPUzpoffsetM.txt"
+GPUzpoffsetM=$( cat $file )
+if [[ -f "$file" && ${GPUzpoffsetM} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "7" > $file
+GPUzpoffsetM="7"
+fi
+menuitems+=( "GPUzpM" "[ $GPUzpoffsetM ]    Modal WFS zero point offset loop: GPU device" )
+
+
+file="./conf/conf_GPUzpoffsetZ.txt"
+GPUzpoffsetZ=$( cat $file )
+if [[ -f "$file" && ${GPUzpoffsetZ} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "8" > $file
+GPUzpoffsetZ="8"
+fi
+menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GPU device" )
+
+
+fi
+
+
+
+CMmode=$( cat ./conf/conf_CMmode.txt )
+
+
+if [[ "${GPUmode}" -ne "0" && "${CMmode}" = "1" ]]; then
+GPUallmode=$( cat ./conf/conf_GPUall.txt )
+
+if [[ -f "./conf/conf_GPUall.txt" && ( "$GPUallmode" = "1" || "$GPUallmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > ./conf/conf_GPUall.txt
+fi
+
+echo "GPUsll mode = $GPUallmode"
+
+if [ "${GPUallmode}" = "0" ];
+then
+menuitems+=( "GPUaon" "[GPUall is OFF]    CURRENTLY USING CPU(s) + GPU(s)       -> Turn on GPUall mode" )
+else
+menuitems+=( "GPUaoff" "\Z5\Zr[GPUall is  ON]\Zn    CURRENTLY USING GPU(S) FOR ALL        -> Turn off GPUall mode" )
+fi
+else
+menuitems+=( " " " GPUall = 0" )
+echo "0" > ./conf/conf_GPUall.txt
+fi
+
+
+
+
+if [[ -f "./conf/conf_CMmode.txt" && ( "$CMmode" = "1" || "$CMmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > ./conf/conf_CMmode.txt
+fi
+echo "CM mode = $CMmode"
+
+if [ "${CMmode}" = "0" ];
+then
+menuitems+=( "CMm1" "[CMmode is OFF]    CURRENTLY USING SEPARATE MATRICES     -> Switch to combined control matrix" )
+else
+menuitems+=( "CMm0" "\Z5\Zr[CMmode is  ON]\Zn    CURRENTLY USING COMBINED MATRIX       -> Switch to separate control matrices" )
+fi
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "LOOP PROCESSES"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+
+procONstat=$( cat ./status/stat_procON.txt )
+if [[ -f "./status/stat_procON.txt" && ( "$procONstat" = " ON" || "$procONstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_procON.txt
+fi
+
+
+
+
+file="conf/conf_LOOPPROCESS_EXTRWFSMODES.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_EXTRWFSMODES=$(cat $file)
+	else
+	LOOPPROCESS_EXTRWFSMODES="0"
+	echo "0" > $file
+fi
+
+file="conf/conf_LOOPPROCESS_EXTROLMODES.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_EXTROLMODES=$(cat $file)
+	else
+	LOOPPROCESS_EXTROLMODES="0"
+	echo "0" > $file
+fi
+
+file="conf/conf_LOOPPROCESS_ZPO.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_ZPO=$(cat $file)
+	else
+	LOOPPROCESS_ZPO="0"
+	echo "0" > $file
+fi
+
+file="conf/conf_LOOPPROCESS_DMCAVE.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_DMCAVE=$(cat $file)
+	else
+	LOOPPROCESS_DMCAVE="0"
+	echo "0" > $file
+fi
+
+file="conf/conf_LOOPPROCESS_WFSRESAVE.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_WFSRESAVE=$(cat $file)
+	else
+	LOOPPROCESS_WFSRESAVE="0"
+	echo "0" > $file
+fi
+
+
+if [ "${procONstat}" = "OFF" ];
+then
+menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
+menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval" )
+menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
+menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
+menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
+else
+menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
+
+if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval" )
+fi
+
+if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+fi
+
+
+if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_ZPO] ---  RUNNING    ---   Zero pt offset\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_ZPO] --- not running ---   Zero pt offset" )
+fi
+
+if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMCAVE] ---  RUNNING    ---   Running average of dmC\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_DMCAVE] --- not running ---   Running average of dmC" )
+fi
+
+if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
+fi
+
+fi
+
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "LOOP CONTROL "
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+
+
+
+ file="conf/conf_loopNBstep.txt"
+ if [ -f "$file" ]; then
+  loopNBstep=$( cat $file )
+  else
+  echo "1" > $file
+  loopNBstep=1
+ fi
+
+
+file="./status/stat_procWFSres2refON.txt"
+procWFSres2refONstat=$( cat $file )
+if [[ -f "$file" && ( "$procWFSres2refONstat" = " ON" || "$procWFSres2refONstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file 
+procWFSres2refONstat="OFF"
+fi
+
+
+if [ "$procONstat" = " ON" ]; then
+ loopONstat=$( cat ./status/stat_loopON.txt )
+  if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
+   echo "OK"
+   else
+   echo "OFF" > ./status/stat_loopON.txt
+  fi
+
+ if [ "${loopONstat}" = "OFF" ];
+  then
+  menuitems+=( "Nloopon" "  \Zb\Zu ==== START control loop ====\ZB\ZU" )
+  else
+  menuitems+=( "Floopoff" "\Z1\ZrLoop running, press to STOP\Zn" )
+ fi
+ 
+ menuitems+=( "Z" "LOOP Zero" )
+ menuitems+=( "nbstep" "[$loopNBstep] set loopNBsteps" )
+ menuitems+=( "tstep" "Advance $loopNBstep step(s)" )
+ 
+ if [ "$procWFSres2refONstat" = "OFF" ]; then
+  menuitems+=( "wresolON" "WFS residual offload to wfsref is OFF, press to START" )
+  else
+  menuitems+=( "wresolOFF" "\Z1\ZrWFS residual offload to wfsref is ON, press to STOP\Zn" )
+ fi
+
+ else
+ menuitems+=( " " "\Z1 Processes need to be ON to turn loop ON/OFF \Zn")
+ menuitems+=( "Z" "LOOP Zero" )
+ menuitems+=( " " "\Z1[$loopNBstep] set loopNBsteps\Zn" )
+ menuitems+=( " " "\Z1Advance $loopNBstep step(s)\Zn" )
+ menuitems+=( " " "WFS residual offload to wfsref requires loop ON" )
+fi
+menuitems+=( "wresolinit" "WFS residual offload initialize" )
+menuitems+=( "wzpoinit" "Initialize all wfszpo" )
+
+
+
+menuitems+=( " " " " )
+stringcenter "LOOP MONITORING "
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+menuitems+=( "ctrmon" "  Enter tmux session aol${LOOPNUMBER}-ctr" )
+menuitems+=( "runmon" "  Monitor tmux session aol${LOOPNUMBER}-run" )
+
+
+
+menuitems+=( " " " " )
+stringcenter "LOOP SETTING "
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "g" "loop gain    =   ${loopgain}" )
+menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
+menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "CONTROL MATRIX MODAL BLOCK GAINS"
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
+
+if [ "$CMMODE" = "MODAL" ]; then
+menuitems+=( "gball" "Set all block to same gain")
+menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
+menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
+menuitems+=( "gball04" "Custom gain set 04 (alpha = 0.4)")
+menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
+menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
+menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
+menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
+
+NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+
+for i in `seq 0 $(( $NBblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+
+NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
+#menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
+
+fname="conf/conf_gainb${i2}.txt"
+if [ -f "$fname" ]; then
+gainb[10#${i2}]=$( cat ${fname} )
+else
+gainb[10#${i2}]="1.000"
+fi
+string=$( printf "% 3d" "${NBblockmodes}" )
+menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
+done
+else
+menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS" )
+fi
+
+
+
+
+
+
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "ZONAL ZERO POINT (slow CPU-BASED)"
+menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
+
+
+zploopONstat0=$( cat ./status/stat_zploopON0.txt )
+if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploopONstat0" = "OFF" || "$zploopONstat0" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON0.txt
+fi
+
+
+zploopONstat1=$( cat ./status/stat_zploopON1.txt )
+if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploopONstat1" = "OFF" || "$zploopONstat1" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON1.txt
+fi
+
+
+
+zploopONstat2=$( cat ./status/stat_zploopON2.txt )
+if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" || "$zploopONstat2" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON2.txt
+fi
+
+
+zploopONstat3=$( cat ./status/stat_zploopON3.txt )
+if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" || "$zploopONstat3" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON3.txt
+fi
+
+zploopONstat4=$( cat ./status/stat_zploopON4.txt )
+if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploopONstat4" = "OFF" || "$zploopONstat4" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON4.txt
+fi
+
+zploopONstat5=$( cat ./status/stat_zploopON5.txt )
+if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" || "$zploopONstat5" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON5.txt
+fi
+
+zploopONstat6=$( cat ./status/stat_zploopON6.txt )
+if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" || "$zploopONstat6" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON6.txt
+fi
+
+zploopONstat7=$( cat ./status/stat_zploopON7.txt )
+if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" || "$zploopONstat7" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON7.txt
+fi
+
+
+
+
+fname="./conf/conf_zpmultcoeff.txt"
+if [ -f "$fname" ]; then
+zpmultcoeff=$( cat ${fname} )
+else
+zpmultcoeff="1.000"
+fi
+menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient" )
+
+
+if [ "${zploopONstat0}" = "OFF" ];
+then
+menuitems+=( "zplon0" "   START DM->WFS zero point offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
+elif [ "${zploopONstat0}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff0" "\Z1\Zr    STOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
+fi
+
+if [ "${zploopONstat1}" = "OFF" ];
+then
+menuitems+=( "zplon1" "   START DM->WFS zero point offset loop #1 (\Z4${dmZP1}\Zn -> wfszpo1)" )
+elif [ "${zploopONstat1}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff1" "\Z1\Zr    STOP DM->WFS zero point offset loop #1\Zn (\Z4${dmZP1}\Zn -> wfszpo1)" )
+fi
+
+
+if [ "${zploopONstat2}" = "OFF" ];
+then
+menuitems+=( "zplon2" "   START DM->WFS zero point offset loop #2 (\Z4${dmZP2}\Zn -> wfszpo2)" )
+elif [ "${zploopONstat2}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff2" "\Z1\Zr    STOP DM->WFS zero point offset loop #2\Zn (\Z4${dmZP2}\Zn -> wfszpo2)" )
+fi
+
+
+if [ "${zploopONstat3}" = "OFF" ];
+then
+menuitems+=( "zplon3" "   START DM->WFS zero point offset loop #3 (\Z4${dmZP3}\Zn -> wfszpo3)" )
+elif [ "${zploopONstat3}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff3" "\Z1\Zr    STOP DM->WFS zero point offset loop #3\Zn (\Z4${dmZP3}\Zn -> wfszpo3)" )
+fi
+
+
+if [ "${zploopONstat4}" = "OFF" ];
+then
+menuitems+=( "zplon4" "   START DM->WFS zero point offset loop #4 (\Z4${dmZP4}\Zn -> wfszpo4)" )
+elif [ "${zploopONstat4}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff4" "\Z1\Zr    STOP DM->WFS zero point offset loop #4\Zn (\Z4${dmZP4}\Zn -> wfszpo4)" )
+fi
+
+
+if [ "${zploopONstat5}" = "OFF" ];
+then
+menuitems+=( "zplon5" "   START DM->WFS zero point offset loop #5 (\Z4${dmZP5}\Zn -> wfszpo5)" )
+elif [ "${zploopONstat5}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff5" "\Z1\Zr    STOP DM->WFS zero point offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
+fi
+
+
+if [ "${zploopONstat6}" = "OFF" ];
+then
+menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
+elif [ "${zploopONstat6}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff6" "\Z1\Zr    STOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
+fi
+
+
+if [ "${zploopONstat7}" = "OFF" ];
+then
+menuitems+=( "zplon7" "   START DM->WFS zero point offset loop #7 (\Z4${dmZP7}\Zn -> wfszpo7)" )
+elif [ "${zploopONstat7}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 7 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "zploff7" "\Z1\Zr    STOP DM->WFS zero point offset loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
+fi
+
+
+
+
+menuitems+=( "zpinj" "Inject Fourier mode to DM zero point" )
+menuitems+=( "zpz" "Zero DM zero point" )
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "ZERO POINT (fast GPU-BASED)"
+menuitems+=( "8 ->" "\Zb\Zr$string\Zn" )
+
+
+file="./conf/conf_GPUdm2wfsref.txt"
+GPUdm2wfsref=$( cat $file )
+if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPUdm2wfsref=0
+fi
+
+menuitems+=( " " " ")
+if [ "${GPUdm2wfsrefM}" = "0" ];
+then
+menuitems+=( "GPUd2wMon" " [  OFF  ] Modal WFS offset [->dm05] is OFF (select for DM modes applied as WFS offset)" )
+fi
+if [ "${GPUdm2wfsrefM}" = "1" ];
+then
+menuitems+=( "GPUd2wMoff" " [   ON  ] Modal WFS offset [->dm05] is ON (select to de-activate)" )
+fi
+
+
+menuitems+=( " " " ")
+if [ "${GPUdm2wfsrefZ}" = "0" ];
+then
+menuitems+=( "GPUd2wZon" " [  OFF  ] Zonal WFS offset [dm07->] is OFF (select for DM ouput applied as WFS offset)" )
+fi
+if [ "${GPUdm2wfsrefZ}" = "1" ];
+then
+menuitems+=( "GPUd2wZoff" " [   ON  ] Zonal WFS offset [dm07->] is ON (select to de-activate)" )
+fi
+
+
+
+
+
+
+state="menutop"
+
+
+dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - (CMMODE = $CMMODE)" \
+--ok-label "Select" \
+--cancel-label "Top" \
+--help-button --help-label "Exit" \
+--default-item "${menucontrolloop_default}" \
+ --menu "$menuname" \
+ $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+
+retval=$?
+choiceval=$(cat $tempfile)
+menucontrolloop_default="$choiceval"
+state="menucontrolloop"
+case $retval in
+   0) # button
+	case $choiceval in
+
+
+# LOOP CONFIGURATION
+
+
+
+
+	GPUsel)
+exec 3>&1;
+nbGPU=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$nbGPU" 2>&1 1>&3);
+exec 3>&-;
+echo "$nbGPU" > ./conf/conf_GPU.txt
+aoconflog "set nbGPU = ${nbGPU}"
+;;
+
+
+    GPU0)
+exec 3>&1;
+GPU0device=$(dialog --inputbox "GPU0 device" 0 0 "$GPU0device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU0device" > ./conf/conf_GPUset0_dev0.txt
+aoconflog "set GPU0device = ${GPU0device}"
+menucontrolloop_default="GPU0"
+;;
+
+    GPU1)
+exec 3>&1;
+GPU1device=$(dialog --inputbox "GPU1 device" 0 0 "$GPU1device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU1device" > ./conf/conf_GPUset0_dev1.txt
+aoconflog "set GPU1device = ${GPU1device}"
+menucontrolloop_default="GPU1"
+;;
+
+    GPU2)
+exec 3>&1;
+GPU2device=$(dialog --inputbox "GPU2 device" 0 0 "$GPU2device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU2device" > ./conf/conf_GPUset0_dev2.txt
+aoconflog "set GPU2device = ${GPU2device}"
+menucontrolloop_default="GPU2"
+;;
+
+    GPU3)
+exec 3>&1;
+GPU3device=$(dialog --inputbox "GPU3 device" 0 0 "$GPU3device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU3device" > ./conf/conf_GPUset0_dev3.txt
+aoconflog "set GPU3device = ${GPU3device}"
+menucontrolloop_default="GPU3"
+;;
+
+    GPU4)
+exec 3>&1;
+GPU4device=$(dialog --inputbox "GPU4 device" 0 0 "$GPU4device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU4device" > ./conf/conf_GPUset0_dev4.txt
+aoconflog "set GPU4device = ${GPU4device}"
+menucontrolloop_default="GPU4"
+;;
+
+    GPU5)
+exec 3>&1;
+GPU5device=$(dialog --inputbox "GPU5 device" 0 0 "$GPU5device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU5device" > ./conf/conf_GPUset0_dev5.txt
+aoconflog "set GPU5device = ${GPU5device}"
+menucontrolloop_default="GPU5"
+;;
+
+    GPU6)
+exec 3>&1;
+GPU6device=$(dialog --inputbox "GPU6 device" 0 0 "$GPU6device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU6device" > ./conf/conf_GPUset0_dev6.txt
+aoconflog "set GPU6device = ${GPU6device}"
+menucontrolloop_default="GPU6"
+;;
+
+    GPU7)
+exec 3>&1;
+GPU7device=$(dialog --inputbox "GPU7 device" 0 0 "$GPU7device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU7device" > ./conf/conf_GPUset0_dev7.txt
+aoconflog "set GPU7device = ${GPU7device}"
+menucontrolloop_default="GPU7"
+;;
+
+    GPU8)
+exec 3>&1;
+GPU8device=$(dialog --inputbox "GPU8 device" 0 0 "$GPU8device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU8device" > ./conf/conf_GPUset0_dev8.txt
+aoconflog "set GPU8device = ${GPU8device}"
+menucontrolloop_default="GPU8"
+;;
+
+    GPU9)
+exec 3>&1;
+GPU9device=$(dialog --inputbox "GPU9 device" 0 0 "$GPU9device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU9device" > ./conf/conf_GPUset0_dev9.txt
+aoconflog "set GPU9device = ${GPU9device}"
+menucontrolloop_default="GPU9"
+;;
+
+
+	GPUon)
+echo "1" > ./conf/conf_GPU.txt
+aoconflog "set GPU ON"
+menucontrolloop_default="GPUoff"
+;;
+	GPUoff)
+echo "0" > ./conf/conf_GPU.txt
+aoconflog "set GPU OFF"
+menucontrolloop_default="GPUon"
+;;
+
+ 
+ 
+    GPUmewfs)
+file="./conf/conf_GPUmodesextrwfs.txt"
+exec 3>&1;
+GPUmodesextrwfs=$(dialog --inputbox "GPU modes extract 0 device" 0 0 "$GPUmodesextrwfs" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUmodesextrwfs" > $file
+aoconflog "set GPUmodesextrwfs = ${GPUmodesextrwfs}"
+menucontrolloop_default="GPUmewfs"
+;;
+
+#    GPUme1)
+#file="./conf/conf_GPUmodesextr1.txt"
+#exec 3>&1;
+#GPUmodesextr1=$(dialog --inputbox "GPU modes extract 1 device" 0 0 "$GPUmodesextr1" 2>&1 1>&3);
+#exec 3>&-;
+#echo "$GPUmodesextr1" > $file
+#aoconflog "set GPUmodesextr1 = ${GPUmodesextr1}"
+#menucontrolloop_default="GPUme1"
+#;;
+
+
+
+
+    GPUzpM)
+file="./conf/conf_GPUzpoffsetM.txt"
+exec 3>&1;
+GPUzpoffsetM=$(dialog --inputbox "Modal GPU zero pt offset device" 0 0 "$GPUzpoffsetM" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUzpoffsetM" > $file
+aoconflog "set GPUzpoffsetM = ${GPUzpoffsetM}"
+menucontrolloop_default="GPUzpM"
+;;
+ 
+    GPUzpZ)
+file="./conf/conf_GPUzpoffsetZ.txt"
+exec 3>&1;
+GPUzpoffsetZ=$(dialog --inputbox "Zonal GPU zero pt offset device" 0 0 "$GPUzpoffsetZ" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUzpoffsetZ" > $file
+aoconflog "set GPUzpoffsetZ = ${GPUzpoffsetZ}"
+menucontrolloop_default="GPUzpZ"
+;;
+ 
+
+ 
+ 
+ 
+ 
+    GPUaon)
+echo "1" > ./conf/conf_GPUall.txt
+aoconflog "set GPUall ON"
+menucontrolloop_default="GPUaoff"
+;;
+    GPUaoff)
+echo "0" > ./conf/conf_GPUall.txt
+aoconflog "set GPUall OFF"
+menucontrolloop_default="GPUaon"
+;;
+
+
+	CMm1)
+echo "1" > ./conf/conf_CMmode.txt
+aoconflog "set CMmode 1"
+menucontrolloop_default="CMm0"
+;;
+	CMm0)
+echo "0" > ./conf/conf_CMmode.txt
+aoconflog "set CMmode 0"
+menucontrolloop_default="CMm1"
+;;
+
+
+
+
+
+
+# LOOP PROCESSES
+   	 S)  	 
+echo " ON" > ./status/stat_procON.txt
+#rm aolctr-${LOOPNUMBER}-fifo
+aoconflogext "START LOOP PROCESSES"
+tmuxname="aol${LOOPNUMBER}-ctr"
+tmux new-session -d -s ${tmuxname}
+logRunningProcess "aolctr" "$tmuxname" "AO loop control prompt"
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolctr" C-m
+
+
+sleep 1
+tmux new-session -d -s aol${LOOPNUMBER}-run
+tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
+logRunningProcess "aolrun" "aol${LOOPNUMBER}-run" "AO loop real-time loop"
+tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
+echo "./aolrun" > cmd00.txt
+
+sleep 1
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
+sleep 2
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolset" C-m
+sleep 2
+
+if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
+# START ZERO POINT OFFSET LOOP (ZONAL, CPU-BASED)
+tmuxname="aol${LOOPNUMBER}wfszpo"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolzpwfscloop" "$tmuxname" "AO loop zero point offset (zonal, CPU-based)"
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}wfszpo" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
+fi
+
+if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}mexwfs"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
+tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
+fi
+
+if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}meol"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
+tmux send-keys -t $tmuxname "Cfits" C-m
+tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
+fi
+
+
+if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmCave"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aol_dmCave" "$tmuxname" "AO loop compute time-averaged DM correction"
+tmux send-keys -t $tmuxname "./auxscripts/aol_dmCave 0.0005" C-m
+fi
+
+
+if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}wfsresave"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
+tmux send-keys -t $tmuxname "./auxscripts/aolmkWFSres 0.0005" C-m
+fi
+
+menucontrolloop_default="K"
+;; 
+
+   	 K)
+echo "OFF" > ./status/stat_procON.txt
+aoconflogext "STOP LOOP PROCESSES"
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "rm aolctr.runproc" C-m
+pkill -9 aolrun-${LOOPNUMBER}
+rm aolrun.runproc
+
+if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
+pkill -9 aol${LOOPNUMBER}wfszpo
+tmuxname="aol${LOOPNUMBER}wfszpo"
+tmux kill-session -t $tmuxname
+rm aolzpwfscloop.runproc
+fi
+
+if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}mexwfs"
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+rm modesextractwfs.runproc
+#stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+fi
+
+if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}meol"
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+rm aolcompolm.runproc
+#stopstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "0" > "./status/stat_log_modeval_ol.txt"
+fi
+
+
+if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmCave"
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+rm aol_dmCave.runproc
+fi
+
+if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}wfsresave"
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+rm aolmkWFSres.runproc
+fi
+
+if [ "$procWFSres2refONstat" = " ON" ]; then
+tmuxname="aol${LOOPNUMBER}wfsresoffl"
+file="./status/stat_procWFSres2refON.txt"
+echo "OFF" > $file
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+fi
+
+menucontrolloop_default="S"
+;;
+
+
+LPmewfs)
+	if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
+	LOOPPROCESS_EXTRWFSMODES="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_EXTRWFSMODES.txt
+	echo "0" > ./conf/conf_LOOPPROCESS_EXTROLMODES.txt
+	else
+	LOOPPROCESS_EXTRWFSMODES="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTRWFSMODES.txt
+	fi
+menucontrolloop_default="LPmewfs"
+;;
+
+
+LPmeol)
+	if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
+	LOOPPROCESS_EXTROLMODES="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_EXTROLMODES.txt
+	else
+	LOOPPROCESS_EXTROLMODES="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTRWFSMODES.txt
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTROLMODES.txt
+	fi
+menucontrolloop_default="LPmeol"
+;;
+
+
+LPzpo)
+	if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
+	LOOPPROCESS_ZPO="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_ZPO.txt
+	else
+	LOOPPROCESS_ZPO="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_ZPO.txt
+	fi
+menucontrolloop_default="LPzpo"
+;;
+
+LPdmCa)
+	if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
+	LOOPPROCESS_DMCAVE="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_DMCAVE.txt
+	else
+	LOOPPROCESS_DMCAVE="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_DMCAVE.txt
+	fi
+menucontrolloop_default="LPdmCa"
+;;
+
+LPwfsresa)
+	if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+	LOOPPROCESS_WFSRESAVE="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_WFSRESAVE.txt
+	else
+	LOOPPROCESS_WFSRESAVE="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_WFSRESAVE.txt
+	fi
+menucontrolloop_default="LPwfsresa"
+;;
+
+
+   	 Nloopon)
+echo " ON" > ./status/stat_loopON.txt
+aoconflogext "LOOP ON [gain = ${loopgain}   maxlim = ${loopmaxlim}   multcoeff = ${loopmultcoeff}]"
+customfunction_startloop
+
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
+if [ "$logMode" = "1" ] || [ "$logMode" =  "2" ] ;
+then
+start_Telemetrylog_all
+fi
+
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
+menucontrolloop_default="Floopoff"
+;; 
+
+   	 Floopoff)
+echo "OFF" > ./status/stat_loopON.txt
+aoconflogext "LOOP OFF"
+customfunction_stoploop
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
+if [ "$logMode" = "0" ] || [ "$logMode" =  "1" ] ;
+then
+stop_Telemetrylog_all
+fi
+menucontrolloop_default="Nloopon"
+;;
+
+ 
+  	 Z)
+Cfits <<EOF
+readshmim aol${LOOPNUMBER}_DMmode_cmd
+imzero aol${LOOPNUMBER}_DMmode_cmd
+readshmim aol${LOOPNUMBER}_dmC
+imzero aol${LOOPNUMBER}_dmC
+readshmim aol${LOOPNUMBER}_dmC
+imzero aol${LOOPNUMBER}_dmC
+exit
+EOF
+
+
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
+aoconflogext "zeroing DM correction"
+#echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
+#echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
+#echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
+
+;;
+
+
+
+    nbstep)
+exec 3>&1;
+loopNBstep=$(dialog --inputbox "Number of loop steps" 0 0 "$loopNBstep" 2>&1 1>&3);
+exec 3>&-;
+echo "$loopNBstep" > ./conf/conf_loopNBstep.txt
+aoconflog "set loopNBstep = ${loopNBstep}"
+menucontrolloop_default="nbstep"
+;;
+
+
+	tstep)
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolstep $loopNBstep" C-m 
+aoconflogext "aolstep $loopNBstep"
+;;
+
+
+
+	wresolON)
+# WFS residual offload to aolN_wfszpo6
+tmuxname="aol${LOOPNUMBER}wfsresoffl"
+file="./status/stat_procWFSres2refON.txt"
+echo " ON" > $file
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1 6" C-m
+
+echo "WFS" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon6"
+aoconflogext "stop zero-point offset loop 6"
+menucontrolloop_default="wresolOFF"
+;;
+
+	wresolOFF)
+# WFS residual offload to aolN_wfszpo6
+tmuxname="aol${LOOPNUMBER}wfsresoffl"
+file="./status/stat_procWFSres2refON.txt"
+echo "OFF" > $file
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+echo "OFF" > ./status/stat_zploopON6.txt
+menucontrolloop_default="wresolON"
+;;
+
+	wresolinit)
+# WFS residual offload to wfsref: init
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_wfsref0
+readshmim aol${LOOPNUMBER}_wfsref
+cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref
+exit
+EOF
+menucontrolloop_default="wresolinit"
+;;
+
+wzpoinit)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_wfszpo0
+imzero aol${LOOPNUMBER}_wfszpo0
+readshmim aol${LOOPNUMBER}_wfszpo1
+imzero aol${LOOPNUMBER}_wfszpo1
+readshmim aol${LOOPNUMBER}_wfszpo2
+imzero aol${LOOPNUMBER}_wfszpo2
+readshmim aol${LOOPNUMBER}_wfszpo3
+imzero aol${LOOPNUMBER}_wfszpo3
+readshmim aol${LOOPNUMBER}_wfszpo4
+imzero aol${LOOPNUMBER}_wfszpo4
+readshmim aol${LOOPNUMBER}_wfszpo5
+imzero aol${LOOPNUMBER}_wfszpo5
+readshmim aol${LOOPNUMBER}_wfszpo6
+imzero aol${LOOPNUMBER}_wfszpo6
+readshmim aol${LOOPNUMBER}_wfszpo7
+imzero aol${LOOPNUMBER}_wfszpo7
+exit
+EOF
+menucontrolloop_default="wzpoinit"
+;;
+
+
+
+
+
+
+
+	ctrmon) tmux a -t aol${LOOPNUMBER}-ctr ;;
+	runmon) tmux a -t aol${LOOPNUMBER}-run ;;
+
+  	 g)
+  	 value=${loopgain}
+	 SelectValue01 100 1200 50
+  	 loopgain=${value}
+  	 echo "$loopgain" > ./conf/conf_loopgain.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
+	 aoconflogext "set gain ${loopgain}"
+  	 ;; 
+   	 m)
+   	 value=${loopmaxlim}
+   	 SelectValue01 100 1200 50
+ 	 loopmaxlim=${value}
+ 	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
+	 aoconflogext "set max limit ${loopmaxlim}"
+   	 ;;  
+   	 e) 
+   	 value=${loopmultcoeff}
+   	 SelectValue01 900 1001 2
+ 	 loopmultcoeff=${value}
+ 	 echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
+	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
+	 aoconflogext "set mult coeff ${loopmultcoeff}"
+     	 ;;  
+
+	 gball) 
+	 value=${gainallb}
+	 SelectValue01 100 1200 50 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=${value}
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to ${value}"
+	 ;;
+	 
+    gball01)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.1)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 01 (alpha = 0.1)"
+	 ;;
+   gball02)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.2)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 02 (alpha = 0.2)"
+	 ;;
+   gball04)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.4)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 04 (alpha = 0.4)"
+	 ;;
+   gball08)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.8)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 08 (alpha = 0.8)"
+	 ;;
+   gball12)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.2)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 12 (alpha = 1.2)"
+	 ;;
+   gball16)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.6)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 16 (alpha = 1.6)"
+	 ;;
+   gball20)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 20 (alpha = 2.0)"
+	 ;;
+
+
+
+
+
+
+    gball2)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 2 (alpha = 2)"
+	 ;;
+
+    gball3)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.5)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to custom set 3 (alpha = 0.5)"
+	 ;;
+     
+  	 gb00)
+  	 gi="00"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${10#gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb01)
+  	 gi="01"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb02)
+  	 gi="02"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb03)
+  	 gi="03"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb04)
+  	 gi="04"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb05)
+  	 gi="05"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb06)
+  	 gi="06"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb07)
+  	 gi="07"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[10#${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb08)
+  	 gi="08"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[10#${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb09)
+  	 gi="09"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[10#${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb10)
+  	 gi="10"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb11)
+  	 gi="11"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb12)
+  	 gi="12"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb13)
+  	 gi="13"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+  	 gb14)
+  	 gi="14"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;; 
+
+
+
+    zpmult)
+value=${zpmultcoeff}
+SelectValue01 100 1001 50
+zpmultcoeff=${value}
+echo "${zpmultcoeff}" > ./conf/conf_zpmultcoeff.txt
+tmuxname="aol${LOOPNUMBER}zpmult"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n ${tmuxname}" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+tmux send-keys -t $tmuxname "wfsref=${zpmult}*wfsref0"
+tmux send-keys -t $tmuxname "exit" C-m
+aoconflogext "multiply ref by ${value}"
+;;
+
+
+	zplon0)
+echo " ON" > ./status/stat_zploopON0.txt
+tmuxname="aol${LOOPNUMBER}zploop0"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop0" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP0 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo0" C-m
+menucontrolloop_default="zploff0"
+aoconflogext "start zero-point offset loop 0"
+;; 
+
+	zploff0)
+echo "OFF" > ./status/stat_zploopON0.txt
+tmuxname="aol${LOOPNUMBER}zploop0"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon0"
+aoconflogext "stop zero-point offset loop 0"
+	;;
+
+
+	zplon1)
+echo " ON" > ./status/stat_zploopON1.txt
+tmuxname="aol${LOOPNUMBER}zploop1"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop1" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP1 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo1" C-m
+menucontrolloop_default="zploff1"
+aoconflogext "start zero-point offset loop 1"
+;; 
+
+	zploff1)
+echo "OFF" > ./status/stat_zploopON1.txt
+tmuxname="aol${LOOPNUMBER}zploop1"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon1"
+aoconflogext "stop zero-point offset loop 1"
+	;;
+
+
+	zplon2)
+echo " ON" > ./status/stat_zploopON2.txt
+tmuxname="aol${LOOPNUMBER}zploop2"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop2" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP2 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo2" C-m
+menucontrolloop_default="zploff2"
+aoconflogext "start zero-point offset loop 2"
+;; 
+
+	zploff2)
+echo "OFF" > ./status/stat_zploopON2.txt
+tmuxname="aol${LOOPNUMBER}zploop2"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon2"
+aoconflogext "stop zero-point offset loop 2"
+	;;
+
+	zplon3)
+echo " ON" > ./status/stat_zploopON3.txt
+tmuxname="aol${LOOPNUMBER}zploop3"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop3" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP3 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
+menucontrolloop_default="zploff3"
+aoconflogext "start zero-point offset loop 3"
+;; 
+
+	zploff3)
+echo "OFF" > ./status/stat_zploopON3.txt
+tmuxname="aol${LOOPNUMBER}zploop3"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon3"
+aoconflogext "stop zero-point offset loop 3"
+	;;
+
+	zplon4)
+echo " ON" > ./status/stat_zploopON4.txt
+tmuxname="aol${LOOPNUMBER}zploop4"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop4" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP4 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo4" C-m
+menucontrolloop_default="zploff4"
+aoconflogext "start zero-point offset loop 4"
+;; 
+
+	zploff4)
+echo "OFF" > ./status/stat_zploopON4.txt
+tmuxname="aol${LOOPNUMBER}zploop4"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon4"
+aoconflogext "stop zero-point offset loop 4"
+	;;
+
+
+	zplon5)
+echo " ON" > ./status/stat_zploopON5.txt
+tmuxname="aol${LOOPNUMBER}zploop5"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop5" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP5 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo5" C-m
+menucontrolloop_default="zploff5"
+aoconflogext "start zero-point offset loop 5"
+;; 
+
+	zploff5)
+echo "OFF" > ./status/stat_zploopON5.txt
+tmuxname="aol${LOOPNUMBER}zploop5"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon5"
+aoconflogext "stop zero-point offset loop 5"
+	;;
+
+
+	zplon6)
+echo " ON" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop6" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP6 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo6" C-m
+menucontrolloop_default="zploff6"
+aoconflogext "start zero-point offset loop 6"
+;; 
+
+	zploff6)
+echo "OFF" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon6"
+aoconflogext "stop zero-point offset loop 6"
+	;;
+
+	zplon7)
+echo " ON" > ./status/stat_zploopON7.txt
+tmuxname="aol${LOOPNUMBER}zploop7"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop7" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP7 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo7" C-m
+menucontrolloop_default="zploff7"
+aoconflogext "start zero-point offset loop 7"
+;; 
+
+	zploff7)
+echo "OFF" > ./status/stat_zploopON7.txt
+tmuxname="aol${LOOPNUMBER}zploop7"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon7"
+aoconflogext "stop zero-point offset loop 7"
+	;;
+
+
+
+
+    
+	zpinj)
+ampl="0.03"
+modenb="00030"
+tmuxname="aol${LOOPNUMBER}zpinject3"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
+tmux send-keys -t $tmuxname "breakcube modec" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
+tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+aoconflogext "inject fourier mode to zero-point"
+	;;
+
+
+	zpz)
+tmuxname="aol${LOOPNUMBER}zpzero3"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+aoconflogext "zero the zero-point offset"
+	;;
+	
+	
+	
+    GPUd2wMon)
+aoconflogext "(re) STARTING GPU-based Modal WFSref offset loop"
+file="./conf/conf_GPUdm2wfsrefM.txt"
+echo "1" > $file
+tmuxname="GPUdm2wfsrefM_dm${DMindex}"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
+tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp05 ${GPUzpoffsetM} aol${DMindex}_wfszpo3 0 bogus" C-m
+menutop_default="GPUd2wMoff"
+;;
+
+    GPUd2wMoff)
+aoconflogext "STOPPING GPU-based Modal WFSref offset loop"
+file="./conf/conf_GPUdm2wfsrefM.txt"
+echo "0" > $file
+tmuxname="GPUdm2wfsrefM_dm${DMindex}"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="GPUdm2wfsrefM_dm${DMindex}z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "imzero aol${DMindex}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menutop_default="GPUd2wMon"
+;;
+
+
+	
+    GPUd2wZon)
+aoconflogext "(re) STARTING GPU-based DM -> WFSref loop 1"
+file="./conf/conf_GPUdm2wfsrefZ.txt"
+echo "1" > $file
+tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
+tmux send-keys -t $tmuxname "readshmim dm${LOOPNUMBER}disp07" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM dm${LOOPNUMBER}disp07 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
+menutop_default="GPUd2wZoff"
+;;
+
+    GPUd2wZoff)
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 1"
+file="./conf/conf_GPUdm2wfsrefZ.txt"
+echo "0" > $file
+tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menutop_default="GPUd2wZon"
+;;
+
+
+	
+	
+esac
+;;
+   1) state="menutop";;   
+   2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+
+fi
+
+
+
+
+
+
+
+
+
+
+

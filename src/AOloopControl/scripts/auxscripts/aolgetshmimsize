@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+Cfits << EOF
+readshmimsize $1 _size.txt
+quit
+EOF
+
+sizestring=$( cat _size.txt )
+sizestring=$(printf "%+12s\n" "$sizestring" )
+echo "$sizestring" > conf/conf_imsize_$1.txt
+rm -f _size.txt

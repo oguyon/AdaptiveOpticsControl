@@ -1,0 +1,31 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ Compute real-time WFS residual image ------"
+  echo 
+  echo "Usage: $0 <averaging coeff>"
+  echo
+  echo "creates streams :"
+  echo "        aol<loop>_wfsres"
+  echo "        aol<loop>_wfsres_ave"
+  echo "        aol<loop>_wfsres_rms"
+  echo 
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+Cfits -n aol${loopnb}latency << EOF
+readshmim aol${loopnb}_imWFS0
+readshmim aol${loopnb}_wfsred
+readshmim aol${loopnb}_imWFS0tot
+aolmkwfsres ${loopnb} $1
+exit
+EOF

@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Olivier Guyon" />
+  <title>Making control modes (aolmkmodes)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { color: #800000; } /* DataType */
+code > span.dv { color: #0000ff; } /* DecVal */
+code > span.bn { color: #0000ff; } /* BaseN */
+code > span.fl { color: #800080; } /* Float */
+code > span.ch { color: #ff00ff; } /* Char */
+code > span.st { color: #dd0000; } /* String */
+code > span.co { color: #808080; font-style: italic; } /* Comment */
+code > span.al { color: #00ff00; font-weight: bold; } /* Alert */
+code > span.fu { color: #000080; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #ff0000; font-weight: bold; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #ff00ff; } /* SpecialChar */
+code > span.vs { color: #dd0000; } /* VerbatimString */
+code > span.ss { color: #dd0000; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { } /* Variable */
+code > span.cf { } /* ControlFlow */
+code > span.op { } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.at { } /* Attribute */
+code > span.do { color: #808080; font-style: italic; } /* Documentation */
+code > span.an { color: #808080; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #808080; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="/home/olivier/.css/pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">Making control modes (aolmkmodes)</h1>
+<h2 class="author">Olivier Guyon</h2>
+<h3 class="date">July 9, 2016</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#making-ao-control-modes"><span class="toc-section-number">1</span> Making AO control modes</a><ul>
+<li><a href="#overview"><span class="toc-section-number">1.1</span> Overview</a></li>
+<li><a href="#algorithm"><span class="toc-section-number">1.2</span> Algorithm</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="making-ao-control-modes" class="section level1">
+<h1><span class="header-section-number">1</span> Making AO control modes</h1>
+<div id="overview" class="section level2">
+<h2><span class="header-section-number">1.1</span> Overview</h2>
+<p>Script <code>aolmkmodes</code> creates control modes from system response matrix.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#! /bin/bash</span>
+<span class="co"># args: &lt;confindex&gt; &lt;maxCPA&gt;</span>
+
+<span class="ot">EXPECTED_ARGS=</span>4
+
+<span class="kw">if [</span> <span class="ot">$#</span> <span class="ot">-ne</span> <span class="ot">$EXPECTED_ARGS</span><span class="kw"> ]</span>
+<span class="kw">then</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;------ CREATE MODES FOR AO LOOP ----&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;Usage: </span><span class="ot">$0</span><span class="st"> &lt;maxCPA&gt; &lt;Block&gt; &lt;SVDlim&gt; &lt;skip DMmodes&gt;&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;maxCPA&gt;       : maximum spatial frequency in cycles per aperture&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;Block&gt;        : if -1, perform full comp. Otherwise, update block number only&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;SVDlim&gt;       : SVD limit, relative to strongest mode&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;skip DMmodes&gt; : 1 if re-using previous DM modes, 0 otherwise&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;EXAMPLE: </span><span class="ot">$0</span><span class="st"> 2.0 -1 0.03&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot; read from filesystem:&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmslaved.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_zrepM.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmmaskRM.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_wfsmask.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LOrespM.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LODMmodes.fits&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodesall.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodesWFSall.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/cmat.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodes_xx.fits.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/respM_xx.fits.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrM_xx.fits.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrMc_xx.fits.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrMcact_xx.fits.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: dmmask.fits&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">echo</span> <span class="st">&quot;NOTES :&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;  USES (OPTIONAL) : ./conf/TPind.fits&quot;</span>
+  <span class="kw">echo</span> <span class="st">&quot;                  Modes to be excluded&quot;</span>
+  <span class="kw">echo</span>
+  <span class="kw">exit</span>
+<span class="kw">fi</span>
+
+
+
+
+
+<span class="ot">loopnb=$(</span><span class="kw">cat</span> LOOPNUMBER<span class="ot">)</span>
+
+<span class="ot">pname0=$0</span>
+<span class="ot">pname=${pname0#</span><span class="st">&quot;./&quot;</span><span class="ot">}</span>-<span class="ot">$loopnb</span>
+
+<span class="ot">pid=$$</span>
+
+<span class="ot">startupfile=</span><span class="st">&quot;clistartup</span><span class="ot">$pid</span><span class="st">.txt&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;a=1&quot;</span> <span class="kw">&gt;</span> <span class="ot">$startupfile</span>
+<span class="ot">fifoname=</span><span class="st">&quot;clififo</span><span class="ot">$pid</span><span class="st">&quot;</span>
+
+
+
+<span class="ot">execnamestring=</span><span class="st">&quot;Cfits -s </span><span class="ot">$startupfile</span><span class="st"> -f </span><span class="ot">$fifoname</span><span class="st">&quot;</span>
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$4</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;loadfits </span><span class="dt">\&quot;</span><span class="st">./mkmodestmp/fmodes2ball.fits</span><span class="dt">\&quot;</span><span class="st"> fmodes2ball&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span>
+<span class="kw">fi</span>
+
+
+
+<span class="kw">mkdir</span> -p Cmodes
+<span class="kw">mkdir</span> -p tmp
+
+<span class="ot">$execnamestring</span> <span class="kw">-n</span> <span class="ot">$pname</span> &lt;&lt; EOF
+aol<span class="kw">nb</span> <span class="ot">$loopnb</span>
+
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_dmslaved.fits&quot; dmslaved
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_zrespM.fits&quot; zrespM
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_dmmaskRM.fits&quot; dmmaskRM
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_wfsmask.fits&quot; wfsmask
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_LOrespM.fits&quot; RMMresp
+loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_LODMmodes.fits&quot; RMMmodes
+loadfits &quot;./conf/TPind.fits&quot; emodes
+readshmim aol<span class="ot">${loopnb}</span>_dmC
+imstats aol<span class="ot">${loopnb}</span>_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+od=0.42*imsize0
+id=0.13*imsize0
+aolmkmodes fmodes imsize0 imsize1 <span class="ot">$1</span> 0.8 cx cy od id 0 <span class="ot">$2</span> <span class="ot">$3</span>
+exit
+EOF
+
+#rm <span class="ot">$startupfile</span>
+#rm <span class="ot">$fifoname</span></code></pre></div>
+</div>
+<div id="algorithm" class="section level2">
+<h2><span class="header-section-number">1.2</span> Algorithm</h2>
+<div class="figure">
+<img src="AOloopControl_figs-3.jpg" title="Control Modes" alt="Control Modes" />
+<p class="caption">Control Modes</p>
+</div>
+<p>Takes response matrix (zrespM)</p>
+<p>The first steps are done in DM space:</p>
+<ul>
+<li>computes Zernike / Fourier mode basis for dm mask -&gt; ./mkmodestmp/fmodes0all.fits</li>
+<li>compute WFS response to modes -&gt; ./mkmodestmp/fmodesWFS00all.fits</li>
+<li>separate DM modes into blocks</li>
+<li>REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -&gt; ./mkmodestmp/fmodes1_xx.fits ./mkmodestmp/fmodes1all.fits</li>
+<li>REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -&gt; fmodes2all.fits</li>
+<li>STEP 5: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -&gt; fmodes2ball.fits (DM space)</li>
+</ul>
+<p>Followed by WFS space computations:</p>
+<ul>
+<li>STEP 6: COMPUTE WFS RESPONSE TO MODES: fmodes2ball -&gt; fmodesWFS0all.fits</li>
+<li>STEP 7: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS: fmodesWFS0all (corresponding to fmodes2ball) -&gt; fmodesWFS1all / fmodes3all</li>
+<li>STEP 8: SVD WFS SPACE IN EACH BLOCK : fmodesWFS1all, fmodes3 -&gt; fmodes4all</li>
+<li>STEP 9: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -&gt; fmodes5all.fits (DM space)</li>
+<li>STEP 10: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -&gt; fmodes5ball.fits (DM space)</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

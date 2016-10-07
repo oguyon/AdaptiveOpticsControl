@@ -1,0 +1,169 @@
+
+[ File ./doc/help.txt ]
+-----------------------------------------------------------------------------------
+COMMAND LINE OPTIONS
+
+  -h, --help 
+	print this message and exit
+  -i, --info
+	Print version, settings, info and exit
+  --verbose
+	be verbose
+  -d, --debug=DEBUGLEVEL
+	Set debug level at startup
+  -o, --overwrite         
+	Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
+  -e, --idle
+	Only run process when X is idle (WARNING: PREVENTS INTERACTIVE USER INPUT)
+	Requires script runidle
+  --listimfile	  
+	Keeps a list of images in file imlist.txt
+  -m, --mmon=TTYDEVICE
+	open memory monitor on tty device
+	example:
+	<executable> -m /dev/tty2
+	<executable> --mmon=/dev/tty2
+  -n, --pname=PROCESSNAME
+	specify name to be given to process
+	example:
+	<executable> -n exec3
+	note: by default, fifo name is <processname>.fifo
+  -p, --priority=<PR>
+	set process priority to PR (0-99)
+  -f, --fifo==FIFONAME
+	specify fifo name
+	example
+	<executable> -f /tmp/fifo24
+	<executable> --fifo=/tmp/fifo24
+  -s, --startup=STARTUPFILE
+	execute specified script on startup
+	requires the -f option, as the script is loaded into fifo
+
+-----------------------------------------------------------------------------------
+SYNTAX RULES, PARSER
+
+Spaces are used to separate arguments. Number of spaces irrelevant.
+Comments are written after the special character #
+If a command is not found, the input string will be interpreted as an arithmetic operation (See ARITHMETIC OPERATIONS below)
+ <command> <arg1> <arg2>   # comment
+
+-----------------------------------------------------------------------------------
+TAB COMPLETION
+
+Tab completion is provided and behaves as follows:
+  first argument:        try to match command, then image, then filename
+  additional arguments:  try to match image, then filename
+
+-----------------------------------------------------------------------------------
+INPUT
+
+GNU readline used to read input. See GNU readline documentation on http://tiswww.case.edu/php/chet/readline/rltop.html. For a quick help on readline input, type:
+> helprl 
+
+The command line interpreter (CLI) will take input from file cmdfile.txt if it exists. If file cmdfile.txt exists commands will be read one by one from top to bottom, and will be removed from the file as they are read, until the file is empty
+
+-----------------------------------------------------------------------------------
+HELP COMMANDS
+
+> ?
+> help			     
+	# print this help file
+> helprl		     
+	# print readline quick help
+> lm?                        
+	# list all modules loaded
+> m? <module>               
+	# list all commands for a module
+> m?                    
+	# perform m? on all modules loaded
+> cmd? <command>              
+	# command description for <command>
+> cmd?                    
+	# command description for all commands
+> h? str                    
+	# search for string <str> in all commands and their descriptions
+
+-----------------------------------------------------------------------------------
+IMPORTANT COMMANDS
+
+> ci
+	# compilation time and memory usage
+> listim                    
+	# list all images in memory
+> listimf <filename>        
+	# list all images in memory and write output to file <filename>
+> !<syscommand>             
+	# execute system command
+> showhist                  
+	# prints history of all commands
+> quit                      
+	# exit Cfits (exit also works)
+> creaim <im> <xs> <ys>     
+	# creates a 2D image named <im>, size = <xs> x <ys> pixels
+
+-----------------------------------------------------------------------------------
+FITS FILES I/O (see also modules COREMOD_memory and COREMOD_iofits
+
+FITSIO is used for FITS files I/O, see FITSIO documentation for more detailed instructions
+
+LOADING FILES
+
+> loadfits <fname> <imname> 
+	# load FITS file <fname> into image <imname>
+> loadfits im1.fits imf1    
+	# load file im1.fits in memory with name imf1
+> loadfits im1.fits	     
+	# load file im1.fits in memory with name im1 (default name is composed of all chars before first ".")
+> loadfits im1.fits.gz im1  
+	# load compressed file
+
+SAVING FILES
+
+> savefits  <imname> <fname> 
+	# save image <imname> into FITS file <fname> 
+> savefits im1 imf1.fits      
+	# write image im1 to disk file imf1.fits
+> savefits im1
+	# write image im1 to disk file im1.fits (default file name = image name + ".fits")
+> savefits im1 "!im1.fits"   
+	# overwrite file im1.fits if it exists
+> savefits im1 "../dir2/im1.fits"
+	# specify full path
+> savefits im1 im1.fits.gz   
+	# save compressed image
+
+-----------------------------------------------------------------------------------
+INTEGRATION WITH STANDARD LINUX TOOLS AND COMMANDS
+
+FIFO INPUT TO EXECUTABLE:
+
+You can control the executable through a named pipe (fifo), which is created by default when the executable is started, and removed when it is cleanly stopped. Note that starting the program will erase the content of the fifo upon startup even if it was previously created.
+
+By default, the fifo is created in the local directory, with the name "clififo", to pipe commands into the command line interface. You can opt out of the fifo feature by adding the option --nofifo to the command line executable, or rename the fifo with the -f option :
+<executable> -f "/tmp/fifo145.txt"
+This will create a fifo named /tmp/fifo145.txt. 
+
+Other programs can write to the fifo to issue commands to the executable, such as:
+cat myscript.txt > clififo
+More complex commands can be issued within the executable using the fifo. 
+For example, to load all im*.fits files in memory, you can type within the executable:
+
+> !ls im*.fits | xargs -I {} echo loadfits {} >> clififo
+
+
+USING "imlist.txt" AND fifo
+
+If you start the executable with the "-l" option,  the file "imlist.txt" contains the list of images currently in memory in a ASCII table. You can use standard unix tools to process this list and issue commands. For example, if you want to save all images with x size > 200 onto disk as single precision FITS files :
+
+> !awk '{if ($4>200) print $2}' imlist.txt| xargs -I {} echo saveflfits {} {}_tmp.fits >> clififo
+
+Note that if you launch several instances of the executable in the same directory, they will share the same fifo - this is generally a bad idea, as there is no easy way to control wich of the programs will read and execute the fifo commands.
+
+-----------------------------------------------------------------------------------
+ARITHMETIC OPERATIONS
+
+> im1=sqrt(im+2.0)          
+	# will perform an arithmetic operation on image im and store the result in image im1
+
+-----------------------------------------------------------------------------------
+

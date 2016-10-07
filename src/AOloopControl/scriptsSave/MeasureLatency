@@ -1,0 +1,35 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo "------ Measure System Response Latency ------"
+  echo 
+  echo "Usage: $0 <NBiter>"
+  echo 
+  echo " INPUT <NBiter>   : Number of iterations" 
+  echo 
+  echo " OUTPUT FILES:"
+  echo "   latency.txt      : measured latency values" 
+  echo " maxlatencyseq.fits : imwfs sequence with longest latency"
+  echo 
+  echo "Example: $0 5000"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+
+Cfits -n aol${loopnb}latency << EOF
+readshmim aol${loopnb}_wfsim
+readshmim dm0disp1 
+aoltestlat dm0disp1 aol${loopnb}_wfsim $1
+savefits _testwfsc "!test_latencyC.fits"
+exit
+EOF

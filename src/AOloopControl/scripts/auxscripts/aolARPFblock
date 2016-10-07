@@ -1,0 +1,51 @@
+#!/bin/bash
+
+EXPECTED_ARGS=4
+
+# example :
+# ./auxscripts/aolARPF ./rec/modeval_ol.fits 0 2.7 4 
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ AO find optimal AR linear predictive filter ------"
+  echo 
+  echo "uses pseudo-open loop telemetry"
+  echo "Usage: $0 <telemetry log> <block> <latency> <PForder>"
+  echo 
+  echo " INPUT 1 <telemetry log>   : pseudo-open loop WFS telemetry" 
+  echo " INPUT 2 <block>           : block number"
+  echo " INPUT 3 <latency>         : latency [frame]"
+  echo " INPUT 4 <PForder>         : filter order"
+  echo 
+  echo "Example: $0 wfsmodes_ol.fits 3 2.36 6"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+GPUindex=1
+
+Cfits -n aol${loopnb}scangain << EOF
+readshmim aol${loopnb}_mode_blknb
+loadfits "$1" olwfsmeas
+mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
+savefits olwfsmeasblk "!olwfsmeasblk.fits"
+mkARpfilt olwfsmeasblk $4 $3 0.001 0.0 outPF 
+savefits outPF "!outPF.fits"
+
+applyARpfilt outPF olwfsmeasblk $3 outrec
+savefits outrec "!outPFrec.fits"
+savefits outf "!outPFf.fits"
+res=outrec-outf
+imstats res
+imstats olwfsmeasblk
+exit
+EOF
+
+cp gainscan.txt gainscan.$2.txt
+

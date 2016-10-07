@@ -1,0 +1,7 @@
+#!/bin/bash
+
+Cfits << EOF
+readshmim $1
+imzero $1
+exit
+EOF

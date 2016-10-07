@@ -1,0 +1,44 @@
+#!/bin/bash
+
+EXPECTED_ARGS=4
+
+# example :
+# 
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ AO scan gain for optimal value ------"
+  echo 
+  echo "uses pseudo-open loop telemetry"
+  echo "Usage: $0 <telemetry log> <block> <multf> <latency>"
+  echo 
+  echo " INPUT <telemetry log>   : pseudo-open loop WFS telemetry" 
+  echo " INPUT <block>           : block number"
+  echo " INPUT <multf>           : multiplicative factor (leak)" 
+  echo " INPUT <latency>         : latency [frame]"
+  echo 
+  echo "Example: $0 wfsmodes_ol.fits 3 0.98 2.36"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+GPUindex=$1
+
+Cfits -n aol${loopnb}scangain << EOF
+readshmim aol${loopnb}_mode_blknb
+loadfits "$1" olwfsmeas
+mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
+savefits olwfsmeasblk "!olwfsmeasblk.fits"
+mscangain olwfsmeasblk $3 $4
+listim
+exit
+EOF
+
+cp gainscan.txt gainscan.$2.txt
+

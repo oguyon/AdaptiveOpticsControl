@@ -1,0 +1,87 @@
+#!/bin/bash
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+# =====================================================
+# ======== PREDICTIVE CONTROL  ========================
+# =====================================================
+
+if [ $state = "menupredictivecontrol" ]; then
+stateok=1
+
+menuname="PREDICTIVE CONTROL"
+
+
+stringcenter "HELP"
+menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
+menuitems+=( " " " ")
+
+stringcenter "PREDICTIVE CONTROL"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "ARPF" "AO find optimal AR linear predictive filter" )
+menuitems+=( "ARPFb" "AO find optimal AR linear predictive filter - single block" )
+
+
+
+
+
+
+
+
+dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+
+
+
+retval=$?
+choiceval=$(cat $tempfile)
+menurecord_default="$choiceval"
+state="menupredictivecontrol"
+case $retval in
+   0) # Monitor
+	case $choiceval in
+
+  
+    ARPF)
+./auxscripts/aolARPF
+sleep 5
+menurecord_default="ARPF"
+;;
+
+    ARPFb)
+./auxscripts/aolARPFblock
+sleep 5
+menurecord_default="ARPFb"
+;;
+
+
+
+esac
+;; 
+   1) state="menutop";;   
+  2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+fi
+
+
+
+
+
+

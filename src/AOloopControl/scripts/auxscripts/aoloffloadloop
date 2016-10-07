@@ -1,0 +1,40 @@
+#!/bin/bash
+
+EXPECTED_ARGS=5
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ dm offload loop ------"
+  echo 
+  echo "additive offload from one stream to the other"
+  echo "Usage: $0 <streamin> <streamout> <interval[s]> <offcoeff>"
+  echo 
+  echo " INPUT <streamin>   : input stream" 
+  echo " INPUT <streamout>  : output stream" 
+  echo " INPUT <interval>   : time interval between offloads" 
+  echo " INPUT <offcoeff>   : offload coefficient" 
+  echo " INPUT <multcoeff>  : multiplicative coeff" 
+  echo 
+  echo "At each time step:"
+  echo " mult*(out+coeff*in) -> out"
+  echo 
+  echo "Example: $0 dmC_ave dmZP0 1.0 -0.1 0.99"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+pname="aol${loopnb}-$0"
+
+Cfits -n $pname << EOF
+readshmim $1
+readshmim $2
+aoldm2dmoffload $1 $2 $3 $4 $5
+exit
+EOF

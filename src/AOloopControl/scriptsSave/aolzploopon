@@ -1,0 +1,30 @@
+#!/bin/bash
+
+EXPECTED_ARGS=0
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo "------ WFS zero point offsets loop: create and combine multiple channels ------"
+  echo 
+  echo "Usage: $0"
+  echo 
+  echo "Example: $0"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+pname="aol${loopnb}zpwfsl"
+echo "pname = $pname"
+
+Cfits -n $pname << EOF
+readshmim aol${loopnb}_wfsref
+readshmim aol${loopnb}_wfsref0
+aolzpwfscloop aol${loopnb}_wfszp 4 aol${loopnb}_wfsref0 aol${loopnb}_wfsref
+exit
+EOF
+

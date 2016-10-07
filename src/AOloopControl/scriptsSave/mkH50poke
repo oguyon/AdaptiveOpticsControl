@@ -1,0 +1,5 @@
+Cfits << EOF
+aolmkH50 outim
+savefits outim "!H50poke.fits"
+exit
+EOF

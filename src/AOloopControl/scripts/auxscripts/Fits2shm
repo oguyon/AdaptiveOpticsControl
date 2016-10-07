@@ -1,0 +1,7 @@
+#!/bin/bash
+
+Cfits << EOF
+loadfits "$1" im
+imcp2shm im $2
+quit
+EOF

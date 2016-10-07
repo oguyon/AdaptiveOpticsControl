@@ -1,0 +1,625 @@
+#!/bin/bash
+
+
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+
+# =====================================================
+# ===================== TOP MENU ======================
+# =====================================================
+
+if [ $state = "menutop" ]; then
+stateok=1
+dateUTC=$( date -u )
+#aoconflog "$0 state = ${state}"
+confselected=$(cat "./conf/conf_CONFNUMBER.txt")
+menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
+
+
+file="./conf/conf_dmcombavemode.txt"
+dmcombavemode=$( cat $file )
+if [[ -f "$file" && ( "$dmcombavemode" = "0" || "$dmcombavemode" = "1" || "$dmcombavemode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmcombavemode=0
+fi
+
+DMindex=$(cat "./conf/conf_DMindex.txt")
+
+
+
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+
+# =====================================================================================================================
+# =================================== DM CHANNELS AND OUTPUT (dmcomb process) =========================================
+# =====================================================================================================================
+
+stringcenter "DM CHANNELS AND OUTPUT (dmcomb process)"
+menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+
+menuitems+=( "S" "[${DMindex}] Set DM index" )
+
+dmxsize=$(cat "./conf/conf_dm${DMindex}xsize.txt")
+menuitems+=( "dmxs" "[${dmxsize}] Set DM x size (if modal control, = number of modes)" )
+dmysize=$(cat "./conf/conf_dm${DMindex}ysize.txt")
+menuitems+=( "dmys" "[${dmysize}] Set DM y size (1 if modal control)" )
+
+menuitems+=( " " " " )
+menuitems+=( "nolink" "Auto-configure main DM (no link)" )
+menuitems+=( "dmolink" "Auto-configure link DM output to loop number" )
+
+
+file="./conf/conf_dm2dm_mode.txt"
+dm2dm_mode=$( cat $file )
+if [[ -f "$file" && ( "$dm2dm_mode" = "1" || "$dm2dm_mode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dm2dm_mode=0
+fi
+
+file="./conf/conf_dm2dmModes_name.txt"
+dm2dmModesMast=$( cat $file )
+
+
+
+
+menuitems+=( " " " ")
+if [ "${dm2dm_mode}" = "0" ];
+then
+menuitems+=( "dm2dmMode1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+fi
+if [ "${dm2dm_mode}" = "1" ];
+then
+menuitems+=( "dm2dmMode0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
+
+
+Readdm2dmMname
+dm2dmMfile="/tmp/${dm2dmM}.im.shm"
+if [ -f $dm2dmMfile ]; then
+getshmimsize ${dm2dmM}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
+fi
+
+
+Readdm2dmOname
+dm2dmOfile="/tmp/${dm2dmO}.im.shm"
+if [ -f $dm2dmOfile ]; then
+getshmimsize ${dm2dmO}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dm2dmO" "[${OKstr}]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
+fi
+
+
+fi
+
+
+
+file="./conf/conf_dmwfsref_mode.txt"
+dmwfsrefmode=$( cat $file )
+if [[ -f "$file" && ( "$dmwfsrefmode" = "1" || "$dmwfsrefmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmwfsrefmode=0
+fi
+
+menuitems+=( " " " ")
+if [ "${dmwfsrefmode}" = "0" ];
+then
+menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
+fi
+if [ "${dmwfsrefmode}" = "1" ];
+then
+menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
+fi
+
+ReaddmwrefRMname
+dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
+if [ -f $dmwrefRMfile ]; then
+getshmimsize ${dmwrefRM}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
+fi
+
+
+ReaddmwrefOname
+dmwrefOfile="/tmp/${dmwrefO}.im.shm"
+if [ -f $dmwrefOfile ]; then
+getshmimsize ${dmwrefO}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+fi
+
+
+
+
+
+file="./conf/conf_dmvolt_mode.txt"
+dmvoltmode=$( cat $file )
+if [[ -f "$file" && ( "$dmvoltmode" = "1" || "$dmvoltmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmvoltmode=0
+fi
+
+menuitems+=( " " " ")
+if [ "${dmvoltmode}" = "0" ];
+then
+menuitems+=( "dmvolt1" " [  OFF  ] Activate DM volt output [-> dmvolt]" )
+fi
+if [ "${dmvoltmode}" = "1" ];
+then
+menuitems+=( "dmvolt0" " [   ON  ] De-activate DM volt output [-> dmvolt]" )
+fi
+menuitems+=( " " " ")
+
+menuitems+=( "dmcombam" "[${dmcombavemode}] DM combination averaging mode" )
+
+menuitems+=( " " " ")
+file="$HOME/status/stat_initdm${DMindex}.txt"
+initDMstat=$( cat $file )
+if [[ -f "$file" && ( "$initDMstat" = "0" || "$initDMstat" = "1" ) ]]; then
+echo "OK"
+else
+mkdir -p ./status
+echo "0" > $file
+fi
+
+file="$HOME/status/stat_initdm${DMindex}.txt"
+initDMstat=$( cat $file )
+if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+initDMstat=0
+fi
+
+if [ "${initDMstat}" = "0" ]; then
+menuitems+=( "initDM" "(re)-START  DM comb process (-> dm${DMindex}disp00..07  dm${DMindex}disp)" )
+else
+menuitems+=( "stopDM" "STOP  DM comb process" )
+fi
+
+
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+
+
+
+
+# =====================================================================================================================
+# ===================================  AO CONFIGURE AND CONTROL =======================================================
+# =====================================================================================================================
+
+
+stringcenter "AO CONFIGURE AND CONTROL"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "M" "load all (M)emory" )
+menuitems+=( "C" "(C)onfigure/link AO loop" )
+
+menuitems+=( "CM" "Control Matrix" )
+
+menuitems+=( " " " ")
+
+menuitems+=( "L" "Control AO (L)oop" )
+
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+
+# =====================================================================================================================
+# ================================  PREDICTIVE CONTROL & POST PROCESSING ==============================================
+# =====================================================================================================================
+
+stringcenter "PREDICTIVE CONTROL"
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "P" "Predictive Control")
+menuitems+=( "Fi" "Filtering")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+
+
+# =====================================================================================================================
+# ===========================================  TEST AND MONITOR =======================================================
+# =====================================================================================================================
+
+
+stringcenter "TEST AND MONITOR"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "T" "Test mode: simulated AO system" )
+menuitems+=( "V" "View / monitor" )
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+# =====================================================================================================================
+# ===========================================  DATA LOGGING / ANALYSIS ================================================
+# =====================================================================================================================
+
+
+stringcenter "DATA LOGGING / ANALYSIS"
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "R" "Record / analyze")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+# =====================================================================================================================
+# ===========================================  CUSTOM EXTERNAL SCRIPTS ================================================
+# =====================================================================================================================
+
+
+stringcenter "CUSTOM EXTERNAL SCRIPTS"
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "A" "Align")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
+--ok-label "Select" \
+--cancel-label "Exit" \
+--default-item "${menutop_default}" \
+ --menu "$menuname" \
+ $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+
+
+retval=$?
+choiceval=$(cat $tempfile)
+menutop_default="$choiceval"
+case $retval in
+   0) # button
+	case $choiceval in
+
+     S) 
+vali=$( echo $DMindex )
+menuitems1=( "00" "DM index = 00" )
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15;
+        do
+menuitems1+=( "$i" "DM index = $i" )
+done 
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+DMindex=$("${cmd[@]}" 2>&1 >/dev/tty)
+echo "$DMindex" > ./conf/conf_DMindex.txt
+aoconflog "set DMindex = $DMindex"
+getshmimsize dm${DMindex}disp
+sizestring=$( cat conf/conf_imsize_dm${DMindex}disp.txt )
+read -r dmxsize dmysize <<< "$sizestring"
+echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
+echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
+;;
+
+	dmxs)
+exec 3>&1;dmxsize=$(dialog --inputbox "DM xsize" 0 0 "$dmxsize" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
+aoconflog "set dm${DMindex}xsize = $dmxsize"
+;;
+
+	dmys)
+exec 3>&1;dmysize=$(dialog --inputbox "DM ysize" 0 0 "$dmysize" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
+aoconflog "set dm${DMindex}ysize = $dmysize"
+;;
+
+    nolink)
+aoconflog "set DM nolink"
+echo "0" > "./conf/conf_dm2dm_mode.txt"
+echo "0" > "./conf/conf_dmwfsref_mode.txt"
+echo "1" > "./conf/conf_dmvolt_mode.txt"
+echo "0" > "./conf/conf_dmcombavemode.txt"
+echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
+ReaddmCname
+echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
+ReaddmOname
+
+echo "dm${DMindex}disp04" > ./conf/conf_dmZP0_name.txt
+ReaddmZP0name
+echo "dm${DMindex}disp05" > ./conf/conf_dmZP1_name.txt
+ReaddmZP1name
+echo "dm${DMindex}disp06" > ./conf/conf_dmZP2_name.txt
+ReaddmZP2name
+echo "dm${DMindex}disp07" > ./conf/conf_dmZP3_name.txt
+ReaddmZP3name
+echo "dm${DMindex}disp08" > ./conf/conf_dmZP4_name.txt
+ReaddmZP4name
+echo "dm${DMindex}disp09" > ./conf/conf_dmZP5_name.txt
+ReaddmZP5name
+echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
+ReaddmZP6name
+echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
+ReaddmZP7name
+
+echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
+Readdmdispname
+echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
+ReaddmRMname
+;;
+
+    dmolink)
+aoconflog "set DM link"
+echo "1" > "./conf/conf_dm2dm_mode.txt"
+echo "1" > "./conf/conf_dmwfsref_mode.txt"
+echo "0" > "./conf/conf_dmvolt_mode.txt"
+echo "2" > "./conf/conf_dmcombavemode.txt"
+menuitems1=( "0" "loop 0" )
+for i in 1 2 3 4 5 6 7 8 9;
+        do
+menuitems1+=( "$i" "loop $i (directory ../AOloop$i/)" )
+done 
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
+
+
+
+menuitems1=( " " " " )
+for i in 0 1 2 3 4 5 6 7;
+        do
+dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
+dmolinkchan="$i"
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
+menuitems1+=( "$i" "offset channel $i  ( dm${dmnb}disp${dmolinkchan1} )" )
+done 
+
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
+
+# set external loop DM modes controlled by this loop 
+$execname << EOF
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$dmxsize]" im
+savefits im "!./conf/conf_dm2dmM.fits" 
+cpsh im aol${dmolinknb}_modes0_$dmxsize
+quit
+EOF
+dm2dmM="aol${dmolinknb}_modes0_$dmxsize"
+echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
+Readdm2dmMname
+
+# symbolic link to dm channel in external loop
+dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
+dm2dmO="dm${dmnb}disp${dmolinkchan1}"
+echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
+Readdm2dmOname
+
+
+# external loop WFS response of modes controlled by this loop
+$execname << EOF
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$dmxsize]" im
+savefits im "!./conf/conf_dmwrefRM.fits" 
+cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
+quit
+EOF
+dmwrefRM="aol${dmolinknb}_modesWFS0_$dmxsize"
+echo "$dmwrefRM" > ./conf/conf_dmwrefRM_name.txt
+ReaddmwrefRMname
+
+dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
+echo "$dmwrefO" > ./conf/conf_dmwrefO_name.txt
+ReaddmwrefOname
+
+
+echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
+ReaddmCname
+echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
+ReaddmOname
+
+echo "dm${DMindex}disp04" > ./conf/conf_dmZP0_name.txt
+ReaddmZP0name
+echo "dm${DMindex}disp05" > ./conf/conf_dmZP1_name.txt
+ReaddmZP1name
+echo "dm${DMindex}disp06" > ./conf/conf_dmZP2_name.txt
+ReaddmZP2name
+echo "dm${DMindex}disp07" > ./conf/conf_dmZP3_name.txt
+ReaddmZP3name
+echo "dm${DMindex}disp08" > ./conf/conf_dmZP4_name.txt
+ReaddmZP4name
+echo "dm${DMindex}disp09" > ./conf/conf_dmZP5_name.txt
+ReaddmZP5name
+echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
+ReaddmZP6name
+echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
+ReaddmZP7name
+
+echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
+Readdmdispname
+echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
+ReaddmRMname
+;;
+
+
+   dm2dmMode0)
+aoconflog "set dm2dm_mode = 0"
+echo "0" > "./conf/conf_dm2dm_mode.txt"
+menutop_default="dm2dmMode1"
+;;
+    dm2dmMode1)
+aoconflog "set dm2dm_mode = 1"
+echo "1" > "./conf/conf_dm2dm_mode.txt"
+menutop_default="dm2dmMode0"
+;;
+    dm2dmM)
+exec 3>&1;
+dm2dmM=$(dialog --inputbox "dm2dmM" 0 0 "$dm2dmM" 2>&1 1>&3);
+echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
+Readdm2dmMname
+aoconflog "set dm2dm_name = $dm2dmM"
+;;
+
+    dm2dmO)
+exec 3>&1;
+dm2dmO=$(dialog --inputbox "dm2dmO" 0 0 "$dm2dmO" 2>&1 1>&3);
+exec 3>&-;
+echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
+Readdm2dmOname
+aoconflog "set dm2dmO_name = $dm2dmO"
+;;
+
+    dmwref0)
+aoconflog "set dmwfsref = 0"
+echo "0" > "./conf/conf_dmwfsref_mode.txt"
+menutop_default="dmwref1"
+;;
+    dmwref1)
+aoconflog "set dmwfsref = 1"
+echo "1" > "./conf/conf_dmwfsref_mode.txt"
+menutop_default="dmwref0"
+;;
+
+    dmvolt0)
+aoconflog "set dmvolt_mode = 0"
+echo "0" > "./conf/conf_dmvolt_mode.txt"
+menutop_default="dmvolt1"
+;;
+    dmvolt1)
+aoconflog "set dmvolt_mode = 1"
+echo "1" > "./conf/conf_dmvolt_mode.txt"
+menutop_default="dmvolt0"
+;;
+
+    dmcombam)
+vali=$( echo $dmcombavemode )
+menuitems1=( "0" "do not appy DC offset command to average, but offset combined average to mid-range, and clip displacement at >0.0" )
+menuitems1+=( "1" "apply DC offset to remove average" )
+menuitems1+=( "2" "do not apply DC offset, do not offset sum, do not clip" )
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+dmcombavemode=$("${cmd[@]}" 2>&1 >/dev/tty)
+echo "$dmcombavemode" > ./conf/conf_dmcombavemode.txt
+aoconflog "set dmcombavemode = ${dmcombavemode}"
+;;
+
+	initDM)
+mkdir -p $HOME/status
+file="$HOME/status/stat_initdm${DMindex}.txt"
+echo "1" > $file
+initDMfunc
+;;
+
+    stopDM)
+mkdir -p $HOME/status
+file="$HOME/status/stat_initdm${DMindex}.txt"
+echo "0" > $file
+stopDMfunc
+;;
+
+
+	M)
+AOloadMem 1
+;;
+
+
+   	 C) state="menuconfigureloop";;
+   	 
+  	 CM) state="menucontrolmatrix";;
+   	    
+   	 L) state="menucontrolloop";;
+   	 CM) state="menucontrolmatrix";;
+   	 
+   	 
+   	 P) state="menupredictivecontrol";;
+   	 Fi) state="menudmCfiltering";;
+   	 
+   	 
+   	 T) state="menutestmode"   ;;
+   	 V) state="menuview" ;;
+
+	R) state="menurecord" ;;
+
+   	 A) state="menualign";;
+
+	esac;;
+   1) state="menuexit";;   
+   255) state="menuexit";;
+esac
+fi
+
+
+
+
+
+
+
+
+if [ $state = "menualign" ]; then
+stateok=1
+. ./aocustomscripts/AOloopAlign_${LOOPNAME}.bash
+state="menutop"
+fi
+
+
+
+
+
+
+

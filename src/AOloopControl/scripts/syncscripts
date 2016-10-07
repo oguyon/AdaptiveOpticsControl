@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# number of arguments to script
+NBARGS=0
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+filelist="aolconf"
+dirlist="aolconfscripts auxscripts aohardsim aocustomscripts aosetup"
+
+printHELP ()
+{
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : SYNC AOloopControl scripts $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-hc]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-c$(tput sgr0)          clear all files in directory (USE WITH CARE)"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+	
+	
+
+# ================= OPTIONS =============================
+
+#Parse command line flags
+#If an option should be followed by an argument, it should be followed by a ":".
+#Notice there is no ":" after "h". The leading ":" suppresses error messages from
+#getopts. This is required to get unrecognized option code to work.
+
+while getopts :hc FLAG; do
+  case $FLAG in
+    h)  #show help
+      printHELP
+      exit
+      ;;
+    c) # clear
+    echo "Clearing all directory and files"
+    ls | grep -v syncscripts | xargs rm -rf
+    ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+	
+shift $((OPTIND-1))
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+	
+	
+
+
+
+
+
+
+echo ""
+echo "SYNCING AOloopControl scripts..."
+echo ""
+
+
+for file in ${filelist[*]}
+do
+	srcfile="$HOME/src/Cfits/src/AOloopControl/scripts/$file"
+	echo "syncing file $srcfile -> $file"
+	ln -fs $srcfile $file	
+done
+
+for dir in ${dirlist[*]}
+do
+	mkdir -p $dir
+	srcdir="$HOME/src/Cfits/src/AOloopControl/scripts/$dir"
+	for entry in "$srcdir"/*
+	do
+	filename="${entry##*/}"	
+	echo "syncing directory $srcdir file $filename"
+	ln -fs $entry ./$dir/$filename
+	done
+done
+
+
+
+echo ""
+

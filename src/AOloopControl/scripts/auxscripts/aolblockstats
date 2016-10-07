@@ -1,0 +1,27 @@
+#! /bin/bash
+
+
+EXPECTED_ARGS=0
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo "------- EXTRACT MODE VALUES FROM WFS IMAGES, SORT PER BLOCK ---------"
+  echo 
+  echo "Usage:  $0"
+  echo
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname="aol${loopnb}-blockstats"
+
+
+Cfits -n $pname << EOF
+aolblockstats ${loopnb} aol${loopnb}_blockstats
+listim
+exit
+EOF
+
+shmim2fits aol${loopnb}_blockstats aol${loopnb}_blockstats.fits
+
+

@@ -1,0 +1,60 @@
+--------------------------------------------------------------------------------
+                        CFITS LIBRARIES AND INCLUDE FILES                              
+--------------------------------------------------------------------------------
+
+    Cfits requires several special libraries and their include files.
+    If configure printed this message then at least one library or
+    include-file could not be found.
+
+o REQUIRED LIBRARIES AND INCLUDE FILES:
+    gsl       : The Gnu Scientific Library
+    fftw3     : Fast Fourier Transform
+    cfitsio   : FITS file I/O
+
+
+o MISSING LIBRARIES and/or INCLUDE FILES
+    If any of the required libraries or include-files do not exist you must provide them.
+    If you provide a required library or include-file in a non-standard place
+    then you must tell configure where to find them.
+    see below: LIBRARIES & INCLUDE FILES EXIST BUT BUILD CAN'T FIND THEM
+
+
+o LIBRARIES & INCLUDE FILES EXIST BUT BUILD CAN'T FIND THEM
+
+    If any libraries and/or include-files exist but cannot be found by the
+    build procedures then they are installed in non-standard places.
+    (E.G. not in /usr/lib, /lib, etc.. )
+    You must tell the build procedure how to find them.
+    For help in doing this, please see below...
+
+
+o INCLUDE FILE SEARCH PATH   :  CPPFLAGS=<directory-path> 
+
+  o The complier automatically searches standard locations for include-files
+    If you have required include-files in a non-standard directory then
+    on the configure commandline, specify the path using CPPFLAGS=<directory-path> 
+    E.g. to specify the path to the required include-file /burble/foo/zork.h inclue
+    CPPFLAGS=-I/burble/foo on the configure commandline.
+
+o LIBRARY FILE SEARCH PATH   :  LDFLAGS=<directory-path> 
+
+  o The linker automatically searches standard locations for libraries.
+    If you have required libraries in a non-standard directory then
+    on the configure commandline specify the path using LDFLAGS=<directory-path> 
+    E.g. to specify the path to the required library-file /burble/foo/libzork.so include
+    LDFLAGS=-L/burble/foo on the configure commandline.
+  
+
+o ADDITIONAL LIBRARIES  :  LIBS=-l<libraryname> 
+
+  o To specify additional libraries for linking use LIBS=-l<libname>.
+    E.g. to link the library libspliff.so include LIBS=-lspliff in the configure commandline.
+
+    If libspliff.so is in a nonstandard library directory then specify its path with
+    LDFLAGS. E.G. To link the library /futz/glorp/libspliff.so, say:
+    configure LDFLAGS=/futz/glorp LIBS=-lspliff
+
+
+Examples:
+./configure CPPFLAGS=-I/usr/local/include
+

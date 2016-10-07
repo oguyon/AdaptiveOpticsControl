@@ -1,0 +1,44 @@
+#! /bin/bash
+
+loopnb=$(cat LOOPNUMBER)
+confnb=$(cat ./conf/conf_CONFNUMBER.txt)
+
+pname0=$0
+pname="${pname0#"./"}-$loopnb"
+
+echo "pname = $pname"
+
+echo "aolnb ${loopnb}" > aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_wfsref" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_respM" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_contrM" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmodes" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_wfsdark" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_imWFS0" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_imWFS1" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_imWFS2" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_cmd" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_cmd1" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_cmd" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_cmd1" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_AVE" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_RMS" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_GAIN" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_LIMIT" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_DMmode_MULTF" >> aol${loopnb}startup.txt
+
+
+#echo "loadfits \"./conf/respm.fits\" respm" >> aol${loopnb}startup.txt
+#echo "loadfits \"./conf/cmat.fits\" cmat" >> aol${loopnb}startup.txt
+#echo "loadfits \"./conf/refwfs.fits\" refwfs" >> aol${loopnb}startup.txt
+#echo "loadfits \"./conf/dark.fits\" wfsdark" >> aol${loopnb}startup.txt
+
+#echo "cp wfsdark aol${loopnb}_wfsdark" >> aol${loopnb}startup.txt
+#echo "cp respm aol${loopnb}_RespM" >> aol${loopnb}startup.txt
+#echo "cp refwfs aol${loopnb}_refWFSim" >> aol${loopnb}startup.txt
+#echo "cp cmat aol${loopnb}_ContrM" >> aol${loopnb}startup.txt
+
+rm ${pname}-fifo
+Cfits -n $pname --startup="aol${loopnb}startup.txt" -f ${pname}-fifo
+ 
+

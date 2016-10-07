@@ -1,0 +1,64 @@
+#! /bin/bash
+# args: <confindex> <maxCPA>
+
+EXPECTED_ARGS=3
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE MODES FOR AO LOOP ----"
+  echo
+  echo "Usage: $0 <maxCPA> <Block> <SVDlim>"
+  echo
+  echo "  INPUT <maxCPA>      : maximum spatial frequency in cycles per aperture"
+  echo "  INPUT <Block>       : if -1, perform full comp. Otherwise, update block number only"
+  echo "  INPUT <SVDlim>      : SVD limit, relative to strongest mode"
+  echo
+  echo "EXAMPLE: $0 2.0 -1 0.03"
+  echo
+  echo "  OUTPUT: ./conf<confindex>/fmodes.fits"
+  echo "  OUTPUT: ./conf<confindex>/modescpa.fits"
+  echo
+  echo "NOTES :"
+  echo "  USES (OPTIONAL) : ./conf/DMmask.fits"
+  echo "                  Telescope pupil mask"
+  echo "  USES (OPTIONAL) : ./conf/TPind.fits"
+  echo "                  Modes to be excluded"
+  echo
+  exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+
+mkdir -p Cmodes
+mkdir -p tmp
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
+loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
+loadfits "./conf/aol${loopnb}_dmmask.fits" dmmask
+loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
+loadfits "./conf/aol${loopnb}_LOrespM.fits" RMMresp
+loadfits "./conf/aol${loopnb}_LODMmodes.fits" RMMmodes
+loadfits "./conf/TPind.fits" emodes
+readshmim aol${loopnb}_dmC
+imstats aol${loopnb}_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+od=0.42*imsize0
+id=0.13*imsize0
+aolmkmodes fmodes imsize0 imsize1 $1 0.8 cx cy od id 0 $2 $3
+#listim
+#savefits fmodes "!./Cmodes/fmodes_$1.fits"
+exit
+EOF
+

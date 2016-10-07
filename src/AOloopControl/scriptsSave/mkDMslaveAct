@@ -1,0 +1,46 @@
+#!/bin/bash
+
+EXPECTED_ARGS=2
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE DM SLAVED ACTUATORS MAP ----"
+  echo
+  echo "Usage: $0 <dmmap> <lim>"
+  echo
+  echo "  INPUT <dmmap>      : DM response map"
+  echo "  INPUT <lim>        : limit value (usually 0.7)"
+  echo
+  echo "EXAMPLE: $0 dmmap 0.7"
+  echo
+  echo "  OUTPUT: ./conf/dmslaved.fits"
+  echo
+  exit
+fi
+
+
+
+
+Cfits << EOF
+loadfits "$1" dmmap
+gaussfilt dmmap dmmapg 5.0 24
+savefits dmmapg "!test_dmmapg.fits"
+dmmap1=dmmap/dmmapg
+savefits dmmap1 "!_test_dmmap1.fits"
+a=$2
+b=$2*0.99
+imtrunc dmmap1 0.0 a dmmap2
+dmmap3=dmmap2/b
+dmmap4=floor(dmmap3)
+gaussfilt dmmap4 dmmap4g 1.0 2
+dmmap5=dmmap4g/0.8
+dmmask=floor(dmmap5)
+dmmap6=dmmap5/0.2
+imtrunc dmmap6 0.0 1.01 dmmap6t
+dmmap7=floor(dmmap6t)
+dmmapsl=dmmap7*(1.0-dmmask)
+savefits dmmapsl "!./conf/dmslaved.fits"
+exit
+EOF
+

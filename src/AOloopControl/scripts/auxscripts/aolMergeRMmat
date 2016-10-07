@@ -1,0 +1,56 @@
+#!/bin/bash
+
+EXPECTED_ARGS=7
+
+
+# example args
+#  conf/Hpoke.fits zrespm_Hadamard.fits respM_LOmodes.fits LOrespmat.fits ./conf/DMmask.fits zrespmat.fits 10
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ Merge HO and LO resp matrices ------"
+  echo 
+  echo ""
+  echo "Usage: $0 <HOpoke> <HOresp> <LOpoke> <LOresp> <RM> <coeff>"
+  echo 
+  echo " INPUT <HOpoke>        : High order poke matrix" 
+  echo " INPUT <HOresp>        : High order response"
+  echo " INPUT <LOpoke>        : Low order poke"
+  echo " INPUT <LOresp>        : Low order resp" 
+  echo " INPUT <RMmask>        : input RM mask"
+  echo " INPUT <RM>            : zonal response matrix estimate"
+  echo " INPUT <coeff>         : relative coeff of second matrix"
+  echo 
+  echo "Example: $0 HOpoke.fits HOresp.fits LOpoke.fits LOresp.fits RespMat.fits 50.0"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+Cfits -n aol${loopnb}-$0 << EOF
+loadfits "$1" m_in0
+loadfits "$2" m_out0
+loadfits "$3" m_in1
+loadfits "$4" m_out1
+loadfits "$5" inmask
+loadfits "$6" RMmat
+
+m_in1c=m_in1*$7
+m_out1c=m_out1*$7
+
+merge3d m_in0 m_in1c inC
+merge3d m_out0 m_out1c outC
+listim
+savefits pokeC "!pokeC.fits"
+savefits respC "!respC.fits"
+lincRMiter inC inmask outC RMmat $7
+savefits testout "!testout.fits"
+exit
+EOF
+

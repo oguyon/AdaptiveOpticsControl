@@ -1,0 +1,33 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $@"  
+  echo
+  echo "------ dmC temporal averaging ------"
+  echo 
+  echo "temporal averaging of zonal correction in AO system"
+  echo "Usage: $0 <averaging coefficient>"
+  echo 
+  echo " INPUT <time interval>   : " 
+  echo 
+  echo 
+  echo "Example: $0 0.001"
+  echo 
+  exit
+fi
+
+
+
+loopnb=$(cat LOOPNUMBER)
+pname="aol${loopnb}-$0"
+
+Cfits -n $pname << EOF
+readshmim aol${loopnb}_dmC
+aveACshmim aol${loopnb}_dmC $1 aol${loopnb}_dmC_ave aol${loopnb}_dmC_AC aol${loopnb}_dmC_rms
+exit
+EOF

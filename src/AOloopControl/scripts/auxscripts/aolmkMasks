@@ -1,0 +1,159 @@
+#!/bin/bash
+
+
+# number of arguments to script
+NBARGS=4
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : CREATE/UPDATE AO MASKS $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  updates AO wfs and DM masks"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h] <DMperc0> <DMcoeff0> <DMperc1> <DMcoeff1>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <DMperc0>      DM map: background noise level percentile"
+echo "     <DMcoeff0>     DM map: background coefficient (ususally 1.0)"
+echo "     <DMperc1>      DM map: percentile level above background"
+echo "     <DMcoeff1>     DM map: coefficient on level above background"
+echo ""
+echo " $(tput bold)OUTPUT:$(tput sgr0)"
+echo "     wfsmask.fits"
+echo "     dmmaskRM.fits"
+echo "     dmslaved.fits"
+echo "     dmmask.fits" 
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+
+
+printHELP1 ()
+{
+    printf "%20s       Create AO wfs and DM masks\n" "$0" 
+}
+
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+stageddir="conf_zrm_staged"
+
+Cfits << EOF
+aolnb $loopnb
+loadfits "./${stageddir}/zrespmat.fits" zrespm
+#loadfits "./${stageddir}/wfsmap.fits" wfsmap
+#loadfits "./${stageddir}/dmmap.fits" dmmap
+aolRMmkmasks zrespm wfsmap dmmap 0.2 1.0 0.7 0.3
+savefits wfsmask "!wfsmask.fits"
+savefits dmmask "!dmmaskRM.fits"
+exit
+EOF
+
+
+
+cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits
+cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits
+
+./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
+
+cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits
+
+Cfits << EOF
+loadfits dmmaskRM.fits dmmRM
+loadfits dmslaved.fits dmsl
+imtrunc dmsl 0.0 1.0 dmsl1
+dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
+savefits dmm "!dmmask.fits"
+exit
+EOF
+
+cp dmmask.fits dmmask/dmmask_${datestr}.fits
+
+
+# update on staged directory
+
+cp wfsmask.fits ./${stageddir}/
+cp dmmaskRM.fits ./${stageddir}/
+cp dmslaved.fits ./${stageddir}/
+cp dmmask.fits ./${stageddir}/
+
+echo "wfsmask/wfsmask_${datestr}.fits" > ./${stageddir}/conf_wfsmask_name.txt
+echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${stageddir}/conf_dmmaskRM_name.txt
+echo "dmslaved/dmslaved_${datestr}.fits" > ./${stageddir}/conf_dmslaved_name.txt
+echo "dmmask/dmmask_${datestr}.fits" > ./${stageddir}/conf_dmmask_name.txt

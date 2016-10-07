@@ -1,0 +1,54 @@
+#!/bin/bash
+
+EXPECTED_ARGS=3
+
+if [ ! "$1" = "help" ] && [ $# -ne $EXPECTED_ARGS ]
+then
+  echo "Wrong number of argument"
+  echo "expecting $# arguments - see instructions below"
+fi
+
+if [ "$1" = "help" ] || [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ TEST TEMPORAL RESPONSE TO SINGLE DM MODE EXCITATION ----"
+  echo
+  echo "Usage: $0 <ampl [um]> <delay [us]> <nbave>"
+  echo
+  echo "  INPUT <ampl [um]>   : mode amplitude [um]"
+  echo "  INPUT <delay [us]>  : delay from DM command to measurement start"
+  echo "  INPUT <nbave>       : Number of frames averaged for measurement"
+  echo
+  echo "EXAMPLE: $0 0.05 30000 50"
+  echo
+  echo "  OUTPUT: ."
+  echo
+  echo "NOTES :"
+  echo "  Loop must be running"
+  echo
+  exit
+fi
+
+
+loopnb=$(cat LOOPNUMBER)
+
+
+ampl=$1
+tlagus=$2
+nbave=$3
+
+Cfits << EOF
+readshmim aol2_DMmodes
+readshmim aol2_dmmask
+readshmim aol2_dmRM
+readshmim aol2_dmC
+readshmim aol2_meas_act
+aoltestdmrec aol2_DMmodes ${ampl} aol2_dmmask aol2_dmRM aol2_dmC aol2_meas_act ${tlagus} ${nbave} outave outrms outmave outmrms
+savefits outave "!test_DMmodesRec.fits"
+savefits outrms "!test_DMmodesRec_RMS.fits"
+savefits outmave "!test_DMmodesRec_m.fits"
+savefits outmrms "!test_DMmodesRec_m_RMS.fits"
+exit
+EOF
+
+

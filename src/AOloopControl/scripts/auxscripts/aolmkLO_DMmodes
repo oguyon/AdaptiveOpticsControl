@@ -1,0 +1,62 @@
+#! /bin/bash
+# args: <confindex> <maxCPA>
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE LO DM MODES FOR AO LOOP ----"
+  echo
+  echo "Usage: $0 <maxCPA>"
+  echo
+  echo "  INPUT <maxCPA>      : maximum spatial frequency in cycles per aperture"
+  echo
+  echo "EXAMPLE: $0 2.0" 
+  echo
+  echo "  OUTPUT: ./respM_LOmodes.fits"
+  echo
+  echo "NOTES :"
+  echo "  USES (OPTIONAL) : ./conf/aol<loopnb>_dmmask.fits"
+  echo "  USES (OPTIONAL) : ./conf/aol<loopnb>_dmslaved.fits"
+  echo "                  Telescope pupil mask and slaved actuators"
+  echo "  USES (OPTIONAL) : ./conf/TPind.fits"
+  echo "                  Modes to be excluded"
+  echo
+  exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
+
+
+mkdir -p Cmodes
+mkdir -p tmp
+
+
+zrmstageddir="./conf_zrm_staged"
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+loadfits "${zrmstageddir}/dmslaved.fits" dmslaved0
+imtrunc dmslaved0 0.0 1.0 dmslaved
+loadfits "${zrmstageddir}/dmmask.fits" dmmask
+loadfits "./conf/TPind.fits" emodes
+readshmim aol${loopnb}_dmC
+imstats aol${loopnb}_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+od=0.42*imsize0
+id=0.13*imsize0
+if=0
+aolmklodmmodes fmodes imsize0 imsize1 $1 0.8 cx cy od id 0 
+savefits fmodes "!respM_LOmodes.fits"
+exit
+EOF
+
