@@ -12,7 +12,7 @@
 
 extern DATA data;
 
-char errormessage[SBUFFERSIZE];
+char errormessage_iofits[SBUFFERSIZE];
 
 
 
@@ -23,6 +23,7 @@ int save_fl_fits(char *ID_name, char *file_name);
 int save_db_fits(char *ID_name, char *file_name);
 int save_sh_fits(char *ID_name, char *file_name);
 int save_fits(char *ID_name, char *file_name);
+int save_fits_atomic(char *ID_name, char *file_name);
 int break_cube(char *ID_name);
 int images_to_cube(char *img_name, long nbframes, char *cube_name);
 
@@ -32,8 +33,9 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name);
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
+// 5: string 
 //
 
 int load_fits_cli()
@@ -58,6 +60,7 @@ int save_fl_fits_cli()
   }
   return 0;
 }
+
 
 int save_db_fits_cli()
 {
@@ -92,6 +95,7 @@ int save_sh_fits_cli()
   
   return 0;
 }
+
 
 int save_fits_cli()
 {
@@ -203,9 +207,9 @@ int init_COREMOD_iofits()
   strcpy(data.cmd[data.NBcmd].key,"imgs2cube");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = images_to_cube_cli;
-  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube");
+  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube, image name is prefix followed by 5 digits");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image format> <max index> <output cube>");
-  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ imc");
+  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ 100 imc");
   strcpy(data.cmd[data.NBcmd].Ccall,"int images_to_cube(char *img_name, long nbframes, char *cube_name)");
   data.NBcmd++;
 
@@ -249,7 +253,7 @@ int check_FITSIO_status(const char *cfile, const char *cfunc, long cline, int pr
     {
         if(print==1)
         {
-            fits_get_errstatus(FITSIO_status,errstr);
+            fits_get_errstatus(FITSIO_status, errstr);
             fprintf(stderr,"%c[%d;%dmFITSIO error %d [%s, %s, %ld]: %s%c[%d;m\n\a",(char) 27, 1, 31, FITSIO_status, cfile, cfunc, cline, errstr, (char) 27, 0);
         }
         Ferr = FITSIO_status;
@@ -291,10 +295,10 @@ int is_fits_file(char *file_name)
     }
     if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
     {
-        n = snprintf(errormessage,SBUFFERSIZE,"Error in function is_fits_file(%s)",file_name);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"Error in function is_fits_file(%s)",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errormessage);
+        printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
         //      fprintf(stderr,"%c[%d;%dm Error in function is_fits_file for file \"%s\" %c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
     }
 
@@ -314,10 +318,10 @@ int read_keyword(char* file_name, char* KEYWORD, char* content)
     {
         if (fits_read_keyword(fptr,KEYWORD, str1, comment, &FITSIO_status))
         {
-            n = snprintf(errormessage,SBUFFERSIZE,"Keyword \"%s\" does not exist in file \"%s\"",KEYWORD,file_name);
+            n = snprintf(errormessage_iofits,SBUFFERSIZE,"Keyword \"%s\" does not exist in file \"%s\"",KEYWORD,file_name);
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            printERROR(__FILE__,__func__,__LINE__,errormessage);
+            printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
 
             //	  printf("%c[%d;%dm Keyword \"%s\" does not exist in file \"%s\" %c[%d;m\n", (char) 27, 1, 31, KEYWORD,file_name, (char) 27, 0);
             exists = 1;
@@ -332,10 +336,10 @@ int read_keyword(char* file_name, char* KEYWORD, char* content)
     }
     if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
     {
-        n = snprintf(errormessage,SBUFFERSIZE,"Error reading keyword \"%s\" in file \"%s\"",KEYWORD,file_name);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"Error reading keyword \"%s\" in file \"%s\"",KEYWORD,file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errormessage);
+        printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
         //      fprintf(stderr,"%c[%d;%dm Error reading keyword \"%s\" in file \"%s\" %c[%d;m\n", (char) 27, 1, 31, KEYWORD,file_name, (char) 27, 0);
     }
 
@@ -427,12 +431,13 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
     naxes[1] = 0;
     naxes[2] = 0;
 
+
     if (fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
     {
-        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
-        {
-            if(errcode!=0)
-            {
+		 if(errcode!=0)
+		 {
+			 if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
+			{
                 fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
@@ -440,16 +445,16 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
                 if(errcode>1)
                     exit(0);
             }
-        }
+			}
         LOAD_FITS_ERROR = 1;
         ID = -1;
     }
     else
     {
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
-        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
-        {
-            if(errcode!=0)
+       if(errcode!=0)
+            {
+				 if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
             {
                 fprintf(stderr, "%c[%d;%dm Error while calling \"fits_read_key\" NAXIS %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
@@ -766,19 +771,19 @@ int save_db_fits(char *ID_name, char *file_name)
 
     if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
     {
-        n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printWARNING(__FILE__,__func__,__LINE__,errormessage);
+        printWARNING(__FILE__,__func__,__LINE__,errormessage_iofits);
         n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
     }
     else
     {
-        n = snprintf(file_name1,SBUFFERSIZE,"%s",file_name);
+        n = snprintf(file_name1, SBUFFERSIZE, "%s", file_name);
         if(n >= SBUFFERSIZE)
-            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
     }
 
     ID = image_ID(ID_name);
@@ -789,11 +794,15 @@ int save_db_fits(char *ID_name, char *file_name)
         naxis = data.image[ID].md[0].naxis;
         for(i=0; i<naxis; i++)
             naxes[i] = data.image[ID].md[0].size[i];
+  
+  
+     
 
         nelements = 1;
         for(i=0; i<naxis; i++)
             nelements *= naxes[i];
 
+    
         switch (atype)
         {
         case CHAR :
@@ -823,7 +832,7 @@ int save_db_fits(char *ID_name, char *file_name)
                 printERROR(__FILE__,__func__,__LINE__,"malloc error");
                 exit(0);
             }
-            for (ii = 0; ii < nelements; i++)
+            for (ii = 0; ii < nelements; ii++)
                 array[ii] = (double) data.image[ID].array.F[ii];
             break;
         case DOUBLE :
@@ -832,6 +841,11 @@ int save_db_fits(char *ID_name, char *file_name)
             printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
             break;
         }
+
+
+        
+    printf("creating file \"%s\"\n", file_name1);
+    fflush(stdout);
 
         fits_create_file(&fptr, file_name1, &FITSIO_status);
         if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
@@ -905,12 +919,12 @@ int save_fl_fits(char *ID_name, char *file_name)
     char file_name1[SBUFFERSIZE];
     int n;
 
-    if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
+    if((data.overwrite == 1) && (file_name[0]!='!') && (file_exists(file_name)==1))
     {
-        n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printWARNING(__FILE__,__func__,__LINE__,errormessage);
+        printWARNING(__FILE__,__func__,__LINE__,errormessage_iofits);
         //	printf("WARNING: automatic overwrite on file \"%s\"\n",file_name);
         n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
         if(n >= SBUFFERSIZE)
@@ -984,11 +998,12 @@ int save_fl_fits(char *ID_name, char *file_name)
             exit(0);
             break;
         }
-
+		
+		FITSIO_status = 0;
         fits_create_file(&fptr, file_name1, &FITSIO_status);
-        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+        if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
         {
-            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_file\" with filename \"%s\" %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_file\" with filename \"%s\" %c[%d;m\n", (char) 27, 1, 31, file_name1, (char) 27, 0);
             if(file_exists(file_name1)==1)
             {
                 fprintf(stderr,"%c[%d;%dm File \"%s\" already exists. Make sure you remove this file before attempting to write file with identical name. %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
@@ -1046,6 +1061,7 @@ int save_fl_fits(char *ID_name, char *file_name)
 
 
 
+
 /* saves an image in a short int format */
 
 int save_sh_fits(char *ID_name, char *file_name)
@@ -1064,10 +1080,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 
     if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
     {
-        n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printWARNING(__FILE__,__func__,__LINE__,errormessage);
+        printWARNING(__FILE__,__func__,__LINE__,errormessage_iofits);
         //	printf("WARNING: automatic overwrite on file \"%s\"\n",file_name);
         n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
         if(n >= SBUFFERSIZE)
@@ -1204,156 +1220,156 @@ int save_sh_fits(char *ID_name, char *file_name)
 
 int save_ush_fits(char *ID_name, char *file_name)
 {
-  fitsfile *fptr;       
-  long  fpixel = 1, naxis, nelements;
-  long naxes[3];
-  unsigned short int *array = NULL;
-  long ID;
-  long ii;
-  long i;
-  int atype;
-  char file_name1[SBUFFERSIZE];
-  int n;
-  
- 
-  if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
+    fitsfile *fptr;
+    long  fpixel = 1, naxis, nelements;
+    long naxes[3];
+    unsigned short int *array = NULL;
+    long ID;
+    long ii;
+    long i;
+    int atype;
+    char file_name1[SBUFFERSIZE];
+    int n;
+
+
+    if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
     {
-      n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      printWARNING(__FILE__,__func__,__LINE__,errormessage);
-      //	printf("WARNING: automatic overwrite on file \"%s\"\n",file_name);
-      n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        printWARNING(__FILE__,__func__,__LINE__,errormessage_iofits);
+        //	printf("WARNING: automatic overwrite on file \"%s\"\n",file_name);
+        n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
     }
-  else
+    else
     {
-      n = snprintf(file_name1,SBUFFERSIZE,"%s",file_name);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        n = snprintf(file_name1,SBUFFERSIZE,"%s",file_name);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
     }
 
     ID = image_ID(ID_name);
 
     if (ID!=-1)
-      {
-	atype = data.image[ID].md[0].atype;
-	naxis=data.image[ID].md[0].naxis;
-	for(i=0;i<naxis;i++)
-	  naxes[i] = data.image[ID].md[0].size[i];
+    {
+        atype = data.image[ID].md[0].atype;
+        naxis=data.image[ID].md[0].naxis;
+        for(i=0; i<naxis; i++)
+            naxes[i] = data.image[ID].md[0].size[i];
 
-	nelements = 1;
-	for(i=0;i<naxis;i++)
-	  nelements *= naxes[i];
-	switch (atype) 
-	  {
-	  case CHAR :	  
-	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.C[ii];
-	    break;
-	  case INT :
-	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.I[ii];
-	    break;
-	  case FLOAT :
-	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (unsigned short int) data.image[ID].array.F[ii];
-	    break;
-	  case DOUBLE :
-	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (unsigned short int) data.image[ID].array.D[ii];
-	    break;
-	  case USHORT :
-	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (unsigned short int) data.image[ID].array.U[ii];
-	    break;
-	  default :
-	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
-	    exit(0);
-	    break;
-	  }
-	
-	fits_create_file(&fptr, file_name1, &FITSIO_status);
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  {
-	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_file\" with filename \"%s\" %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
-	    if(file_exists(file_name1)==1)
-	      {
-		fprintf(stderr,"%c[%d;%dm File \"%s\" already exists. Make sure you remove this file before attempting to write file with identical name. %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
-		exit(0);
-	      }
-	    else
-	      {
-		fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-		list_image_ID();
-	      }
-	  }
+        nelements = 1;
+        for(i=0; i<naxis; i++)
+            nelements *= naxes[i];
+        switch (atype)
+        {
+        case CHAR :
+            array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);
+            if(array==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            for (ii = 0; ii < nelements; ii++)
+                array[ii] = (short int) data.image[ID].array.C[ii];
+            break;
+        case INT :
+            array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);
+            if(array==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            for (ii = 0; ii < nelements; ii++)
+                array[ii] = (short int) data.image[ID].array.I[ii];
+            break;
+        case FLOAT :
+            array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);
+            if(array==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            for (ii = 0; ii < nelements; ii++)
+                array[ii] = (unsigned short int) data.image[ID].array.F[ii];
+            break;
+        case DOUBLE :
+            array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);
+            if(array==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            for (ii = 0; ii < nelements; ii++)
+                array[ii] = (unsigned short int) data.image[ID].array.D[ii];
+            break;
+        case USHORT :
+            array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);
+            if(array==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            for (ii = 0; ii < nelements; ii++)
+                array[ii] = (unsigned short int) data.image[ID].array.U[ii];
+            break;
+        default :
+            printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+            exit(0);
+            break;
+        }
 
-	fits_create_img(fptr, USHORT_IMG, naxis, naxes, &FITSIO_status);
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  {
-	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    list_image_ID();
-	  }
+        fits_create_file(&fptr, file_name1, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+        {
+            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_file\" with filename \"%s\" %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
+            if(file_exists(file_name1)==1)
+            {
+                fprintf(stderr,"%c[%d;%dm File \"%s\" already exists. Make sure you remove this file before attempting to write file with identical name. %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
+                exit(0);
+            }
+            else
+            {
+                fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+                list_image_ID();
+            }
+        }
 
-	if(atype==USHORT)
-	  fits_write_img(fptr, TUSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
-	else
-	  fits_write_img(fptr, TUSHORT, fpixel, nelements, array, &FITSIO_status);
+        fits_create_img(fptr, USHORT_IMG, naxis, naxes, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+        {
+            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            list_image_ID();
+        }
 
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  {
-	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_write_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    list_image_ID();
-	  }
+        if(atype==USHORT)
+            fits_write_img(fptr, TUSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+        else
+            fits_write_img(fptr, TUSHORT, fpixel, nelements, array, &FITSIO_status);
 
-	fits_close_file (fptr, &FITSIO_status);
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  {
-	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_close_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	    list_image_ID();
-	  }
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+        {
+            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_write_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            list_image_ID();
+        }
 
-	free(array);
-	array = NULL;
-      }
-    else 
-      fprintf(stderr,"%c[%d;%dm image \"%s\" does not exist in memory %c[%d;m\n", (char) 27, 1, 31, ID_name, (char) 27, 0);
-          
+        fits_close_file (fptr, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+        {
+            fprintf(stderr,"%c[%d;%dm Error while calling \"fits_close_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            list_image_ID();
+        }
+
+        free(array);
+        array = NULL;
+    }
+    else
+        fprintf(stderr,"%c[%d;%dm image \"%s\" does not exist in memory %c[%d;m\n", (char) 27, 1, 31, ID_name, (char) 27, 0);
+
     return(0);
 }
 
@@ -1364,148 +1380,199 @@ int save_ush_fits(char *ID_name, char *file_name)
 
 
 
+
 int save_fits(char *ID_name, char *file_name)
 {
-  long ID;
-  int atype;
+    long ID;
+    int atype;
 
-  ID = image_ID(ID_name);
-  
-  if (ID!=-1)
+    ID = image_ID(ID_name);
+
+    if (ID!=-1)
     {
-      atype = data.image[ID].md[0].atype;
-      switch(atype) {
-      case FLOAT:
-	save_fl_fits(ID_name, file_name);
-	break;
-      case DOUBLE:
-	save_db_fits(ID_name, file_name);
-	break;
-      case USHORT:
-	save_sh_fits(ID_name, file_name);
-	break;	
-      }
-    }  
+        atype = data.image[ID].md[0].atype;
+        switch(atype) {
+        case FLOAT:
+            save_fl_fits(ID_name, file_name);
+            break;
+        case DOUBLE:
+            save_db_fits(ID_name, file_name);
+            break;
+        case USHORT:
+            save_sh_fits(ID_name, file_name);
+            break;
+        }
+    }
 
-  return 0;
+    return 0;
 }
 
 
-int saveall_fl_fits()
+
+
+int save_fits_atomic(char *ID_name, char *file_name)
 {
-  long i;
+    long ID;
+    int atype;
+    char fnametmp[1000];
+	char command[2000];
+	
+    ID = image_ID(ID_name);
 
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
-    if(data.image[i].used==1) 
-      save_fl_fits(data.image[i].md[0].name,data.image[i].md[0].name);
+	sprintf(fnametmp, "!_savefits_atomic_%s.tmp.fits", ID_name);
 
-  return(0);
+    if (ID!=-1)
+    {
+        atype = data.image[ID].md[0].atype;
+        switch(atype) {
+        case FLOAT:
+            save_fl_fits(ID_name, fnametmp);
+            break;
+        case DOUBLE:
+            save_db_fits(ID_name, fnametmp);
+            break;
+        case USHORT:
+            save_sh_fits(ID_name, fnametmp);
+            break;
+        }
+		
+		sprintf("mv %s %s", fnametmp, file_name);
+		system(command);
+    }
+
+    return 0;
 }
+
+
+
+int saveall_fits(char *savedirname)
+{
+    long i;
+    char fname[200];
+    char command[200];
+    int r;
+    
+    sprintf(command, "mkdir -p %s", savedirname);
+    r = system(command);
+    
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+        if(data.image[i].used==1)
+            {
+                sprintf(fname, "!./%s/%s.fits", savedirname, data.image[i].name);
+                save_fits(data.image[i].name, fname);
+            }
+    return(0);
+}
+
+
+
 
 int break_cube(char *ID_name)
 {
-  long ID,ID1;
-  long naxes[3];
-  long ii,jj,kk;
-  char framename[SBUFFERSIZE];
-  long i;
-  int n;
+    long ID,ID1;
+    long naxes[3];
+    long ii,jj,kk;
+    char framename[SBUFFERSIZE];
+    long i;
+    int n;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];
-  naxes[2] = data.image[ID].md[0].size[2];
-  
-  for(kk=0;kk<naxes[2];kk++)
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    naxes[2] = data.image[ID].md[0].size[2];
+
+    for(kk=0; kk<naxes[2]; kk++)
     {
-      n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      for(i=0;i<(long) strlen(framename);i++)
-	{
-	  if(framename[i] == ' ')
-	    framename[i] = '0';
-	}
-      ID1 = create_2Dimage_ID(framename,naxes[0],naxes[1]);
-      for(ii=0;ii<naxes[0];ii++)
-	for(jj=0;jj<naxes[1];jj++)
-	  {
-	    data.image[ID1].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
-	  }
+        n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        for(i=0; i<(long) strlen(framename); i++)
+        {
+            if(framename[i] == ' ')
+                framename[i] = '0';
+        }
+        ID1 = create_2Dimage_ID(framename,naxes[0],naxes[1]);
+        for(ii=0; ii<naxes[0]; ii++)
+            for(jj=0; jj<naxes[1]; jj++)
+            {
+                data.image[ID1].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
+            }
     }
-  
-  return(0);
+
+    return(0);
 }
+
 
 
 
 int images_to_cube(char *img_name, long nbframes, char *cube_name)
 {
-  long ID,ID1;
-  long frame;
-  char imname[SBUFFERSIZE];
-  long naxes[2];
-  long ii,jj;
-  long xsize, ysize;
-  int n;
-  
-  frame = 0;
-  n = snprintf(imname,SBUFFERSIZE,"%s%05ld",img_name,frame);
-  if(n >= SBUFFERSIZE) 
-    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+    long ID,ID1;
+    long frame;
+    char imname[SBUFFERSIZE];
+    long naxes[2];
+    long ii,jj;
+    long xsize, ysize;
+    int n;
 
-  ID1 = image_ID(imname);
-  if(ID1==-1)
+    frame = 0;
+    n = snprintf(imname,SBUFFERSIZE,"%s%05ld",img_name,frame);
+    if(n >= SBUFFERSIZE)
+        printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+
+    ID1 = image_ID(imname);
+    if(ID1==-1)
     {
-      n = snprintf(errormessage,SBUFFERSIZE,"Image \"%s\" does not exist",imname);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      printERROR(__FILE__,__func__,__LINE__,errormessage);
-      exit(0);
+        n = snprintf(errormessage_iofits,SBUFFERSIZE,"Image \"%s\" does not exist",imname);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
+        exit(0);
     }
-  naxes[0] = data.image[ID1].md[0].size[0];
-  naxes[1] = data.image[ID1].md[0].size[1];
-  xsize = naxes[0];
-  ysize = naxes[1];
-  
-  printf("SIZE = %ld %ld %ld\n",naxes[0],naxes[1],nbframes);
-  fflush(stdout);
-  ID = create_3Dimage_ID(cube_name,naxes[0],naxes[1],nbframes);
-  for (ii = 0; ii < naxes[0]; ii++) 
-    for (jj = 0; jj < naxes[1]; jj++)    
-      data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
+    naxes[0] = data.image[ID1].md[0].size[0];
+    naxes[1] = data.image[ID1].md[0].size[1];
+    xsize = naxes[0];
+    ysize = naxes[1];
 
-  for(frame=1;frame<nbframes;frame++)
+    printf("SIZE = %ld %ld %ld\n",naxes[0],naxes[1],nbframes);
+    fflush(stdout);
+    ID = create_3Dimage_ID(cube_name,naxes[0],naxes[1],nbframes);
+    for (ii = 0; ii < naxes[0]; ii++)
+        for (jj = 0; jj < naxes[1]; jj++)
+            data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
+
+    for(frame=1; frame<nbframes; frame++)
     {
-      n = snprintf(imname,SBUFFERSIZE,"%s%05ld",img_name,frame);      
-      printf("Adding image %s -> %ld/%ld ... ",img_name,frame,nbframes);
-      fflush(stdout);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      ID1 = image_ID(imname);
-      if(ID1==-1)
-	{
-	  n = snprintf(errormessage,SBUFFERSIZE,"Image \"%s\" does not exist - skipping",imname);
-	  if(n >= SBUFFERSIZE) 
-	    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	  printERROR(__FILE__,__func__,__LINE__,errormessage);
-	}
-      else
-	{
-	  naxes[0] = data.image[ID1].md[0].size[0];
-	  naxes[1] = data.image[ID1].md[0].size[1];
-	  if((xsize != naxes[0])||(ysize != naxes[1]))
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"Image has wrong size");
-	      exit(0);
-	    }
-	  for (ii = 0; ii < naxes[0]; ii++) 
-	    for (jj = 0; jj < naxes[1]; jj++)    
-	      data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
-	}
-      printf("Done\n");
-      fflush(stdout);
+        n = snprintf(imname,SBUFFERSIZE,"%s%05ld",img_name,frame);
+        printf("Adding image %s -> %ld/%ld ... ",img_name,frame,nbframes);
+        fflush(stdout);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        ID1 = image_ID(imname);
+        if(ID1==-1)
+        {
+            n = snprintf(errormessage_iofits,SBUFFERSIZE,"Image \"%s\" does not exist - skipping",imname);
+            if(n >= SBUFFERSIZE)
+                printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
+        }
+        else
+        {
+            naxes[0] = data.image[ID1].md[0].size[0];
+            naxes[1] = data.image[ID1].md[0].size[1];
+            if((xsize != naxes[0])||(ysize != naxes[1]))
+            {
+                printERROR(__FILE__,__func__,__LINE__,"Image has wrong size");
+                exit(0);
+            }
+            for (ii = 0; ii < naxes[0]; ii++)
+                for (jj = 0; jj < naxes[1]; jj++)
+                    data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
+        }
+        printf("Done\n");
+        fflush(stdout);
     }
 
-  return(0);
+    return(0);
 }
+

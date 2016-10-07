@@ -1,16 +1,15 @@
-#include <time.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <time.h>
 #include <gsl/gsl_randist.h>
 #include "CLIcore.h"
 
 
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
-
+#include "statistic/statistic.h"
 
 
 
@@ -20,7 +19,7 @@ extern DATA data;
 
 
 
-int put_poisson_noise(char *ID_in_name, char *ID_out_name);
+//int put_poisson_noise(char *ID_in_name, char *ID_out_name);
 
 
 
@@ -32,6 +31,19 @@ int statistic_putphnoise_cli()
   if(CLI_checkarg(1, 4)+CLI_checkarg(2, 3)==0)
     {
       put_poisson_noise( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+int statistic_putgaussnoise_cli()
+{
+ 
+  if(CLI_checkarg(1, 4)+CLI_checkarg(2, 3)+CLI_checkarg(3, 1)==0)
+    {
+      put_gauss_noise( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
       return 0;
     }
   else
@@ -54,6 +66,15 @@ int init_statistic()
   strcpy(data.cmd[data.NBcmd].example,"putphnoise im0 im1");
   strcpy(data.cmd[data.NBcmd].Ccall,"int put_poisson_noise(char *ID_in_name, char *ID_out_name)");
   data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"putgaussnoise");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = statistic_putgaussnoise_cli;
+  strcpy(data.cmd[data.NBcmd].info,"add gaussian noise to image");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output amplitude");
+  strcpy(data.cmd[data.NBcmd].example,"putgaussnoise im0 im1 0.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long put_gauss_noise(char *ID_in_name, char *ID_out_name, doule ampl)");
+  data.NBcmd++; 
  
  // add atexit functions here
 
@@ -197,10 +218,10 @@ double better_poisson(double mu) {
 }
 
 
-int put_poisson_noise(char *ID_in_name, char *ID_out_name)
+long put_poisson_noise(char *ID_in_name, char *ID_out_name)
 {
-  int ID_in;
-  int ID_out;
+  long ID_in;
+  long ID_out;
   long ii;
   long nelements;
   long naxis;
@@ -222,3 +243,32 @@ int put_poisson_noise(char *ID_in_name, char *ID_out_name)
 
   return(ID_out);
 }
+
+
+
+long put_gauss_noise(char *ID_in_name, char *ID_out_name, double ampl)
+{
+  long ID_in;
+  long ID_out;
+  long ii;
+  long nelements;
+  long naxis;
+  long i;
+
+  ID_in = image_ID(ID_in_name);
+  naxis = data.image[ID_in].md[0].naxis;
+  nelements=1;
+  for(i=0;i<naxis;i++)
+    nelements*=data.image[ID_in].md[0].size[i];
+
+  copy_image_ID(ID_in_name, ID_out_name, 0);
+
+  ID_out = image_ID(ID_out_name);
+  //  srand(time(NULL));
+  
+  for (ii=0; ii < nelements; ii++)
+    data.image[ID_out].array.F[ii] = data.image[ID_in].array.F[ii] + ampl*gauss();
+
+  return(ID_out);
+}
+

@@ -1,11 +1,35 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <sched.h>
+
+#ifdef __MACH__
+#include <mach/mach_time.h>long AOloopControl_ComputeOpenLoopModes(long loop)
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+static int clock_gettime(int clk_id, struct mach_timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
+#include <time.h>
+#endif
+
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
+#include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_tools/COREMOD_tools.h"
+#include "info/info.h"
+
 
 #define SBUFFERSIZE 1000
 
@@ -26,7 +50,19 @@ int write_float_file(char *fname, float value);
 // 2: long
 // 3: string
 // 4: existing image
-//
+// 5: string
+
+int COREMOD_TOOLS_mvProcCPUset_cli()
+{
+    if(CLI_checkarg(1,3)==0)
+    {
+      COREMOD_TOOLS_mvProcCPUset(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 int write_flot_file_cli()
 {
@@ -51,41 +87,83 @@ int COREMOD_TOOLS_imgdisplay3D_cli()
     return 1;
 }
 
+int COREMOD_TOOLS_statusStat_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+    {
+        COREMOD_TOOLS_statusStat(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
 
 
 
 
 int init_COREMOD_tools()
 {
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "image information and statistics");
-  data.NBmodule++;
-
-  
-  strcpy(data.cmd[data.NBcmd].key,"writef2file");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = write_flot_file_cli;
-  strcpy(data.cmd[data.NBcmd].info,"write float to file");
-  strcpy(data.cmd[data.NBcmd].syntax,"<filename> <float variable>");
-  strcpy(data.cmd[data.NBcmd].example,"writef2file val.txt a");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(char *fname, float value)");
-  data.NBcmd++;
-
- strcpy(data.cmd[data.NBcmd].key,"dispim3d");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_TOOLS_imgdisplay3D_cli;
-  strcpy(data.cmd[data.NBcmd].info,"display 2D image as 3D surface using gnuplot");
-  strcpy(data.cmd[data.NBcmd].syntax,"<imname> <step>");
-  strcpy(data.cmd[data.NBcmd].example,"dispim3d im1 5");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)");
-  data.NBcmd++;
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "image information and statistics");
+    data.NBmodule++;
 
 
-  return 0;
+    strcpy(data.cmd[data.NBcmd].key,"csetpmove");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_TOOLS_mvProcCPUset_cli;
+    strcpy(data.cmd[data.NBcmd].info,"move current process to CPU set");
+    strcpy(data.cmd[data.NBcmd].syntax,"<CPU set name>");
+    strcpy(data.cmd[data.NBcmd].example,"csetpmove realtime");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_mvProcCPUset(char *csetname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"writef2file");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = write_flot_file_cli;
+    strcpy(data.cmd[data.NBcmd].info,"write float to file");
+    strcpy(data.cmd[data.NBcmd].syntax,"<filename> <float variable>");
+    strcpy(data.cmd[data.NBcmd].example,"writef2file val.txt a");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(char *fname, float value)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"dispim3d");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_TOOLS_imgdisplay3D_cli;
+    strcpy(data.cmd[data.NBcmd].info,"display 2D image as 3D surface using gnuplot");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <step>");
+    strcpy(data.cmd[data.NBcmd].example,"dispim3d im1 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"ctsmstats");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_TOOLS_statusStat_cli;
+    strcpy(data.cmd[data.NBcmd].info,"monitors shared variable status");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <NBstep>");
+    strcpy(data.cmd[data.NBcmd].example,"ctsmstats imst 100000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax)");
+    data.NBcmd++;
+
+
+    return 0;
 }
 
 
 
+
+
+int COREMOD_TOOLS_mvProcCPUset(char *csetname)
+{
+    int pid;
+    char command[200];
+    int ret;
+    
+    pid = getpid();
+    sprintf(command, "sudo -n cset proc -m -p %d -t %s\n", pid, csetname);
+    ret = system(command);
+      
+    return(0);
+}
 
 
 
@@ -612,7 +690,7 @@ long read_config_parameter_long(char *config_file, char *keyword)
   return(value);
 }
 
-long read_config_parameter_int(char *config_file, char *keyword)
+int read_config_parameter_int(char *config_file, char *keyword)
 {
   int value;
   char content[SBUFFERSIZE];
@@ -795,55 +873,148 @@ int write_float_file(char *fname, float value)
 }
 
 
-// displays 2D image in 3D using gnuplot 
+// displays 2D image in 3D using gnuplot
 //
 int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)
 {
-	char ID;
-	long xsize, ysize;
-	long ii, jj;
-	char cmd[512];
- FILE *fp;
- 
-	ID = image_ID(IDname);
-	xsize = data.image[ID].md[0].size[0];
-	ysize = data.image[ID].md[0].size[1];
-	
-	snprintf(cmd, 512, "gnuplot");
+    char ID;
+    long xsize, ysize;
+    long ii, jj;
+    char cmd[512];
+    FILE *fp;
 
-   if ((fpgnuplot = popen(cmd,"w")) == NULL)
-   {
-      fprintf(stderr, "could not connect to gnuplot\n");
-      return -1;
-   }
-	
-	printf("image: %s [%ld x %ld], step = %ld\n", IDname, xsize, ysize, step);
-	
-   fprintf(fpgnuplot, "set pm3d\n");
-   fprintf(fpgnuplot, "set hidden3d\n");
-   fprintf(fpgnuplot, "set palette\n");
-   //fprintf(gnuplot, "set xrange [0:%li]\n", image.md[0].size[0]);
-   //fprintf(gnuplot, "set yrange [0:1e-5]\n");
-   //fprintf(gnuplot, "set xlabel \"Mode #\"\n");
-   //fprintf(gnuplot, "set ylabel \"Mode RMS\"\n");
-   fflush(fpgnuplot);
+    ID = image_ID(IDname);
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
 
-fp = fopen("pts.dat", "w");
-      fprintf(fpgnuplot, "splot \"-\" w d notitle\n");
-      for(ii=0;ii<xsize;ii+=step)
-		{
-			for(jj=0;jj<xsize;jj+=step)
-				{
-					fprintf(fpgnuplot, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
-					fprintf(fp, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
-				}
-			fprintf(fpgnuplot, "\n");
-				fprintf(fp, "\n");
-		}
-      fprintf(fpgnuplot, "e\n");
-      fflush(fpgnuplot);
-	fclose(fp);
-	
-	
-	return(0);
+    snprintf(cmd, 512, "gnuplot");
+
+    if ((fpgnuplot = popen(cmd,"w")) == NULL)
+    {
+        fprintf(stderr, "could not connect to gnuplot\n");
+        return -1;
+    }
+
+    printf("image: %s [%ld x %ld], step = %ld\n", IDname, xsize, ysize, step);
+
+    fprintf(fpgnuplot, "set pm3d\n");
+    fprintf(fpgnuplot, "set hidden3d\n");
+    fprintf(fpgnuplot, "set palette\n");
+    //fprintf(gnuplot, "set xrange [0:%li]\n", image.md[0].size[0]);
+    //fprintf(gnuplot, "set yrange [0:1e-5]\n");
+    //fprintf(gnuplot, "set xlabel \"Mode #\"\n");
+    //fprintf(gnuplot, "set ylabel \"Mode RMS\"\n");
+    fflush(fpgnuplot);
+
+    fp = fopen("pts.dat", "w");
+    fprintf(fpgnuplot, "splot \"-\" w d notitle\n");
+    for(ii=0; ii<xsize; ii+=step)
+    {
+        for(jj=0; jj<xsize; jj+=step)
+        {
+            fprintf(fpgnuplot, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
+            fprintf(fp, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
+        }
+        fprintf(fpgnuplot, "\n");
+        fprintf(fp, "\n");
+    }
+    fprintf(fpgnuplot, "e\n");
+    fflush(fpgnuplot);
+    fclose(fp);
+
+
+    return(0);
 }
+
+
+
+
+//
+// watch shared memory status image and perform timing statistics
+//
+long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax)
+{
+    long IDout;
+    int RT_priority = 91; //any number from 0-99
+    struct sched_param schedpar;
+    float usec0 = 50.0;
+    float usec1 = 150.0;
+    long long k;
+    long long NBkiter = 2000000000;
+    long IDstat;
+
+    unsigned short st;
+
+    struct timespec t1;
+    struct timespec t2;
+    struct timespec tdiff;
+    double tdiffv;
+    double tdisplay = 1.0; // interval
+    double tdiffv1 = 0.0;
+	long *sizearray;
+
+	long cnttot;
+	
+	
+
+    IDstat = image_ID(IDstat_name);
+
+		sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = indexmax;
+    sizearray[1] = 1;
+    IDout = create_image_ID("statout", 2, sizearray, LONG, 0, 0);
+	free(sizearray);
+
+    for(st=0; st<indexmax; st++)
+        data.image[IDout].array.L[st] = 0;
+
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar);
+	#endif
+
+
+    printf("Measuring status distribution \n");
+    fflush(stdout);
+
+    clock_gettime(CLOCK_REALTIME, &t1);
+    for(k=0; k<NBkiter; k++)
+    {
+        usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
+        st = data.image[IDstat].array.U[0];
+        if(st<indexmax)
+            data.image[IDout].array.L[st]++;
+
+
+        clock_gettime(CLOCK_REALTIME, &t2);
+        tdiff = info_time_diff(t1, t2);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+        if(tdiffv>tdiffv1)
+        {
+            tdiffv1 += tdisplay;
+            printf("\n");
+            printf("============== %10lld  %d  ==================\n", k , st);
+            printf("\n");
+			cnttot = 0;
+			for(st=0; st<indexmax; st++)
+				cnttot += data.image[IDout].array.L[st];
+            
+            for(st=0; st<indexmax; st++)
+                printf("STATUS  %5d    %20ld   %6.3f  \n", st, data.image[IDout].array.L[st], 100.0*data.image[IDout].array.L[st]/cnttot);
+        }
+    }
+
+
+    printf("\n");
+    for(st=0; st<indexmax; st++)
+        printf("STATUS  %5d    %10ld\n", st, data.image[IDout].array.L[st]);
+
+    printf("\n");
+
+
+
+    return(IDout);
+}
+
+

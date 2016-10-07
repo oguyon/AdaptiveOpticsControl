@@ -2,7 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
+
+
+
+
 
 #include "CLIcore.h"
 
@@ -23,6 +26,16 @@ extern DATA data;
 ZERNIKE Zernike;
 
 
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
 int mk_zer_cli()
 {
   if(CLI_checkarg(1, 3)+CLI_checkarg(2, 2)+CLI_checkarg(3, 2)+CLI_checkarg(4, 1)==0)
@@ -33,6 +46,23 @@ int mk_zer_cli()
   else
     return 1;
 }
+
+
+
+
+int ZERNIKEPOLYN_rmPiston_cli()
+{
+  if(CLI_checkarg(1, 4)+CLI_checkarg(2, 4)==0)
+    {
+      ZERNIKEPOLYN_rmPiston(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 
 
 
@@ -53,6 +83,16 @@ int init_ZernikePolyn()
   strcpy(data.cmd[data.NBcmd].syntax,"<output image> <size> <zern index> <rpix>");
   strcpy(data.cmd[data.NBcmd].example,"mkzer z43 512 43 100.0");
   strcpy(data.cmd[data.NBcmd].Ccall,"mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)");
+  data.NBcmd++;
+ 
+ 
+  strcpy(data.cmd[data.NBcmd].key,"rmcpiston");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = ZERNIKEPOLYN_rmPiston_cli;
+  strcpy(data.cmd[data.NBcmd].info,"remove piston term from WF cube");
+  strcpy(data.cmd[data.NBcmd].syntax,"<WF cube> <aperture mask>");
+  strcpy(data.cmd[data.NBcmd].example,"rmcpiston wfc mask");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name);");
   data.NBcmd++;
  
  // add atexit functions here
@@ -632,6 +672,8 @@ double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1)
   return(value);
 }
 
+
+
 int get_zerns(char *ID_name, long max_zer, double radius)
 {
   long i;
@@ -641,6 +683,8 @@ int get_zerns(char *ID_name, long max_zer, double radius)
 
   return(0);
 }
+
+
 
 int get_zern_array(char *ID_name, long max_zer, double radius, double *array)
 {
@@ -656,6 +700,8 @@ int get_zern_array(char *ID_name, long max_zer, double radius, double *array)
 
   return(0);
 }
+
+
 
 int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
 {
@@ -680,6 +726,45 @@ int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
     }
   return(0);
 }
+
+
+long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name)
+{
+	long ID, IDmask;
+	long xsize, ysize, zsize, xysize;
+	long ii, kk;
+	double tot1, tot2, ave;
+	
+	
+	ID = image_ID(ID_name);
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
+	zsize = data.image[ID].md[0].size[2];
+	xysize = xsize*ysize;
+	
+	IDmask = image_ID(IDmask_name);
+
+	for(kk=0;kk<zsize;kk++)
+		{
+			tot1 = 0.0;
+			tot2 = 0.0;
+			for(ii=0;ii<xysize;ii++)
+				{
+					tot1 += data.image[ID].array.F[kk*xysize+ii]*data.image[IDmask].array.F[ii];
+					tot2 += data.image[IDmask].array.F[ii];
+				}
+			ave = tot1/tot2;
+			for(ii=0;ii<xysize;ii++)
+				{
+					data.image[ID].array.F[kk*xysize+ii] -= ave;
+				}
+		}
+
+
+	return(ID);
+}
+	
+
 
 int remove_TTF(char *ID_name, char *ID_name_out, double radius)
 {

@@ -9,6 +9,7 @@
 #include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
+#include "COREMOD_iofits/COREMOD_iofits.h"
 
 #include "fft/fft.h"
 #include "image_gen/image_gen.h"
@@ -233,151 +234,153 @@ int Fresnel_propagate_wavefront1(char *in, char *out, char *Cin)
 
 long Fresnel_propagate_cube(char *IDcin_name, char *IDout_name_amp, char *IDout_name_pha, double PUPIL_SCALE, double zstart, double zend, long NBzpts, double lambda)
 {
-  long IDouta, IDoutp;
-  long IDcin;
-  long xsize, ysize;
-  long ii,jj,kk;
-  double zprop;
-  long IDtmp;
-  double re,im,amp,pha;
+    long IDouta, IDoutp;
+    long IDcin;
+    long xsize, ysize;
+    long ii,jj,kk;
+    double zprop;
+    long IDtmp;
+    double re,im,amp,pha;
 
-  IDcin = image_ID(IDcin_name);
-  xsize = data.image[IDcin].md[0].size[0];
-  ysize = data.image[IDcin].md[0].size[1];
-  
-  IDouta = create_3Dimage_ID(IDout_name_amp,xsize,ysize,NBzpts);
-  IDoutp = create_3Dimage_ID(IDout_name_pha,xsize,ysize,NBzpts);
+    IDcin = image_ID(IDcin_name);
+    xsize = data.image[IDcin].md[0].size[0];
+    ysize = data.image[IDcin].md[0].size[1];
 
-  for(kk=0;kk<NBzpts;kk++)
+    IDouta = create_3Dimage_ID(IDout_name_amp,xsize,ysize,NBzpts);
+    IDoutp = create_3Dimage_ID(IDout_name_pha,xsize,ysize,NBzpts);
+
+    for(kk=0; kk<NBzpts; kk++)
     {
-      zprop = zstart + (zend-zstart)*kk/NBzpts;
-      printf("[%ld] propagating by %f m\n",kk,zprop);
-      Fresnel_propagate_wavefront(IDcin_name, "_propim", PUPIL_SCALE, zprop, lambda);
-      IDtmp = image_ID("_propim");
-      for(ii=0;ii<xsize;ii++)
-	for(jj=0;jj<ysize;jj++)
-	  {
-	    re = data.image[IDtmp].array.CF[jj*xsize+ii].re;
-	    im = data.image[IDtmp].array.CF[jj*xsize+ii].im;
-	    amp = sqrt(re*re+im*im);
-	    pha = atan2(im,re);
-	    data.image[IDouta].array.F[kk*xsize*ysize+jj*xsize+ii] = amp;
-	    data.image[IDoutp].array.F[kk*xsize*ysize+jj*xsize+ii] = pha;
-	  }
-      delete_image_ID("_propim");
+        zprop = zstart + (zend-zstart)*kk/NBzpts;
+        printf("[%ld] propagating by %f m\n",kk,zprop);
+        Fresnel_propagate_wavefront(IDcin_name, "_propim", PUPIL_SCALE, zprop, lambda);
+        IDtmp = image_ID("_propim");
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+            {
+                re = data.image[IDtmp].array.CF[jj*xsize+ii].re;
+                im = data.image[IDtmp].array.CF[jj*xsize+ii].im;
+                amp = sqrt(re*re+im*im);
+                pha = atan2(im,re);
+                data.image[IDouta].array.F[kk*xsize*ysize+jj*xsize+ii] = amp;
+                data.image[IDoutp].array.F[kk*xsize*ysize+jj*xsize+ii] = pha;
+            }
+        delete_image_ID("_propim");
     }
 
-  return(0);
+    return(0);
 }
+
 
 
 double WFpropagate_TestLyot(long NBmask, double *maskpos)
 {
-  long k;
-  double lambda = 0.55e-6;
-  double pixscale = 5.0693766e-5;
-  double z = 0;
+    long k;
+    double lambda = 0.55e-6;
+    double pixscale = 5.0693766e-5;
+    double z = 0;
 
-  double rin = 3.0; // in l/D
-  double rout = 10.0; // in l/D
-  double value = 0.0;
-  double valuecnt = 0.0;
+    double rin = 3.0; // in l/D
+    double rout = 10.0; // in l/D
+    double value = 0.0;
+    double valuecnt = 0.0;
 
-  long ID, IDm, IDa, IDp;
-  long size;
-  long ii, jj;
-  double x, y, r;
-  char fname[200];
+    long ID, IDm, IDa, IDp;
+    long size;
+    long ii, jj;
+    double x, y, r;
+    char fname[200];
 
-  printf("Testing Lyot Masks\n");
-  // input image is imc (complex amplitude) 
-  // masks are mask0, mask1 etc...
- 
-  copy_image_ID("imc", "imc0", 0);
-  for(k=0; k<NBmask; k++)
+    printf("Testing Lyot Masks\n");
+    // input image is imc (complex amplitude)
+    // masks are mask0, mask1 etc...
+
+    copy_image_ID("imc", "imc0", 0);
+    for(k=0; k<NBmask; k++)
     {
-      sprintf(fname, "mask%ld", k);
-      IDm = image_ID(fname);
-      Fresnel_propagate_wavefront("imc0", "imc1", pixscale, maskpos[k]-z, lambda);
-      z = maskpos[k];
-      delete_image_ID("imc0");
-      mk_amph_from_complex("imc1", "ima1", "imp1");
-      delete_image_ID("imc1");
-      ID = image_ID("ima1");
-      size = data.image[ID].md[0].size[0];
-      sprintf(fname, "!ima_%ld_0.fits", k);
-      save_fl_fits("ima1",fname);
-      sprintf(fname, "!imp_%ld_0.fits", k);
-      save_fl_fits("imp1",fname);
-       for(ii=0;ii<size*size;ii++)
-	data.image[ID].array.F[ii] *= data.image[IDm].array.F[ii];
-      sprintf(fname, "!ima_%ld_1.fits", k);
-      save_fl_fits("ima1",fname);
-      sprintf(fname, "!imp_%ld_1.fits", k);
-      save_fl_fits("imp1",fname);
-      mk_complex_from_amph("ima1", "imp1", "imc0");
-      delete_image_ID("ima1");
-      delete_image_ID("imp1");
+        sprintf(fname, "mask%ld", k);
+        IDm = image_ID(fname);
+        Fresnel_propagate_wavefront("imc0", "imc1", pixscale, maskpos[k]-z, lambda);
+        z = maskpos[k];
+        delete_image_ID("imc0");
+        mk_amph_from_complex("imc1", "ima1", "imp1", 0);
+        delete_image_ID("imc1");
+        ID = image_ID("ima1");
+        size = data.image[ID].md[0].size[0];
+        sprintf(fname, "!ima_%ld_0.fits", k);
+        save_fl_fits("ima1",fname);
+        sprintf(fname, "!imp_%ld_0.fits", k);
+        save_fl_fits("imp1",fname);
+        for(ii=0; ii<size*size; ii++)
+            data.image[ID].array.F[ii] *= data.image[IDm].array.F[ii];
+        sprintf(fname, "!ima_%ld_1.fits", k);
+        save_fl_fits("ima1",fname);
+        sprintf(fname, "!imp_%ld_1.fits", k);
+        save_fl_fits("imp1",fname);
+        mk_complex_from_amph("ima1", "imp1", "imc0", 0);
+        delete_image_ID("ima1");
+        delete_image_ID("imp1");
     }
 
-  mk_amph_from_complex("imc0", "pup0a", "pup0p");
-  delete_image_ID("pup0p");
-  save_fl_fits("pup0a", "!pup0a.fits");
-  delete_image_ID("pup0a");
-  
-  permut("imc0");
-  do2dfft("imc0","imc1");
-  delete_image_ID("imc0");
-  permut("imc1");
-  mk_amph_from_complex("imc1", "foca", "focp");
-  delete_image_ID("imc1");
-  execute_arith("foci=foca*foca/98130");
+    mk_amph_from_complex("imc0", "pup0a", "pup0p", 0);
+    delete_image_ID("pup0p");
+    save_fl_fits("pup0a", "!pup0a.fits");
+    delete_image_ID("pup0a");
 
-  IDa = image_ID("foca");
-  IDp = image_ID("focp");
-  size = data.image[IDa].md[0].size[0];
-  for(ii=0;ii<size;ii++)
-    for(jj=0;jj<size;jj++)
-      {
-	x = (1.0*ii-0.5*size)/5.12;
-	y = (1.0*jj-0.5*size)/5.12;
-	r = sqrt(x*x+y*y);
-	if((r>5*rout)||(r<rin))
-	  data.image[IDa].array.F[jj*size+ii] = 0.0;
-      }
-  mk_complex_from_amph("foca", "focp", "focc"); 
+    permut("imc0");
+    do2dfft("imc0","imc1");
+    delete_image_ID("imc0");
+    permut("imc1");
+    mk_amph_from_complex("imc1", "foca", "focp", 0);
+    delete_image_ID("imc1");
+    execute_arith("foci=foca*foca/98130");
 
-  delete_image_ID("focp");
-  delete_image_ID("foca");
-  permut("focc");
-  do2dfft("focc","pupc1");
-  delete_image_ID("focc");
-  permut("pupc1");
-  mk_amph_from_complex("pupc1", "pupa1", "pupp1");
-  delete_image_ID("pupc1");
-  save_fl_fits("pupa1", "!pupa_res.fits");
-  delete_image_ID("pupa1");
-  delete_image_ID("pupp1");
+    IDa = image_ID("foca");
+    IDp = image_ID("focp");
+    size = data.image[IDa].md[0].size[0];
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            x = (1.0*ii-0.5*size)/5.12;
+            y = (1.0*jj-0.5*size)/5.12;
+            r = sqrt(x*x+y*y);
+            if((r>5*rout)||(r<rin))
+                data.image[IDa].array.F[jj*size+ii] = 0.0;
+        }
+    mk_complex_from_amph("foca", "focp", "focc", 0);
+
+    delete_image_ID("focp");
+    delete_image_ID("foca");
+    permut("focc");
+    do2dfft("focc","pupc1");
+    delete_image_ID("focc");
+    permut("pupc1");
+    mk_amph_from_complex("pupc1", "pupa1", "pupp1", 0);
+    delete_image_ID("pupc1");
+    save_fl_fits("pupa1", "!pupa_res.fits");
+    delete_image_ID("pupa1");
+    delete_image_ID("pupp1");
 
 
-  ID = image_ID("foci");
-  // scale : 5.12 pix = 1.0 l/D
-  size = data.image[ID].md[0].size[0];
-  for(ii=0;ii<size;ii++)
-    for(jj=0;jj<size;jj++)
-      {
-	x = (1.0*ii-0.5*size)/5.12;
-	y = (1.0*jj-0.5*size)/5.12;
-	r = sqrt(x*x+y*y);
-	if((r>rin)&&(r<rout))
-	  {
-	    value += data.image[ID].array.F[jj*size+ii];
-	    valuecnt += 1.0;
-	  }
-      }
-  
-  return(value/valuecnt);
+    ID = image_ID("foci");
+    // scale : 5.12 pix = 1.0 l/D
+    size = data.image[ID].md[0].size[0];
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            x = (1.0*ii-0.5*size)/5.12;
+            y = (1.0*jj-0.5*size)/5.12;
+            r = sqrt(x*x+y*y);
+            if((r>rin)&&(r<rout))
+            {
+                value += data.image[ID].array.F[jj*size+ii];
+                valuecnt += 1.0;
+            }
+        }
+
+    return(value/valuecnt);
 }
+
 
 
 
@@ -393,7 +396,7 @@ long WFpropagate_run() // custom function
   maskpos = (double*) malloc(sizeof(double)*NBmask);
 
 
-  load_fits("pa1a_post2.fits", "pa1a");
+  load_fits("pa1a_post2.fits", "pa1a", 1);
   execute_arith("refpup=pa1a*pa1a");
   tot0 = arith_image_total("refpup");
 
@@ -401,13 +404,13 @@ long WFpropagate_run() // custom function
   save_fl_fits("mask0", "!mask0.fits");
   maskpos[0] = -1.35;
 
-  load_fits("mask_i100_o5.fits", "mask1");
+  load_fits("mask_i100_o5.fits", "mask1", 1);
   maskpos[1] = 0.0;
 
-  load_fits("mask_i40_o5.fits", "mask2");
+  load_fits("mask_i40_o5.fits", "mask2", 1);
   maskpos[2] = 0.08;
 
-  load_fits("mask_o5_r48.fits", "mask3");
+  load_fits("mask_o5_r48.fits", "mask3", 1);
   maskpos[3] = 0.14;
 
   execute_arith("refpup1=refpup*mask0*mask1*mask2*mask3");
@@ -416,6 +419,7 @@ long WFpropagate_run() // custom function
   fp = fopen("result.txt","w");
   fclose(fp);
 
+	x = 0.0;
   // for(x = 0.08; x< 0.3; x+= 0.01)
   // {
   //maskpos[3] = x;
