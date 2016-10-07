@@ -4,11 +4,11 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
@@ -33,13 +33,28 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/semaphore.h \
- /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/xlocale.h \
- /usr/include/fftw3.h /usr/include/gsl/gsl_rng.h \
- /usr/include/gsl/gsl_types.h /usr/include/gsl/gsl_errno.h \
- /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
- /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
+ /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/fftw3.h \
+ /usr/include/gsl/gsl_rng.h /usr/include/gsl/gsl_types.h \
+ /usr/include/gsl/gsl_errno.h /usr/include/errno.h \
+ /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/gsl/gsl_inline.h
+ /usr/include/gsl/gsl_inline.h /usr/include/signal.h \
+ /usr/include/x86_64-linux-gnu/bits/signum.h \
+ /usr/include/x86_64-linux-gnu/bits/siginfo.h \
+ /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+ /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+ /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+ /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h cudacomp/cudacomp.h \
+ AOloopControl/AOloopControl.h AOloopControl_DM/AOloopControl_DM.h \
+ ZernikePolyn/ZernikePolyn.h WFpropagate/WFpropagate.h \
+ image_basic/image_basic.h image_filter/image_filter.h kdtree/kdtree.h \
+ image_gen/image_gen.h linopt_imtools/linopt_imtools.h \
+ statistic/statistic.h fft/fft.h info/info.h \
+ COREMOD_arith/COREMOD_arith.h COREMOD_iofits/COREMOD_iofits.h \
+ COREMOD_memory/COREMOD_memory.h COREMOD_tools/COREMOD_tools.h \
+ 00CORE/00CORE.h
 
 /usr/include/stdc-predef.h:
 
@@ -57,7 +72,7 @@ CLIcore.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.9/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
@@ -69,7 +84,7 @@ CLIcore.h:
 
 /usr/include/wchar.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
@@ -135,8 +150,6 @@ CLIcore.h:
 
 /usr/include/x86_64-linux-gnu/bits/semaphore.h:
 
-/usr/include/xlocale.h:
-
 /usr/include/fftw3.h:
 
 /usr/include/gsl/gsl_rng.h:
@@ -158,3 +171,55 @@ CLIcore.h:
 /usr/include/asm-generic/errno-base.h:
 
 /usr/include/gsl/gsl_inline.h:
+
+/usr/include/signal.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/x86_64-linux-gnu/sys/ucontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+cudacomp/cudacomp.h:
+
+AOloopControl/AOloopControl.h:
+
+AOloopControl_DM/AOloopControl_DM.h:
+
+ZernikePolyn/ZernikePolyn.h:
+
+WFpropagate/WFpropagate.h:
+
+image_basic/image_basic.h:
+
+image_filter/image_filter.h:
+
+kdtree/kdtree.h:
+
+image_gen/image_gen.h:
+
+linopt_imtools/linopt_imtools.h:
+
+statistic/statistic.h:
+
+fft/fft.h:
+
+info/info.h:
+
+COREMOD_arith/COREMOD_arith.h:
+
+COREMOD_iofits/COREMOD_iofits.h:
+
+COREMOD_memory/COREMOD_memory.h:
+
+COREMOD_tools/COREMOD_tools.h:
+
+00CORE/00CORE.h:

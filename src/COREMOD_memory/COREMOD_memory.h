@@ -29,17 +29,20 @@ typedef struct
 
 
 
+typedef struct
+{
+    long cnt0;
+    long cnt1;
+} TCP_BUFFER_METADATA;
 
 
 
 
+int init_COREMOD_memory();
 
 
 
 int memory_monitor(char *termttyname);
-
-
-
 
 
 long compute_nb_image();
@@ -73,7 +76,7 @@ long create_variable_string_ID(char *name, char *value);
 long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
 
 
-
+ 
 
 long image_write_keyword_L(char *IDname, char *kname, long value, char *comment);
 long image_write_keyword_D(char *IDname, char *kname, double value, char *comment);
@@ -84,7 +87,7 @@ long image_list_keywords(char *IDname);
 long image_read_keyword_D(char *IDname, char *kname, double *val);
 long image_read_keyword_L(char *IDname, char *kname, long *val);
 
-
+long read_sharedmem_image_size(char *name, char *fname);
 long read_sharedmem_image(char *name);
 
 long create_1Dimage_ID(char *ID_name, long xsize);
@@ -107,6 +110,8 @@ long copy_image_ID(char *name, char *newname, int shared);
 
 long create_variable_ID(char *name, double value);
 
+int list_image_ID_ncurses();
+
 int list_image_ID_ofp(FILE *fo);
 
 int list_image_ID_ofp_simple(FILE *fo);
@@ -121,17 +126,17 @@ int list_variable_ID_file(char *fname);
 
 long chname_image_ID(char *ID_name, char *new_name);
 
-int mk_complex_from_reim(char *re_name, char *im_name, char *out_name);
+int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int sharedmem);
 
-int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name);
+int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int sharedmem);
 
-int mk_reim_from_complex(char *in_name, char *re_name, char *im_name);
+int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int sharedmem);
 
-int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name);
+int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int sharedmem);
 
-int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name);
+int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name, int sharedmem);
 
-int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name);
+int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name, int sharedmem);
 
 int clearall();
 
@@ -151,17 +156,23 @@ long COREMOD_MEMORY_image_set_status(char *IDname, int status);
 long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0);
 long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1);
 
-long COREMOD_MEMORY_image_set_createsem(char *IDname);
-long COREMOD_MEMORY_image_set_sempost(char *IDname);
-long COREMOD_MEMORY_image_set_semwait(char *IDname);
+long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem);
+long COREMOD_MEMORY_image_set_sempost(char *IDname, long index);
+long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index);
+
+long COREMOD_MEMORY_image_set_sempost_loop(char *IDname, long index, long dtus);
+long COREMOD_MEMORY_image_set_semwait(char *IDname, long index);
+void *waitforsemID(void *ID);
 long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID);
-long COREMOD_MEMORY_image_set_semflush(char *IDname);
+long COREMOD_MEMORY_image_set_semflush(char *IDname, long index);
 
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
+
+long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname);
 
 int COREMOD_MEMORY_logshim_printstatus(char *IDname);
 int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv);

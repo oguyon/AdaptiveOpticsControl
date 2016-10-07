@@ -20,6 +20,7 @@ long basic_extract(char *ID_in_name, char *ID_out_name, long n1, long n2, long n
 int basic_trunc_circ(char *ID_name, float f1);
 
 long basic_expand(char *ID_name, char *ID_name_out, int n1, int n2);
+long basic_expand3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3);
 
 long basic_zoom2(char *ID_name, char *ID_name_out);
 
@@ -88,6 +89,8 @@ long basic_addimages(char *prefix, char *ID_out);
 long basic_averageimages(char *prefix, char *ID_out);
 
 long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout);
+long image_basic_3Dto2D(char *IDname);
+long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name);
 
 long basic_tableto2Dim(char *fname, float xmin, float xmax, float ymin, float ymax, long xsize, long ysize, char *ID_name, float convsize);
 
@@ -99,5 +102,7 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax);
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode);
 
 long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ);
+
+long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname);
 
 #endif

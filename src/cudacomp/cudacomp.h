@@ -39,7 +39,8 @@ typedef struct
     int alloc; /// 1 if memory has been allocated
     long CM_ID;
     long CM_cnt;
-
+    long timerID;
+    
     int M;
     int N;
 
@@ -85,6 +86,8 @@ typedef struct
     int *Nsize;
     int *Noffset;
 
+    int *GPUdevice;
+
     int orientation;
     long IDout;
 
@@ -101,10 +104,22 @@ int CUDACOMP_init();
 #ifdef HAVE_CUDA
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N);
 int GPUloadCmat(int index);
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem, int initWFSref);
-int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta);
+int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
+int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing);
 int GPU_loop_MultMat_free(int index);
-void *compute_function( void *ptr );
+
+#ifdef HAVE_MAGMA
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name);
 #endif
+
+void *compute_function( void *ptr );
+int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name);
+
+int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode);
+
+int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
+
+#endif
+
 
 #endif

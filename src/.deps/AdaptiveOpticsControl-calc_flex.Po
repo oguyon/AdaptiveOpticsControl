@@ -4,11 +4,11 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
@@ -34,7 +34,9 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/math.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/inttypes.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
@@ -51,6 +53,13 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/fftw3.h \
  /usr/include/gsl/gsl_rng.h /usr/include/gsl/gsl_types.h \
  /usr/include/gsl/gsl_errno.h /usr/include/gsl/gsl_inline.h \
+ /usr/include/signal.h /usr/include/x86_64-linux-gnu/bits/signum.h \
+ /usr/include/x86_64-linux-gnu/bits/siginfo.h \
+ /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+ /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+ /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+ /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
  COREMOD_arith/COREMOD_arith.h info/info.h
 
 /usr/include/stdc-predef.h:
@@ -67,7 +76,7 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.9/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
@@ -79,7 +88,7 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
 
 /usr/include/wchar.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.9/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
@@ -151,6 +160,14 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
+/usr/include/inttypes.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
 /usr/include/math.h:
 
 /usr/include/x86_64-linux-gnu/bits/huge_val.h:
@@ -202,6 +219,22 @@ CLIcore.h:
 /usr/include/gsl/gsl_errno.h:
 
 /usr/include/gsl/gsl_inline.h:
+
+/usr/include/signal.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/x86_64-linux-gnu/sys/ucontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
 COREMOD_arith/COREMOD_arith.h:
 

@@ -1,6 +1,11 @@
 #if !defined(GENIMAGE_H)
 #define GENIMAGE_H
 
+
+int init_image_gen();
+
+
+
 long make_double_star(char *ID_name, long l1, long l2, double intensity_1, double intensity_2, double separation, double position_angle);
 /* creates a double star */
 
@@ -18,11 +23,11 @@ long make_square(char *ID_name, long l1, long l2, double x_center, double y_cent
 long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_center, double radius1, double radius2);
 
 long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, double y2, double t);
-
+long make_lincoordinate(char *IDname, long l1, long l2, double x_center, double y_center, double angle);
 long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_center, double radius);
 
 long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step);
-
+long IMAGE_gen_segments2WFmodes(char *prefix, long ndigit, char *IDout);
 long make_jacquinot_pupil(char *ID_name, long l1, long l2, double x_center, double y_center, double width, double height);
 
 long make_sectors(char *ID_name, long l1, long l2, double x_center, double y_center, double step, long NB_sectors);
@@ -58,5 +63,7 @@ long make_cosapoedgePupil(long size, double a, double b, char *IDname);
 long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety);
 
 long make_tile(char *IDin_name, long size, char *IDout_name);
+
+long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name);
 
 #endif

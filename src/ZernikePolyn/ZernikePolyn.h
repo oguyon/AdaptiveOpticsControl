@@ -14,6 +14,11 @@ typedef struct /* structure to store Zernike coefficients */
 
 
 
+
+int init_ZernikePolyn();
+
+
+
 double fact(int n);
 
 int zernike_init();
@@ -41,6 +46,8 @@ int get_zerns(char *ID_name, long max_zer, double radius);
 int get_zern_array(char *ID_name, long max_zer, double radius, double *array);
 
 int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius);
+
+long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name);
 
 int remove_TTF(char *ID_name, char *ID_name_out, double radius);
 

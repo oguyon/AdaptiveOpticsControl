@@ -1,6 +1,11 @@
 #ifndef _IOFITS_H
 #define _IOFITS_H
 
+
+int init_COREMOD_iofits();
+
+
+
 int file_exists(char *file_name);
 
 int is_fits_file(char *file_name);
@@ -19,7 +24,10 @@ int save_fl_fits(char *ID_name, char *file_name);
 
 int save_sh_fits(char *ID_name, char *file_name);
 
-int saveall_fl_fits();
+int save_fits(char *ID_name, char *file_name);
+int save_fits_atomic(char *ID_name, char *file_name);
+
+int saveall_fits(char *savedirname);
 
 int break_cube(char *ID_name);
 

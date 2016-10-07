@@ -1,6 +1,8 @@
-
 #if !defined(FFT_H)
 #define FFT_H
+
+int init_fft();
+
 
 int import_wisdom();
 

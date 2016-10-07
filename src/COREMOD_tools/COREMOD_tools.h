@@ -1,6 +1,13 @@
 #ifndef _TOOLS_H
 #define _TOOLS_H
 
+
+
+int init_COREMOD_tools();
+
+
+int COREMOD_TOOLS_mvProcCPUset(char *csetname);
+
 int create_counter_file(char *fname, long NBpts);
 
 int bubble_sort(double *array, long count);
@@ -20,7 +27,7 @@ void qs3(double *array, double *array1, double *array2, long left, long right);
 void qs3_double(double *array, double *array1, double *array2, long left, long right);
 
 void quick_sort3(double *array, double *array1, double *array2, long count);
-
+void quick_sort3_float(float *array, float *array1, float *array2, long count);
 void quick_sort3_double(double *array, double *array1, double *array2, long count);
 
 void qs2l(double *array, long *array1, long left, long right);
@@ -65,6 +72,8 @@ int write_float_file(char *fname, float value);
 
 
 int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step);
+
+long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax);
 
 
 #endif
