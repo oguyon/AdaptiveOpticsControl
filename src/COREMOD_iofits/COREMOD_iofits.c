@@ -1416,6 +1416,7 @@ int save_fits_atomic(char *ID_name, char *file_name)
     int atype;
     char fnametmp[1000];
 	char command[2000];
+	int ret;
 	
     ID = image_ID(ID_name);
 
@@ -1437,7 +1438,7 @@ int save_fits_atomic(char *ID_name, char *file_name)
         }
 		
 		sprintf("mv %s %s", fnametmp, file_name);
-		system(command);
+		ret = system(command);
     }
 
     return 0;
