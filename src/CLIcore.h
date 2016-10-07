@@ -8,9 +8,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <semaphore.h>
-#include <time.h>
 #include <fftw3.h>
 #include <gsl/gsl_rng.h>	// for random numbers
+#include <signal.h>
 
 
 #define PI 3.14159265358979323846264338328
@@ -19,14 +19,14 @@
 #define SZ_CLICOREVARRAY 1000
 
 /// important directories and info
-pid_t CLIPID;
-char DocDir[200];		// location of documentation
-char SrcDir[200];		// location of source
-char BuildFile[200];	// file name for source
-char BuildDate[200];
-char BuildTime[200];
+extern pid_t CLIPID;
+extern char DocDir[200];		// location of documentation
+extern char SrcDir[200];		// location of source
+extern char BuildFile[200];	// file name for source
+extern char BuildDate[200];
+extern char BuildTime[200];
 
-int C_ERRNO;			// C errno (from errno.h)
+extern int C_ERRNO;			// C errno (from errno.h)
 
 /* #define DEBUG */
 #define CFITSEXIT  printf("Program abnormally terminated, File \"%s\", line %d\n", __FILE__, __LINE__);exit(0)
@@ -45,14 +45,15 @@ int C_ERRNO;			// C errno (from errno.h)
 #define SHAREDMEMDIR "/tmp"
 
 
-
+#define SEMAPHORE_MAX       1000
+#define SEMAPHORE_MAXVAL    10 // maximum value for a semaphore
 #define NB_ARG_MAX                 20
 
 
 //Need to install process with setuid.  Then, so you aren't running privileged all the time do this:
-uid_t euid_real;
-uid_t euid_called;
-uid_t suid;
+extern uid_t euid_real;
+extern uid_t euid_called;
+extern uid_t suid;
 
 
 
@@ -149,7 +150,7 @@ typedef struct
 #define USHORT 7
 #define LONG 8
 
-int TYPESIZE[9];
+extern int TYPESIZE[9];
 
 
 //typedef float PRECISION;
@@ -181,21 +182,21 @@ typedef struct
 
     long naxis;                   // number of axis
     long size[3];                 // image size
-    long nelement;				// number of elements in image
-    int atype;					// data type code
+    long nelement;              // number of elements in image
+    int atype;                  // data type code
 
-    double creation_time;	        // creation time (since program start)
-    double last_access;			// last time the image was accessed  (since program start)
+    double creation_time;       // creation time (since program start)
+    double last_access;         // last time the image was accessed  (since program start)
     struct timespec wtime;
 
-    int shared; 					// 1 if in shared memory
+    int shared;                 // 1 if in shared memory
 
-    int write;                	// 1 if image is being written
-    int status;					// 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
-    long cnt0;               	  	// counter (incremented if image is updated)
-    long cnt1;					// in 3D rolling buffer image, this is the last slice written
+    int write;               // 1 if image is being written
+    int status;              // 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
+    long cnt0;               // counter (incremented if image is updated)
+    long cnt1;               // in 3D rolling buffer image, this is the last slice written
 
-    long NBkw; 					// number of keywords
+    long NBkw;                  // number of keywords
 
 } IMAGE_METADATA;
 
@@ -206,7 +207,7 @@ typedef struct
 
 
 
-typedef struct			/* structure used to store data arrays */
+typedef struct          /* structure used to store data arrays */
 {
     int used;
     int shmfd; // if shared memory, file descriptor
@@ -228,20 +229,19 @@ typedef struct			/* structure used to store data arrays */
 
     IMAGE_KEYWORD *kw;
 
+    int sem; // number of semaphores in use     
+    sem_t **semptr; // semaphore array
 
-
-    int sem; // 1 if semaphore exists for this image
-    sem_t *semptr; // semaphore for this image
-
-    int sem1;
-    sem_t *semptr1; // extra semaphore
-
-    int semlog; // reserved for data logging
-    sem_t *semptrlog;
+    sem_t *semlog; // semaphore for logging
+    
+    
+    char name[80]; // local name (can be different from name in shared memory)
+    //long cnt00; // custom counter
 
     //	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
 } IMAGE;
+
 
 
 
@@ -267,6 +267,18 @@ typedef struct
 // THIS IS WHERE EVERYTHING THAT NEEDS TO BE WIDELY ACCESSIBLE GETS STORED
 typedef struct
 {
+    struct sigaction sigact; 
+    // signals toggle flags
+    int signal_USR1;
+    int signal_USR2;
+    int signal_TERM;
+    int signal_INT;
+    int signal_SEGV;
+    int signal_ABRT;
+    int signal_BUS;
+    int signal_HUP;
+    int signal_PIPE;
+    
     int Debug;
     int quiet;
     int overwrite;		// automatically overwrite FITS files
@@ -335,7 +347,7 @@ typedef struct
 #define MAX_NB_EXCLUSIONS 40
 
 
-
+void sig_handler(int signo);
 
 
 

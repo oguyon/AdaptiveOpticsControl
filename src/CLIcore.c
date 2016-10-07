@@ -1,9 +1,36 @@
+#define _GNU_SOURCE
+
 #include <string.h>
 #include <CLIcore.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <pthread.h>
+
+#include <unistd.h>
+
+//#include <pthread_np.h>
+
+#ifdef __MACH__
+#include <mach/mach_time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+static int clock_gettime(int clk_id, struct mach_timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
+#include <sys/time.h>
+#endif
+
+
 #include <math.h>
 #include <errno.h>
 #include <unistd.h>
@@ -13,8 +40,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#ifndef __MACH__
 #include <sys/prctl.h>
+#endif
 #include <sched.h>
+#include <signal.h>
 
 #include <readline/readline.h>  
 #include <readline/history.h>  
@@ -42,19 +72,38 @@
 
 
 
- 
+extern int yy_scan_string(const char *);
+extern int yylex_destroy (void );
+
 
 
 /**
  * @file CLIcore.c
  * @author Olivier Guyon
- * @date Sept 4, 2014
+ * @date 2015
  */
 
 
 /*-----------------------------------------
 *       Globals
 */
+
+pid_t CLIPID;
+char DocDir[200]; // location of documentation
+char SrcDir[200]; // location of source
+char BuildFile[200]; // file name for source
+char BuildDate[200];
+char BuildTime[200];
+
+uid_t euid_real;
+uid_t euid_called;
+uid_t suid;
+
+int TYPESIZE[9];
+
+int C_ERRNO;
+
+
 
 
 
@@ -114,6 +163,53 @@ int help_command(char *cmdkey);
 
 
 
+
+
+/// signal catching
+
+
+void sig_handler(int signo)
+{
+    switch ( signo ) {
+        case SIGINT:
+           printf("received SIGINT\n");
+           data.signal_INT = 1;
+        break;
+        case SIGTERM:
+           printf("received SIGTERM\n");
+           data.signal_TERM = 1;
+        break;
+        case SIGUSR1:
+             printf("received SIGUSR1\n");
+           data.signal_USR1 = 1;
+        break;
+        case SIGUSR2:
+             printf("received SIGUSR2\n");
+           data.signal_USR2 = 1;
+        break;
+         case SIGBUS:
+           printf("received SIGBUS\n");
+           data.signal_BUS = 1;
+        break;
+        case SIGABRT:
+             printf("received SIGABRT\n");
+           data.signal_ABRT = 1;
+        break;
+        case SIGSEGV:
+             printf("received SIGSEGV\n");
+           data.signal_SEGV = 1;
+        break;
+        case SIGHUP:
+             printf("received SIGHUP\n");
+           data.signal_HUP = 1;
+        break;
+         case SIGPIPE:
+             printf("received SIGPIPE\n");
+           data.signal_PIPE = 1;
+        break;
+   }
+}
+
 /// CLI functions
 
 int exitCLI()
@@ -149,7 +245,9 @@ int exitCLI()
 int printInfo()
 {
     float f1;
-
+    printf("\n");
+    printf("  PID = %d\n", CLIPID);
+    
     printf("--------------- GENERAL ----------------------\n");
     printf("%s VERSION   %s\n",  PACKAGE_NAME, PACKAGE_VERSION );
     printf("%s BUILT   %s %s\n", __FILE__,__DATE__,__TIME__);
@@ -478,7 +576,10 @@ int main(int argc, char *argv[])
 
     int initstartup = 0; /// becomes 1 after startup
 
-
+	int blockCLIinput = 0;
+	int CLIinit1 = 0;
+	
+	
 
 
     strcpy(data.processname, argv[0]);
@@ -496,6 +597,7 @@ int main(int argc, char *argv[])
 
     atexit(fnExit1);
 
+
     data.Debug = 0;
     data.overwrite = 0;
     data.precision = 0; // float is default precision
@@ -507,14 +609,42 @@ int main(int argc, char *argv[])
     data.fifoON = 1;
 
 
+    // signal handling
+    
+    data.sigact.sa_handler = sig_handler;
+    sigemptyset(&data.sigact.sa_mask);
+    data.sigact.sa_flags = 0;
+
+    data.signal_USR1 = 0;
+    data.signal_USR2 = 0;
+    data.signal_TERM = 0;
+    data.signal_INT = 0;
+    data.signal_BUS = 0;
+    data.signal_SEGV = 0;
+    data.signal_ABRT = 0;
+    data.signal_HUP = 0;
+    data.signal_PIPE = 0;
+    
+   // if (signal(SIGINT, sig_handler) == SIG_ERR)
+     //   printf("\ncan't catch SIGINT\n");
+    if (sigaction(SIGUSR1, &data.sigact, NULL) == -1)
+        printf("\ncan't catch SIGUSR1\n");
+    if (sigaction(SIGUSR2, &data.sigact, NULL) == -1)
+        printf("\ncan't catch SIGUSR2\n");
+   
+
+
+
+
     // to take advantage of kernel priority:
     // owner=root mode=4755
-
+    
+    #ifndef __MACH__
     getresuid(&euid_real, &euid_called, &suid);
 
     //This sets it to the privileges of the normal user
     r = seteuid(euid_real);
-
+	#endif
 
 
 
@@ -539,7 +669,7 @@ int main(int argc, char *argv[])
     }
 
     CLIPID = getpid();
-
+    
     //    sprintf(promptname, "%s", data.processname);
     sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, data.processname, 0x1B, 0);
     //sprintf(prompt, "%s> ", PACKAGE_NAME);
@@ -647,32 +777,38 @@ int main(int argc, char *argv[])
             }
         initstartup = 1;
 
+
         // -------------------------------------------------------------
         //                 get user input
         // -------------------------------------------------------------
+		FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors. 
+        if(data.fifoON==1)
+            FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
+        FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
 
 
+		
+		
         while(CLIexecuteCMDready == 0)
         {
-            FD_ZERO(&cli_fdin_set);
-            if(data.fifoON==1)
-                FD_SET(fifofd, &cli_fdin_set);
-            FD_SET(fileno(stdin), &cli_fdin_set);
-
             n = select(fdmax+1, &cli_fdin_set, NULL, NULL, NULL);
 
             if (!n)
                 continue;
             if (n == -1) {
-                perror("select");
-                return EXIT_FAILURE;
+                if(errno==EINTR) // no command received
+                    {
+                        continue;
+                    }
+                else
+                {
+                    perror("select");
+                    return EXIT_FAILURE;
+                }
             }
 
-
-            if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
-                rl_callback_read_char();
-            }
-
+			blockCLIinput = 0;
+            
             if(data.fifoON==1)
             {
                 if (FD_ISSET(fifofd, &cli_fdin_set)) {
@@ -700,14 +836,22 @@ int main(int argc, char *argv[])
                             break;
                         }
                     }
+					blockCLIinput = 1;
                 }
             }
+           
+           
+            if(blockCLIinput == 0)
+				if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
+					rl_callback_read_char();
+				}
         }
         CLIexecuteCMDready = 0;
 
         if(data.CMDexecuted==0)
             printf("Command not found, or command with no effect\n");
     }
+    
 
     return(0);
 }
@@ -771,8 +915,8 @@ char* CLI_generator(const char* text, int state)
         iok = data.image[list_index1].used;
         if(iok == 1)
         {
-            name = data.image[list_index1].md[0].name;
-            //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].md[0].name, name);
+            name = data.image[list_index1].name;
+            //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].name, name);
         }
         list_index1++;
         if(iok == 1)
@@ -846,8 +990,8 @@ void main_init()
   /* initialization of the data structure 
    */
   data.quiet           = 1;
-  data.NB_MAX_IMAGE    = 100;
-  data.NB_MAX_VARIABLE = 100;
+  data.NB_MAX_IMAGE    = 5000;
+  data.NB_MAX_VARIABLE = 5000;
   data.INVRANDMAX      = 1.0/RAND_MAX;
   
 
@@ -1153,6 +1297,8 @@ int re_alloc()
             data.image[i].used = 0;
             data.image[i].shmfd = -1;
             data.image[i].memsize = 0;
+            data.image[i].semptr = NULL;
+            data.image[i].semlog = NULL;
         }
     }
 
@@ -1225,6 +1371,7 @@ int command_line( int argc, char **argv)
     struct sched_param schedpar;
     int r;
     char command[200];
+
 
 
 
@@ -1309,14 +1456,21 @@ int command_line( int argc, char **argv)
             printf("process name '%s'\n", optarg);
             strcpy(data.processname, optarg);
             memcpy((void *)argv[0], optarg, sizeof(optarg));
-            prctl(PR_SET_NAME, optarg, 0, 0, 0);
+#ifdef __linux__
+     prctl(PR_SET_NAME, optarg, 0, 0, 0);
+#elif defined(HAVE_PTHREAD_SETNAME_NP) && defined(OS_IS_DARWIN)
+    pthread_setname_np(optarg);
+#endif
+//            prctl(PR_SET_NAME, optarg, 0, 0, 0);
             break;
 
         case 'p':
             schedpar.sched_priority = atoi(optarg);
+            #ifndef __MACH__
             r = seteuid(euid_called); //This goes up to maximum privileges
             sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
             r = seteuid(euid_real);//Go back to normal privileges
+            #endif
             break;
 
         case 'f':
@@ -1585,7 +1739,7 @@ int CLI_checkarg0(int argnum, int argtype, int errmsg)
         }
         break;
 
-    case 3:  // should be string
+    case 3:  // should be string, but not image
         switch (data.cmdargtoken[argnum].type) {
         case 1:
             if(errmsg==1)
@@ -1644,7 +1798,34 @@ int CLI_checkarg0(int argnum, int argtype, int errmsg)
             rval = 0;
             break;
         }
-        break;
+    case 5: // should be string (image or not)
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            if(errmsg==1)
+                printf("arg %d is floating point, but should be string or image\n", argnum);
+            rval = 1;
+            break;
+        case 2:
+            if(errmsg==1)
+                printf("arg %d is integer, but should be string or image\n", argnum);
+            rval = 1;
+            break;
+        case 3:
+            rval = 0;
+            break;
+        case 4:
+            rval = 0;
+            break;
+        case 5:
+            if(errmsg==1)
+                printf("arg %d is command (=\"%s\"), but should be image\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 6:
+            rval = 0;
+            break;
+        }
+    break;
 
     }
 
