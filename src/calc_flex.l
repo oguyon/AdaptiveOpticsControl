@@ -7,6 +7,7 @@
 #include "calc_bison.h"
 
 #include "CLIcore.h"
+#include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "info/info.h"
 extern DATA data;
@@ -115,6 +116,13 @@ return TKFUNC_d_d;
 "acos(" {
 if(data.Debug>0){printf("Found function %s\n", yytext);} 
 yylval.fnctptr = acos;
+return TKFUNC_d_d; 
+}
+
+
+"posi(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = Ppositive;
 return TKFUNC_d_d; 
 }
 

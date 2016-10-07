@@ -12,6 +12,11 @@
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "info/info.h"
 
+
+int yylex();
+int yyerror(char *);
+
+
 extern DATA data;
 
 
@@ -173,11 +178,12 @@ exps:    TKNVAR         {$$ = strdup($1);        data.cmdargtoken[data.cmdNBarg]
 
 #include <stdio.h>
 
+int yylex();
 
-
-yyerror (s)  /* Called by yyparse on error */
+int yyerror (s)  /* Called by yyparse on error */
      char *s;
 {
   printf ("PARSING ERROR ON COMMAND LINE ARG %ld: %s\n", data.cmdNBarg, s);
   data.parseerror = 1;
+	return 0;
 }

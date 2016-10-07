@@ -80,7 +80,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 26 "calc_bison.y" /* yacc.c:1909  */
+#line 31 "calc_bison.y" /* yacc.c:1909  */
 
   long     val_l;  /* long */  
   float    val_f;  /* float */
