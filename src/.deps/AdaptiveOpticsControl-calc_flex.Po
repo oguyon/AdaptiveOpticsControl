@@ -60,7 +60,8 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- COREMOD_arith/COREMOD_arith.h info/info.h
+ COREMOD_memory/COREMOD_memory.h COREMOD_arith/COREMOD_arith.h \
+ info/info.h
 
 /usr/include/stdc-predef.h:
 
@@ -235,6 +236,8 @@ CLIcore.h:
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+COREMOD_memory/COREMOD_memory.h:
 
 COREMOD_arith/COREMOD_arith.h:
 
