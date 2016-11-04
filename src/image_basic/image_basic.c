@@ -88,6 +88,19 @@ int image_basic_resize_cli()
     return 1;
 }
 
+
+int image_basic_rotate_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1) == 0)
+    {
+      basic_rotate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 int image_basic_3Dto2D_cli() // collapse first 2 axis into one
 {
 	if(CLI_checkarg(1,4) == 0)
@@ -272,6 +285,16 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
     data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"rotateim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_rotate_cli;
+    strcpy(data.cmd[data.NBcmd].info,"rotate 2D image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <angle>");
+    strcpy(data.cmd[data.NBcmd].example,"rotateim imin imout 230");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_rotate(char *ID_name, char *ID_out_name, float angle)");
+    data.NBcmd++;
+    
 
 	strcpy(data.cmd[data.NBcmd].key,"im3Dto2D");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -574,7 +597,7 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
 
     if(atype==DOUBLE)
     {
-        create_2Dimagedouble_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
+        create_2Dimage_ID_double(ID_name_out,(xmax-xmin),(ymax-ymin));
         ID_out = image_ID(ID_name_out);
         naxes[0] = data.image[ID_out].md[0].size[0];
         naxes[1] = data.image[ID_out].md[0].size[1];
@@ -1174,28 +1197,30 @@ long basic_renorm_max(char *ID_name)
     return(ID);
 }
 
-int basic_rotate(char *ID_name, char *ID_out_name, float angle)
+
+
+long basic_rotate(char *ID_name, char *IDout_name, float angle)
 {
-    int ID,ID_out;
+    int ID, IDout;
     long ii,jj,iis,jjs;
     long naxes[2];
 
     ID = image_ID(ID_name);
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
-    create_2Dimage_ID(ID_out_name,naxes[0],naxes[1]);
-    ID_out = image_ID(ID_out_name);
+    create_2Dimage_ID(IDout_name,naxes[0],naxes[1]);
+    IDout = image_ID(IDout_name);
 
     for (jj = 0; jj < naxes[1]; jj++)
         for (ii = 0; ii < naxes[0]; ii++)
         {
             iis = (long) (naxes[0]/2 + (ii-naxes[0]/2)*cos(angle) + (jj-naxes[1]/2)*sin(angle));
-            jjs = (long) (naxes[1]/2 + (ii-naxes[0]/2)*sin(angle) - (jj-naxes[1]/2)*cos(angle));
+            jjs = (long) (naxes[1]/2 - (ii-naxes[0]/2)*sin(angle) + (jj-naxes[1]/2)*cos(angle));
             if ((iis>0)&&(jjs>0)&&(iis<naxes[0])&&(jjs<naxes[1]))
-                data.image[ID_out].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[jjs*naxes[0]+iis];
+                data.image[IDout].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[jjs*naxes[0]+iis];
         }
 
-    return(0);
+    return(IDout);
 }
 
 
@@ -3986,7 +4011,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     long ii;
    
     schedpar.sched_priority = RT_priority;
-    #ifndef __MACH_
+    #ifndef __MACH__
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges

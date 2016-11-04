@@ -254,7 +254,13 @@ tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
 logRunningProcess "aolMeasureLOrespmat" "$1" "Acquiring LO modal response matrix"
 tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
-tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+
+if pgrep "aol${LOOPNUMBER}run" > /dev/null
+then # use option -r to re-use AO shared memory configuration
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+else
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+fi
 echo "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
@@ -644,9 +650,9 @@ if [ -a $file ]
 	MASKS_LOCK="0"
 fi
 if [ "$MASKS_LOCK" -eq "1" ]; then
-menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] Toggle Lock WFS and DM masks\Zn" )
+menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
-menuitems+=( "mlock" "[$MASKS_LOCK] Toggle Lock WFS and DM masks" )
+menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock OFF" )
 fi
 
 
@@ -987,7 +993,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})"
 --help-button --help-label "Exit" \
 --default-item "${menucontrolloop_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 retval=$?
@@ -1494,11 +1500,27 @@ fi
 	Sconf)
 mkdir -p ./CONF
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-exec 3>&1;
-confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_" $nbwlines $nbwcols)
-exec 3>&-;
+#exec 3>&1;
+#confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_" $nbwlines $nbwcols)
+#exec 3>&-;
+
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+
+dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+retval="$?"
+confname=$(cat $tempfile)
+
 aoconflogext "save configuration to ${confname}"
-echo "${confname}" > ./confname.txt
+echo "saving to ${confname}   tempfile = $tempfile"
+
+case $retval in
+   0) # button
+ echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/conf_* "${confname}/"
 cp conf/RMpoke.fits "${confname}/"
@@ -1507,15 +1529,31 @@ cp conf/RMHmat.fits "${confname}/"
 cp conf/RMpixindex.fits "${confname}/"
 cp conf/RMpokeCube.fits "${confname}/"
 ;;
+esac
+;;
 
 	Lconf)
 mkdir -p ./CONF
-exec 3>&1;
-confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
-exec 3>&-;
+#exec 3>&1;
+#confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
+#exec 3>&-;
+
+dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
+retval="$?"
+confname=$(cat $tempfile)
+
 echo "${confname}" > confname.txt
 aoconflogext "load configuration from ${confname}"
+echo "confname = $confname"
+
+
 confnameloaded=${confname}
+
+case $retval in
+   0) # button
+   
+if [ -d ${confname} ]; then
 cp "${confname}"/conf_*.txt ./conf/
 
 # set up symbolic links to streams
@@ -1581,6 +1619,14 @@ cp "${confname}/RMpokeCube.fits" ./conf/
 
 
 AOloadMem 1
+else
+dialog --title "ERROR" --msgbox "Directory ${confname} does not exit" 6 30
+fi;;
+ 1) echo "1"
+ ;;
+ 255) echo "255"
+ ;;
+esac
 
 ;;
 

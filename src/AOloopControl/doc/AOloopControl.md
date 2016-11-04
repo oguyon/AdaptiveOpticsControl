@@ -449,6 +449,33 @@ Note that at this point, the files are NOT loaded in shared memory, but the arch
 - **Load LOrespm files into shared memory** (`SMloadmrm` in `Loop Configure` screen)
 
 
+## Automatic system calibration (recommended)
+
+The automatic system calibration performs all steps listed above under zonal and modal response matrix acquisition.
+
+The old calibrations are archived as follows:
+
+- "conf_zrm_staged" and "conf_mrm_staged" hold the new configuration (zonal and modal respectively)
+
+- "conf_zrm_staged.000" and "conf_mrm_staged.000" hold the previous configuration (previously "conf_zrm_staged" and "conf_mrm_staged")
+
+- "conf_zrm_staged.001" and "conf_mrm_staged.001" hold the configuration previously named "conf_zrm_staged.000" and "conf_mrm_staged.000"
+
+- etc for a total of 20 configuration
+
+
+
+  
+
+## Managing configurations
+
+At any given time, the current configuration (including control matrices if they have been computed) can be saved using the `SAVE CURRENT SYSTEM CALIBRATION` command. Saving a configuration will save all files in the conf directory into a user-specified directory.
+
+Previously saved configurations can be loaded with the `LOAD SAVED SYSTEM CALIBRATION` command. This will load saved files into the conf directory and load all files into shared memory.
+
+
+
+
 ## Building control matrix
 
 - **set SVDlimit** (`SVDla` in `Control Matrix` screen). Set value is 0.1 as a starting point for a stable loop.
@@ -535,6 +562,8 @@ Launches script `./auxscripts/modesextractwfs` :
 !INCLUDE "../scripts/auxscripts/modesextractwfs"
 ~~~
 
+Converts WFS residuals into modes.
+
 
 ### Extract open loop modes
 
@@ -548,6 +577,10 @@ syntax    :    <loop #>
 example   :    aolcompolm 2
 C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)
 ~~~
+
+This function is entirely modal, and assumes that the WFS modes (see section above) are computed. The key input to the function is `aolN_modeval`, the WFS residual mode values. The function uses this telemetry and knowledge of loop gain and mult factor to track open loop mode values.
+
+Optionally, it also includes `aolN_modeval_pC`, the predictive control mode values that are added to the correction in predictive mode.
 
 
 ### Running average of dmC
@@ -664,8 +697,18 @@ The next steps are similar to the ones previously described, with the following 
 
 # Predictive control (experimental)
 
-## Scripts
+## Overview
 
+Predictive control is implemented in two processes:
+
+- The optimal auto-regressive (AR) filter predicting the current state from previous states is computed. The AR filter is computed from open-loop estimates, so the processes computing open-loop telemetry need to be running.
+
+- the AR filter is applied to write a prediction buffer, which can be written asynchronously from the main loop steps.
+
+The predictive filter is modal, and adopts the same modes as the main control loop.
+
+
+## Scripts
 
 ----------------------------- -----------------------------------------------------------
 File                          Description

@@ -14,9 +14,6 @@ echo "pname = $pname"
 
 loopnb=$(cat LOOPNUMBER)
 
-gain=0.2
-
-
 function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP (included filtering) $(tput sgr0)"
@@ -30,7 +27,6 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)             help"
 echo "     $(tput bold)-o$(tput sgr0) <file>      set output correction map"
-echo "     $(tput bold)-g$(tput sgr0) <gain>      set gain (default = $gain)"
 echo "     $(tput bold)-f$(tput sgr0)             offload correction to aol${looop}_dmC"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
@@ -42,7 +38,7 @@ echo "------------------------------------------------------------------------"
 
 OUTMODE=0 # default output : outDM_map
 OFFLOADMODE=0
-
+OUTCNAME="aol${loopnb}_dmCoutfilt"
 
 # ================= OPTIONS =============================
 
@@ -60,9 +56,6 @@ while getopts :ho:g:f FLAG; do
     h)  #show help
       printHELP
       exit
-      ;;
-    g)  #show help
-      gain="$OPTARG"
       ;;
     f) # offload correction to dmC
     OFFLOADMODE=1
@@ -118,7 +111,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
@@ -132,7 +125,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 

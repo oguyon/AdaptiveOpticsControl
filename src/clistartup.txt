@@ -1,0 +1,3 @@
+creaim im1 100 100
+listim
+creaim im2 200 200

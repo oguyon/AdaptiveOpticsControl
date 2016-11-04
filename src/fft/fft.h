@@ -18,21 +18,21 @@ int permut(char *ID_name);
 
 //void permutfliphv(char *ID_name);
 
-int do1dfft(char *in_name, char *out_name);
+long do1dfft(char *in_name, char *out_name);
 
-int do1drfft(char *in_name, char *out_name);
+long do1drfft(char *in_name, char *out_name);
 
-int do1dffti(char *in_name, char *out_name);
+long do1dffti(char *in_name, char *out_name);
 
-int do2dfft(char *in_name, char *out_name);
+long do2dfft(char *in_name, char *out_name);
 
-int do2dffti(char *in_name, char *out_name);
+long do2dffti(char *in_name, char *out_name);
 
 int pupfft(char *ID_name_ampl, char *ID_name_pha, char *ID_name_ampl_out, char *ID_name_pha_out, char *options);
 
-int do2drfft(char *in_name, char *out_name);
+long do2drfft(char *in_name, char *out_name);
 
-int do2drffti(char *in_name, char *out_name);
+long do2drffti(char *in_name, char *out_name);
 
 long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout);
 

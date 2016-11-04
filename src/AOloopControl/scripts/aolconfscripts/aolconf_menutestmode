@@ -71,6 +71,9 @@ tmux new-session -d -s ${tmuxname}
 aoconflog "Start linear WFS simulator"
 tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
 tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
+cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
+echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
+Readwfsimcamname
 }
 
 
@@ -83,6 +86,8 @@ tmux kill-session -t ${tmuxnameD}
 tmux kill-session -t ${tmuxname}
 rm aollinsimDelay.runproc
 rm aollindm2wfsim.runproc
+cp ./conf/conf_wfsimhardware_name.txt ./conf/conf_wfsim_name.txt
+Readwfsimcamname
 }
 
 
@@ -370,9 +375,9 @@ else
 echo "OFF" > ./status/stat_mrecON.txt
 fi
 if [ "$mrecONstat" = "OFF" ]; then
-menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 else
-menuitems+=( "mrec_off" "\Z1\Zr    STOP Test mode recovery (all modes) \Zn  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+menuitems+=( "mrec_off" "\Z1\Zr    STOP Test mode recovery (all modes) \Zn  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 fi
 
 
@@ -450,7 +455,7 @@ dialog --colors --title "TEST MODE  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
 --help-button --help-label "Exit" \
 --default-item "${menutestmode_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 retval=$?
 choiceval=$(cat $tempfile)
@@ -516,6 +521,8 @@ menucontrolloop_default="linsimDelay"
 
 
 	lsimon)
+ReadConfFile "zrespMlinsim"
+ReadConfFile "wfsref0linsim"
 function_lsim_on
 menutestmode_default="lsimoff"
 ;;

@@ -2932,7 +2932,7 @@ int arith_image_cstsubm(char *ID_name, double f1, char *ID_out){ arith_image_fun
 int arith_image_cstmult(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmult); return(0);}
 int arith_image_cstdiv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv); return(0);}
 int arith_image_cstdiv1(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv1); return(0);}
-int arith_image_cstpow(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ppow); return(0);}
+int arith_image_cstpow(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1, ID_out, &Ppow); return(0);}
 int arith_image_cstmaxv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmaxv); return(0);}
 int arith_image_cstminv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pminv); return(0);}
 int arith_image_csttestlt(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ptestlt); return(0);}
@@ -2980,11 +2980,12 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
   long nelement;
   long naxis;
   int atype;
+  int atypeout;
   long i;
 
   ID = image_ID(ID_name);
   atype = data.image[ID].md[0].atype;
-  naxis=data.image[ID].md[0].naxis;
+  naxis = data.image[ID].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -2996,8 +2997,11 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
     {
       naxes[i] = data.image[ID].md[0].size[i];
     }
-  
-  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
+  atypeout = FLOAT;
+  if(atype==DOUBLE)
+	atypeout = DOUBLE;
+	
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
   nelement = data.image[ID].md[0].nelement;
   
@@ -3035,7 +3039,7 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
+	data.image[IDout].array.D[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
     }
   # ifdef _OPENMP
   }
@@ -3043,6 +3047,11 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
 
   return(0);
 }
+
+
+
+
+
 
 int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, double (*pt2function)(double,double,double))
 {
@@ -3054,6 +3063,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
   ID = image_ID(ID_name);
   atype = data.image[ID].md[0].atype;
   nelement = data.image[ID].md[0].nelement;
+    
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -3065,7 +3075,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
+	data.image[ID].array.C[ii] = (char) pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
     }
   if(atype==INT)
     {
@@ -3073,7 +3083,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
+	data.image[ID].array.I[ii] = (int) pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
     }
   if(atype==FLOAT)
     {
@@ -3089,7 +3099,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
+	data.image[ID].array.D[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
     }
   # ifdef _OPENMP
   }
@@ -3097,6 +3107,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
 
   return(0);
 }
+
 
 int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, double (*pt2function)(double,double,double))
 {
@@ -3117,7 +3128,7 @@ int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, doubl
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
+	data.image[ID].array.C[ii] = (char) pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
     }
   if(atype==INT)
     {
@@ -3125,7 +3136,7 @@ int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, doubl
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
+	data.image[ID].array.I[ii] = (int) pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
     }
   if(atype==FLOAT)
     {
@@ -3141,7 +3152,7 @@ int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, doubl
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
+	data.image[ID].array.D[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
     }
   # ifdef _OPENMP
   }

@@ -64,9 +64,23 @@ function initDMfunc {
     tmux send-keys -t $tmuxname "readshmim ${dmwrefO}" C-m
     fi
 
-    
+	echo "" > cmd00.txt
 
-    echo "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 0.0 120.0" > cmd00.txt
+	if [ -f "./conf/conf_dmdelayON.txt" ]; then
+	dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
+	else
+	dmDelayON="OFF"
+	fi
+	
+	if [ "$dmDelayON" = " ON" ]; then
+	if [ -f "./conf/conf_dmdelayus.txt" ]; then
+	dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
+	echo "DMTWAIT=${dmdelayus}" >> cmd00.txt
+	tmux send-keys -t $tmuxname "DMTWAIT=${dmdelayus}" C-m
+	fi
+	fi
+
+    echo "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 0.0 120.0" >> cmd00.txt
     echo "$tmuxname" >> cmd00.txt
     echo "dm2dm_mode : $dm2dm_mode" >> cmd00.txt
     echo "dm2dmM : $dm2dmM" >> cmd00.txt
@@ -74,6 +88,7 @@ function initDMfunc {
     echo "dmvoltmode : $dmvoltmode" >> cmd00.txt
     
     aoconflog "STARTING DM COM"
+    
     tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 12 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 0.0 120.0" C-m
 }
 

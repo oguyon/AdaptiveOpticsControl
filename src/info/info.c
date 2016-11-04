@@ -1617,6 +1617,8 @@ int test_structure_function(char *ID_name, long NBpoints, char *ID_out)
   return(0);
 }
 
+
+
 int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
 {
   int ID,ID1,ID2;
@@ -1663,21 +1665,29 @@ int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
   return(0);
 }
 
+
+
 int fft_structure_function(char *ID_in, char *ID_out)
 {
-  long ID;
-  double value;
-  long nelement;
+	long ID;
+	double value;
+	long nelement;
+	int atype;
+	
+	autocorrelation(ID_in, "stftmp");
+	ID = image_ID("stftmp");
+	nelement = data.image[ID].md[0].nelement;
+	
+	atype = data.image[ID].md[0].atype;
+	if(atype==FLOAT)
+		value = -data.image[ID].array.F[0];
+	else
+		value = -data.image[ID].array.D[0];
+	
+	arith_image_cstadd("stftmp",value,"stftmp1");
+	delete_image_ID("stftmp");
+	arith_image_cstmult("stftmp1",-2.0/sqrt(nelement),ID_out);
+	delete_image_ID("stftmp1");
 
-  autocorrelation(ID_in,"stftmp");
-  ID=image_ID("stftmp");
-  nelement = data.image[ID].md[0].nelement;
-  value=-data.image[ID].array.F[0];
-  
-  arith_image_cstadd("stftmp",value,"stftmp1");
-  delete_image_ID("stftmp");
-  arith_image_cstmult("stftmp1",-2.0/sqrt(nelement),ID_out);
-  delete_image_ID("stftmp1");
-
-  return(0);
+	return(0);
 }

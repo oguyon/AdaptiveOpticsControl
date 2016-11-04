@@ -167,8 +167,262 @@ pywfsreimagexposref=$(cat ./status/pcampos.txt | awk '{print $1}')
 pywfsreimageyposref=$(cat ./status/pcampos.txt | awk '{print $2}')
 fi
 
-stringcenter "Pyramid TT align"
+
+stringcenter "Pyramid modulation"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+
+
+menuitems+=( "" "" )
+file="./conf/conf_pywfs_freq.txt"
+if [ -f $file ]; then
+pyfreq=$(cat $file)
+else
+pyfreq="2000"
+echo "$pyfreq" > $file
+fi
+
+if [ "$pyfreq" = "500" ]; then
+menuitems+=( "pyfr05" "\Zr\Z2 freq = 0.5 kHz\Zn" )
+else
+menuitems+=( "pyfr05" " freq = 0.5 kHz" )
+fi
+
+if [ "$pyfreq" = "1000" ]; then
+menuitems+=( "pyfr10" "\Zr\Z2 freq = 1.0 kHz\Zn" )
+else
+menuitems+=( "pyfr10" " freq = 1.0 kHz" )
+fi
+
+if [ "$pyfreq" = "1500" ]; then
+menuitems+=( "pyfr15" "\Zr\Z2 freq = 1.5 kHz\Zn" )
+else
+menuitems+=( "pyfr15" " freq = 1.5 kHz" )
+fi
+
+if [ "$pyfreq" = "2000" ]; then
+menuitems+=( "pyfr20" "\Zr\Z2 freq = 2.0 kHz\Zn" )
+else
+menuitems+=( "pyfr20" " freq = 2.0 kHz" )
+fi
+
+if [ "$pyfreq" = "2500" ]; then
+menuitems+=( "pyfr25" "\Zr\Z2 freq = 2.5 kHz\Zn" )
+else
+menuitems+=( "pyfr25" " freq = 2.5 kHz" )
+fi
+
+if [ "$pyfreq" = "3000" ]; then
+menuitems+=( "pyfr30" "\Zr\Z2 freq = 3.0 kHz\Zn" )
+else
+menuitems+=( "pyfr30" " freq = 3.0 kHz" )
+fi
+
+if [ "$pyfreq" = "3500" ]; then
+menuitems+=( "pyfr35" "\Zr\Z2 freq = 3.5 kHz\Zn" )
+else
+menuitems+=( "pyfr35" " freq = 3.5 kHz" )
+fi
+
+
+menuitems+=( "" "" )
+
+file="./conf/conf_pywfs_modampl.txt"
+if [ -f $file ]; then
+pymodampl=$(cat $file)
+else
+pymodampl="05"
+echo "$pymodampl" > $file
+fi
+
+if [ "$pymodampl" = "0.1" ]; then
+menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
+else
+menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
+fi
+
+if [ "$pymodampl" = "0.2" ]; then
+menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
+else
+menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
+fi
+
+if [ "$pymodampl" = "0.3" ]; then
+menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn" )
+else
+menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
+fi
+
+if [ "$pymodampl" = "0.5" ]; then
+menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
+else
+menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
+fi
+
+if [ "$pymodampl" = "0.7" ]; then
+menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
+else
+menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
+fi
+
+if [ "$pymodampl" = "1.0" ]; then
+menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn" )
+else
+menuitems+=( "pymoda10" " modulation amplitude = 1.0" )
+fi
+
+
+menuitems+=( "" "" )
+
+file="./conf/conf_pywfs_filter.txt"
+if [ -f $file ]; then
+pyfilter=$(cat $file)
+else
+pyfilter="1"
+echo "$pyfilter" > $file
+fi
+
+
+if [ "$pyfilter" = "1" ]; then
+menuitems+=( "pyfilt1" "\Zr\Z2 PyWFS filter 1  (Open)\Zn" )
+else
+menuitems+=( "pyfilt1" " PyWFS filter 1  (Open)" )
+fi
+
+
+if [ "$pyfilter" = "2" ]; then
+menuitems+=( "pyfilt2" "\Zr\Z2 PyWFS filter 2  (700 nm, 50 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt2" " PyWFS filter 2  (700 nm, 50 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "3" ]; then
+menuitems+=( "pyfilt3" "\Zr\Z2 PyWFS filter 3  (BLOCK)\Zn" )
+else
+menuitems+=( "pyfilt3" " PyWFS filter 3  (BLOCK)" )
+fi
+
+
+if [ "$pyfilter" = "4" ]; then
+menuitems+=( "pyfilt4" "\Zr\Z2 PyWFS filter 4  (750 nm, 50 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt4" " PyWFS filter 4  (750 nm, 50 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "5" ]; then
+menuitems+=( "pyfilt5" "\Zr\Z2 PyWFS filter 5  (850 nm, 25 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt5" " PyWFS filter 5  (850 nm, 25 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "6" ]; then
+menuitems+=( "pyfilt6" "\Zr\Z2 PyWFS filter 6  (850 nm, 40 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt6" " PyWFS filter 6  (850 nm, 40 nm BW)" )
+fi
+
+
+
+
+menuitems+=( "" "" )
+
+file="./conf/conf_pywfs_pickoff.txt"
+if [ -f $file ]; then
+pypickoff=$(cat $file)
+else
+pypickoff="01"
+echo "$pypickoff" > $file
+fi
+
+
+if [ "$pypickoff" = "01" ]; then
+menuitems+=( "pypick01" "\Zr\Z2 PyWFS pickoff 01  (Open)\Zn" )
+else
+menuitems+=( "pypick01" " PyWFS pickoff 01  (Open)" )
+fi
+
+if [ "$pypickoff" = "02" ]; then
+menuitems+=( "pypick02" "\Zr\Z2 PyWFS pickoff 02  (Silver mirror)\Zn" )
+else
+menuitems+=( "pypick02" " PyWFS pickoff 02  (Silver mirror)" )
+fi
+
+if [ "$pypickoff" = "03" ]; then
+menuitems+=( "pypick03" "\Zr\Z2 PyWFS pickoff 03  (50/50 splitter)\Zn" )
+else
+menuitems+=( "pypick03" " PyWFS pickoff 03  (50/50 splitter)" )
+fi
+
+if [ "$pypickoff" = "04" ]; then
+menuitems+=( "pypick04" "\Zr\Z2 PyWFS pickoff 04  (650 nm SP)\Zn" )
+else
+menuitems+=( "pypick04" " PyWFS pickoff 04  (650 nm SP)" )
+fi
+
+if [ "$pypickoff" = "05" ]; then
+menuitems+=( "pypick05" "\Zr\Z2 PyWFS pickoff 05  (700 nm SP)\Zn" )
+else
+menuitems+=( "pypick05" " PyWFS pickoff 05  (700 nm SP)" )
+fi
+
+if [ "$pypickoff" = "06" ]; then
+menuitems+=( "pypick06" "\Zr\Z2 PyWFS pickoff 06  (750 nm SP)\Zn" )
+else
+menuitems+=( "pypick06" " PyWFS pickoff 06  (750 nm SP)" )
+fi
+
+if [ "$pypickoff" = "07" ]; then
+menuitems+=( "pypick07" "\Zr\Z2 PyWFS pickoff 07  (800 nm SP)\Zn" )
+else
+menuitems+=( "pypick07" " PyWFS pickoff 07  (800 nm SP)" )
+fi
+
+if [ "$pypickoff" = "08" ]; then
+menuitems+=( "pypick08" "\Zr\Z2 PyWFS pickoff 08  (850 nm SP)\Zn" )
+else
+menuitems+=( "pypick08" " PyWFS pickoff 08  (850 nm SP)" )
+fi
+
+if [ "$pypickoff" = "09" ]; then
+menuitems+=( "pypick09" "\Zr\Z2 PyWFS pickoff 09  (750 nm LP)\Zn" )
+else
+menuitems+=( "pypick09" " PyWFS pickoff 09  (750 nm LP)" )
+fi
+
+if [ "$pypickoff" = "10" ]; then
+menuitems+=( "pypick10" "\Zr\Z2 PyWFS pickoff 10  (800 nm LP)\Zn" )
+else
+menuitems+=( "pypick10" " PyWFS pickoff 10  (800 nm LP)" )
+fi
+
+if [ "$pypickoff" = "11" ]; then
+menuitems+=( "pypick11" "\Zr\Z2 PyWFS pickoff 11  (850 nm LP)\Zn" )
+else
+menuitems+=( "pypick11" " PyWFS pickoff 11  (850 nm LP)" )
+fi
+
+if [ "$pypickoff" = "12" ]; then
+menuitems+=( "pypick12" "\Zr\Z2 PyWFS pickoff 12  (Open)\Zn" )
+else
+menuitems+=( "pypick12" " PyWFS pickoff 12  (Open)" )
+fi
+
+
+pymodampl10=$(sed 's/\.//' ./conf/conf_pywfs_modampl.txt)
+loopconfname="fr${pyfreq}_mod${pymodampl10}_pf${pyfilter}_pp${pypickoff}_"
+echo "${loopconfname}" > ./conf/conf_loopconfname.txt
+
+
+menuitems+=( "" "" )
+
+
+
+
+
+stringcenter "Pyramid TT align"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "tz" "Zero TT align" )
 
@@ -192,7 +446,7 @@ menuitems+=( "tm" "Monitor TT align tmux session")
 menuitems+=( "" "" )
 
 stringcenter "Pyramid Camera Align"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "pz" "Zero Pcam align  ( $pywfsreimagexposref $pywfsreimageyposref )" )
 menuitems+=( "pst0" "alignment step = 50000" )
@@ -224,7 +478,7 @@ menuitems+=( "pm" "Monitor Pcam align tmux session")
 menuitems+=( "" "" )
 
 stringcenter "DM flatten"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "fl" "Flatten DM for pyWFS" )
 menuitems+=( "flk" "End flatten DM process" )
@@ -234,7 +488,7 @@ menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
 stringcenter "FILTERS"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "fw" "Set PY Filter Wheel" )
 menuitems+=( "" "" )
@@ -262,6 +516,205 @@ case $retval in
    0) # button
 menualign_default="$choiceval"
 	case $choiceval in
+
+
+	pyfr05)
+pyfreq="500"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr10)
+pyfreq="1000"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr15)
+pyfreq="1500"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr20)
+pyfreq="2000"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr25)
+pyfreq="2500"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+	
+	pyfr30)
+pyfreq="3000"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr35)
+pyfreq="3500"
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+
+
+	pymoda01)
+pymodampl="0.1"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda02)
+pymodampl="0.2"
+echo "0.2" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda03)
+pymodampl="0.3"
+echo "0.3" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda05)
+pymodampl="0.5"
+echo "0.5" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda07)
+pymodampl="0.7"
+echo "0.7" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda10)
+pymodampl="1.0"
+echo "1.0" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+
+
+
+	pyfilt1)
+pyfilter="1"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt2)
+pyfilter="2"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt3)
+pyfilter="3"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt4)
+pyfilter="4"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt5)
+pyfilter="5"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt6)
+pyfilter="6"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+
+
+
+	pypick01)
+pypickoff="01"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick02)
+pypickoff="02"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick03)
+pypickoff="03"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick04)
+pypickoff="04"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick05)
+pypickoff="05"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick06)
+pypickoff="06"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick07)
+pypickoff="07"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick08)
+pypickoff="08"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick09)
+pypickoff="09"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick10)
+pypickoff="10"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick11)
+pypickoff="11"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick12)
+pypickoff="12"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+
+
+
 	tz)
 aoconflogext "TT align zero"
 analog_output.py voltage C -5.0
@@ -321,10 +774,10 @@ state="menualign"
 	tm) tmux a -t alignPyrTT ;; 
 	pz)
 aoconflogext "Pupil align zero"
-pywfs reimage x home
-pywfs reimage x goto $pywfsreimagexposref #150000
-pywfs reimage y home
-pywfs reimage y goto $pywfsreimageyposref #67000
+pywfs_pup x home
+pywfs_pup x goto $pywfsreimagexposref #150000
+pywfs_pup y home
+pywfs_pup y goto $pywfsreimageyposref #67000
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pz"
 state="menualign"
@@ -351,7 +804,7 @@ state="menualign"
 ;;
         pxm)
 pywfsreimagexposref=$(($pywfsreimagexposref-$pcamstep))
-pywfs reimage x goto $pywfsreimagexposref #150000
+pywfs_pup x goto $pywfsreimagexposref #150000
 aoconflog "Pupil move x ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pxm"
@@ -359,7 +812,7 @@ state="menualign"
 ;;
         pxp)
 pywfsreimagexposref=$(($pywfsreimagexposref+$pcamstep))
-pywfs reimage x goto $pywfsreimagexposref #150000
+pywfs_pup x goto $pywfsreimagexposref #150000
 aoconflog "Pupil move x ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pxp"
@@ -367,7 +820,7 @@ state="menualign"
 ;;
         pym)
 pywfsreimageyposref=$(($pywfsreimageyposref-$pcamstep))
-pywfs reimage y goto $pywfsreimageyposref #150000
+pywfs_pup y goto $pywfsreimageyposref #150000
 aoconflog "Pupil move y ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pym"
@@ -375,7 +828,7 @@ state="menualign"
 ;;
         pyp)
 pywfsreimageyposref=$(($pywfsreimageyposref+$pcamstep))
-pywfs reimage y goto $pywfsreimageyposref #150000
+pywfs_pup y goto $pywfsreimageyposref #150000
 aoconflog "Pupil move y ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pyp"

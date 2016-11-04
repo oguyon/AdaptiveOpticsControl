@@ -1629,6 +1629,8 @@ long make_sectors(char *ID_name, long l1, long l2, double x_center, double y_cen
   return(ID);
 }
 
+
+
 long make_rnd(char *ID_name, long l1, long l2, char *options)
 {
   long ID;
@@ -1636,8 +1638,6 @@ long make_rnd(char *ID_name, long l1, long l2, char *options)
   long naxes[2];
   int distrib;
   long nelement;
-
-  if( data.Debug ) fprintf(stdout, "[make_rnd]\n");
 
   distrib = 0; /* uniform */
   if (strstr(options,"gauss")!=NULL)
@@ -1654,13 +1654,12 @@ long make_rnd(char *ID_name, long l1, long l2, char *options)
 
   if ( data.Debug > 1) fprintf(stdout,"Image size = %ld %ld\n",l1,l2);
 
-  create_2Dimage_ID(ID_name,l1,l2);
+  create_2Dimage_ID(ID_name, l1, l2);
   ID = image_ID(ID_name);
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1]; 
   nelement=naxes[0]*naxes[1];
  
-
 
   // openMP is slow when calling gsl random number generator : do not use openMP here
   if(distrib==0)
@@ -1676,25 +1675,70 @@ long make_rnd(char *ID_name, long l1, long l2, char *options)
   if(distrib==2)
     {
       for (ii = 0; ii < nelement; ii++) {
-	//if( data.Debug > 2 ) printf("ii:%d\n", ii); 
-	data.image[ID].array.F[ii] = (double) gauss_trc();
+		data.image[ID].array.F[ii] = (double) gauss_trc();
       }
     }
 
-  /*  for (ii = 0; ii < nelement; ii++) 
-    { 
-      if (distrib == 0)
-	data.image[ID].array.F[ii] = (double) ran1();
-      
-      if (distrib == 1)
-	data.image[ID].array.F[ii] = (double) gauss();
-      
-      if (distrib == 2)
-	data.image[ID].array.F[ii] = (double) gauss_trc();
-    } 
-  */
   return(ID);
 }
+
+
+long make_rnd_double(char *ID_name, long l1, long l2, char *options)
+{
+  long ID;
+  long ii;
+  long naxes[2];
+  int distrib;
+  long nelement;
+
+  distrib = 0; /* uniform */
+  if (strstr(options,"gauss")!=NULL)
+    {
+      distrib = 1; /* gauss */
+      printf("gaussian distribution\n");
+    }
+  
+  if (strstr(options,"trgauss")!=NULL)
+    {
+      distrib = 2; /* truncated gauss */
+      printf("truncated gaussian distribution\n");
+   }
+
+  if ( data.Debug > 1) fprintf(stdout,"Image size = %ld %ld\n",l1,l2);
+
+  create_2Dimage_ID_double(ID_name, l1, l2);
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
+  nelement=naxes[0]*naxes[1];
+ 
+
+  // openMP is slow when calling gsl random number generator : do not use openMP here
+  if(distrib==0)
+    {
+      for (ii = 0; ii < nelement; ii++) 
+	data.image[ID].array.D[ii] = (double) ran1();
+    }
+  if(distrib==1)
+    {
+      for (ii = 0; ii < nelement; ii++) 
+      	data.image[ID].array.D[ii] = (double) gauss();
+    }
+  if(distrib==2)
+    {
+      for (ii = 0; ii < nelement; ii++) {
+		data.image[ID].array.D[ii] = (double) gauss_trc();
+      }
+    }
+
+  return(ID);
+}
+
+
+
+
+
+
 
 /*
 int make_rnd1(char *ID_name, long l1, long l2, char *options)

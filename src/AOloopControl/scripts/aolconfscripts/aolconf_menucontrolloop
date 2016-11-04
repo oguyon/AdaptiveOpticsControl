@@ -58,6 +58,15 @@ fi
 
 
 
+file="./conf/conf_ARPFgain.txt"
+if [ -f $file ]; then
+ARPFgain=$(echo "$(cat $file)")
+else
+echo "0.0" > $file
+ARPFgain="0.0"
+fi
+
+
 if [ -f "./conf/conf_WFSnormalize.txt" ]; then
 WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
 else
@@ -199,7 +208,7 @@ fi
 if [ "7" -lt "$GPUmode" ]; then
 file="./conf/conf_GPUset0_dev7.txt"
 GPU7device=$( cat $file )
-if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+if [[ -f "$file" && ${GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
 echo "7" > $file
@@ -225,7 +234,7 @@ fi
 if [ "9" -lt "$GPUmode" ]; then
 file="./conf/conf_GPUset0_dev9.txt"
 GPU9device=$( cat $file )
-if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+if [[ -f "$file" && ${GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
 echo "9" > $file
@@ -233,6 +242,180 @@ GPU9device="9"
 fi
 menuitems+=( "GPU9" "            [ $GPU9device ]    GPU #9 device" )
 fi
+
+
+
+
+
+
+GPUmodeARPF=$( cat ./conf/conf_GPU_ARPF.txt )
+if [[ -f "./conf/conf_GPU_ARPF.txt" && ( "$GPUmodeARPF" = "0" || "$GPUmodeARPF" = "1" || "$GPUmodeARPF" = "2" || "$GPUmodeARPF" = "3" || "$GPUmodeARPF" = "4" || "$GPUmodeARPF" = "5" ) ]]; then
+echo "OK"
+else
+echo "0" > ./conf/conf_GPU_ARPF.txt
+GPUmodeARPF=0
+fi
+
+echo "GPU ARPF mode = $GPUmodeARPF"
+
+if [ "${GPUmodeARPF}" = "0" ];
+then
+menuitems+=( "GPUselARPF" "[ GPU_ARPF is OFF  ]    AR PREDICTION MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU_ARPF mode" )
+else
+menuitems+=( "GPUselARPF" " AR PREDICTION MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmodeARPF \Zn GPU(S)" )
+fi
+
+
+
+if [ "0" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev0.txt"
+GPU0ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU0ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPU0ARPFdevice="0"
+fi
+menuitems+=( "GPU0ARPF" "            [ $GPU0ARPFdevice ]    GPU ARPF #0 device" )
+fi
+
+
+if [ "1" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev1.txt"
+GPU1ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU1ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "1" > $file
+GPU1ARPFdevice="1"
+fi
+menuitems+=( "GPU1ARPF" "            [ $GPU1ARPFdevice ]    GPU ARPF #1 device" )
+fi
+
+
+if [ "2" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev2.txt"
+GPU2ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU2ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "2" > $file
+GPU2ARPFdevice="2"
+fi
+menuitems+=( "GPU2ARPF" "            [ $GPU2ARPFdevice ]    GPU ARPF #2 device" )
+fi
+
+
+if [ "3" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev3.txt"
+GPU3ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU3ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "3" > $file
+GPU3ARPFdevice="3"
+fi
+menuitems+=( "GPU3ARPF" "            [ $GPU3ARPFdevice ]    GPU ARPF #3 device" )
+fi
+
+
+if [ "4" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev4.txt"
+GPU4ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU4ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "4" >  $file
+GPU4ARPFdevice="4"
+fi
+menuitems+=( "GPU4ARPF" "            [ $GPU4ARPFdevice ]    GPU ARPF #4 device" )
+fi
+
+
+if [ "5" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev5.txt"
+GPU5ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU5ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "5" > $file
+GPU5ARPFdevice="5"
+fi
+menuitems+=( "GPU5ARPF" "            [ $GPU5ARPFdevice ]    GPU ARPF #5 device" )
+fi
+
+
+if [ "6" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev6.txt"
+GPU6ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU6ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "6" > $file
+GPU6ARPFdevice="6"
+fi
+menuitems+=( "GPU6ARPF" "            [ $GPU6ARPFdevice ]    GPU ARPF #6 device" )
+fi
+
+
+if [ "7" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev7.txt"
+GPU7ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU7ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "7" > $file
+GPU7ARPFdevice="7"
+fi
+menuitems+=( "GPU7ARPF" "            [ $GPU7ARPFdevice ]    GPU ARPF #7 device" )
+fi
+
+
+if [ "8" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev8.txt"
+GPU8ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU8ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "8" > $file
+GPU8ARPFdevice="8"
+fi
+menuitems+=( "GPU8ARPF" "            [ $GPU8ARPFdevice ]    GPU ARPF #8 device" )
+fi
+
+
+if [ "9" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev9.txt"
+GPU9ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU9ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "9" > $file
+GPU9ARPFdevice="9"
+fi
+menuitems+=( "GPU9ARPF" "            [ $GPU9ARPFdevice ]    GPU ARPF #9 device" )
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -249,16 +432,16 @@ GPUmodesextrwfs="5"
 fi
 menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
 
+file="./conf/conf_GPUdmfwb.txt"
+GPUdmfwb=$( cat $file )
+if [[ -f "$file" && ${GPUdmfwb} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPUdmfwb="0"
+fi
+menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
 
-#file="./conf/conf_GPUmodesextr1.txt"
-#GPUmodesextr1=$( cat $file )
-#if [[ -f "$file" && ${GPUmodesextr1} =~ [0-9]$ ]]; then
-#echo "OK"
-#else
-#echo "6" > $file
-#GPUmodesextr1="6"
-#fi
-#menuitems+=( "GPUme1" "[ $GPUmodesextr1 ]    Mode coefficient dmC extraction : GPU device" )
 
 
 file="./conf/conf_GPUzpoffsetM.txt"
@@ -364,6 +547,15 @@ if [ -a $file ]
 	echo "0" > $file
 fi
 
+file="conf/conf_LOOPPROCESS_DMFILTWB.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_DMFILTWB=$(cat $file)
+	else
+	LOOPPROCESS_DMFILTWB="0"
+	echo "0" > $file
+fi
+
 file="conf/conf_LOOPPROCESS_ZPO.txt"
 if [ -a $file ]
 	then
@@ -395,8 +587,9 @@ fi
 if [ "${procONstat}" = "OFF" ];
 then
 menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
-menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval" )
-menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
 menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
 menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
 menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
@@ -404,15 +597,21 @@ else
 menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
 
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval\Zn" )
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
 else
-menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval" )
+menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
 fi
 
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol\Zn" )
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
 else
-menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+fi
+
+if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
 fi
 
 
@@ -519,10 +718,27 @@ menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
 menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
 
+file="./conf/conf_ARPFon.txt"
+if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
+echo "ARPFon OK"
+ARPFon=$( cat $file )
+else
+echo "OFF" > "$file"
+ARPFon=$( cat $file )
+fi
+
+
+if [ "$ARPFon" = "OFF" ]; then
+menuitems+=( "ARPFon" " Predictive control (ARPF) is OFF - press to START" )
+else
+menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\Zn  " )
+fi
+
+menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
 
 
 menuitems+=( " " " " )
-stringcenter "CONTROL MATRIX MODAL BLOCK GAINS"
+stringcenter "CONTROL MATRIX MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 if [ "$CMMODE" = "MODAL" ]; then
@@ -534,7 +750,10 @@ menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
 menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
 menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
 menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
-
+menuitems+=( " " " " )
+menuitems+=( "lball" "Set all block to same limit")
+menuitems+=( "mball" "Set all block to same multf")
+menuitems+=( " " " " )
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -550,19 +769,30 @@ gainb[10#${i2}]=$( cat ${fname} )
 else
 gainb[10#${i2}]="1.000"
 fi
-string=$( printf "% 3d" "${NBblockmodes}" )
-menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
-done
+
+fname="conf/conf_limitb${i2}.txt"
+if [ -f "$fname" ]; then
+limitb[10#${i2}]=$( cat ${fname} )
 else
-menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS" )
+limitb[10#${i2}]="1.00000"
 fi
 
+fname="conf/conf_multfb${i2}.txt"
+if [ -f "$fname" ]; then
+multfb[10#${i2}]=$( cat ${fname} )
+else
+multfb[10#${i2}]="1.000"
+fi
 
-
-
-
-
-
+string=$( printf "% 3d" "${NBblockmodes}" )
+menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
+menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
+menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
+menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
+done
+else
+menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
+fi
 
 
 
@@ -779,7 +1009,7 @@ dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - (CMM
 --help-button --help-label "Exit" \
 --default-item "${menucontrolloop_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 retval=$?
 choiceval=$(cat $tempfile)
@@ -895,6 +1125,115 @@ menucontrolloop_default="GPU9"
 ;;
 
 
+
+
+
+	GPUselARPF)
+exec 3>&1;
+nbGPUARPF=$(dialog --inputbox "Number of ARPF GPU(s) (0 = CPU mode)" 0 0 "$nbGPUARPF" 2>&1 1>&3);
+exec 3>&-;
+echo "$nbGPUARPF" > ./conf/conf_GPU_ARPF.txt
+aoconflog "set nbGPUARPF = ${nbGPUARPF}"
+;;
+
+
+    GPU0ARPF)
+exec 3>&1;
+GPU0ARPFdevice=$(dialog --inputbox "GPU0ARPF device" 0 0 "$GPU0ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU0ARPFdevice" > ./conf/conf_GPUsetARPF_dev0.txt
+aoconflog "set GPU0ARPFdevice = ${GPU0ARPFdevice}"
+menucontrolloop_default="GPU0ARPF"
+;;
+
+    GPU1ARPF)
+exec 3>&1;
+GPU1ARPFdevice=$(dialog --inputbox "GPU1ARPF device" 0 0 "$GPU1ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU1ARPFdevice" > ./conf/conf_GPUsetARPF_dev1.txt
+aoconflog "set GPU1device = ${GPU1ARPFdevice}"
+menucontrolloop_default="GPU1ARPF"
+;;
+
+    GPU2ARPF)
+exec 3>&1;
+GPU2ARPFdevice=$(dialog --inputbox "GPU2ARPF device" 0 0 "$GPU2ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU2ARPFdevice" > ./conf/conf_GPUsetARPF_dev2.txt
+aoconflog "set GPU2device = ${GPU2ARPFdevice}"
+menucontrolloop_default="GPU2ARPF"
+;;
+
+    GPU3ARPF)
+exec 3>&1;
+GPU3ARPFdevice=$(dialog --inputbox "GPU3ARPF device" 0 0 "$GPU3ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU3ARPFdevice" > ./conf/conf_GPUsetARPF_dev3.txt
+aoconflog "set GPU3device = ${GPU3ARPFdevice}"
+menucontrolloop_default="GPU3ARPF"
+;;
+
+    GPU4ARPF)
+exec 3>&1;
+GPU4ARPFdevice=$(dialog --inputbox "GPU4ARPF device" 0 0 "$GPU4ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU4ARPFdevice" > ./conf/conf_GPUsetARPF_dev4.txt
+aoconflog "set GPU4device = ${GPU4ARPFdevice}"
+menucontrolloop_default="GPU4ARPF"
+;;
+
+    GPU5ARPF)
+exec 3>&1;
+GPU5ARPFdevice=$(dialog --inputbox "GPU5ARPF device" 0 0 "$GPU5ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU5ARPFdevice" > ./conf/conf_GPUsetARPF_dev5.txt
+aoconflog "set GPU5device = ${GPU5ARPFdevice}"
+menucontrolloop_default="GPU5ARPF"
+;;
+
+    GPU6ARPF)
+exec 3>&1;
+GPU6ARPFdevice=$(dialog --inputbox "GPU6ARPF device" 0 0 "$GPU6ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU6ARPFdevice" > ./conf/conf_GPUsetARPF_dev6.txt
+aoconflog "set GPU6device = ${GPU6ARPFdevice}"
+menucontrolloop_default="GPU6ARPF"
+;;
+
+    GPU7ARPF)
+exec 3>&1;
+GPU7ARPFdevice=$(dialog --inputbox "GPU7ARPF device" 0 0 "$GPU7ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU7ARPFdevice" > ./conf/conf_GPUsetARPF_dev7.txt
+aoconflog "set GPU7device = ${GPU7ARPFdevice}"
+menucontrolloop_default="GPU7ARPF"
+;;
+
+    GPU8ARPF)
+exec 3>&1;
+GPU8ARPFdevice=$(dialog --inputbox "GPU8ARPF device" 0 0 "$GPU8ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU8ARPFdevice" > ./conf/conf_GPUsetARPF_dev8.txt
+aoconflog "set GPU8device = ${GPU8ARPFdevice}"
+menucontrolloop_default="GPU8ARPF"
+;;
+
+    GPU9ARPF)
+exec 3>&1;
+GPU9ARPFdevice=$(dialog --inputbox "GPU9ARPF device" 0 0 "$GPU9ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU9ARPFdevice" > ./conf/conf_GPUsetARPF_dev9.txt
+aoconflog "set GPU9device = ${GPU9ARPFdevice}"
+menucontrolloop_default="GPU9ARPF"
+;;
+
+
+
+
+
+
+
+
 	GPUon)
 echo "1" > ./conf/conf_GPU.txt
 aoconflog "set GPU ON"
@@ -918,15 +1257,17 @@ aoconflog "set GPUmodesextrwfs = ${GPUmodesextrwfs}"
 menucontrolloop_default="GPUmewfs"
 ;;
 
-#    GPUme1)
-#file="./conf/conf_GPUmodesextr1.txt"
-#exec 3>&1;
-#GPUmodesextr1=$(dialog --inputbox "GPU modes extract 1 device" 0 0 "$GPUmodesextr1" 2>&1 1>&3);
-#exec 3>&-;
-#echo "$GPUmodesextr1" > $file
-#aoconflog "set GPUmodesextr1 = ${GPUmodesextr1}"
-#menucontrolloop_default="GPUme1"
-#;;
+
+
+    GPUdmfwb)
+file="./conf/conf_GPUdmfwb.txt"
+exec 3>&1;
+GPUdmfwb=$(dialog --inputbox "GPU DM modal write device" 0 0 "$GPUdmfwb" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUdmfwb" > $file
+aoconflog "set GPUdmfwb = ${GPUdmfwb}"
+menucontrolloop_default="GPUdmfwb"
+;;
 
 
 
@@ -1014,7 +1355,25 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_respM" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolset" C-m
+sleep 1
+
+
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+
+	     limitb[10#${gi}]=$(cat ./conf/conf_limitb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+
+	     multfb[10#${gi}]=$(cat ./conf/conf_multfb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+
+	     gainb[10#${gi}]=$(cat ./conf/conf_gainb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[10#${gi}]} 0" C-m
+	 done
+gi="00"
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[10#${gi}]} 1" C-m
+
 sleep 2
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
@@ -1040,6 +1399,7 @@ logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
 fi
 
+
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
@@ -1048,6 +1408,18 @@ logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
 tmux send-keys -t $tmuxname "Cfits" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
+
+
+if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmfwb"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolmcoeffs2dmmap" "$tmuxname" "DM modal (post-filtering) write back"
+tmux send-keys -t $tmuxname "./auxscripts/aolmcoeffs2dmmap -f ${GPUdmfwb}" C-m
+fi
+
+
+
 
 
 if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
@@ -1158,6 +1530,20 @@ menucontrolloop_default="LPmeol"
 ;;
 
 
+DMfWB)
+	if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+	LOOPPROCESS_DMFILTWB="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_DMFILTWB.txt
+	else
+	LOOPPROCESS_DMFILTWB="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_DMFILTWB.txt
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTRWFSMODES.txt
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTROLMODES.txt
+	fi
+menucontrolloop_default="DMfWB"
+;;
+
+
 LPzpo)
 	if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
 	LOOPPROCESS_ZPO="0"
@@ -1234,6 +1620,9 @@ fi
 menucontrolloop_default="Nloopon"
 ;;
 
+
+
+
  
   	 Z)
 Cfits <<EOF
@@ -1245,16 +1634,7 @@ readshmim aol${LOOPNUMBER}_dmC
 imzero aol${LOOPNUMBER}_dmC
 exit
 EOF
-
-
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 aoconflogext "zeroing DM correction"
-#echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
-#echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
-#echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
-
 ;;
 
 
@@ -1354,6 +1734,7 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
 	 aoconflogext "set gain ${loopgain}"
   	 ;; 
+   	 
    	 m)
    	 value=${loopmaxlim}
    	 SelectValue01 100 1200 50
@@ -1361,7 +1742,8 @@ menucontrolloop_default="wzpoinit"
  	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
 	 aoconflogext "set max limit ${loopmaxlim}"
-   	 ;;  
+   	 ;; 
+   	  
    	 e) 
    	 value=${loopmultcoeff}
    	 SelectValue01 900 1001 2
@@ -1371,6 +1753,29 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "set mult coeff ${loopmultcoeff}"
      	 ;;  
 
+	ARPFon)
+	ARPFon=" ON"
+	echo "$ARPFon" > ./conf/conf_ARPFon.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolARPFon" C-m
+	menucontrolloop_default="ARPFoff"
+	;;
+	 
+	ARPFoff)
+	ARPFon="OFF"
+	echo "$ARPFon" > ./conf/conf_ARPFon.txt
+	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolARPFoff" C-m
+	menucontrolloop_default="ARPFon"
+	;;
+	 
+	 ARPFg)
+  	 value=${loopgain}
+	 SelectValue01 100 1200 50
+  	 ARPFgain=${value}
+  	 echo "$ARPFgain" > ./conf/conf_ARPFgain.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetARPFgain ${ARPFgain}" C-m
+	 aoconflogext "set ARPF gain ${ARPFgain}"
+  	 ;; 
+	 
 	 gball) 
 	 value=${gainallb}
 	 SelectValue01 100 1200 50 
@@ -1385,6 +1790,33 @@ menucontrolloop_default="wzpoinit"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "set all gains to ${value}"
 	 ;;
+	 
+	 lball) 
+	 value=${limitallb}
+	 SelectValue02 10000 120000 5000 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     limitb[10#${gi}]=${value}
+	     echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 done
+	 aoconflogext "set all limits to ${value}"
+	 ;;
+	 
+	 mball) 
+	 value=${multfallb}
+	 SelectValue03 100 1001 50 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     multfb[10#${gi}]=${value}
+	     echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 done
+	 aoconflogext "set all limits to ${value}"
+	 ;;
+	
 	 
     gball01)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -1502,6 +1934,9 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "set all gains to custom set 3 (alpha = 0.5)"
 	 ;;
      
+
+
+
   	 gb00)
   	 gi="00"
   	 value=${gainb[${gi}]}
@@ -1511,6 +1946,30 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+  	 lb00)
+  	 gi="00"
+  	 value=${limitb[${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${10#gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+  	 mb00)
+  	 gi="00"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${10#gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
 
   	 gb01)
   	 gi="01"
@@ -1522,6 +1981,29 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb01)
+  	 gi="01"
+  	 value=${limitb[${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+ 	 mb01)
+  	 gi="01"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
   	 gb02)
   	 gi="02"
   	 value=${gainb[${gi}]}
@@ -1532,6 +2014,28 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb02)
+  	 gi="02"
+  	 value=${limitb[${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+ 	 mb02)
+  	 gi="02"
+  	 value=${limitb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
   	 gb03)
   	 gi="03"
   	 value=${gainb[${gi}]}
@@ -1541,6 +2045,30 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb03)
+  	 gi="03"
+  	 value=${limitb[${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+ 	 mb03)
+  	 gi="03"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+  	 
+  	 
+  	 
 
   	 gb04)
   	 gi="04"
@@ -1550,7 +2078,29 @@ menucontrolloop_default="wzpoinit"
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;;
+  	 
+ 	 lb04)
+  	 gi="04"
+  	 value=${limitb[${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+  	 
+  	 mb04)
+  	 gi="04"
+  	 value=${limitb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+ 	  
 
   	 gb05)
   	 gi="05"
@@ -1561,6 +2111,30 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb05)
+  	 gi="05"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+   	 mb05)
+  	 gi="05"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+	 
+  	 
+  	 
 
   	 gb06)
   	 gi="06"
@@ -1571,6 +2145,29 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb06)
+  	 gi="06"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+ 	 mb06)
+  	 gi="06"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
 
   	 gb07)
   	 gi="07"
@@ -1582,6 +2179,30 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb07)
+  	 gi="07"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+ 	 mb07)
+  	 gi="07"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
+
   	 gb08)
   	 gi="08"
   	 value=${gainb[10#${gi}]}
@@ -1592,6 +2213,30 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb08)
+  	 gi="08"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+ 	 mb08)
+  	 gi="08"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+ 
+
+
+
+
   	 gb09)
   	 gi="09"
   	 value=${gainb[10#${gi}]}
@@ -1601,6 +2246,30 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb09)
+  	 gi="09"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+ 	 mb09)
+  	 gi="09"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+    	 
+  	 
+  	 
 
   	 gb10)
   	 gi="10"
@@ -1612,6 +2281,31 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb10)
+  	 gi="10"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+	 mb10)
+  	 gi="10"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+  
+
+
+
   	 gb11)
   	 gi="11"
   	 value=${gainb[10#${gi}]}
@@ -1621,6 +2315,31 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+	 lb11)
+  	 gi="11"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+	 mb11)
+  	 gi="11"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
+
 
   	 gb12)
   	 gi="12"
@@ -1632,6 +2351,30 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb12)
+  	 gi="12"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+	 mb12)
+  	 gi="12"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
+
   	 gb13)
   	 gi="13"
   	 value=${gainb[10#${gi}]}
@@ -1642,6 +2385,30 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb13)
+  	 gi="13"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+	 mb13)
+  	 gi="13"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
+
+
   	 gb14)
   	 gi="14"
   	 value=${gainb[10#${gi}]}
@@ -1651,6 +2418,29 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+	 lb14)
+  	 gi="14"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue02 10000 120000 5000
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+	 mb14)
+  	 gi="14"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
+
 
 
 

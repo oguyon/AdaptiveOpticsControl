@@ -31,11 +31,56 @@ stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " ")
 
-stringcenter "PREDICTIVE CONTROL"
+
+
+
+
+loophlat="2.1"
+if [ -f "./conf/conf_loophlat.txt" ]; then
+loophlat=$( cat ./conf/conf_loophlat.txt )
+fi
+loopclat="0.6"
+if [ -f "./conf/conf_loopclat.txt" ]; then
+loopclat=$( cat ./conf/conf_loopclat.txt )
+fi
+lat=$(awk "BEGIN {printf \"%.2f\",${loophlat}+${loopclat}}")
+
+
+
+stringcenter "PREDICTIVE CONTROL: COMPUTE FILTER(S), SINGLE FILE"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
 menuitems+=( " " " ")
-menuitems+=( "ARPF" "AO find optimal AR linear predictive filter" )
+file="./conf/conf_PForder.txt"
+if [ -f $file ]; then
+PForder=$(cat $file)
+else
+echo "0" > $file
+PForder=$(cat $file)
+fi
+
+menuitems+=( "PFord" "[$PForder] Select Predictive Filter order (latency = $lat)" )
+menuitems+=( " " " ")
+
+
+menuitems+=( "sellat" "Select Latest telemetry files for filter computation" )
+fname=$(ls -lh ./PredictiveControl/modeval_ol.fits )
+fnamel=$( echo $fname |  awk '{print $NF}' )
+menuitems+=( "" "$fnamel" )
+menuitems+=( "mkPSDs" "Create open and closed loop PSDs of selected OL / CL telemetry" )
+menuitems+=( "" "" )
+
+file="./conf/conf_predcontr_blockSel.txt"
+if [ -f $file ]; then
+blockSel=$(cat $file)
+else
+echo "0" > $file
+blockSel=$(cat $file)
+fi
+menuitems+=( "selB" "[$blockSel] Select block" )
+
 menuitems+=( "ARPFb" "AO find optimal AR linear predictive filter - single block" )
+menuitems+=( " " " ")
 
 
 
@@ -43,8 +88,32 @@ menuitems+=( "ARPFb" "AO find optimal AR linear predictive filter - single block
 
 
 
+menuitems+=( "ARPF" "AO find optimal AR linear predictive filter" )
 
-dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+
+
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+stringcenter "PREDICTIVE CONTROL: APPLY FILTER(S), SINGLE FILE"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+
+menuitems+=( " " " ")
+menuitems+=( "sellatC" "Select Latest telemetry files for filter correction" )
+fname=$(ls -lh ./PredictiveControl/modeval_ol_C.fits )
+fnamel=$( echo $fname |  awk '{print $NF}' )
+menuitems+=( "" "$fnamel" )
+menuitems+=( "" "" )
+
+
+menuitems+=( " " " ")
+menuitems+=( "PFapply" "Apply Predictive Filter" )
+menuitems+=( "PFapplyb" "Apply Predictive Filter - single block" )
+
+
+
+
+dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 
@@ -57,19 +126,48 @@ case $retval in
 	case $choiceval in
 
   
+	sellat)
+./auxscripts/selectLatestTelemetry
+;;
+  
+	mkPSDs)
+./auxscripts/processTelemetryPSDs
+;;
+  
+	selB)
+exec 3>&1;
+blockSel=$(dialog --inputbox "Select block" 0 0 "$blockSel" 2>&1 1>&3);
+exec 3>&-;
+echo "$blockSel" > ./conf/conf_predcontr_blockSel.txt
+;;
+
+	PFord)
+exec 3>&1;
+PForder=$(dialog --inputbox "Select predictive filter order" 0 0 "$PForder" 2>&1 1>&3);
+exec 3>&-;
+echo "$PForder" > ./conf/conf_PForder.txt
+;;
+
+
     ARPF)
-./auxscripts/aolARPF
-sleep 5
-menurecord_default="ARPF"
+echo "./auxscripts/aolARPF \"./PredictiveControl/modeval_ol.fits\" $lat $PForder" > cmd.txt
+./auxscripts/aolARPF "./PredictiveControl/modeval_ol.fits" $lat $PForder
 ;;
 
     ARPFb)
-./auxscripts/aolARPFblock
-sleep 5
-menurecord_default="ARPFb"
+echo "./auxscripts/aolARPFblock \"./PredictiveControl/modeval_ol.fits\"  $blockSel $lat $PForder" > cmd.txt
+./auxscripts/aolARPFblock "./PredictiveControl/modeval_ol.fits"  $blockSel $lat $PForder
 ;;
 
 
+	sellatC)
+./auxscripts/selectLatestTelemetry -c
+;;
+  
+  
+	PFapply)
+./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
+;;
 
 esac
 ;; 

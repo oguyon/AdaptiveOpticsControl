@@ -87,7 +87,7 @@ menuitems+=( " " " " )
 
 
 
-dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 

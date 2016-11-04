@@ -96,9 +96,10 @@ long create_1DCimage_ID(char *ID_name, long xsize);
 
 long create_2Dimage_ID(char *ID_name, long xsize, long ysize);
 
-long create_2Dimagedouble_ID(char *ID_name, long xsize, long ysize);
+long create_2Dimage_ID_double(char *ID_name, long xsize, long ysize);
 
 long create_2DCimage_ID(char *ID_name, long xsize, long ysize);
+long create_2DCimage_ID_double(char *ID_name, long xsize, long ysize);
 
 long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize);
 

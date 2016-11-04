@@ -91,13 +91,15 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">4.4</span> Acquiring a zonal response matrix</a></li>
 <li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">4.5</span> Acquiring a modal response matrix (optional)</a></li>
-<li><a href="#building-control-matrix"><span class="toc-section-number">4.6</span> Building control matrix</a></li>
-<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">4.7</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
-<li><a href="#auxilliary-processes"><span class="toc-section-number">4.8</span> Auxilliary processes</a><ul>
-<li><a href="#extract-wfs-modes"><span class="toc-section-number">4.8.1</span> Extract WFS modes</a></li>
-<li><a href="#extract-open-loop-modes"><span class="toc-section-number">4.8.2</span> Extract open loop modes</a></li>
-<li><a href="#running-average-of-dmc"><span class="toc-section-number">4.8.3</span> Running average of dmC</a></li>
-<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">4.8.4</span> Compute and average wfsres</a></li>
+<li><a href="#automatic-system-calibration-recommended"><span class="toc-section-number">4.6</span> Automatic system calibration (recommended)</a></li>
+<li><a href="#managing-configurations"><span class="toc-section-number">4.7</span> Managing configurations</a></li>
+<li><a href="#building-control-matrix"><span class="toc-section-number">4.8</span> Building control matrix</a></li>
+<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">4.9</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
+<li><a href="#auxilliary-processes"><span class="toc-section-number">4.10</span> Auxilliary processes</a><ul>
+<li><a href="#extract-wfs-modes"><span class="toc-section-number">4.10.1</span> Extract WFS modes</a></li>
+<li><a href="#extract-open-loop-modes"><span class="toc-section-number">4.10.2</span> Extract open loop modes</a></li>
+<li><a href="#running-average-of-dmc"><span class="toc-section-number">4.10.3</span> Running average of dmC</a></li>
+<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">4.10.4</span> Compute and average wfsres</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#offsetting"><span class="toc-section-number">5</span> Offsetting</a><ul>
@@ -113,7 +115,8 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#running-the-loop"><span class="toc-section-number">6.2</span> Running the loop</a></li>
 </ul></li>
 <li><a href="#predictive-control-experimental"><span class="toc-section-number">7</span> Predictive control (experimental)</a><ul>
-<li><a href="#scripts"><span class="toc-section-number">7.1</span> Scripts</a></li>
+<li><a href="#overview-4"><span class="toc-section-number">7.1</span> Overview</a></li>
+<li><a href="#scripts"><span class="toc-section-number">7.2</span> Scripts</a></li>
 </ul></li>
 <li><a href="#reference"><span class="toc-section-number">8</span> REFERENCE</a><ul>
 <li><a href="#semaphores"><span class="toc-section-number">8.1</span> Semaphores</a></li>
@@ -813,8 +816,24 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <li><p><strong>Load LOrespm files into shared memory</strong> (<code>SMloadmrm</code> in <code>Loop Configure</code> screen)</p></li>
 </ul>
 </div>
+<div id="automatic-system-calibration-recommended" class="section level2">
+<h2><span class="header-section-number">4.6</span> Automatic system calibration (recommended)</h2>
+<p>The automatic system calibration performs all steps listed above under zonal and modal response matrix acquisition.</p>
+<p>The old calibrations are archived as follows:</p>
+<ul>
+<li><p>&quot;conf_zrm_staged&quot; and &quot;conf_mrm_staged&quot; hold the new configuration (zonal and modal respectively)</p></li>
+<li><p>&quot;conf_zrm_staged.000&quot; and &quot;conf_mrm_staged.000&quot; hold the previous configuration (previously &quot;conf_zrm_staged&quot; and &quot;conf_mrm_staged&quot;)</p></li>
+<li><p>&quot;conf_zrm_staged.001&quot; and &quot;conf_mrm_staged.001&quot; hold the configuration previously named &quot;conf_zrm_staged.000&quot; and &quot;conf_mrm_staged.000&quot;</p></li>
+<li><p>etc for a total of 20 configuration</p></li>
+</ul>
+</div>
+<div id="managing-configurations" class="section level2">
+<h2><span class="header-section-number">4.7</span> Managing configurations</h2>
+<p>At any given time, the current configuration (including control matrices if they have been computed) can be saved using the <code>SAVE CURRENT SYSTEM CALIBRATION</code> command. Saving a configuration will save all files in the conf directory into a user-specified directory.</p>
+<p>Previously saved configurations can be loaded with the <code>LOAD SAVED SYSTEM CALIBRATION</code> command. This will load saved files into the conf directory and load all files into shared memory.</p>
+</div>
 <div id="building-control-matrix" class="section level2">
-<h2><span class="header-section-number">4.6</span> Building control matrix</h2>
+<h2><span class="header-section-number">4.8</span> Building control matrix</h2>
 <ul>
 <li><p><strong>set SVDlimit</strong> (<code>SVDla</code> in <code>Control Matrix</code> screen). Set value is 0.1 as a starting point for a stable loop.</p></li>
 <li><p><strong>perform full CM computation</strong> (<code>mkModes0</code> in <code>Control Matrix</code> screen). Enter first the number of CPA blocks you wish to use. Computation takes a few minutes, and takes place in tmux session <code>aol#mkmodes</code>.</p></li>
@@ -894,7 +913,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 </div>
 <div id="running-the-loop-choosing-hardware-mode-cpugpu" class="section level2">
-<h2><span class="header-section-number">4.7</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
+<h2><span class="header-section-number">4.9</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
 <p>There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:</p>
 <ul>
 <li><p><strong>GPU</strong> : 0 if matrix multiplication(s) done on CPU, &gt;0 for GPU use. This is the number GPUs to use for matrix mult.</p></li>
@@ -965,10 +984,10 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </table>
 </div>
 <div id="auxilliary-processes" class="section level2">
-<h2><span class="header-section-number">4.8</span> Auxilliary processes</h2>
+<h2><span class="header-section-number">4.10</span> Auxilliary processes</h2>
 <p>A number of auxilliary processes can be running in addition to the main loop operation.</p>
 <div id="extract-wfs-modes" class="section level3">
-<h3><span class="header-section-number">4.8.1</span> Extract WFS modes</h3>
+<h3><span class="header-section-number">4.10.1</span> Extract WFS modes</h3>
 <p>Launches script <code>./auxscripts/modesextractwfs</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1145,14 +1164,15 @@ readshmim aol${loopnb}_imWFS0tot
 readshmim aol${loopnb}_wfsref0
 
 readshmim aol${loopnb}_wfsmask
-cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref0 nullim aol${loopnb}_modeval $1 1 1 1 2
+cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref0 nullim aol${loopnb}_modeval $1 1 1 1 2 0
 
 
 exit
 EOF</code></pre></td></tr></table></div>
+<p>Converts WFS residuals into modes.</p>
 </div>
 <div id="extract-open-loop-modes" class="section level3">
-<h3><span class="header-section-number">4.8.2</span> Extract open loop modes</h3>
+<h3><span class="header-section-number">4.10.2</span> Extract open loop modes</h3>
 <p>Launches script C function (CPU-based):</p>
 <pre><code>key       :    aolcompolm
 module    :    AOloopControl.c
@@ -1160,9 +1180,11 @@ info      :    compute open loop mode values
 syntax    :    &lt;loop #&gt;
 example   :    aolcompolm 2
 C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)</code></pre>
+<p>This function is entirely modal, and assumes that the WFS modes (see section above) are computed. The key input to the function is <code>aolN_modeval</code>, the WFS residual mode values. The function uses this telemetry and knowledge of loop gain and mult factor to track open loop mode values.</p>
+<p>Optionally, it also includes <code>aolN_modeval_pC</code>, the predictive control mode values that are added to the correction in predictive mode.</p>
 </div>
 <div id="running-average-of-dmc" class="section level3">
-<h3><span class="header-section-number">4.8.3</span> Running average of dmC</h3>
+<h3><span class="header-section-number">4.10.3</span> Running average of dmC</h3>
 <p>Launches script <code>./auxscripts/aol_dmCave 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1232,7 +1254,7 @@ exit
 EOF</code></pre></td></tr></table></div>
 </div>
 <div id="compute-and-average-wfsres" class="section level3">
-<h3><span class="header-section-number">4.8.4</span> Compute and average wfsres</h3>
+<h3><span class="header-section-number">4.10.4</span> Compute and average wfsres</h3>
 <p>Launches script <code>./auxscripts/aolmkWFSres 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1363,8 +1385,17 @@ EOF</code></pre></td></tr></table></div>
 </div>
 <div id="predictive-control-experimental" class="section level1">
 <h1><span class="header-section-number">7</span> Predictive control (experimental)</h1>
+<div id="overview-4" class="section level2">
+<h2><span class="header-section-number">7.1</span> Overview</h2>
+<p>Predictive control is implemented in two processes:</p>
+<ul>
+<li><p>The optimal auto-regressive (AR) filter predicting the current state from previous states is computed. The AR filter is computed from open-loop estimates, so the processes computing open-loop telemetry need to be running.</p></li>
+<li><p>the AR filter is applied to write a prediction buffer, which can be written asynchronously from the main loop steps.</p></li>
+</ul>
+<p>The predictive filter is modal, and adopts the same modes as the main control loop.</p>
+</div>
 <div id="scripts" class="section level2">
-<h2><span class="header-section-number">7.1</span> Scripts</h2>
+<h2><span class="header-section-number">7.2</span> Scripts</h2>
 <table>
 <colgroup>
 <col width="33%" />
@@ -1412,6 +1443,28 @@ EOF</code></pre></td></tr></table></div>
 <tr class="even">
 <td align="left">6</td>
 <td>-&gt; compute simulated linear WFS image</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="20%" />
+<col width="79%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">aol0_dmdisp</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td>?</td>
+</tr>
+<tr class="even">
+<td align="left">7</td>
+<td>-&gt; compute delayed DM : aol0_dmdispD</td>
 </tr>
 </tbody>
 </table>

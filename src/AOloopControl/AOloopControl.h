@@ -75,6 +75,11 @@ typedef struct
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     long framesAve; // number of frames to average
+ 
+	// PREDICTICE CONTROL
+    int ARPFon; // 1 if auto-regressive predictive filter is ON
+	float ARPFgain; 
+ 
 
     int status;
     int GPUstatus[50];
@@ -104,10 +109,37 @@ typedef struct
 
     
 
-    // LOOP TELEMETRY
+    // LOOP TELEMETRY AND PERFORMANCE 
+    // COMPUTED BY OPEN LOOP RETRIEVAL PROCESS
+    
     double RMSmodes;
     double RMSmodesCumul;
     long long RMSmodesCumulcnt;
+
+	// block statistics (instantaneous)
+	double block_OLrms[100]; // open loop RMS
+	double block_Crms[100]; // correction RMS
+	double block_WFSrms[100]; // WFS residual RMS
+	double block_limFrac[100]; // fraction of mode coefficients exceeding limit
+	
+	double ALL_OLrms; // open loop RMS
+	double ALL_Crms; // correction RMS
+	double ALL_WFSrms; // WFS residual RMS
+	double ALL_limFrac; // fraction of mode coefficients exceeding limit
+	
+	// averaged
+	long AveStats_NBpt; // averaging interval
+	double blockave_OLrms[100]; // open loop RMS
+	double blockave_Crms[100]; // correction RMS
+	double blockave_WFSrms[100]; // WFS residual RMS
+	double blockave_limFrac[100]; // fraction of mode coefficients exceeding limit
+
+	double ALLave_OLrms; // open loop RMS
+	double ALLave_Crms; // correction RMS
+	double ALLave_WFSrms; // WFS residual RMS
+	double ALLave_limFrac; // fraction of mode coefficients exceeding limit
+
+
 
     long logdataID; // image ID containing additional info that can be attached to a image stream log
 
@@ -179,7 +211,7 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
 int AOcompute(long loop, int normalize);
 int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, int offloadMode);
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode);
  
 long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
 double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps);
@@ -187,7 +219,7 @@ double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double 
 int AOloopControl_run();
 
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);
-int AOloopControl_printloopstatus(long loop, long nbcol);
+int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
 int AOloopControl_statusStats();
 int AOloopControl_showparams(long loop);
@@ -204,12 +236,15 @@ int AOloopControl_logon();
 int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_loopreset();
+int AOloopControl_ARPFon();
+int AOloopControl_ARPFoff();
 
 int AOloopControl_set_loopfrequ(float loopfrequ);
 int AOloopControl_set_hardlatency_frame(float hardlatency_frame);
 int AOloopControl_set_complatency_frame(float complatency_frame);
 int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
 int AOloopControl_setgain(float gain);
+int AOloopControl_setARPFgain(float gain);
 int AOloopControl_setWFSnormfloor(float WFSnormfloor);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setmult(float multcoeff);

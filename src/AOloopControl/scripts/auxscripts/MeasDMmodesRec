@@ -35,10 +35,16 @@ echo " $(tput bold)EXAMPLE:$(tput sgr0)"
 echo "     $0 0.05 30000 50"
 echo "" 
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
-echo "     out.txt     output file"
+echo "        test_DMmodesRec.fits        Average DM input - DM output (applied on DM)"
+echo "        test_DMmodesRec_RMS.fits    RMS DM input - DM ouput (applied on DM)"
+echo "        test_DMmodesRec_m.fits      Average DM input - Measured (measured by WFS)"
+echo "        test_DMmodesRec_m_RMS.fits  RMS DM input - Measured (measured by WFS)"
 echo ""
 echo "NOTES :"
 echo "  Loop must be running"
+echo "  If loop gain is high, then most signal is in DM output"
+echo "  If loop gain is low, then most signal is in measurement"
+echo "  All values are normalized to input amplitude, so recovery fractions are computed"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -121,7 +127,8 @@ readshmim aol${loopnb}_dmmaskRM
 readshmim aol${loopnb}_dmRM
 readshmim aol${loopnb}_dmC
 readshmim aol${loopnb}_meas_act
-aoltestdmrec aol${loopnb}_DMmodes ${ampl} aol${loopnb}_dmmaskRM aol2_dmRM aol2_dmC aol${loopnb}_meas_act ${tlagus} ${nbave} outave outrms outmave outmrms
+listim
+aoltestdmrec aol${loopnb}_DMmodes ${ampl} aol${loopnb}_dmmaskRM aol${loopnb}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act ${tlagus} ${nbave} outave outrms outmave outmrms
 savefits outave "!test_DMmodesRec.fits"
 savefits outrms "!test_DMmodesRec_RMS.fits"
 savefits outmave "!test_DMmodesRec_m.fits"

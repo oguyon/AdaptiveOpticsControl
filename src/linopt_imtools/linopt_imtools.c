@@ -1390,7 +1390,7 @@ long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char
     if(atype==FLOAT)
         ID = create_2Dimage_ID(ID_name, xsize, ysize);
     else
-        ID = create_2Dimagedouble_ID(ID_name, xsize, ysize);
+        ID = create_2Dimage_ID_double(ID_name, xsize, ysize);
 
     IDcoeff = image_ID(IDcoeff_name);
 

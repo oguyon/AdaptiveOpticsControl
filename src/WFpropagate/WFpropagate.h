@@ -7,7 +7,7 @@ int init_WFpropagate();
 
 int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double z, double lambda);
 
-int Init_Fresnel_propagate_wavefront(char *Cim, long size, double PUPIL_SCALE, double z, double lambda, double FPMASKRAD);
+int Init_Fresnel_propagate_wavefront(char *Cim, long size, double PUPIL_SCALE, double z, double lambda, double FPMASKRAD, int Precision);
 
 int Fresnel_propagate_wavefront1(char *in, char *out, char *Cin);
 

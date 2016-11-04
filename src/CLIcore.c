@@ -578,7 +578,8 @@ int main(int argc, char *argv[])
 
 	int blockCLIinput = 0;
 	int CLIinit1 = 0;
-	
+	int cliwaitus=100;
+	struct timeval tv;   // sleep 100 us after reading FIFO 
 	
 
 
@@ -781,20 +782,30 @@ int main(int argc, char *argv[])
         // -------------------------------------------------------------
         //                 get user input
         // -------------------------------------------------------------
+		tv.tv_sec = 0;		
+		tv.tv_usec = cliwaitus;
 		FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors. 
         if(data.fifoON==1)
             FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
         FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
 
-
-		
-		
+			
         while(CLIexecuteCMDready == 0)
         {
-            n = select(fdmax+1, &cli_fdin_set, NULL, NULL, NULL);
-
-            if (!n)
-                continue;
+            n = select(fdmax+1, &cli_fdin_set, NULL, NULL, &tv);
+            
+            if (n==0) // nothing received, need to re-init and go back to select call
+				{
+					tv.tv_sec = 0;			
+					tv.tv_usec = cliwaitus;
+           
+           
+					FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors. 
+					if(data.fifoON==1)
+						FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
+					FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
+					continue;
+				}
             if (n == -1) {
                 if(errno==EINTR) // no command received
                     {
@@ -808,7 +819,7 @@ int main(int argc, char *argv[])
             }
 
 			blockCLIinput = 0;
-            
+           
             if(data.fifoON==1)
             {
                 if (FD_ISSET(fifofd, &cli_fdin_set)) {
@@ -830,17 +841,16 @@ int main(int argc, char *argv[])
                         {
                             buf1[total_bytes-1] = '\0';
                             line = buf1;
-                            CLI_execute_line();
+                            CLI_execute_line();                           
                             printf("%s", prompt);
                             fflush(stdout);
                             break;
                         }
                     }
-					blockCLIinput = 1;
+					blockCLIinput = 1; // keep blocking input while fifo is not empty
                 }
             }
-           
-           
+			
             if(blockCLIinput == 0)
 				if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
 					rl_callback_read_char();

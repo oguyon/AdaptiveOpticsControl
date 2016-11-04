@@ -123,7 +123,6 @@ pname="aol${loopnb}LOrespM"
 Cfits -n $pname << EOF
 aolnb $loopnb
 loadfits respM_LOmodes.fits RMpokeCube
-listim
 aolmeaszrm $1 $2 $3 $4 LOrespmat LOwfsref0 wfsmap dmmap 1 $5 ${AOinitMode}
 savefits wfsmask "!wfsmask_LO.fits"
 savefits dmmask "!dmmask_LO.fits"

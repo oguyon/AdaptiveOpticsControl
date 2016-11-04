@@ -145,7 +145,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})"
 --help-button --help-label "Exit" \
 --default-item "${menucontrolloop_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 retval=$?

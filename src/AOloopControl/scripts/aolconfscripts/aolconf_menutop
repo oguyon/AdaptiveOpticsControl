@@ -185,6 +185,31 @@ menuitems+=( " " " ")
 
 menuitems+=( "dmcombam" "[${dmcombavemode}] DM combination averaging mode" )
 
+
+menuitems+=( " " " ")
+if [ -f "./conf/conf_dmdelayus.txt" ]; then
+dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
+else
+echo "0" > ./conf/conf_dmdelayus.txt
+dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
+fi
+menuitems+=( "setDMdelayval" "[${dmdelayus}] Set DM delay value [us]" )
+
+if [ -f "./conf/conf_dmdelayON.txt" ]; then
+dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
+else
+echo "OFF" > ./conf/conf_dmdelayON.txt
+dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
+fi
+	
+if [ "$dmDelayON" = " ON" ]; then
+menuitems+=( "setDMdelayOFF" "[DM delay is  ON] press to toggle DM delay to OFF state" )
+else
+menuitems+=( "setDMdelayON" "[DM delay is OFF] press to toggle DM delay to  ON state" )
+fi
+
+
+
 menuitems+=( " " " ")
 file="$HOME/status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
@@ -267,6 +292,7 @@ menuitems+=( " " " ")
 stringcenter "TEST AND MONITOR"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
+menuitems+=( "l" "List running AO processes, locks" )
 menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
 menuitems+=( " " " ")
@@ -323,12 +349,12 @@ menuitems+=( "A" "Align")
 
 
 
-dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
+dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})  [$nbwlines x $nbwcols]" \
 --ok-label "Select" \
 --cancel-label "Exit" \
 --default-item "${menutop_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 retval=$?
@@ -337,6 +363,10 @@ menutop_default="$choiceval"
 case $retval in
    0) # button
 	case $choiceval in
+
+# =====================================================================================================================
+# =================================== DM CHANNELS AND OUTPUT (dmcomb process) =========================================
+# =====================================================================================================================
 
      S) 
 vali=$( echo $DMindex )
@@ -559,11 +589,32 @@ echo "$dmcombavemode" > ./conf/conf_dmcombavemode.txt
 aoconflog "set dmcombavemode = ${dmcombavemode}"
 ;;
 
+	setDMdelayval)
+exec 3>&1;dmdelayus=$(dialog --inputbox "DM delay [us]" 0 0 "$dmdelayus" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmdelayus" > ./conf/conf_dmdelayus.txt
+aoconflog "set dmdelayus = $dmdelayus"
+;;
+
+	setDMdelayON)
+dmDelayON=" ON"
+echo "$dmDelayON" > ./conf/conf_dmdelayON.txt
+menutop_default="setDMdelayOFF"
+;;
+
+	setDMdelayOFF)
+dmDelayON="OFF"
+echo "$dmDelayON" > ./conf/conf_dmdelayON.txt
+menutop_default="setDMdelayON"
+;;
+
+
 	initDM)
 mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "1" > $file
 initDMfunc
+menutop_default="stopDM"
 ;;
 
     stopDM)
@@ -571,8 +622,13 @@ mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "0" > $file
 stopDMfunc
+menutop_default="initDM"
 ;;
 
+
+# =====================================================================================================================
+# ===================================  AO CONFIGURE AND CONTROL =======================================================
+# =====================================================================================================================
 
 	M)
 AOloadMem 1
@@ -586,16 +642,32 @@ AOloadMem 1
    	 L) state="menucontrolloop";;
    	 CM) state="menucontrolmatrix";;
    	 
+
+# =====================================================================================================================
+# ================================  PREDICTIVE CONTROL & POST PROCESSING ==============================================
+# =====================================================================================================================
    	 
    	 P) state="menupredictivecontrol";;
    	 Fi) state="menudmCfiltering";;
    	 
-   	 
+# =====================================================================================================================
+# ===========================================  TEST AND MONITOR =======================================================
+# =====================================================================================================================   	 
+	l)
+	xterm  -geometry 200x40 -e ./auxscripts/listrunproc &
+	;;
    	 T) state="menutestmode"   ;;
    	 V) state="menuview" ;;
 
+# =====================================================================================================================
+# ===========================================  DATA LOGGING / ANALYSIS ================================================
+# =====================================================================================================================
 	R) state="menurecord" ;;
 
+
+# =====================================================================================================================
+# ===========================================  CUSTOM EXTERNAL SCRIPTS ================================================
+# =====================================================================================================================
    	 A) state="menualign";;
 
 	esac;;

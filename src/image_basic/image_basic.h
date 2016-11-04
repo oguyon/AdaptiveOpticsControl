@@ -42,7 +42,7 @@ int basic_median(char *ID_name, char *options);
 
 long basic_renorm_max(char *ID_name);
 
-int basic_rotate(char *ID_name, char *ID_out_name, float angle);
+long basic_rotate(char *ID_name, char *IDout_name, float angle);
 
 int basic_rotate90(char *ID_name, char *ID_out_name);
 

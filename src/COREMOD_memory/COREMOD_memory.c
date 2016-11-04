@@ -2370,7 +2370,7 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
     return(ID);
 }
 
-long create_2Dimagedouble_ID(char *ID_name, long xsize, long ysize)
+long create_2Dimage_ID_double(char *ID_name, long xsize, long ysize)
 {
     long ID = -1;
     long naxis=2;
@@ -2402,6 +2402,22 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
 
     return(ID);
 }
+
+/* 2D complex image */
+long create_2DCimage_ID_double(char *ID_name, long xsize, long ysize)
+{
+    long ID = -1;
+    long naxis=2;
+    long naxes[2];
+
+    naxes[0]=xsize;
+    naxes[1]=ysize;
+
+    ID = create_image_ID(ID_name,naxis,naxes, 6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+
+    return(ID);
+}
+
 
 
 /* 3D image, single precision */
@@ -4677,7 +4693,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             semr = sem_timedwait(data.image[ID].semptr[0], &ts);
 			#else
 			alarm(1);
-			semr = sem_wait(data.image[ID].semptr[0])
+			semr = sem_wait(data.image[ID].semptr[0]);
 			#endif
 			
             if(iter == 0)
@@ -5651,6 +5667,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
    //        sprintf(fname, "!%s/%s_%02d:%02d:%02d.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, (long)thetime->tv_sec, (long) (thetime->tv_nsec));
 
             sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+            
+         //   printf("fname           = %s\n", fname);
+          //  printf("fname_asciilog  = %s\n", fname_asciilog);
+         //   fflush(stdout);
         }
 
         if(logshimconf[0].on == 1)

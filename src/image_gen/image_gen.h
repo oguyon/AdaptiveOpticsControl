@@ -33,6 +33,7 @@ long make_jacquinot_pupil(char *ID_name, long l1, long l2, double x_center, doub
 long make_sectors(char *ID_name, long l1, long l2, double x_center, double y_center, double step, long NB_sectors);
 
 long make_rnd(char *ID_name, long l1, long l2, char *options);
+long make_rnd_double(char *ID_name, long l1, long l2, char *options);
 /*int make_rnd1(char *ID_name, long l1, long l2, char *options);*/
 
 long make_gauss(char *ID_name, long l1, long l2, double a, double A);
