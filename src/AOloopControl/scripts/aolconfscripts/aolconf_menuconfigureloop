@@ -8,43 +8,194 @@ fi
 
 
 
+# DM mode
+# ZONAL : physical actuators on spatial coordinates
+# MODAL : each DM actuiator represents a single WF mode
+DMMODEfile="conf/conf_DMMODE.txt"
+if [ -f $DMMODEfile ]; then
+DMMODE=$( cat ${DMMODEfile} )
+else
+DMMODE="ZONAL"
+echo "$DMMODE" > $DMMODEfile
+fi
+
+
+
+
+RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
+RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
+
+
+
+function function_acqWFSresp {
+tmuxname="aol${LOOPNUMBER}arespM"
+
+# STAGING DIRECTORIES
+dir_conf_staged="conf_staged"
+
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+tmux new-session -d -s $tmuxname
+
+# ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref00.fits
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+
+tmux send-keys -t $tmuxname "date" C-m
+
+
+if pgrep "aol${LOOPNUMBER}run" > /dev/null
+then # use option -r to re-use AO shared memory configuration
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+else
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+fi
+
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+
+
+
+# PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref00.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
+
+# MAKE MASKS : zrespmat.fits, wfsmap.fits, dmmap.fits -> wfsmask.fits, dmmaskRM.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
+
+# MAKE SLAVED ACTUATOR MAP: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
+
+
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask -> wfsref0
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
+tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
+tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
+tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
+tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref0.fits\"" C-m
+tmux send-keys -t ${tmuxname} "listim" C-m
+tmux send-keys -t ${tmuxname} "exit" C-m
+
+
+# COPY TO ARCHIVE
+for imname in $RMZONALCALIBlist
+do
+	mkdir -p ${imname}
+	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
+done
+
+
+
+
+
+# MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits -> respM_LOmodes.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+
+
+# ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+
+
+if pgrep "aol${LOOPNUMBER}run" > /dev/null
+then # use option -r to re-use AO shared memory configuration
+	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+else
+	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+fi
+
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+
+# COPY TO ARCHIVE
+for imname in $RMMODALCALIBlist
+do
+	mkdir -p ${imname}
+	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
+done
+
+
+
+# =============================================================================================================
+#       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
+#             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
+# =============================================================================================================
+
+
+
+# copy file names in conf_<name>_name.txt files in staged directory
+
+dir="$dir_conf_staged"
+mkdir -p $dir
+
+for imname in $RMZONALCALIBlist $RMMODALCALIBlist
+do
+	tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+	tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+done
+
+
+tmux send-keys -t ${tmuxname} "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
+tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+
+
+}
+
+
+
+
+
+
 
 function function_zresp_on {
 zrespMstat=" ON"
 tmuxname="aol${LOOPNUMBER}zrespM"
+rm function_zresp_off.wait
 echo " ON" > ./status/stat_zrespM.txt
 logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response matrix"
+
 tmux new-session -d -s $tmuxname
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -r ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-echo "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded"
+tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
+
+echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
 }
 
 
+#
 # arg 1 is time [sec] until zresp process will be stopped
+#
 function function_zresp_off 
 {
 zrespMstat="OFF"
+echo "OFF" > ./status/stat_zrespM.txt
 tmuxname="aol${LOOPNUMBER}zrespMc"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
 tmux send-keys -t ${tmuxname} "pkill -USR1 aol${LOOPNUMBER}zrespM" C-m
 tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
 tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
-tmux send-keys -t ${tmuxname} "sleep 0.5" C-m
-aoconflogext "STOP HO RM acquision in $1 sec"
+tmux send-keys -t ${tmuxname} "sleep 0.2" C-m
+tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
+aoconflogext "STOP HO RM acquision in $1 sec max"
 
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
 logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
 
@@ -53,35 +204,38 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ "$MASKS_LOCK" -eq "1" ]; then
 tmux send-keys -t ${tmuxname} "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
 fi
+fi
 
-tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 
+if [ "$DMMODE" = "ZONAL" ]; then
+tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
+fi
 
-#if [ "$MASKS_LOCK" -eq "1" ]; then
-#echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
-#else
-#echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
-#fi
+
 
 # move from staged to ./conf/
 UpdateCalib_staged_zrm_tmux "${tmuxname}"
@@ -95,7 +249,7 @@ function function_upzrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "aolupzrm" "$1" "Update zonal response matrix calibration to latest"
-tmux send-keys -t $1 "cp ${dir_conf_zrm_staged}/conf_*.txt ./conf/" C-m
+tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
 tmux send-keys -t $1 "rm aolupzrm.runproc" C-m
 }
 
@@ -104,22 +258,31 @@ function function_SMloadzrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "SMloadzrm" "$1" "Load zonal response matrix files to shared memory"
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"zrespM\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_zrespM" C-m
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsref0\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsref0" C-m
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmap\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmap" C-m
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmap\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmap" C-m
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmask" C-m
+
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmaskRM" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
+fi
 tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
 }
 
@@ -193,14 +356,14 @@ ReadConfFile "contrMcact${i2}_00"
 
 
 # STAGING DIRECTORIES
-dir_conf_zrm_staged="conf_zrm_staged"
-dir_conf_mrm_staged="conf_mrm_staged"
+dir_conf_staged="conf_staged"
+
 
 
 
 
 function UpdateCalib_staged_zrm {
-dir="$dir_conf_zrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
@@ -213,17 +376,21 @@ echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
 mv dmmap.fits ./${dir}/
 echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
 mv wfsmap.fits ./${dir}/
+
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
 mv dmmaskRM.fits ./${dir}/
 echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
 mv dmslaved.fits ./${dir}/
 echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
 mv dmmask.fits ./${dir}/
+fi
+
 }
 
 
 function UpdateCalib_staged_zrm_tmux {
-dir="$dir_conf_zrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 tmux send-keys -t $1 "echo \"zrespM/zrespM_${datestr}.fits\" > ./${dir}/conf_zrespM_name.txt" C-m
 tmux send-keys -t $1 "mv zrespmat.fits ./${dir}/" C-m
@@ -235,12 +402,15 @@ tmux send-keys -t $1 "echo \"dmmap/dmmap_${datestr}.fits\" > ./${dir}/conf_dmmap
 tmux send-keys -t $1 "mv dmmap.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"wfsmask/wfsmask_${datestr}.fits\" > ./${dir}/conf_wfsmask_name.txt" C-m
 tmux send-keys -t $1 "mv wfsmap.fits ./${dir}/" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t $1 "echo \"dmmaskRM/dmmaskRM_${datestr}.fits\" > ./${dir}/conf_dmmaskRM_name.txt" C-m
 tmux send-keys -t $1 "mv dmmaskRM.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"dmslaved/dmslaved_${datestr}.fits\" > ./${dir}/conf_dmslaved_name.txt" C-m
 tmux send-keys -t $1 "mv dmslaved.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"dmmask/dmmask_${datestr}.fits\" > ./${dir}/conf_dmmask_name.txt" C-m
 tmux send-keys -t $1 "mv dmmask.fits ./${dir}/" C-m
+fi
 }
 
 
@@ -249,6 +419,7 @@ tmux send-keys -t $1 "mv dmmask.fits ./${dir}/" C-m
 function function_LOresp_on_tmux ()
 {
 LOrespMstat=" ON"
+rm function_LOresp_off.wait
 tmux new-session -d -s $1
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
@@ -257,12 +428,14 @@ tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-echo "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
+
+tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
 }
 
@@ -273,15 +446,15 @@ function function_LOresp_off_tmux ()
 tmux new-session -d -s $1
 LOrespMstat="OFF"
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_off_tmux.lock" C-m
-
-tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "sleep $2 && touch function_LOresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek function_LOresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "sleep $2 && touch function_LOresp_off.wait &" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $2 function_LOresp_off.wait" C-m
 
 tmux send-keys -t $1 "pkill -USR1 aol${LOOPNUMBER}LOrespM" C-m
 tmux send-keys -t $1 "echo \"OFF\" > ./status/stat_LOrespM.txt" C-m
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
-tmux send-keys -t $1 "sleep 0.5" C-m
+tmux send-keys -t $1 "sleep 0.2" C-m
+tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
 tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
 echo "./auxscripts/aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
@@ -320,7 +493,7 @@ function function_upmrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "aolupmrm" "$1" "Update LO modal response matrix calibration to latest"
-tmux send-keys -t $1 "cp ${dir_conf_mrm_staged}/conf_*.txt ./conf/" C-m
+tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
 tmux send-keys -t $1 "rm aolupmrm.runproc" C-m
 }
 
@@ -342,7 +515,7 @@ tmux send-keys -t $1 "rm SMloadmrm.runproc" C-m
 
 
 function UpdateCalib_staged_mrm {
-dir="$dir_conf_mrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 echo "LOrespM/LOrespM_${datestr}.fits" > ./${dir}/conf_LOrespM_name.txt
@@ -363,7 +536,7 @@ mv LOdmmask.fits ./${dir}/
 
 
 function UpdateCalib_staged_mrm_tmux {
-dir="$dir_conf_mrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 tmux send-keys -t $1 "echo \"LOrespM/LOrespM_${datestr}.fits\" > ./${dir}/conf_LOrespM_name.txt" C-m
@@ -419,23 +592,28 @@ loopfrequ=$( cat ./conf/conf_loopfrequ.txt )
 fi
 menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ} Hz" )
 
-loophlat="2.1"
-if [ -f "./conf/conf_loophlat.txt" ]; then
-loophlat=$( cat ./conf/conf_loophlat.txt )
+hardwlatency="0.001"
+if [ -f "./conf/conf_hardwlatency.txt" ]; then
+hardwlatency=$( cat ./conf/conf_hardwlatency.txt )
+hardwlatency_frame=$( cat ./conf/conf_hardwlatency_frame.txt )
 fi
-menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} frame" )
+menuitems+=( "lhlat" "            Hardware Latency                  ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
 
-loopclat="0.6"
-if [ -f "./conf/conf_loopclat.txt" ]; then
-loopclat=$( cat ./conf/conf_loopclat.txt )
-fi
-menuitems+=( "lclat" "            Computing Latency                 ${loopclat} frame" )
 
-loopwlat="0.6"
-if [ -f "./conf/conf_loopwlat.txt" ]; then
-loopwlat=$( cat ./conf/conf_loopwlat.txt )
+complatency="0.0002"
+if [ -f "./conf/conf_complatency_frame.txt" ]; then
+complatency=$( cat ./conf/conf_complatency.txt )
+complatency_frame=$( cat ./conf/conf_complatency_frame.txt )
 fi
-menuitems+=( "lwlat" "            WFS modes extraction Latency      ${loopwlat} frame" )
+menuitems+=( "lclat" "            Computing Latency                 ${complatency} sec -> ${complatency_frame} frame" )
+
+
+wfsmextrlatency="0.0004"
+if [ -f "./conf/conf_wfsmextrlatency.txt" ]; then
+wfsmextrlatency=$( cat ./conf/conf_wfsmextrlatency.txt )
+wfsmextrlatency_frame=$( cat ./conf/conf_wfsmextrlatency_frame.txt )
+fi
+menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrlatency} sec -> ${wfsmextrlatency_frame} frame" )
 
 
 
@@ -607,6 +785,10 @@ fi
 menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
 
 
+
+
+
+
 menuitems+=( " " " " )
 stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
@@ -636,7 +818,7 @@ menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LO
 
 
 
-
+if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( " " " " )
 
 
@@ -652,8 +834,14 @@ fi
 if [ "$MASKS_LOCK" -eq "1" ]; then
 menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
-menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock OFF" )
+menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock ON" )
 fi
+else
+MASKS_LOCK="0"
+fi
+
+
+
 
 
 
@@ -667,73 +855,124 @@ ACzrmtime="600.0"
 if [ -f "./conf/conf_ACzrmtime.txt" ]; then
 ACzrmtime=$( cat ./conf/conf_ACzrmtime.txt )
 fi
-menuitems+=( "sACzrmt" "            zonal RM running time                 ${ACzrmtime} sec" )
+menuitems+=( "sACzrmt" "            Zonal RM maximum running time          ${ACzrmtime} sec" )
 
+ACzrmNBcycle="5"
+if [ -f "./conf/conf_ACzrmNBcycle.txt" ]; then
+ACzrmNBcycle=$( cat ./conf/conf_ACzrmNBcycle.txt )
+fi
+menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACzrmNBcycle} cycle(s)" )
+
+
+
+if [ "$DMMODE" = "ZONAL" ]; then
 ACmrmtime="60.0"
 if [ -f "./conf/conf_ACmrmtime.txt" ]; then
 ACmrmtime=$( cat ./conf/conf_ACmrmtime.txt )
 fi
-menuitems+=( "sACmrmt" "            modal RM running time                 ${ACmrmtime} sec" )
+menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
 
-
-if [ -f "autocalibration.runproc" ]; then
-menuitems+=( "ACstopK" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
-menuitems+=( "ACstopZ" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
-menuitems+=( "ACstopM" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
-else
-menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn" )
-menuitems+=( " " " " )
-menuitems+=( " " " " )
+ACmrmNBcycle="5"
+if [ -f "./conf/conf_ACmrmNBcycle.txt" ]; then
+ACmrmNBcycle=$( cat ./conf/conf_ACmrmNBcycle.txt )
+fi
+menuitems+=( "sACmrmN" "            Modal RM maximum number of Cycles      ${ACmrmNBcycle} cycle(s)" )
 fi
 
-menuitems+=( " " " " )
 
 
-stringcenter "SYSTEM CALIBRATION (ZONAL)"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
+
+rmdelayfr=2
+if [ -f "./conf/conf_RMdelayfr.txt" ]; then
+rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
+fi
+
+rmfrave=5
+if [ -f "./conf/conf_RMfrave.txt" ]; then
+rmfrave=$( cat ./conf/conf_RMfrave.txt )
+fi
+
+rmexfr=5
+if [ -f "./conf/conf_RMexfr.txt" ]; then
+rmexfr=$( cat ./conf/conf_RMexfr.txt )
+fi
+
+# compute acquisition time
+RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
+#RMacqTimeM=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+
+
+
+#if [ -f "autocalibration.runproc" ]; then
+#menuitems+=( "[ACstopK]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
+#menuitems+=( "[ACstopZ]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
+#if [ "$DMMODE" = "ZONAL" ]; then
+#menuitems+=( "[ACstopM]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
+#fi
+#else
+#menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acquisition time = ${RMacqTimeZ} s" )
+#menuitems+=( " " " " )
+#menuitems+=( " " " " )
+#fi
+
+
+menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
+menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
+#menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
+menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
 menuitems+=( " " " " )
+
+
+
+
+
+stringcenter "ACQUISITION TIMING"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
 
 rmamplum=0.05
 if [ -f "./conf/conf_RMamplum.txt" ]; then
 rmamplum=$( cat ./conf/conf_RMamplum.txt )
 fi
 menuitems+=( "rmamp" "            RM amplitude                    ${rmamplum} um" )
-
-rmdelayfr=2
-if [ -f "./conf/conf_RMdelayfr.txt" ]; then
-rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
-fi
 menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
 
-rmfrave=5
-if [ -f "./conf/conf_RMfrave.txt" ]; then
-rmfrave=$( cat ./conf/conf_RMfrave.txt )
+
+
+delayRM1us="0"
+if [ -f "./conf/conf_delayRM1us.txt" ]; then
+delayRM1us=$( cat ./conf/conf_delayRM1us.txt )
 fi
+menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
+
 menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frame(s)" )
 
 
-rmexfr=5
-if [ -f "./conf/conf_RMexfr.txt" ]; then
-rmexfr=$( cat ./conf/conf_RMexfr.txt )
-fi
 menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frame(s)" )
 
 nblatm=100
 if [ -f "./conf/conf_nblatm.txt" ]; then
 nblatm=$( cat ./conf/conf_nblatm.txt )
 fi
-menuitems+=( "mlat" "            Measure Latency                 ${nblatm} frame(s)" )
+menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
+
+
+menuitems+=( " " " " )
+
+stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL) : $RMZONALCALIBlist"
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
 menuitems+=( "zrespM" "$menustring" )
 
-menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
+#menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ -f "./conf/conf_RMpokeMode.txt" ]; then
 RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
 else
@@ -750,7 +989,10 @@ menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
 else
 menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
 fi
-
+else
+RMpokeMode=0
+menuitems+=( " " " " )
+fi
 
 
 if [ -f "./conf/conf_WFSnormalize.txt" ]; then
@@ -772,6 +1014,7 @@ if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" 
 echo "OK"
 else
 echo "OFF" > ./status/stat_zrespM.txt
+zrespMstat="OFF"
 fi
 
 
@@ -781,32 +1024,33 @@ fi
 
 zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 
-if [ -f "aolCleanZrespmat.runproc" ]; then
-menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
-menuitems+=( " " " " )
-else
-if [ "${zrespMstat}" = "OFF" ];
-then
-menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
-if [ "${zrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-else
-menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
-fi
+#if [ -f "aolCleanZrespmat.runproc" ]; then
+#	menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
+#	menuitems+=( " " " " )
+#else
+#	if [ "${zrespMstat}" = "OFF" ];
+#	then
+#		menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
 
-#menuitems+=( "zrespoff" "            PROCESS zrespM" )
-menuitems+=( " " " ")
-else
-menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
-if [ "${zrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-else
-menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
-fi
+#		if [ "${zrespmatnbiter}" -lt 4 ]; then
+#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+#		else
+#			menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
+#		fi
 
-menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
-fi
-fi
+#		menuitems+=( "zrespoff" "            PROCESS zrespM" )
+#		menuitems+=( " " " ")
+#	else
+#		menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
+#		if [ "${zrespmatnbiter}" -lt 4 ]; then
+#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+#		else
+#			menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
+#		fi
+
+#menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
+#	fi
+#fi
 
 
 makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
@@ -815,6 +1059,7 @@ menuitems+=( "wfsM" "$menustring" )
 makemenuitemstringaolshm "dmmap" "DM influence map"
 menuitems+=( "dmmap" "$menustring" )
 
+if [ "$DMMODE" = "ZONAL" ]; then
 makemenuitemstringaolshm "dmmaskRM" "DM actuator mask"
 menuitems+=( "dmMrm" "$menustring" )
 
@@ -823,58 +1068,103 @@ menuitems+=( "dmSlM" "$menustring" )
 
 makemenuitemstringaolshm "dmmask" "extended DM act mask"
 menuitems+=( "dmM" "$menustring" )
+fi
 
 makemenuitemstringaolshm "wfsref0" "WFS reference"
 menuitems+=( "wfsref0" "$menustring" )
 
 
 
-acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_acquwfsref0.txt
-fi
+#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
+#if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
+#echo "OK"
+#else
+#echo "OFF" > ./status/stat_acquwfsref0.txt
+#acquwfsref0stat="OFF"
+#fi
 
-acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-if [ "${acquwfsref0stat}" = "OFF" ];
-then
-menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0" )
-menuitems+=( " " " " )
-fi
-if [ "${acquwfsref0stat}" = " ON" ];
-then
-menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition                  \Zn" )
-menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
-fi
+#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
+#if [ "${acquwfsref0stat}" = "OFF" ];
+#then
+#menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
+#menuitems+=( " " " " )
+#fi
+#if [ "${acquwfsref0stat}" = " ON" ];
+#then
+#menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
+#menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
+#menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
+#fi
 
 
 
 menuitems+=(" " " ")
 
+if [ "$DMMODE" = "ZONAL" ]; then
+
+
 DMmaskRMp0=0.2
 if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
 DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
 fi
-menuitems+=( "DMmaskRMp0" "            DM mask RM: background percentile               ${DMmaskRMp0}" )
+menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
 
 DMmaskRMc0=1.0
 if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
 DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
 fi
-menuitems+=( "DMmaskRMc0" "            DM mask RM: background coefficient              ${DMmaskRMc0}" )
+menuitems+=( "DMmaskRMc0"  "            DM mask RM: low level coefficient                               ${DMmaskRMc0}" )
 
 DMmaskRMp1=0.5
 if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
 DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
 fi
-menuitems+=( "DMmaskRMp1" "            DM mask RM: threshold percentile                ${DMmaskRMp1}" )
+menuitems+=( "DMmaskRMp1"  "            DM mask RM: high level percentile                               ${DMmaskRMp1}" )
 
 DMmaskRMc1=0.4
 if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
 DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
 fi
-menuitems+=( "DMmaskRMc1" "            DM mask RM: threshold coefficient               ${DMmaskRMc1}" )
+menuitems+=( "DMmaskRMc1"  "            DM mask RM: high level coefficient                              ${DMmaskRMc1}" )
+
+
+
+WFSmaskRMp0=0.2
+if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
+WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
+fi
+menuitems+=( "WFSmaskRMp0" "            WFS mask RM: low level percentile                               ${WFSmaskRMp0}" )
+
+WFSmaskRMc0=1.0
+if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
+WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
+fi
+menuitems+=( "WFSmaskRMc0" "            WFS mask RM: low level coefficient                              ${WFSmaskRMc0}" )
+
+WFSmaskRMp1=0.5
+if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
+WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
+fi
+menuitems+=( "WFSmaskRMp1" "            WFS mask RM: high level percentile                              ${WFSmaskRMp1}" )
+
+WFSmaskRMc1=0.4
+if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
+WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
+fi
+menuitems+=( "WFSmaskRMc1" "            WFS mask RM: high level coefficient                             ${WFSmaskRMc1}" )
+
+
+
+WFSmaskSNRr=0.05
+if [ -f "./conf/conf_WFSmaskSNRr.txt" ]; then
+WFSmaskSNRr=$( cat ./conf/conf_WFSmaskSNRr.txt )
+fi
+menuitems+=( "WFSmaskSNRr" "            WFS mask RN: fraction of pixels rejected for poor SNR           ${WFSmaskSNRr}" )
+
+
+
+
+
 
 
 if [ "$MASKS_LOCK" -eq "0" ]; then
@@ -882,26 +1172,32 @@ menuitems+=("mkAOmasks" "(re-)create AO masks")
 else
 menuitems+=(" " "CANNOT (re-)create AO masks in AO mask LOCK mode")
 fi
+else
+DMmaskRMp0=0
+DMmaskRMc0=0
+DMmaskRMp1=0
+DMmaskRMc1=0
+fi
+
+
+#menuitems+=(" " " ")
+#menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
+#menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 
-menuitems+=(" " " ")
-menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
-menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
-
-
-
-
+if [ "$DMMODE" = "ZONAL" ]; then
 
 menuitems+=( " " " " )
-stringcenter "SYSTEM CALIBRATION (MODAL)"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+stringcenter "SYSTEM CALIBRATION (MODAL) : $RMMODALCALIBlist"
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./conf/conf_RMmodal.txt
+RMmodal="OFF"
 aoconflog "RMmodal not (properly) set -> SETTING TO OFF"
 fi
 
@@ -948,32 +1244,32 @@ then
 
     LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
    
-    if [ "${LOrespMstat}" = "OFF" ];
-    then
-        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in zrm staged dir)" )
-        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-        else
-            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
-        fi
-        menuitems+=( " " " ")
-    else
-        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
-        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-        else
-            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
-        fi
-        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
-    fi
+#    if [ "${LOrespMstat}" = "OFF" ];
+#    then
+#        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
+#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+#        else
+#            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
+#        fi
+#        menuitems+=( " " " ")
+#    else
+#        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
+#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+#        else
+#            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
+#        fi
+#        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
+#    fi
 
-	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
-	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
+#	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
+#	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 fi
 
-
+fi
 
 
 
@@ -986,7 +1282,7 @@ fi
 state="menutop"
 
 
-dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
+dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - script aolconf_menuconfigureloop" \
 --ok-label "Action: ${actionmode}" \
 --cancel-label "Top" \
 --extra-button --extra-label "Action toggle" \
@@ -1066,31 +1362,59 @@ exec 3>&1;
 loopfrequ=$(dialog --inputbox "Loop Frequency [Hz]" 0 0 "$loopfrequ" 2>&1 1>&3);
 exec 3>&-;
 echo "$loopfrequ" > ./conf/conf_loopfrequ.txt
+Cfits << EOF
+aolsetloopfrequ 1000
+exit
+EOF
 aoconflogext "set loop frequency $loopfrequ Hz"
 ;;
 
 	lhlat)
 exec 3>&1;
-loophlat=$(dialog --inputbox "Hardware latency" 0 0 "$loophlat" 2>&1 1>&3);
+hardwlatency=$(dialog --inputbox "Hardware latency [s]" 0 0 "$hardwlatency" 2>&1 1>&3);
 exec 3>&-;
-echo "$loophlat" > ./conf/conf_loophlat.txt
-aoconflogext "set hardware latency $loophlat frame"
+echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
+echo "$hardwlatency $loopfrequ" > tmpfile.txt
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+Cfits << EOF
+aolsethlat ${hardwlatency_frame}
+exit
+EOF
+aoconflogext "set hardware latency $hardwlatency_frame frame"
 ;;
 
 	lclat)
 exec 3>&1;
-loopclat=$(dialog --inputbox "Computing latency" 0 0 "$loopclat" 2>&1 1>&3);
+complatency=$(dialog --inputbox "Computing latency" 0 0 "$complatency" 2>&1 1>&3);
 exec 3>&-;
-echo "$loopclat" > ./conf/conf_loopclat.txt
-aoconflogext "set computing latency $loopclat frame"
+echo "$complatency" > ./conf/conf_complatency.txt
+echo "$complatency $loopfrequ" > tmpfile.txt
+complatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
+Cfits << EOF
+aolsetclat ${complatency_frame}
+exit
+EOF
+aoconflogext "set computing latency $complatency_frame frame"
 ;;
 
-	lwlat)
+	lslat)
 exec 3>&1;
-loopwlat=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$loopwlat" 2>&1 1>&3);
+wfsmextrlatency=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$wfsmextrlatency" 2>&1 1>&3);
 exec 3>&-;
-echo "$loopwlat" > ./conf/conf_loopwlat.txt
-aoconflogext "set WFS modes extraction latency $loopwlat frame"
+echo "$wfsmextrlatency" > ./conf/conf_wfsmextrlatency.txt
+echo "$wfsmextrlatency $loopfrequ" > tmpfile.txt
+wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
+Cfits << EOF
+aolsetwlat ${wfsmextrlatency_frame}
+exit
+EOF
+aoconflogext "set WFS modes extraction latency $wfsmextrlatency_frame frame"
 ;;
 
 	dmC)
@@ -1300,6 +1624,7 @@ esac
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP7
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmdisp
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+aoconflogext "Zero all DM arrays"
 ;;
 
 
@@ -1342,7 +1667,7 @@ aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-tmux send-keys -t adark "./aocustomscripts/takedark 10000" C-m
+tmux send-keys -t adark "./aocustomscripts/takedark_${LOOPNAME} 10000" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
@@ -1351,6 +1676,7 @@ menucontrolloop_default="adark_on"
 
 
 	smlock) # set masks lock files (from conf file)
+aoconflogext "Set masks lock files"
 fname=$( cat ./conf/conf_dmmask_name.txt )
 cp ./conf/conf_dmmask_name.txt ./conf/conf_dmmask_name.LOCK.txt
 cp $fname ./conf/dmmask.LOCK.fits
@@ -1378,7 +1704,9 @@ mlock)
 	else
 	MASKS_LOCK="1"
 	echo "1" > ./conf/conf_MASKS_LOCK.txt
-	
+
+aoconflogext "MASKS_LOCK = $MASKS_LOCK"
+
 cp ./conf/conf_dmmask_name.LOCK.txt ./conf/conf_dmmask_name.txt
 cp ./conf/dmmask.LOCK.fits ./conf/dmmask.fits
 
@@ -1408,6 +1736,18 @@ echo "$ACzrmtime" > ./conf/conf_ACzrmtime.txt
 aoconflogext "set auto calib zrm time to $ACzrmtime sec"
 ;;
 
+sACzrmN) # set ACzrmNBcycle
+exec 3>&1;
+ACzrmNBcycle=$(dialog --inputbox "Auto calib zRM NBcycle" 0 0 "$ACzrmNBcycle" 2>&1 1>&3);
+exec 3>&-;
+echo "$ACzrmNBcycle" > ./conf/conf_ACzrmNBcycle.txt
+aoconflogext "set auto calib zrm NBcycle to $ACzrmNBcycle"
+menucontrolloop_default="sACzrmN"
+;;
+
+
+
+
 sACmrmt)
 exec 3>&1;
 ACmrmtime=$(dialog --inputbox "Auto calib mRM time" 0 0 "$ACmrmtime" 2>&1 1>&3);
@@ -1416,25 +1756,46 @@ echo "$ACmrmtime" > ./conf/conf_ACmrmtime.txt
 aoconflogext "set auto calib mrm time to $ACmrmtime sec"
 ;;
 
+sACmrmN) # set ACmrmNBcycle
+exec 3>&1;
+ACmrmNBcycle=$(dialog --inputbox "Auto calib mRM NBcycle" 0 0 "$ACmrmNBcycle" 2>&1 1>&3);
+exec 3>&-;
+echo "$ACmrmNBcycle" > ./conf/conf_ACmrmNBcycle.txt
+aoconflogext "set auto calib mrm NBcycle to $ACmrmNBcycle"
+menucontrolloop_default="sACmrmN"
+;;
+
+
+
 ACstopK)
-tmux kill-session -t aol2LOrespM
-tmux kill-session -t aol2LOrespMc
-tmux kill-session -t aol2zrespM
-tmux kill-session -t aol2zrespMc
+if [ "$DMMODE" = "ZONAL" ]; then
+tmux kill-session -t aol${LOOPNUMBER}LOrespM
+tmux kill-session -t aol${LOOPNUMBER}LOrespMc
+fi
+tmux kill-session -t aol${LOOPNUMBER}zrespM
+tmux kill-session -t aol${LOOPNUMBER}zrespMc
+if [ "$DMMODE" = "ZONAL" ]; then
 rm function_LOresp_on_tmux.lock
 rm function_LOresp_off_tmux.lock
 rm aolCleanLOrespmat.runproc  
 rm aolMeasureLOrespmat.runproc  
 rm aolupmrm.runproc  
+fi
 rm autocalibration.runproc  
+if [ "$DMMODE" = "ZONAL" ]; then
 rm SMloadmrm.runproc
+fi
 rm aolCleanZrespmat.runproc   
 rm aolMeasureZrespmat.runproc   
 rm aolupzrm.runproc
 rm SMloadzrm.runproc
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 echo "OFF" > ./status/stat_zrespM.txt 
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "OFF" > ./status/stat_LOrespM.txt
+fi
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+aoconflogext "STOP AUTO CALIBRATION"
 menucontrolloop_default="AUTOC"
 ;;
 
@@ -1449,34 +1810,41 @@ touch function_LOresp_off.wait
 
 
 AUTOC)
+aoconflogext "START AUTO CALIBRATION"
 # archive
 dirnb=20
 i0=`( printf "%03d" "$dirnb" )`
-rm -rf conf_zrm_staged.$i0
-rm -rf conf_mrm_staged.$i0
+rm -rf conf_staged.$i0
 
+
+# save old RMs
 while [ $dirnb -gt 0 ]; do
-i=$(($dirnb))
-i1=$(($dirnb-1))
-is=`( printf "%03d" "$i" )`
-i1s=`( printf "%03d" "$i1" )`
-mv conf_zrm_staged.$i1s conf_zrm_staged.$is
-mv conf_mrm_staged.$i1s conf_mrm_staged.$is
-let dirnb-=1
+	i=$(($dirnb))
+	i1=$(($dirnb-1))
+	is=`( printf "%03d" "$i" )`
+	i1s=`( printf "%03d" "$i1" )`
+	mv conf_staged.$i1s conf_staged.$is
+	let dirnb-=1
 done    
  
-cp -rf conf_zrm_staged conf_zrm_staged.000
-cp -rf conf_mrm_staged conf_mrm_staged.000
-
+cp -rf conf_staged conf_staged.000
 
 logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
+if [ "$DMMODE" = "ZONAL" ]; then
 touch function_LOresp_on_tmux.lock
 touch function_LOresp_off_tmux.lock
+fi
 function_zresp_on
 function_zresp_off $ACzrmtime
 tmuxname="aol${LOOPNUMBER}zrespMc"
+
+
 function_upzrm_tmux ${tmuxname}
+
+# load to shared memory
 function_SMloadzrm_tmux ${tmuxname}
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t ${tmuxname} "rm function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off_tmux.lock" C-m
 
@@ -1493,7 +1861,61 @@ tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 else
 tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 fi
+else
+tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
+fi
 ;;
+
+
+
+nAUTOC)
+aoconflogext "START AUTO CALIBRATION"
+# archive
+dirnb=20
+i0=`( printf "%03d" "$dirnb" )`
+rm -rf conf_staged.$i0
+
+
+# save old RMs
+while [ $dirnb -gt 0 ]; do
+	i=$(($dirnb))
+	i1=$(($dirnb-1))
+	is=`( printf "%03d" "$i" )`
+	i1s=`( printf "%03d" "$i1" )`
+	mv conf_staged.$i1s conf_staged.$is
+	let dirnb-=1
+done    
+ 
+cp -rf conf_staged conf_staged.000
+
+# this function populates conf_staged directory
+function_acqWFSresp
+;;
+
+
+
+	confUp)
+aoconflogext "Update all configuration files"
+cp ./conf_staged/*.txt ./conf/
+;;
+
+	calibL)
+aoconflogext "Update calibration configuration files"
+# zonal calib
+for imname in $RMZONALCALIBlist
+do
+./auxscripts/aolReadConfFile ${imname}	
+./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+done
+# modal calib
+for imname in $RMMODALCALIBlist
+do
+./auxscripts/aolReadConfFile ${imname}	
+./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+done
+;;
+
+
 
 
 
@@ -1515,7 +1937,7 @@ dialog --title "Select Configuration" --title "Select Configuration" --ok-label 
 retval="$?"
 confname=$(cat $tempfile)
 
-aoconflogext "save configuration to ${confname}"
+aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
 
 case $retval in
@@ -1544,7 +1966,7 @@ retval="$?"
 confname=$(cat $tempfile)
 
 echo "${confname}" > confname.txt
-aoconflogext "load configuration from ${confname}"
+aoconflogext "LOAD configuration from ${confname}"
 echo "confname = $confname"
 
 
@@ -1611,12 +2033,13 @@ done
 
 done
 
+if [ "$DMMODE" = "ZONAL" ]; then
 cp "${confname}/RMpoke.fits" ./conf/
 cp "${confname}/Hpoke.fits" ./conf/
 cp "${confname}/RMHmat.fits" ./conf/
 cp "${confname}/RMpixindex.fits" ./conf/
 cp "${confname}/RMpokeCube.fits" ./conf/
-
+fi
 
 AOloadMem 1
 else
@@ -1639,6 +2062,7 @@ exec 3>&-;
 echo "$rmamplum" > ./conf/conf_RMamplum.txt
 aoconflogext "set RM amplitude $rmamplum um"
 ;;
+
 	rmdelay)
 exec 3>&1;
 rmdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$rmdelayfr" 2>&1 1>&3);
@@ -1646,6 +2070,16 @@ exec 3>&-;
 echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
 aoconflogext "set RM time delay $rmdelayfr frame"
 ;;
+
+	delayRM1us)
+exec 3>&1;
+delayRM1us=$(dialog --inputbox "RM time delay1 [us]" 0 0 "$delayRM1us" 2>&1 1>&3);
+exec 3>&-;
+echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+aoconflogext "set RM time delay1 $delayRM1us us"
+;;
+
+
 	rmnbfr)
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
@@ -1658,16 +2092,40 @@ exec 3>&1;
 rmexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$rmexfr" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmexfr" > ./conf/conf_RMexfr.txt
+
+echo "$hardwlatency_frame $rmexfr $loopfrequ" > tmpfile.txt
+rmdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
+echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
+delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
+echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
 aoconflogext "set RM NB frame excluded $rmexfr frames"
 ;;
 
 	mlat)
 exec 3>&1;
-nblatm=$(dialog --inputbox "Latency measurement: # frames" 0 0 "$nblatm" 2>&1 1>&3);
+nblatm=$(dialog --inputbox "Latency measurement # frames :" 0 0 "$nblatm" 2>&1 1>&3);
 exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
-aoconflogext "Measuring system latency"
+aoconflogext "Measuring system hardware latency"
 ./auxscripts/MeasureLatency "$nblatm"
+hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
+loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
+echo "$hardwlatency $loopfrequ" > tmpfile.txt
+
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+
+# subtracting 1/2 frame
+hardwlatency1=$( awk '{ printf("%.6f\n", $1-0.5/$2) }' tmpfile.txt )
+
+rm tmpfile.txt
+echo "$hardwlatency1" > ./conf/conf_hardwlatency1.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+
+Cfits << EOF
+aolsethlat ${hardwlatency_frame}
+exit
+EOF
+aoconflogext "set hardware latency $hardwlatency_frame frame"
 ;;
 
 	zrespM)
@@ -1718,8 +2176,10 @@ else
 fi
 mv Hpoke.fits ./conf/Hpoke.fits
 cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
-cp Hpixindex.fits ./conf/RMpixindex.fits
-cp Hmat.fits ./conf/RMHmat.fits 
+mv Hpixindex.fits ./conf/
+cp ./conf/Hpixindex.fits ./conf/RMpixindex.fits
+mv Hmat.fits ./conf/
+cp ./conf/Hmat.fits ./conf/RMHmat.fits 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
@@ -1759,28 +2219,36 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ "$MASKS_LOCK" -eq "1" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
 fi
+fi
+
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+fi
 
 
 #if [ "$MASKS_LOCK" -eq "1" ]; then
@@ -1842,11 +2310,59 @@ aoconflogext "set DMmaskRM coeff 1 $DMmaskRMc1"
 ;;
 
 
+	WFSmaskRMp0)
+exec 3>&1;
+WFSmaskRMp0=$(dialog --inputbox "WFSmaskRM perc 0" 0 0 "$WFSmaskRMp0" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMp0" > ./conf/conf_WFSmaskRMp0.txt
+aoconflogext "set WFSmaskRM perc 0 $WFSmaskRMp0"
+;;
+
+	WFSmaskRMc0)
+exec 3>&1;
+WFSmaskRMc0=$(dialog --inputbox "WFSmaskRM coeff 0" 0 0 "$WFSmaskRMc0" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMc0" > ./conf/conf_WFSmaskRMc0.txt
+aoconflogext "set WFSmaskRM coeff 0 $WFSmaskRMc0"
+;;
+
+	WFSmaskRMp1)
+exec 3>&1;
+WFSmaskRMp1=$(dialog --inputbox "WFSmaskRM perc 1" 0 0 "$WFSmaskRMp1" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMp1" > ./conf/conf_WFSmaskRMp1.txt
+aoconflogext "set WFSmaskRM perc 1 $WFSmaskRMp1"
+;;
+
+	WFSmaskRMc1)
+exec 3>&1;
+WFSmaskRMc1=$(dialog --inputbox "WFSmaskRM coeff 1" 0 0 "$WFSmaskRMc1" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMc1" > ./conf/conf_WFSmaskRMc1.txt
+aoconflogext "set WFSmaskRM coeff 1 $WFSmaskRMc1"
+;;
+
+
+	WFSmaskSNRr)
+exec 3>&1;
+WFSmaskSNRr=$(dialog --inputbox "Fraction of WFS elements rejected due to poor SNR" 0 0 "$WFSmaskSNRr" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskSNRr" > ./conf/conf_WFSmaskSNRr.txt
+aoconflogext "set WFSmakSNRr $WFSmaskSNRr"
+;;
+
+
 
 
 
 mkAOmasks)
-./auxscripts/aolmkMasks ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}
+aoconflogext "(re-)create masks"
+./auxscripts/aolmkMasks 
+
+stageddir="conf_staged"
+cp wfsmask.fits ./${stageddir}/
+cp dmmaskRM.fits ./${stageddir}/
+
 menucontrolloop_default="mkAOmasks"
 state="menuconfigureloop"
 ;;
@@ -1857,12 +2373,14 @@ state="menuconfigureloop"
 
 
 upzrm) # update zonal response matrix calibration to latest
+aoconflogext "update zonal response matrix calibration to latest"
 tmuxname="aol${LOOPNUMBER}zrespMc"
 function_upzrm_tmux ${tmuxname}
 ;;
 
 
 SMloadzrm) # load files into shared memory
+aoconflogext "load files into shared memory"
 tmuxname="aol${LOOPNUMBER}zrespMc"
 function_SMloadzrm_tmux ${tmuxname}
 ;;
@@ -1880,10 +2398,13 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -1892,17 +2413,26 @@ tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsref0.fits wfsref0/wfsref0_${dat
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+fi
+
+
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
 echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 echo "dmmaskRM/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
+fi
+
 rm zrmcust.run
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "touch zrmcust.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "exit" C-m
@@ -2041,10 +2571,10 @@ echo " ON" > ./status/stat_acquwfsref0.txt
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux new-session -d -s $tmuxsname
 tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
-tmux send-keys -t $tmuxsname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxsname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
-tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
+tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 1" C-m
 aoconflogext "START taking WFS reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
@@ -2054,8 +2584,10 @@ acquwfsref0stat="OFF"
 echo "OFF" > ./status/stat_acquwfsref0.txt
 pkill -USR1 awfsref0${LOOPNUMBER}
 rm wfsref0.fits
+rm wfsimrms.fits
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms wfsimrms.fits" C-m
 tmux send-keys -t $tmuxsname "savefits imave1 wfsref0.fits" C-m
 tmux send-keys -t $tmuxsname "imcp2shm imave1 aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
@@ -2067,12 +2599,36 @@ aoconflogext "STOP taking WFS reference"
 menucontrolloop_default="awfsref0_on"
 state="menuconfigureloop"
 ;;
+	awfsref0offtest)
+acquwfsref0stat="OFF"
+echo "OFF" > ./status/stat_acquwfsref0.txt
+pkill -USR1 awfsref0${LOOPNUMBER}
+rm test_wfsimrms.fits
+rm test_wfsref0.fits
+tmuxsname="aol${LOOPNUMBER}awfsref0"
+tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms test_wfsimrms.fits" C-m
+tmux send-keys -t $tmuxsname "savefits imave1 test_wfsref0.fits" C-m
+tmux send-keys -t $tmuxsname "exit" C-m
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+sleep 10
+tmux send-keys -t $tmuxsname "exit" C-m
+aoconflogext "STOP taking WFS reference"
+menucontrolloop_default="awfsref0_on"
+state="menuconfigureloop"
+;;
 	awfsref0mon)
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux a -t $tmuxsname
 menucontrolloop_default="awfsref0mon"
 state="menuconfigureloop"
 ;;
+
+
+
+
+
+
 
 
 
@@ -2188,7 +2744,7 @@ state="menuconfigureloop"
 upmrm) # update modal  matrix calibration to latest 
 tmuxname="aol${LOOPNUMBER}LOrespMc"
 function_upmrm_tmux ${tmuxname}
-#cp ${dir_conf_mrm_staged}/conf_*.txt ./conf/
+#cp ${dir_conf_staged}/conf_*.txt ./conf/
 ;;
 
 

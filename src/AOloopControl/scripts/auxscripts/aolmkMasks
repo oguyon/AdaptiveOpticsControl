@@ -2,12 +2,12 @@
 
 
 # number of arguments to script
-NBARGS=4
+NBARGS=0
 
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 
@@ -21,16 +21,12 @@ echo "------------------------------------------------------------------------"
 echo "  updates AO wfs and DM masks"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <DMperc0> <DMcoeff0> <DMperc1> <DMcoeff1>"
+echo "     $0 [-h]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
-echo "     <DMperc0>      DM map: background noise level percentile"
-echo "     <DMcoeff0>     DM map: background coefficient (ususally 1.0)"
-echo "     <DMperc1>      DM map: percentile level above background"
-echo "     <DMcoeff1>     DM map: coefficient on level above background"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
 echo "     wfsmask.fits"
@@ -46,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Create AO wfs and DM masks\n" "$0" 
+    printf "%25s       Create AO wfs and DM masks\n" "$0" 
 }
 
 
@@ -108,18 +104,73 @@ fi
 
 
 loopnb=$(cat LOOPNUMBER)
-
-
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
+
+
+
+
+DMmaskRMp0=0.2
+if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
+DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
+fi
+
+
+DMmaskRMc0=1.0
+if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
+DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
+fi
+
+
+DMmaskRMp1=0.7
+if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
+DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
+fi
+
+
+DMmaskRMc1=0.3
+if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
+DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
+fi
+
+
+
+
+WFSmaskRMp0=0.05
+if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
+WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
+fi
+
+
+WFSmaskRMc0=1.0
+if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
+WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
+fi
+
+
+WFSmaskRMp1=0.65
+if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
+WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
+fi
+
+
+WFSmaskRMc1=0.3
+if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
+WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
+fi
+
+
+
+
 stageddir="conf_zrm_staged"
+
 
 Cfits << EOF
 aolnb $loopnb
 loadfits "./${stageddir}/zrespmat.fits" zrespm
 #loadfits "./${stageddir}/wfsmap.fits" wfsmap
 #loadfits "./${stageddir}/dmmap.fits" dmmap
-aolRMmkmasks zrespm wfsmap dmmap 0.2 1.0 0.7 0.3
+aolRMmkmasks zrespm wfsmap dmmap ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1} ${WFSmaskRMp0} ${WFSmaskRMc0} ${WFSmaskRMp1} ${WFSmaskRMc1}
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmaskRM.fits"
 exit
@@ -127,33 +178,27 @@ EOF
 
 
 
-cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits
-cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits
 
-./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
+exit
 
-cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits
-
+if [ -f "./zrespmtmp/wfsimRMS.fits" ]; then
 Cfits << EOF
-loadfits dmmaskRM.fits dmmRM
-loadfits dmslaved.fits dmsl
-imtrunc dmsl 0.0 1.0 dmsl1
-dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
-savefits dmm "!dmmask.fits"
+loadfits wfsmask.fits wfsmask0
+imref=0*wfsmask0+1
+loadfits "./zrespmtmp/wfsimRMS.fits" wfsimrms
+imr=wfsmask0/wfsimrms
+imr1=imr*wfsmask0
+# fraction of pixels in wfsmask0
+a1=itot(wfsmask0)/itot(imref)
+# goal fraction of pixels
+a2=a1*(1.0-$WFSmaskSNRr)
+lim=perc(imr1,a2)
+imr2=imr1/lim
+imtrunc imr2 0.0 1.001 imr3
+imr4=floor(imr3)
+savefits imr4 "!wfsmask_SNRfilt.fits"  
 exit
 EOF
+cp wfsmask_SNRfilt.fits wfsmask.fits
+fi
 
-cp dmmask.fits dmmask/dmmask_${datestr}.fits
-
-
-# update on staged directory
-
-cp wfsmask.fits ./${stageddir}/
-cp dmmaskRM.fits ./${stageddir}/
-cp dmslaved.fits ./${stageddir}/
-cp dmmask.fits ./${stageddir}/
-
-echo "wfsmask/wfsmask_${datestr}.fits" > ./${stageddir}/conf_wfsmask_name.txt
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${stageddir}/conf_dmmaskRM_name.txt
-echo "dmslaved/dmslaved_${datestr}.fits" > ./${stageddir}/conf_dmslaved_name.txt
-echo "dmmask/dmmask_${datestr}.fits" > ./${stageddir}/conf_dmmask_name.txt

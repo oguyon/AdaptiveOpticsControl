@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Display AO loop stats\n" "$0" 
+    printf "%25s       Display AO loop stats\n" "$0" 
 }
 
 

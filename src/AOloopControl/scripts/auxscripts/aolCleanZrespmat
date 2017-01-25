@@ -1,7 +1,7 @@
 #! /bin/bash
 
-EXPECTED_ARGS=6
-
+NBARGS=6
+pname=`echo "$0" | sed "s/\.\///g"`
 
 
 
@@ -47,7 +47,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Cleans zonal resp matrix\n" "$0" 
+    printf "%25s       Cleans zonal resp matrix\n" "$0" 
 }
 
 
@@ -110,6 +110,58 @@ fi
 
 
 
+DMmaskRMp0=0.2
+if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
+DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
+fi
+
+
+DMmaskRMc0=1.0
+if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
+DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
+fi
+
+
+DMmaskRMp1=0.7
+if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
+DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
+fi
+
+
+DMmaskRMc1=0.3
+if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
+DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
+fi
+
+
+
+
+WFSmaskRMp0=0.05
+if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
+WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
+fi
+
+
+WFSmaskRMc0=1.0
+if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
+WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
+fi
+
+
+WFSmaskRMp1=0.65
+if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
+WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
+fi
+
+
+WFSmaskRMc1=0.3
+if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
+WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
+fi
+
+
+
+
 
 
 
@@ -138,36 +190,28 @@ savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
-savefits wfsmask "!wfsmask.fits"
-savefits dmmask "!dmmaskRM.fits"
+#savefits wfsmask "!wfsmask.fits"
+#savefits dmmask "!dmmaskRM.fits"
 listim
 exit
 EOF
 
+#stageddir="conf_zrm_staged"
+#cp zrespmat.fits ./${stageddir}/
+#cp dmmap.fits ./${stageddir}/
+#cp wfsmap.fits ./${stageddir}/
 
 
 
-Cfits << EOF
-loadfits "zrespmat.fits" zrespm
-loadfits "wfsmap.fits" wfsmap
-loadfits "dmmap.fits" dmmap
-aolRMmkmasks zrespm wfsmap dmmap 0.2 1.0 0.7 0.3
-savefits wfsmask "!wfsmask.fits"
-savefits dmmask "!dmmaskRM.fits"
-exit
-EOF
+#./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 
 
-#./auxscripts/mkDMslaveAct dmmap.fits 0.7 1.0
-./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
-
-
-Cfits << EOF
-loadfits dmmaskRM.fits dmmRM
-loadfits dmslaved.fits dmsl
-imtrunc dmsl 0.0 1.0 dmsl1
-dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
-savefits dmm "!dmmask.fits"
-exit
-EOF
+#Cfits << EOF
+#loadfits dmmaskRM.fits dmmRM
+#loadfits dmslaved.fits dmsl
+#imtrunc dmsl 0.0 1.0 dmsl1
+#dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
+#savefits dmm "!dmmask.fits"
+#exit
+#EOF
 

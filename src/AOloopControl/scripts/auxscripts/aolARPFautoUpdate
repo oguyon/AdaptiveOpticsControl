@@ -48,7 +48,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s      Automatic update of AR linear predictive filter\n" "$0" 
+    printf "%25s       Automatic update of AR linear predictive filter\n" "$0" 
 }
 
 

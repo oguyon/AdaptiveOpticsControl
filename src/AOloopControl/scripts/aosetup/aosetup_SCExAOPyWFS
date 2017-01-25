@@ -183,8 +183,10 @@ echo "1" >./conf/conf_RMpokeMode.txt # use Hadamard poke mode
 ./auxscripts/mkHpoke
 mv Hpoke.fits ./conf/Hpoke.fits
 cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
-cp Hpixindex.fits ./conf/RMpixindex.fits
-cp Hmat.fits ./conf/RMHmat.fits 
+mv Hpixindex.fits ./conf/
+cp ./conf/Hpixindex.fits ./conf/RMpixindex.fits
+mv Hmat.fits ./conf/
+cp ./conf/Hmat.fits ./conf/RMHmat.fits
 echo "1" > ./conf/conf_WFSnormalize.txt # normalize WFS frames
 
 echo " ON" > ./conf/conf_RMmodal.txt  

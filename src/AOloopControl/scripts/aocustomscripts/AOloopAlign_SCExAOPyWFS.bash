@@ -71,6 +71,33 @@ line=$1
 
 
 
+function recomputeLatency {
+frHz=$1
+# read latencies 
+hardwlatency1=$( cat conf/conf_hardwlatency1.txt )
+wfsmextrlatency=$( cat conf/conf_wfsmextrlatency.txt )
+complatency=$( cat conf/conf_complatency.txt )
+echo "$hardwlatency1 $wfsmextrlatency $complatency $frHz" > tmpfile.txt
+hardwlatency=$( awk '{ printf("%.6f\n", ($1*$4+0.5)/$4) }' tmpfile.txt )
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$4+0.5) }' tmpfile.txt )
+wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $2*$4) }' tmpfile.txt )
+complatency_frame=$( awk '{ printf("%05.3f\n", $3*$4) }' tmpfile.txt )
+
+echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
+echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
+echo "$frHz" > ./conf/conf_loopfrequ.txt
+Cfits << EOF
+aolsethlat $hardwlatency_frame
+aolsetwlat $wfsmextrlatency_frame
+aolsetclat $complatency_frame
+aolsetloopfrequ $frHz
+exit
+EOF
+}
+
+
 
 
 
@@ -147,13 +174,25 @@ fi
 
 PyrFilter=$(cat ./status/status_fw.txt)
 
+if [ "$TTloopstat" = " ON" ]; then
+TTloopstat_C="\Zr\Z2 ON\Zn"
+else
+TTloopstat_C="OFF"
+fi
+
+if [ "$Pcamloopstat" = " ON" ]; then
+Pcamloopstat_C="\Zr\Z2 ON\Zn"
+else
+Pcamloopstat_C="OFF"
+fi
+
 
 if [ $state = "menualign" ]; then
 stateok=1
 menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
 \n
-   TT   loop is : $TTloopstat\n
-   Pcam loop is : $Pcamloopstat\n
+   TT   loop is : $TTloopstat_C\n
+   Pcam loop is : $Pcamloopstat_C\n
    Pyr Filter   : $PyrFilter\n"
 
 
@@ -181,43 +220,52 @@ pyfreq="2000"
 echo "$pyfreq" > $file
 fi
 
-if [ "$pyfreq" = "500" ]; then
+pmodscale="0"
+
+if [ "$pyfreq" = "0500" ]; then
+pmodscale="250"
 menuitems+=( "pyfr05" "\Zr\Z2 freq = 0.5 kHz\Zn" )
 else
 menuitems+=( "pyfr05" " freq = 0.5 kHz" )
 fi
 
 if [ "$pyfreq" = "1000" ]; then
+pmodscale="250"
 menuitems+=( "pyfr10" "\Zr\Z2 freq = 1.0 kHz\Zn" )
 else
 menuitems+=( "pyfr10" " freq = 1.0 kHz" )
 fi
 
 if [ "$pyfreq" = "1500" ]; then
+pmodscale="250"
 menuitems+=( "pyfr15" "\Zr\Z2 freq = 1.5 kHz\Zn" )
 else
 menuitems+=( "pyfr15" " freq = 1.5 kHz" )
 fi
 
 if [ "$pyfreq" = "2000" ]; then
+pmodscale="250"
 menuitems+=( "pyfr20" "\Zr\Z2 freq = 2.0 kHz\Zn" )
 else
 menuitems+=( "pyfr20" " freq = 2.0 kHz" )
 fi
 
 if [ "$pyfreq" = "2500" ]; then
+pmodscale="215"
 menuitems+=( "pyfr25" "\Zr\Z2 freq = 2.5 kHz\Zn" )
 else
 menuitems+=( "pyfr25" " freq = 2.5 kHz" )
 fi
 
 if [ "$pyfreq" = "3000" ]; then
+pmodscale="180"
 menuitems+=( "pyfr30" "\Zr\Z2 freq = 3.0 kHz\Zn" )
 else
 menuitems+=( "pyfr30" " freq = 3.0 kHz" )
 fi
 
 if [ "$pyfreq" = "3500" ]; then
+pmodscale="145"
 menuitems+=( "pyfr35" "\Zr\Z2 freq = 3.5 kHz\Zn" )
 else
 menuitems+=( "pyfr35" " freq = 3.5 kHz" )
@@ -234,40 +282,150 @@ pymodampl="05"
 echo "$pymodampl" > $file
 fi
 
-if [ "$pymodampl" = "0.1" ]; then
-menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
+
+echo "$pmodscale $pymodampl" > tmpfile.txt
+pmodradmas=$( awk '{ printf("%5.1f\n", $1*$2) }' tmpfile.txt )
+pmodradmas05=$( awk '{ printf("%5.1f\n", $1*0.05) }' tmpfile.txt )
+pmodradmas10=$( awk '{ printf("%5.1f\n", $1*0.10) }' tmpfile.txt )
+pmodradmas15=$( awk '{ printf("%5.1f\n", $1*0.15) }' tmpfile.txt )
+pmodradmas20=$( awk '{ printf("%5.1f\n", $1*0.20) }' tmpfile.txt )
+pmodradmas25=$( awk '{ printf("%5.1f\n", $1*0.25) }' tmpfile.txt )
+pmodradmas30=$( awk '{ printf("%5.1f\n", $1*0.30) }' tmpfile.txt )
+pmodradmas35=$( awk '{ printf("%5.1f\n", $1*0.35) }' tmpfile.txt )
+pmodradmas40=$( awk '{ printf("%5.1f\n", $1*0.40) }' tmpfile.txt )
+pmodradmas45=$( awk '{ printf("%5.1f\n", $1*0.45) }' tmpfile.txt )
+pmodradmas50=$( awk '{ printf("%5.1f\n", $1*0.50) }' tmpfile.txt )
+pmodradmas55=$( awk '{ printf("%5.1f\n", $1*0.55) }' tmpfile.txt )
+pmodradmas60=$( awk '{ printf("%5.1f\n", $1*0.60) }' tmpfile.txt )
+pmodradmas65=$( awk '{ printf("%5.1f\n", $1*0.65) }' tmpfile.txt )
+pmodradmas70=$( awk '{ printf("%5.1f\n", $1*0.70) }' tmpfile.txt )
+pmodradmas75=$( awk '{ printf("%5.1f\n", $1*0.75) }' tmpfile.txt )
+pmodradmas80=$( awk '{ printf("%5.1f\n", $1*0.80) }' tmpfile.txt )
+pmodradmas85=$( awk '{ printf("%5.1f\n", $1*0.85) }' tmpfile.txt )
+pmodradmas90=$( awk '{ printf("%5.1f\n", $1*0.90) }' tmpfile.txt )
+pmodradmas95=$( awk '{ printf("%5.1f\n", $1*0.95) }' tmpfile.txt )
+pmodradmas00=$( awk '{ printf("%5.1f\n", $1*1.00) }' tmpfile.txt )
+rm tmpfile.txt
+
+
+if [ "$pymodampl" = "0.05" ]; then
+menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn (modulation radius = ${pmodradmas05} mas)" )
 else
-menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
+menuitems+=( "pymoda005" " modulation amplitude = 0.05 (modulation radius = ${pmodradmas05} mas)" )
 fi
 
-if [ "$pymodampl" = "0.2" ]; then
-menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
+if [ "$pymodampl" = "0.10" ]; then
+menuitems+=( "pymoda010" "\Zr\Z2 modulation amplitude = 0.10\Zn  (modulation radius = ${pmodradmas10} mas)" )
 else
-menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
+menuitems+=( "pymoda010" " modulation amplitude = 0.10  (modulation radius = ${pmodradmas10} mas)" )
 fi
 
-if [ "$pymodampl" = "0.3" ]; then
-menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn" )
+if [ "$pymodampl" = "0.15" ]; then
+menuitems+=( "pymoda015" "\Zr\Z2 modulation amplitude = 0.15\Zn  (modulation radius = ${pmodradmas15} mas)" )
 else
-menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
+menuitems+=( "pymoda015" " modulation amplitude = 0.15  (modulation radius = ${pmodradmas15} mas)" )
 fi
 
-if [ "$pymodampl" = "0.5" ]; then
-menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
+if [ "$pymodampl" = "0.20" ]; then
+menuitems+=( "pymoda020" "\Zr\Z2 modulation amplitude = 0.20\Zn  (modulation radius = ${pmodradmas20} mas)" )
 else
-menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
+menuitems+=( "pymoda020" " modulation amplitude = 0.20  (modulation radius = ${pmodradmas20} mas)" )
 fi
 
-if [ "$pymodampl" = "0.7" ]; then
-menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
+if [ "$pymodampl" = "0.25" ]; then
+menuitems+=( "pymoda025" "\Zr\Z2 modulation amplitude = 0.25\Zn  (modulation radius = ${pmodradmas25} mas)" )
 else
-menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
+menuitems+=( "pymoda025" " modulation amplitude = 0.25  (modulation radius = ${pmodradmas25} mas)" )
 fi
 
-if [ "$pymodampl" = "1.0" ]; then
-menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn" )
+if [ "$pymodampl" = "0.30" ]; then
+menuitems+=( "pymoda030" "\Zr\Z2 modulation amplitude = 0.30\Zn  (modulation radius = ${pmodradmas30} mas)" )
 else
-menuitems+=( "pymoda10" " modulation amplitude = 1.0" )
+menuitems+=( "pymoda030" " modulation amplitude = 0.30  (modulation radius = ${pmodradmas30} mas)" )
+fi
+
+if [ "$pymodampl" = "0.35" ]; then
+menuitems+=( "pymoda035" "\Zr\Z2 modulation amplitude = 0.35\Zn  (modulation radius = ${pmodradmas35} mas)" )
+else
+menuitems+=( "pymoda035" " modulation amplitude = 0.35  (modulation radius = ${pmodradmas35} mas)" )
+fi
+
+if [ "$pymodampl" = "0.40" ]; then
+menuitems+=( "pymoda040" "\Zr\Z2 modulation amplitude = 0.40\Zn  (modulation radius = ${pmodradmas40} mas)" )
+else
+menuitems+=( "pymoda040" " modulation amplitude = 0.40  (modulation radius = ${pmodradmas40} mas)" )
+fi
+
+if [ "$pymodampl" = "0.45" ]; then
+menuitems+=( "pymoda045" "\Zr\Z2 modulation amplitude = 0.45\Zn  (modulation radius = ${pmodradmas45} mas)" )
+else
+menuitems+=( "pymoda045" " modulation amplitude = 0.45  (modulation radius = ${pmodradmas45} mas)" )
+fi
+
+if [ "$pymodampl" = "0.50" ]; then
+menuitems+=( "pymoda050" "\Zr\Z2 modulation amplitude = 0.50\Zn  (modulation radius = ${pmodradmas50} mas)" )
+else
+menuitems+=( "pymoda050" " modulation amplitude = 0.50  (modulation radius = ${pmodradmas50} mas)" )
+fi
+
+if [ "$pymodampl" = "0.55" ]; then
+menuitems+=( "pymoda055" "\Zr\Z2 modulation amplitude = 0.55\Zn  (modulation radius = ${pmodradmas55} mas)" )
+else
+menuitems+=( "pymoda055" " modulation amplitude = 0.55  (modulation radius = ${pmodradmas55} mas)" )
+fi
+
+if [ "$pymodampl" = "0.60" ]; then
+menuitems+=( "pymoda060" "\Zr\Z2 modulation amplitude = 0.60\Zn  (modulation radius = ${pmodradmas60} mas)" )
+else
+menuitems+=( "pymoda060" " modulation amplitude = 0.60  (modulation radius = ${pmodradmas60} mas)" )
+fi
+
+if [ "$pymodampl" = "0.65" ]; then
+menuitems+=( "pymoda065" "\Zr\Z2 modulation amplitude = 0.65\Zn  (modulation radius = ${pmodradmas65} mas)" )
+else
+menuitems+=( "pymoda065" " modulation amplitude = 0.65  (modulation radius = ${pmodradmas65} mas)" )
+fi
+
+if [ "$pymodampl" = "0.70" ]; then
+menuitems+=( "pymoda070" "\Zr\Z2 modulation amplitude = 0.70\Zn  (modulation radius = ${pmodradmas70} mas)" )
+else
+menuitems+=( "pymoda070" " modulation amplitude = 0.70  (modulation radius = ${pmodradmas70} mas)" )
+fi
+
+if [ "$pymodampl" = "0.75" ]; then
+menuitems+=( "pymoda075" "\Zr\Z2 modulation amplitude = 0.75\Zn  (modulation radius = ${pmodradmas75} mas)" )
+else
+menuitems+=( "pymoda075" " modulation amplitude = 0.75  (modulation radius = ${pmodradmas75} mas)" )
+fi
+
+if [ "$pymodampl" = "0.80" ]; then
+menuitems+=( "pymoda080" "\Zr\Z2 modulation amplitude = 0.80\Zn  (modulation radius = ${pmodradmas80} mas)" )
+else
+menuitems+=( "pymoda080" " modulation amplitude = 0.80  (modulation radius = ${pmodradmas80} mas)" )
+fi
+
+if [ "$pymodampl" = "0.85" ]; then
+menuitems+=( "pymoda085" "\Zr\Z2 modulation amplitude = 0.85\Zn  (modulation radius = ${pmodradmas85} mas)" )
+else
+menuitems+=( "pymoda085" " modulation amplitude = 0.85  (modulation radius = ${pmodradmas85} mas)" )
+fi
+
+if [ "$pymodampl" = "0.90" ]; then
+menuitems+=( "pymoda090" "\Zr\Z2 modulation amplitude = 0.90\Zn  (modulation radius = ${pmodradmas90} mas)" )
+else
+menuitems+=( "pymoda090" " modulation amplitude = 0.90  (modulation radius = ${pmodradmas90} mas)" )
+fi
+
+if [ "$pymodampl" = "0.95" ]; then
+menuitems+=( "pymoda095" "\Zr\Z2 modulation amplitude = 0.95\Zn  (modulation radius = ${pmodradmas95} mas)" )
+else
+menuitems+=( "pymoda095" " modulation amplitude = 0.95  (modulation radius = ${pmodradmas95} mas)" )
+fi
+
+if [ "$pymodampl" = "1.00" ]; then
+menuitems+=( "pymoda100" "\Zr\Z2 modulation amplitude = 1.00\Zn  (modulation radius = ${pmodradmas00} mas)" )
+else
+menuitems+=( "pymoda100" " modulation amplitude = 1.00  (modulation radius = ${pmodradmas00} mas)" )
 fi
 
 
@@ -421,23 +579,46 @@ menuitems+=( "" "" )
 
 
 
-stringcenter "Pyramid TT align"
+
+
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+
+TTposXref=$( cat status/stat_AnalogVoltage_Dref.txt )
+TTposYref=$( cat status/stat_AnalogVoltage_Cref.txt )
+
+stringcenter "Pyramid TT align ( 90.3 mas/V )"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( "tz" "Zero TT align" )
+menuitems+=( " " "Current position ( scale = 90.3 mas/V ) = $TTposX  $TTposY" )
+
+menuitems+=( "tz" "Zero TT align (-5.0 -5.0)" )
+menuitems+=( "ttr" "Move to TT reference position [ $TTposXref  $TTposYref ]" )
+menuitems+=( "tts" "Store current position as reference" )
+
+menuitems+=( "tst0" "alignment step = 0.05" )
+menuitems+=( "tst1" "alignment step = 0.1" )
+menuitems+=( "tst2" "alignment step = 0.2" )
+menuitems+=( "tst3" "alignment step = 0.5" )
+menuitems+=( "txm" "TT x -$TTstep (PyWFS bottom left )" )
+menuitems+=( "txp" "TT x +$TTstep (PyWFS top    right)" )
+menuitems+=( "tym" "TT y -$TTstep (PyWFS top    left )" )
+menuitems+=( "typ" "TT y +$TTstep (PyWFS bottom right)" )
+
+
 
 if [ "$TTloopstat" = "OFF" ]; then
-menuitems+=( "ts" "Start TT align" )
+menuitems+=( "ts" "\Zb ====== Start TT align ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
 if [ "$TTloopstat" = " ON" ]; then
-menuitems+=( "tp" "PAUSE TT align" )
-menuitems+=( "tk" "STOP TT align (note: need to resume first if paused)" )
+menuitems+=( "tp" "\Zr\Z2 TT loop running \Zn  \Z1\Zr Press to PAUSE \Zn" )
+menuitems+=( "tk" "\Zr\Z2 TT loop running \Zn  \Z1\Zr Press to STOP \Zn" )
 fi
 
 if [ "$TTloopstat" = "PAU" ]; then
-menuitems+=( "tr" "Resume TT align (after pause)" )
+menuitems+=( "tr" "\Zb ====== Resume TT align (after pause) ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
@@ -445,7 +626,13 @@ menuitems+=( "tg" "py TT loop gain = ${pyTTloopgain}")
 menuitems+=( "tm" "Monitor TT align tmux session")
 menuitems+=( "" "" )
 
-stringcenter "Pyramid Camera Align"
+
+
+
+
+
+
+stringcenter "Pyramid Camera Align ( 5925 steps / pix )"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "pz" "Zero Pcam align  ( $pywfsreimagexposref $pywfsreimageyposref )" )
@@ -459,17 +646,17 @@ menuitems+=( "pym" "Pcam y -$pcamstep (top)" )
 menuitems+=( "pyp" "Pcam y +$pcamstep (bottom)" )
 
 if [ "$Pcamloopstat" = "OFF" ]; then
-menuitems+=( "ps" "Start Pcam align" )
+menuitems+=( "ps" "\Zb ====== Start Pcam align ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
 if [ "$Pcamloopstat" = " ON" ]; then
-menuitems+=( "pp" "PAUSE Pcam align" )
-menuitems+=( "pk" "STOP Pcam align (note: need to resume first if paused)" )
+menuitems+=( "pp" "\Zr\Z2 Pcam align running \Zn  \Z1\Zr Press to PAUSE \Zn" )
+menuitems+=( "pk" "\Zr\Z2 Pcam align running \Zn  \Z1\Zr Press to STOP \Zn" )
 fi
 
 if [ "$Pcamloopstat" = "PAU" ]; then
-menuitems+=( "pr" "RESUME Pcam align (after pause)" )
+menuitems+=( "pr" "\Zb ====== RESUME Pcam align (after pause) ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
@@ -519,83 +706,202 @@ menualign_default="$choiceval"
 
 
 	pyfr05)
-pyfreq="500"
+pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr10)
 pyfreq="1000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr15)
 pyfreq="1500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr20)
 pyfreq="2000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr25)
 pyfreq="2500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 	
 	pyfr30)
 pyfreq="3000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr35)
 pyfreq="3500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 
 
-	pymoda01)
-pymodampl="0.1"
+
+	pymoda005)
+pymodampl="0.05"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
-	pymoda02)
-pymodampl="0.2"
-echo "0.2" > ./conf/conf_pywfs_modampl.txt
+	pymoda010)
+pymodampl="0.10"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
-	pymoda03)
-pymodampl="0.3"
-echo "0.3" > ./conf/conf_pywfs_modampl.txt
+	pymoda015)
+pymodampl="0.15"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
-	pymoda05)
-pymodampl="0.5"
-echo "0.5" > ./conf/conf_pywfs_modampl.txt
+	pymoda020)
+pymodampl="0.20"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
-	pymoda07)
-pymodampl="0.7"
-echo "0.7" > ./conf/conf_pywfs_modampl.txt
+	pymoda025)
+pymodampl="0.25"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
-	pymoda10)
-pymodampl="1.0"
-echo "1.0" > ./conf/conf_pywfs_modampl.txt
+	pymoda030)
+pymodampl="0.30"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda035)
+pymodampl="0.35"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda040)
+pymodampl="0.40"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda045)
+pymodampl="0.45"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda050)
+pymodampl="0.50"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda055)
+pymodampl="0.55"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda060)
+pymodampl="0.60"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda065)
+pymodampl="0.65"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda070)
+pymodampl="0.70"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda075)
+pymodampl="0.75"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda080)
+pymodampl="0.80"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda085)
+pymodampl="0.85"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda090)
+pymodampl="0.90"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda095)
+pymodampl="0.95"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
+;;
+
+	pymoda100)
+pymodampl="1.00"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 
@@ -605,36 +911,42 @@ pywfs_mod_setup ${pyfreq} ${pymodampl}
 pyfilter="1"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt2)
 pyfilter="2"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt3)
 pyfilter="3"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt4)
 pyfilter="4"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt5)
 pyfilter="5"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt6)
 pyfilter="6"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 
@@ -644,72 +956,84 @@ pywfs_filter ${pyfilter}
 pypickoff="01"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick02)
 pypickoff="02"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick03)
 pypickoff="03"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick04)
 pypickoff="04"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick05)
 pypickoff="05"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick06)
 pypickoff="06"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick07)
 pypickoff="07"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick08)
 pypickoff="08"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick09)
 pypickoff="09"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick10)
 pypickoff="10"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick11)
 pypickoff="11"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick12)
 pypickoff="12"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 
@@ -717,11 +1041,85 @@ pywfs_pickoff ${pypickoff}
 
 	tz)
 aoconflogext "TT align zero"
-analog_output.py voltage C -5.0
-analog_output.py voltage D -5.0
+./aocustomscripts/SCExAO_analogoutput C -5.0
+./aocustomscripts/SCExAO_analogoutput D -5.0
+#analog_output.py voltage C -5.0
+#analog_output.py voltage D -5.0
 menualign_default="tz"
 state="menualign"
 ;;
+
+
+	ttr)
+./aocustomscripts/SCExAO_analogoutput D $TTposXref
+./aocustomscripts/SCExAO_analogoutput C $TTposYref
+menualign_default="ttr"
+state="menualign"
+;;
+
+
+	tts)
+TTposXref="$TTposX"
+echo "$TTposXref" > status/stat_AnalogVoltage_Dref.txt
+TTposYref="$TTposY"
+echo "$TTposYref" > status/stat_AnalogVoltage_Cref.txt
+;;
+
+
+        tst0)
+TTstep="0.05"
+menualign_default="tst0"
+state="menualign"
+;;
+        tst1)
+TTstep="0.1"
+menualign_default="tst1"
+state="menualign"
+;;
+        tst2)
+TTstep="0.2"
+menualign_default="tst2"
+state="menualign"
+;;
+        tst3)
+TTstep="0.5"
+menualign_default="tst3"
+state="menualign"
+;;
+        txm)
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposXn=$( echo "$TTposX-$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput D $TTposXn
+aoconflog "TT move x ${TTposXn}"
+menualign_default="txm"
+state="menualign"
+;;
+        txp)
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposXn=$( echo "$TTposX+$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput D $TTposXn
+aoconflog "TT move x ${TTposXn}"
+menualign_default="txp"
+state="menualign"
+;;
+        tym)
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+TTposYn=$( echo "$TTposY-$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput C $TTposYn
+aoconflog "TT move y ${TTposYn}"
+menualign_default="tym"
+state="menualign"
+;;
+        typ)
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+TTposYn=$( echo "$TTposY+$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput C $TTposYn
+aoconflog "TT move y ${TTposYn}"
+menualign_default="typ"
+state="menualign"
+;;
+
+
 	ts)
 aoconflogext "TT align loop start"
 rm stop_PyAlignTT.txt
@@ -732,11 +1130,12 @@ tmux send-keys -t alignPyrTT "$execname -n alignPyrTT" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
-tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim" C-m
+tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim $TTposX $TTposY" C-m
 echo " ON" > ./status/status_alignTT.txt
 menualign_default="tk"
 state="menualign"
 ;; 
+
   	 tr)
 aoconflogext "TT align loop resume" 
 rm pause_PyAlignTT.txt stop_PyAlignTT.txt
@@ -772,6 +1171,7 @@ menualign_default="ts"
 state="menualign"
 ;;
 	tm) tmux a -t alignPyrTT ;; 
+
 	pz)
 aoconflogext "Pupil align zero"
 pywfs_pup x home
@@ -880,6 +1280,7 @@ menualign_default="ps"
 state="menualign"
 ;;   
 	pm) tmux a -t alignPcam ;;
+	
 	d)
 aoconflogext "Measure DM illumination"
 tmux send-keys -t aolconf$LOOPNUMBER "./MeasureActMap" C-m 

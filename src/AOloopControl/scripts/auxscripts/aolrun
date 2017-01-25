@@ -4,29 +4,87 @@
 
 # number of arguments to script
 NBARGS=0
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
+
+#pname0=`basename $0`
+#pname=$pname0-$loopnb
+
+pname=aol${loopnb}run
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : Run AO control loop $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  Run AO control loop"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo "------------------------------------------------------------------------"
+}
 
 
-
-
-printhelp ()
+printHELP1 ()
 {
-	echo "--------------------------------------------------"
-	echo " script $0 : run AO control loop"
-	echo "--------------------------------------------------"	
+    printf "%25s       Run AO control loop\n" "$0" 
 }
 
 
 
-NBARGS=0
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
-	printhelp
-if [ "$#" -ne $NBARGS ] && [ ! "$1" == "help" ]; then
-    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
-	echo "Illegal number of parameters ($NBARGS params required, $# entered)" > $errorfile
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
-	exit
+printHELP
+        exit
 fi
+
+
+
 
 
 
@@ -40,14 +98,15 @@ echo ""
 exit
 fi
 
-loopnb=$(cat LOOPNUMBER)
+
 confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 
+csetname="aol${loopnb}RT"
 
-pname=aol${loopnb}run
 
 rm /tmp/aol${loopnb}_respM.im.shm
 $execname -n $pname << EOF
+csetpmove ${csetname}
 aolnb $loopnb
 aolrun
 exit

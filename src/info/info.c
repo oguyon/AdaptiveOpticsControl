@@ -609,7 +609,7 @@ int info_image_monitor(char *ID_name, double frequ)
 
         NBpix = npix;
         if(NBpix > wrow)
-            NBpix = wrow-2;
+            NBpix = wrow-4;
 
         start_color();
         init_pair(1, COLOR_BLACK, COLOR_WHITE);
@@ -1312,6 +1312,10 @@ double img_max(char *ID_name)
    return(max);
 }
 
+
+
+
+
 int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)
 {
   int ID;
@@ -1352,7 +1356,7 @@ int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++){
       distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
-      i = (long) distance/step;
+      i = (long) (distance/step);
       if(i<nb_step)
 	{
 	  dist[i] += distance;
@@ -1384,11 +1388,14 @@ int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double
   
   for (i=0;i<nb_step;i++)
     {
-      //     dist[i] /= counts[i];
-      // mean[i] /= counts[i];
-      // rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
-      rms[i] = sqrt(rms[i]/counts[i]);
-      fprintf(fp,"%.18f %.18f %.18f %ld %ld\n", dist[i], mean[i], rms[i], counts[i], i);
+		if(counts[i]>0)
+		{
+			      //     dist[i] /= counts[i];
+			// mean[i] /= counts[i];
+			// rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
+			rms[i] = sqrt(rms[i]/counts[i]);
+			fprintf(fp,"%.18f %.18f %.18f %ld %ld\n", dist[i], mean[i], rms[i], counts[i], i);
+		}
     }
   
 
@@ -1400,6 +1407,10 @@ int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double
   free(rms);
   return(0);
 }
+
+
+
+
 
 int profile2im(char *profile_name, long nbpoints, long size, double xcenter, double ycenter, double radius, char *out)
 {

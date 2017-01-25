@@ -72,9 +72,9 @@ int fmInit = 0;
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
-//
+// 5: string 
 
 
 int linopt_compute_linRM_from_inout_cli()
@@ -88,6 +88,16 @@ int linopt_compute_linRM_from_inout_cli()
     return 1;
 }
 
+int linopt_compute_1Dfit_cli()
+{
+	if(CLI_checkarg(1,5)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,5)+CLI_checkarg(5,2)==0)
+    {
+		linopt_compute_1Dfit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
 
 
 int linopt_imtools_makeCosRadModes_cli()
@@ -102,7 +112,6 @@ int linopt_imtools_makeCosRadModes_cli()
 }
 
 
-//long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float deltaCPA, float radius, float radfactlim)
 int linopt_imtools_makeCPAmodes_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
@@ -216,6 +225,18 @@ int init_linopt_imtools()
     strcpy(data.cmd[data.NBcmd].example,"lincRMiter inC inmask outC imRM");
     strcpy(data.cmd[data.NBcmd].Ccall,"long linopt_compute_linRM_iter(char *IDinput_name, char *IDinmask_name, char *IDoutput_name, char *IDRM_name)");
     data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"linopt1Dfit");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = linopt_compute_1Dfit_cli;
+    strcpy(data.cmd[data.NBcmd].info,"least-square 1D fit");
+    strcpy(data.cmd[data.NBcmd].syntax,"<output data file> <NBpt> <fit order> <output coeff file> <fit MODE>");
+    strcpy(data.cmd[data.NBcmd].example,"linopt1Dfit data.txt 1000 10 fitsol.txt 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long linopt_compute_1Dfit(char *fnamein, long NBpt, long MaxOrder, char *fnameout, int MODE)");
+    data.NBcmd++;
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"mkcosrmodes");
@@ -416,7 +437,7 @@ long linopt_compute_linRM_from_inout(char *IDinput_name, char *IDinmask_name, ch
 
 	// compute pokeM pseudo-inverse
    	#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat", 0);
 	#else
         linopt_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
      #endif   
@@ -493,6 +514,171 @@ long linopt_compute_linRM_from_inout(char *IDinput_name, char *IDinmask_name, ch
 	
 	return(IDout);
 }
+
+
+
+
+
+// r0pix is r=1 in pixel unit
+
+long linopt_imtools_make1Dpolynomials(char *IDout_name, long NBpts, long MaxOrder, float r0pix)
+{
+	long IDout;
+	long xsize, ysize, zsize;
+	long ii, kk;
+	float r;
+	
+	xsize = NBpts;
+	ysize = 1;
+	zsize = MaxOrder;
+	
+	IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize);
+	
+	for(kk=0;kk<zsize;kk++)
+		{
+			for(ii=0;ii<xsize;ii++)
+				{
+					r = 1.0*ii/r0pix;
+					data.image[IDout].array.F[kk*xsize+ii] = pow(r, 1.0*kk);
+				}
+		}
+	
+	return IDout;
+}
+
+
+
+// MODE : 
+// 0 : polynomial
+//
+long linopt_compute_1Dfit(char *fnamein, long NBpt, long MaxOrder, char *fnameout, int MODE)
+{
+	float *xarray;
+	float *valarray;
+	
+	FILE *fp;
+	long ii;
+	int ret;
+	
+	long IDin, IDin0;
+	long IDmask;
+	long IDmodes;
+	long NBmodes;
+	long m;
+	
+	float SVDeps = 0.0000001;
+	
+	long IDout, IDout0;
+	double val, vale, err;
+	
+	long NBiter = 100;
+	float gain = 1.0;
+	long iter;
+	
+	
+	xarray = (float*) malloc(sizeof(float)*NBpt);
+	valarray = (float*) malloc(sizeof(float)*NBpt);
+	
+	fp = fopen(fnamein, "r");
+	for(ii=0;ii<NBpt;ii++)
+		ret = fscanf(fp, "%f %f\n", &xarray[ii], &valarray[ii]);		
+	fclose(fp);
+	
+	IDin = create_2Dimage_ID("invect", NBpt, 1);
+	IDin0 = create_2Dimage_ID("invect0", NBpt, 1);
+	IDmask = create_2Dimage_ID("inmask", NBpt, 1);
+	
+	for(ii=0;ii<NBpt;ii++)
+		{
+//			printf("%18.16f  %+18.16f\n", xarray[ii], valarray[ii]);
+			data.image[IDin].array.F[ii] = valarray[ii];
+			data.image[IDin0].array.F[ii] = valarray[ii];
+			data.image[IDmask].array.F[ii] = 1.0;
+		}
+	
+	NBmodes = MaxOrder;
+	IDmodes = create_3Dimage_ID("fitmodes", NBpt, 1, NBmodes);
+	IDout = create_2Dimage_ID("outcoeff", NBmodes, 1);
+
+	switch (MODE) {
+		case 0 :
+			for(m=0; m<NBmodes; m++)
+			{
+				for(ii=0;ii<NBpt;ii++)
+				data.image[IDmodes].array.F[m*NBpt+ii] = pow(xarray[ii], 1.0*m);
+			}
+		break;
+		case 1 :
+			for(m=0; m<NBmodes; m++)
+			{
+				for(ii=0;ii<NBpt;ii++)
+					data.image[IDmodes].array.F[m*NBpt+ii] = cos(xarray[ii]*M_PI*m);
+			}
+		break;
+		default :
+			printf("ERROR: MODE = %d not supported\n", MODE);
+			exit(0);
+		break;
+	}
+	
+	list_image_ID();
+	
+	for(iter = 0; iter<NBiter; iter++)
+	{
+		linopt_imtools_image_fitModes("invect0", "fitmodes", "inmask", SVDeps, "outcoeffim0", 1);
+		IDout0 = image_ID("outcoeffim0");
+	
+	
+		for(m=0;m<NBmodes;m++)
+			data.image[IDout].array.F[m] += gain*data.image[IDout0].array.F[m];
+	
+		for(ii=0;ii<NBpt;ii++)
+		{	
+			err = 0.0;
+			val = 0.0;
+			for(m=0; m<NBmodes; m++)
+				val += data.image[IDout].array.F[m]*data.image[IDmodes].array.F[m*NBpt+ii];
+			data.image[IDin0].array.F[ii] = data.image[IDin].array.F[ii] - val;
+			err += data.image[IDin0].array.F[ii]*data.image[IDin0].array.F[ii];
+		}
+		err = sqrt(err/NBpt);
+		printf("ITERATION %4ld   residual = %20g   [gain = %20g]\n", iter, err, gain);
+		gain *= 0.95;
+	}
+	
+	
+	
+	
+	fp = fopen(fnameout, "w");
+	for(m=0;m<NBmodes;m++)
+		fprintf(fp, "%4ld %+.8g\n", m, data.image[IDout].array.F[m]);
+	fclose(fp);
+	
+	
+	fp = fopen("testout.txt", "w");
+	err = 0.0;
+	for(ii=0;ii<NBpt;ii++)
+		{
+			val = 0.0;
+			for(m=0; m<NBmodes; m++)
+				val += data.image[IDout].array.F[m]*data.image[IDmodes].array.F[m*NBpt+ii];
+			vale = valarray[ii] - val;
+			err += vale*vale;
+			fprintf(fp, "%05ld  %18.16f  %18.16f   %18.16f\n", ii, xarray[ii], valarray[ii], val);
+		}
+	fclose(fp);
+	err = sqrt(err/NBpt);
+	
+	printf("FIT error = %g m\n", err);
+	
+	free(xarray);
+	free(valarray);
+	
+	return(IDout);
+}
+
+
+
 
 
 //
@@ -1413,6 +1599,8 @@ long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char
 }
 
 
+
+
 // FLOAT only
 long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_name, char *IDout_name)
 {
@@ -1522,7 +1710,7 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
    
 
 	#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat", 0);
 	#else
         linopt_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
    #endif

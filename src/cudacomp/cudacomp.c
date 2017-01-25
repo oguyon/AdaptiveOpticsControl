@@ -87,10 +87,12 @@ int FORCESEMINIT = 1;
 
 
 extern DATA data;
+extern pid_t CLIPID;
 
-    struct timespec tnow;
-    struct timespec tdiff;
-    double tdiffv;
+
+struct timespec tnow;
+struct timespec tdiff;
+double tdiffv;
 
 int IDtimerinit = 0;
 long IDtiming = -1; // index to image where timing should be written
@@ -101,7 +103,7 @@ long IDtiming = -1; // index to image where timing should be written
 #ifdef HAVE_CUDA
 int deviceCount;
 
-GPUMATMULTCONF gpumatmultconf[10]; // supports up to 10 configurations
+GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations per process
 
 
 cudaError_t error;
@@ -110,10 +112,60 @@ float cublasSgemv_alpha = 1.0;
 float cublasSgemv_beta  = 0.0;
 
 
+#endif
 
+
+
+
+// MAGMA global variables
+
+#ifdef HAVE_MAGMA
+
+int INIT_MAGMA = 0;
+
+// queue for default magma device
+magma_queue_t   magmaqueue;
+
+long MAGMAloop_iter = 0;
+
+double *magma_h_A;
+double *magma_d_A;
+double *magma_d_AtA;
+double *magma_h_AtA;
+double *magma_w1; // eigenvalues
+double *magma_h_R;
+double *magma_h_work;
+double *magma_d_VT1;
+double *magma_h_VT1;
+double *magma_d_M2;
+double *magma_d_Ainv;
+double *magma_h_Ainv;
+double *magma_h_M2;
+
+
+float *magmaf_h_A;
+float *magmaf_d_A;
+float *magmaf_d_AtA;
+float *magmaf_h_AtA;
+float *magmaf_w1; // eigenvalues
+float *magmaf_h_R;
+float *magmaf_h_work;
+float *magmaf_d_VT1;
+float *magmaf_h_VT1;
+float *magmaf_d_M2;
+float *magmaf_d_Ainv;
+float *magmaf_h_Ainv;
+float *magmaf_h_M2;
+
+
+magma_int_t magma_aux_iwork[1];
+magma_int_t magma_lwork, magma_liwork;
+magma_int_t *magma_iwork;
 
 
 #endif
+
+
 
 
 
@@ -156,8 +208,8 @@ int CUDACOMP_Coeff2Map_offset_Loop_cli()
 
 int CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,5)+CLI_checkarg(6,3)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)==0)
-        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,5)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
     else
         return 1;
 }
@@ -221,9 +273,9 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop. Note that intot and refout parameters can be NULL");
-    strcpy(data.cmd[data.NBcmd].syntax,"<inval stream> <intot stream> <modes> <refin val> <refout_val> <outmode vals> <GPU index [long]> <PROCESS flag> <TRACEMODE flag> <MODE norm flag> <input semaphore> <axis orientation>");
-    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes inmap inmaptot modes imref imoutref modeval 3 1 1 1 3 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inval stream> <intot stream> <modes> <refin val> <refout_val> <outmode vals> <GPU index [long]> <PROCESS flag> <TRACEMODE flag> <MODE norm flag> <input semaphore> <axis orientation> <twait [us]>");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes inmap inmaptot modes imref imoutref modeval 3 1 1 1 3 0 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)");
     data.NBcmd++;
     
 
@@ -681,35 +733,35 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
             gpumatmultconf[index].dmRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
 
-            sprintf(sname, "i%d_gpu%d_sem1", index, device);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr1[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem2", index, device);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem2", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr2[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr2[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem3", index, device);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem3", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr3[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr3[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem4", index, device);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem4", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr4[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr4[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem5", index, device);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem5", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr5[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
@@ -737,6 +789,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_cMat returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device]);
+			}
 
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsVec[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
@@ -745,6 +801,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_wfsVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsRef[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
             if (error != cudaSuccess)
@@ -752,6 +812,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_wfsRef returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmVec[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -759,6 +823,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, gpumatmultconf[index].M);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -766,9 +834,14 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
-
+			else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, gpumatmultconf[index].M);
+			}
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
+            printf("INITIALIZED CUBLAS handle index=%d device=%d\n", index, device);
+			fflush(stdout);
             if (stat != CUBLAS_STATUS_SUCCESS) {
                 printf ("CUBLAS initialization failed\n");
                 return EXIT_FAILURE;
@@ -854,42 +927,43 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
-   for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
-            {
-                sem_getvalue(gpumatmultconf[index].semptr1[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr1[ptn]);
+	// flush semaphores
+    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+    {
+        sem_getvalue(gpumatmultconf[index].semptr1[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr1[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr2[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr2[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr2[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr2[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr3[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr3[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr3[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr3[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr4[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr4[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr4[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr4[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr5[ptn]);
-            }
+        sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr5[ptn]);
+    }
 
 
     if(timing==1)
     {
-    *status = *status + 1;  // ->7
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // ->7
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
 
-    if((index==0)||(index==2)) /// main CM multiplication loop
-    {
-        //	gpumatmultconf[index].NBstreams = 6;
+//    if((index==0)||(index==2)) /// main CM multiplication loop
+//    {
+
         if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
             if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
             {
@@ -897,15 +971,15 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 GPUloadCmat(index);
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
-    }
-    
-    
- 
+ //   }
+
+
+
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
 
 
-//    if((gpumatmultconf[index].sem==0)||
+    //    if((gpumatmultconf[index].sem==0)||
 
 
 
@@ -913,7 +987,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     {
         printf("GPU pthread create, index = %d    %d %d\n", index, gpumatmultconf[index].sem, gpumatmultconf[index].gpuinit);//TEST
         fflush(stdout);
-                
+
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         {
             gpumatmultconf[index].thdata[ptn].thread_no = ptn;
@@ -929,14 +1003,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         }
         gpumatmultconf[index].gpuinit = 1;
     }
-    
+
     if(timing == 1)
     {
-    *status = *status + 1;  // -> 8
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // -> 8
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
 
 
@@ -971,60 +1045,61 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     // SUM RESULTS FROM SEPARATE GPUs
     if(timing == 1)
     {
-    *status = *status + 1;  // -> 9
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // -> 9
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
-    
+
     data.image[gpumatmultconf[index].IDout].md[0].write = 1;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] = 0.0; 
+        gpumatmultconf[index].dmVecTMP[m] = 0.0;
 
-    
+
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
- 
-	COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
-    
-    
- /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
-    {
-        sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
-    }
-     
-        
-    if(data.image[gpumatmultconf[index].IDout].sem > 1)
-        {
-            sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
-        }
-*/
 
-	
+    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+
+
+    /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
+       {
+           sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
+           if(semval<SEMAPHORE_MAXVAL)
+               sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
+       }
+
+
+       if(data.image[gpumatmultconf[index].IDout].sem > 1)
+           {
+               sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
+               if(semval<SEMAPHORE_MAXVAL)
+                   sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
+           }
+    */
+
+
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     if(timing == 1)
     {
-    *status = *status + 1; // -> 10
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1; // -> 10
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
- 
+
     return(0);
 }
+
 
 
 
@@ -1129,13 +1204,15 @@ void *compute_function( void *ptr )
     *ptrstat = 1;
 
 
-
+	
+	
+	
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
     ptr0f = (float*) ptr0;
 
     if((index==0)||(index==2))
-        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);    
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
@@ -1149,11 +1226,16 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
+		//printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+		//fflush(stdout);
+		
+		
         // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
         if (error != cudaSuccess)
         {
             printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+            fflush(stdout);
             exit(EXIT_FAILURE);
         }
 
@@ -1161,7 +1243,7 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].sem==1)
         {
             sem_wait(gpumatmultconf[index].semptr1[device]);
-            
+
             if(FORCESEMINIT==1)
             {
                 sem_getvalue(gpumatmultconf[index].semptr1[device], &semval);
@@ -1185,10 +1267,6 @@ void *compute_function( void *ptr )
         }
 
 
-
-
-
-
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
             *ptrstat = 4; // compute
@@ -1197,21 +1275,22 @@ void *compute_function( void *ptr )
                 sem_post(gpumatmultconf[index].semptr2[device]);
 
 
-            printf("%d  GPU %d: compute reference product\n", index, device);
-            fflush(stdout);
- 
-//            alphatmp = cublasSgemv_alpha;
-//            betatmp = cublasSgemv_beta;
+          //  printf("%d  device %d (GPU %d): compute reference product\n", index, device, gpumatmultconf[index].GPUdevice[device]);
+          //  fflush(stdout);
 
-        // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
-    //        cublasSgemv_alpha = 1.0;
-    //        cublasSgemv_beta = 0.0;
+            //            alphatmp = cublasSgemv_alpha;
+            //            betatmp = cublasSgemv_beta;
+
+            // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
+            //        cublasSgemv_alpha = 1.0;
+            //        cublasSgemv_beta = 0.0;
             alpharef = 1.0;
             betaref = 0.0;
             stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpharef, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &betaref, gpumatmultconf[index].d_dmRef[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
                 if(stat == CUBLAS_STATUS_INVALID_VALUE)
@@ -1220,15 +1299,25 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+
+                printf("device %d of index %d\n", device, index);
+                printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
+                printf("alpha                               = %f\n", alpharef);
+                printf("alpha                               = %f\n", betaref);
+                printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                fflush(stdout);
                 exit(EXIT_FAILURE);
             }
-  //          cublasSgemv_alpha = alphatmp;
-  //          cublasSgemv_beta = betatmp;
+            //          cublasSgemv_alpha = alphatmp;
+            //          cublasSgemv_beta = betatmp;
 
             gpumatmultconf[index].refWFSinit[device] = 1;
 
 
-           if(gpumatmultconf[index].sem==1)
+            if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr3[device]);
 
             *ptrstat = 5; // transfer result
@@ -1237,11 +1326,11 @@ void *compute_function( void *ptr )
             {
                 sem_wait(gpumatmultconf[index].semptr4[device]);
                 if(FORCESEMINIT==1)
-                    {
-                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                        for(cnt=0; cnt<semval; cnt++)
-                            sem_trywait(gpumatmultconf[index].semptr4[device]);
-                    }
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
             }
 
 
@@ -1258,9 +1347,9 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
                 exit(EXIT_FAILURE);
             }
-            
+
             // TEST
-    
+
             sprintf(fname, "gputest%d.txt", device);
             if((fptest = fopen(fname, "w"))==NULL)
             {
@@ -1269,10 +1358,10 @@ void *compute_function( void *ptr )
             }
             printf("Writing test file \"%s\"\n", fname);
             fflush(stdout);
-            for(ii=0;ii<gpumatmultconf[index].M;ii++)
+            for(ii=0; ii<gpumatmultconf[index].M; ii++)
                 fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
             fclose(fptest);
-            
+
             if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr5[device]);
 
@@ -1290,6 +1379,7 @@ void *compute_function( void *ptr )
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
                 if(stat == CUBLAS_STATUS_INVALID_VALUE)
@@ -1298,14 +1388,15 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-             
-				printf("device %d of index %d\n", device, index);
-				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
-				
-				printf("alpha = %f\n", cublasSgemv_alpha);
- 				printf("alpha = %f\n", cublasSgemv_beta);
-            
-             
+
+                printf("device %d of index %d\n", device, index);
+                printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("alpha = %f\n", cublasSgemv_alpha);
+                printf("alpha = %f\n", cublasSgemv_beta);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                fflush(stdout);
+
                 exit(EXIT_FAILURE);
             }
 
@@ -1319,11 +1410,11 @@ void *compute_function( void *ptr )
             {
                 sem_wait(gpumatmultconf[index].semptr4[device]);
                 if(FORCESEMINIT==1)
-                    {
-                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                        for(cnt=0; cnt<semval; cnt++)
-                            sem_trywait(gpumatmultconf[index].semptr4[device]);
-                    }
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
             }
 
             // result is on gpumatmultconf[index].d_dmVec[device]
@@ -1346,15 +1437,16 @@ void *compute_function( void *ptr )
         *ptrstat = 6;
 
         // START MODE VALUES COMPUTATION HERE
-        
-        
-        
+
+
+
         iter++;
     }
 
 
     pthread_exit(0);
 }
+
 
 
 
@@ -1500,10 +1592,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 	
 	min_mn=min(M,N);
 	
+	//printf("INITIALIZE MAGMA\n");
+	//fflush(stdout);
+	
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
-
-    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-    fflush(stdout);
+ //   printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+    //fflush(stdout);
 
 
 	magma_init (); // initialize Magma
@@ -1518,6 +1612,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 	magma_smalloc_pinned (&h_work, lwork);          // host  mem. for  h_work
 
 
+
+
+	//printf("MAGMA READY\n");
+	//fflush(stdout);
+	
+	
+	
+	
+	
 	// write input h_R matrix
 	 if(atype==FLOAT)
     {
@@ -1532,8 +1635,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
                 h_R[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
     }
 
-	printf("M = %ld   N = %ld\n", (long) M, (long) N);
-	printf("=============== lwork = %ld\n", (long) lwork);
+	//printf("M = %ld   N = %ld\n", (long) M, (long) N);
+	//printf("=============== lwork = %ld\n", (long) lwork);
 	gpu_time = magma_wtime ();
 	magma_sgesvd( MagmaSomeVec, MagmaAllVec, M, N, h_R, lda, S1, U, ldu, VT, ldv, h_work, lwork, &info );
 	gpu_time = magma_wtime() - gpu_time;
@@ -1542,7 +1645,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
                        (int) info, magma_strerror( info ));
             }
             
-	printf("sgesvd gpu time: %7.5f\n", gpu_time );   
+	//printf("sgesvd gpu time: %7.5f\n", gpu_time );   
      
      
      // Write eigenvalues
@@ -1557,7 +1660,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
     fclose(fp);
  
     egvlim = SVDeps * S1[0];
-       
+        
 	MaxNBmodes1 = MaxNBmodes;
 	if(MaxNBmodes1>M)
 		MaxNBmodes1 = M;
@@ -1568,7 +1671,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 		mode++;
 	MaxNBmodes1 = mode;
 	
-	printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
+	//printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
     // Write rotation matrix 
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
@@ -1627,433 +1730,758 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 
 	free(arraysizetmp);
 
-    printf("[CM magma SVD done]\n");
-    fflush(stdout);
+//    printf("[CM magma SVD done]\n");
+ //   fflush(stdout);
 
     return(ID_Cmatrix);
 }
+
+
+
+
+
+
+
+
+
+
 
 
 //
 // Computes control matrix
 // Conventions:
-//   m: number of actuators 
-//   n: number of sensors  
+//   m: number of actuators
+//   n: number of sensors
 //	assumes n>m
 //
 // NOTE: NUMERICALLY STABLE FOR SVDeps >1e-3
 //
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works for m != n */
+// use LOOPmode = 1 for computing the same size SVD, same input and output location
+//
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode) /* works for m != n */
 {
-	long ID_Rmatrix;
-	int atype;
-	long *arraysizetmp;
-	int size; // variable for memory allocations
+    long ID_Rmatrix;
+    int atype;
+    long *arraysizetmp;
+    int size; // variable for memory allocations
     long n, m, N, M;
     long ii, jj, k;
     magma_int_t info;
- 
-	
-	double *h_A, *d_A, *d_AtA, *h_AtA;
-	double *w1; // eigenvalues
-    double *h_R;
-	double aux_work[1];
-	double *h_work;
-	double *d_VT1;
-	double *h_VT1;
-	double *d_M2;
-	double *d_Ainv;
-	double *h_Ainv;
-	double *h_M2;
- 
-	long ID_A, ID_AtA, ID_VT, ID_Ainv;
- 
-	// Timing
-	int testmode = 0;
-	int timing = 0; 
-	struct timespec t0, t1, t2, t3, t4, t5, t6, t7;
-    double t01d, t12d, t23d, t34d, t45d, t56d, t67d;
-	struct timespec tdiff;
- 
- 
-    // queue for default device
-    magma_queue_t   queue;
-    
-   
-    magma_int_t aux_iwork[1];
-    magma_int_t lwork, liwork;
-	magma_int_t *iwork;
-	FILE *fp;
-	char fname[200];
-     
+
+    double aux_work[1];
+    float auxf_work[1];
+
+    long ID_A, ID_AtA, ID_VT, ID_Ainv;
+
+    // Timing
+    int testmode = 0;
+    int timing = 1;
+    struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;
+    struct timespec tdiff;
+
+
+    FILE *fp;
+    char fname[200];
+
     long maxMode, MaxNBmodes1, mode;
     double egvlim;
     long nbmodesremoved;
     long ID_M2;
-    
+
     long ID_Cmatrix;
-	
-     
-     
-       
+
+
+
+    int MAGMAfloat = 0; // 1 if single precision
+
+
+
     if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t0);
-		
-    
-    
+        clock_gettime(CLOCK_REALTIME, &t0);
+
+
+
     arraysizetmp = (long*) malloc(sizeof(long)*3);
-	
+
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
     atype = data.image[ID_Rmatrix].md[0].atype;
-    
-    
+
+
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
         n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
         m = data.image[ID_Rmatrix].md[0].size[2];
-        printf("3D image -> %ld %ld\n", n, m);
-        fflush(stdout);
+       // printf("3D image -> %ld %ld\n", n, m);
+       // fflush(stdout);
     }
     else
     {
         n = data.image[ID_Rmatrix].md[0].size[0];
         m = data.image[ID_Rmatrix].md[0].size[1];
-         printf("2D image -> %ld %ld\n", n, m);
-        fflush(stdout);
-   }
+      //  printf("2D image -> %ld %ld\n", n, m);
+       // fflush(stdout);
+    }
 
-	M = n;
-	N = m;
-/*	if(M<N)
-		{
-			printf("ERROR: this routine needs M > N\n");
-			exit(0);
-		}
-	*/
-	
+    M = n;
+    N = m;
+    /*	if(M<N)
+    		{
+    			printf("ERROR: this routine needs M > N\n");
+    			exit(0);
+    		}
+    	*/
+
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
-    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-    fflush(stdout);
+
+   // printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+  //  fflush(stdout);
 
 
-	magma_init(); // initialize Magma
-	//flops_init(); 
-    
-    magma_print_environment();
-    
-    
-
-	
-    
-	TESTING_MALLOC_CPU( h_A, double, M*N);
-    TESTING_MALLOC_DEV( d_A, double, M*N);
-    
-	TESTING_MALLOC_CPU( h_AtA, double, N*N);
-	TESTING_MALLOC_DEV( d_AtA, double, N*N);
-	
-	TESTING_MALLOC_CPU( h_VT1, double, N*N);
-	TESTING_MALLOC_DEV( d_VT1, double, N*N);
-	TESTING_MALLOC_DEV( d_M2, double, N*N);
-  
-  
-  // h_A d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
-	
-	// write input h_A matrix
-	 if(atype==FLOAT)
+    if(INIT_MAGMA==0)
     {
-        for(k=0; k<m; k++)
-            for(ii=0; ii<n; ii++)
-                h_A[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
+        printf("INITIALIZE MAGMA\n");
+        fflush(stdout);
+        magma_init(); // initialize Magma
+        //flops_init();
+        magma_print_environment();
+
+        INIT_MAGMA = 1;
+    }
+
+
+
+    if(MAGMAloop_iter == 0)
+    {
+        if(MAGMAfloat==0)
+        {
+            TESTING_MALLOC_CPU( magma_h_A, double, M*N);
+            TESTING_MALLOC_DEV( magma_d_A, double, M*N);
+
+            TESTING_MALLOC_CPU( magma_h_AtA, double, N*N);
+            TESTING_MALLOC_DEV( magma_d_AtA, double, N*N);
+
+            TESTING_MALLOC_CPU( magma_h_VT1, double, N*N);
+            TESTING_MALLOC_DEV( magma_d_VT1, double, N*N);
+            TESTING_MALLOC_DEV( magma_d_M2, double, N*N);
+        }
+        else
+        {
+            TESTING_MALLOC_CPU( magmaf_h_A, float, M*N);
+            TESTING_MALLOC_DEV( magmaf_d_A, float, M*N);
+
+            TESTING_MALLOC_CPU( magmaf_h_AtA, float, N*N);
+            TESTING_MALLOC_DEV( magmaf_d_AtA, float, N*N);
+
+            TESTING_MALLOC_CPU( magmaf_h_VT1, float, N*N);
+            TESTING_MALLOC_DEV( magmaf_d_VT1, float, N*N);
+            TESTING_MALLOC_DEV( magmaf_d_M2, float, N*N);
+        }
+    }
+
+
+
+
+    //printf("MAGMA READY\n");
+    //fflush(stdout);
+
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t1);
+
+
+
+
+    // write input h_A matrix
+    if(atype==FLOAT)
+    {
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<n*m; ii++)
+                magmaf_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
+        }
+        else
+        {
+            for(ii=0; ii<n*m; ii++)
+                magma_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
+        }
     }
     else
     {
-        for(k=0; k<m; k++)
-            for(ii=0; ii<n; ii++)
-                h_A[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<n*m; ii++)
+                magmaf_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
+        }
+        else
+        {
+            for(ii=0; ii<n*m; ii++)
+                magma_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
+        }
     }
-    
+
     if(testmode==1)
     {
-		ID_A = create_2Dimage_ID("mA", M, N);
-		for(ii=0;ii<M*N;ii++)
-			data.image[ID_A].array.F[ii] = h_A[ii];
-		save_fits("mA", "!test_mA.fits");
-	}
-	
-    magma_queue_create(0, &queue);
-	magma_dsetmatrix( M, N, h_A, M, d_A, M, queue);
-	TESTING_FREE_CPU( h_A );
-	
-	
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t1);
+        ID_A = create_2Dimage_ID("mA", M, N);
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_A].array.F[ii] = magmaf_h_A[ii];
+        }
+        else
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_A].array.F[ii] = magma_h_A[ii];
+        }
 
-	// COMPUTE trans(A) x A
-	magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, d_A, M, d_A, M, 0.0,  d_AtA, N, queue);
-	
-	if(testmode == 1)
-	{
-		magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, queue);
-		ID_AtA = create_2Dimage_ID("mAtA", N, N);
-		for(ii=0;ii<N*N;ii++)
-			data.image[ID_AtA].array.F[ii] = h_AtA[ii];
-		save_fits("mAtA", "!test_mAtA.fits");
-	}
-	
-	if(timing==1)		
-		clock_gettime(CLOCK_REALTIME, &t2);
-	
-	// COMPUTE eigenvalues and eigenvectors of trans(A) x A
-	
-	// get workspace size
-	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, aux_iwork, -1, &info );
-	lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
-	liwork = aux_iwork[0];
-	printf("workspace size : %ld  %ld\n", (long) lwork, (long) liwork);
-	
-	// allocate & compute
-	TESTING_MALLOC_CPU( iwork,  magma_int_t,        liwork );
-	TESTING_MALLOC_PIN( h_work, double, lwork  );
-	TESTING_MALLOC_CPU( w1,     double,             N      );
-	TESTING_MALLOC_PIN( h_R,    double, N*N  );
-	
-	
-  // d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
-	// iwork h_work w1 h_R
-	
-	
-	// THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
-	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, d_AtA, N, w1, h_R, N, h_work, lwork, iwork, liwork, &info );
-	
-	TESTING_FREE_CPU( iwork  );
-	TESTING_FREE_PIN( h_R    );
-	TESTING_FREE_PIN( h_work );
-	
-	 // d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
-	//  w1
+        save_fits("mA", "!test_mA.fits");
+    }
 
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t3);
 
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t4);
+    if(MAGMAloop_iter == 0)
+        magma_queue_create(0, &magmaqueue);
 
-	
-	
-	// Write eigenvalues
+
+    if(MAGMAfloat==1)
+        magma_ssetmatrix( M, N, magmaf_h_A, M, magmaf_d_A, M, magmaqueue);
+    else
+        magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
+
+
+    if(LOOPmode==0)
+    {
+        if(MAGMAfloat==1)
+            TESTING_FREE_CPU( magmaf_h_A );
+        else
+            TESTING_FREE_CPU( magma_h_A );
+    }
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t2);
+
+    // COMPUTE trans(A) x A
+    if(MAGMAfloat==1)
+        magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_A, M, magmaf_d_A, M, 0.0,  magmaf_d_AtA, N, magmaqueue);
+    else
+        magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magma_d_A, M, magma_d_A, M, 0.0,  magma_d_AtA, N, magmaqueue);
+
+
+
+    if(testmode == 1)
+    {
+        if(MAGMAfloat==1)
+            magma_sgetmatrix( N, N, magmaf_d_AtA, N, magmaf_h_AtA, N, magmaqueue);
+        else
+            magma_dgetmatrix( N, N, magma_d_AtA, N, magma_h_AtA, N, magmaqueue);
+
+
+        ID_AtA = create_2Dimage_ID("mAtA", N, N);
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<N*N; ii++)
+                data.image[ID_AtA].array.F[ii] = magmaf_h_AtA[ii];
+        }
+        else
+        {
+            for(ii=0; ii<N*N; ii++)
+                data.image[ID_AtA].array.F[ii] = magma_h_AtA[ii];
+        }
+        save_fits("mAtA", "!test_mAtA.fits");
+    }
+
+
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t3);
+
+    // COMPUTE eigenvalues and eigenvectors of trans(A) x A
+
+    if(MAGMAloop_iter==0)
+    {
+        // get workspace size
+        if(MAGMAfloat==1)
+        {
+            magma_ssyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, auxf_work,  -1, magma_aux_iwork, -1, &info );
+            magma_lwork  = (magma_int_t) MAGMA_S_REAL( auxf_work[0] );
+        }
+        else
+        {
+            magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, magma_aux_iwork, -1, &info );
+            magma_lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
+        }
+
+        magma_liwork = magma_aux_iwork[0];
+
+      //  printf("workspace size : %ld  %ld\n", (long) magma_lwork, (long) magma_liwork);
+    }
+
+
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t4);
+
+
+    // allocate & compute
+    if(MAGMAloop_iter == 0)
+    {
+        if(MAGMAfloat==1)
+        {
+            TESTING_MALLOC_CPU( magma_iwork,  magma_int_t, magma_liwork );
+            TESTING_MALLOC_PIN( magmaf_h_work, float, magma_lwork  );
+            TESTING_MALLOC_CPU( magmaf_w1,     float,             N      );
+            TESTING_MALLOC_PIN( magmaf_h_R,    float, N*N  );
+        }
+        else
+        {
+            TESTING_MALLOC_CPU( magma_iwork,  magma_int_t, magma_liwork );
+            TESTING_MALLOC_PIN( magma_h_work, double, magma_lwork  );
+            TESTING_MALLOC_CPU( magma_w1,     double,             N      );
+            TESTING_MALLOC_PIN( magma_h_R,    double, N*N  );
+        }
+    }
+
+
+
+    // THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
+    if(MAGMAfloat==1)
+        magma_ssyevd_gpu( MagmaVec, MagmaLower, N, magmaf_d_AtA, N, magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+    else
+        magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+
+    if(LOOPmode == 0)
+    {
+        TESTING_FREE_CPU( magma_iwork  );
+
+        if(MAGMAfloat==1)
+            TESTING_FREE_PIN( magmaf_h_R    );
+        else
+            TESTING_FREE_PIN( magma_h_R    );
+
+		if(MAGMAfloat==1)
+			TESTING_FREE_PIN( magma_h_work );
+		else
+			TESTING_FREE_PIN( magmaf_h_work );
+    }
+
+
+
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t5);
+
+
+
+    // Write eigenvalues
     sprintf(fname, "eigenv_magma.dat");
     if((fp=fopen(fname, "w"))==NULL)
-      {
+    {
         printf("ERROR: cannot create file \"%s\"\n", fname);
         exit(0);
-      }
-    for(k=0; k<m; k++)
-      fprintf(fp,"%ld %g\n", k, w1[m-k-1]);
+    }
+    if(MAGMAfloat==1)
+    {
+        for(k=0; k<m; k++)
+            fprintf(fp,"%ld %g\n", k, magmaf_w1[m-k-1]);
+    }
+    else
+    {
+        for(k=0; k<m; k++)
+            fprintf(fp,"%ld %g\n", k, magma_w1[m-k-1]);
+    }
     fclose(fp);
 
-	
-	
-	egvlim = SVDeps*SVDeps* w1[m-1];
-	MaxNBmodes1 = MaxNBmodes;
-	if(MaxNBmodes1>m)
-		MaxNBmodes1 = m;
-	if(MaxNBmodes1>n)
-		MaxNBmodes1 = n;
-	mode = 0;
-	while( (mode<MaxNBmodes1) && (w1[m-mode-1]>egvlim) )
-		mode++;
-	printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
-	
-	fp = fopen("SVDmodes.log", "w");
-	fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
-	fclose(fp);
-	MaxNBmodes1 = mode;
-	//printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
-
-	magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, queue);
 	
-
-	//if(testmode == 1)
-	//{
-		ID_VT = create_2Dimage_ID(ID_VTmatrix_name, N, N);
-		for(ii=0;ii<N;ii++)
-			for(jj=0;jj<N;jj++)
-				data.image[ID_VT].array.F[jj*N+ii] = h_AtA[(N-ii-1)*N+jj];
-//		save_fits("mVT", "!test_mVT.fits");
-//	}
-
-	for(ii=0;ii<N;ii++)
-		for(jj=0;jj<N;jj++)
-			{
-				if(N-jj-1<MaxNBmodes1)
-					h_VT1[ii*N+jj] = h_AtA[jj*N+ii]/w1[jj];
-				else
-					h_VT1[ii*N+jj] = 0.0;
-			}
-	magma_dsetmatrix( N, N, h_VT1, N, d_VT1, N, queue);
-	
-	TESTING_FREE_CPU( h_VT1 );
-	TESTING_FREE_CPU( w1 );
-	TESTING_FREE_CPU( h_AtA );
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t5);
-
-	// compute M2 = VT1 VT
-	magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, d_VT1, N, d_AtA, N, 0.0,  d_M2, N, queue);
-	
-	
-	if(testmode == 1)
-	{
-		TESTING_MALLOC_CPU( h_M2, double, N*N);
-		magma_dgetmatrix( N, N, d_M2, N, h_M2, N, queue);
-		ID_M2 = create_2Dimage_ID("mM2", N, N);
-
-		/*for(ii=0;ii<N;ii++)
-			for(jj=0;jj<N;jj++)
-				if(ii==jj)
-					h_M2[jj*N+ii] = 1.0;
-				else
-					h_M2[jj*N+ii] = 0.0;
-		*/
-		for(ii=0;ii<N;ii++)
-			for(jj=0;jj<N;jj++)
-				data.image[ID_M2].array.F[jj*N+ii] = h_M2[jj*N+ii];
-		save_fits("mM2", "!test_mM2.fits");
-		
-	
-	//	magma_dsetmatrix( N, N, h_M2, N, d_M2, N, queue);
-		TESTING_FREE_CPU( h_M2 );
+	if(MAGMAfloat==1)
+		egvlim = SVDeps*SVDeps* magmaf_w1[m-1];
+    else
+    	egvlim = SVDeps*SVDeps* magma_w1[m-1];
+    
+    MaxNBmodes1 = MaxNBmodes;
+    if(MaxNBmodes1>m)
+        MaxNBmodes1 = m;
+    if(MaxNBmodes1>n)
+        MaxNBmodes1 = n;
+    mode = 0;
+    
+    if(MAGMAfloat==1)
+    {
+		while( (mode<MaxNBmodes1) && (magmaf_w1[m-mode-1]>egvlim) )
+			mode++;
+    }
+    else
+    {
+		while( (mode<MaxNBmodes1) && (magma_w1[m-mode-1]>egvlim) )
+			mode++;
 	}
-	TESTING_FREE_DEV( d_VT1 );
-	TESTING_FREE_DEV( d_AtA );
-
 	
-	 // d_A d_M2
-	//  w1
-	
-	// compute M3 = M2 A
-	TESTING_MALLOC_DEV( d_Ainv, double, N*M);
-	magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, d_A, M, d_M2, N, 0.0, d_Ainv, M, queue);
-	TESTING_FREE_DEV( d_A);
-	TESTING_MALLOC_CPU( h_Ainv, double, N*M);
-	TESTING_FREE_DEV( d_M2 );
+//    printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
 
-	 // d_Ainv h_Ainv
-	//  w1
+    fp = fopen("SVDmodes.log", "w");
+    fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
+    fclose(fp);
+    MaxNBmodes1 = mode;
+    //printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
+
+    if(MAGMAfloat==1)
+        magma_sgetmatrix( N, N, magmaf_d_AtA, N, magmaf_h_AtA, N, magmaqueue);
+    else
+        magma_dgetmatrix( N, N, magma_d_AtA, N, magma_h_AtA, N, magmaqueue);
+
+    //if(testmode == 1)
+    //{
+    ID_VT = create_2Dimage_ID(ID_VTmatrix_name, N, N);
+
+    if(MAGMAfloat==1)
+    {
+        for(ii=0; ii<N; ii++)
+            for(jj=0; jj<N; jj++)
+                data.image[ID_VT].array.F[jj*N+ii] = magmaf_h_AtA[(N-ii-1)*N+jj];
+    }
+    else
+    {
+        for(ii=0; ii<N; ii++)
+            for(jj=0; jj<N; jj++)
+                data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
+    }
+
+
+    if(MAGMAfloat==1)
+    {
+        for(ii=0; ii<N; ii++)
+            for(jj=0; jj<N; jj++)
+            {
+                if(N-jj-1<MaxNBmodes1)
+                    magmaf_h_VT1[ii*N+jj] = magmaf_h_AtA[jj*N+ii]/magmaf_w1[jj];
+                else
+                    magmaf_h_VT1[ii*N+jj] = 0.0;
+            }
+        magma_ssetmatrix( N, N, magmaf_h_VT1, N, magmaf_d_VT1, N, magmaqueue);
+    }
+    else
+    {
+        for(ii=0; ii<N; ii++)
+            for(jj=0; jj<N; jj++)
+            {
+                if(N-jj-1<MaxNBmodes1)
+                    magma_h_VT1[ii*N+jj] = magma_h_AtA[jj*N+ii]/magma_w1[jj];
+                else
+                    magma_h_VT1[ii*N+jj] = 0.0;
+            }
+        magma_dsetmatrix( N, N, magma_h_VT1, N, magma_d_VT1, N, magmaqueue);
+    }
+
+
+    if(LOOPmode == 0)
+    {
+        if(MAGMAfloat==1)
+        {
+            TESTING_FREE_CPU( magmaf_h_VT1 );
+            TESTING_FREE_CPU( magmaf_w1 );
+            TESTING_FREE_CPU( magmaf_h_AtA );
+        }
+        else
+        {
+            TESTING_FREE_CPU( magma_h_VT1 );
+            TESTING_FREE_CPU( magma_w1 );
+            TESTING_FREE_CPU( magma_h_AtA );
+        }
+    }
 
 
 
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t6);
 
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t6);
+    // compute M2 = VT1 VT
+    if(MAGMAfloat==1)
+        magma_sgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magmaf_d_VT1, N, magmaf_d_AtA, N, 0.0,  magmaf_d_M2, N, magmaqueue);
+    else
+        magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
 
-	magma_dgetmatrix( M, N, d_Ainv, M, h_Ainv, M, queue);
-	if(testmode == 1)
-	{
-		ID_Ainv = create_2Dimage_ID("mAinv", M, N);
-		for(ii=0;ii<M;ii++)
-			for(jj=0;jj<N;jj++)
-				data.image[ID_Ainv].array.F[jj*M+ii] = h_Ainv[jj*M+ii];
-		save_fits("mAinv", "!test_mAinv.fits");
+    if(testmode == 1)
+    {
+        ID_M2 = create_2Dimage_ID("mM2", N, N);
+        if(MAGMAfloat==1)
+        {
+            TESTING_MALLOC_CPU( magmaf_h_M2, float, N*N);
+            magma_sgetmatrix( N, N, magmaf_d_M2, N, magmaf_h_M2, N, magmaqueue);
+
+            for(ii=0; ii<N; ii++)
+                for(jj=0; jj<N; jj++)
+                    data.image[ID_M2].array.F[jj*N+ii] = magmaf_h_M2[jj*N+ii];
+        }
+        else
+        {
+            TESTING_MALLOC_CPU( magma_h_M2, double, N*N);
+            magma_dgetmatrix( N, N, magma_d_M2, N, magma_h_M2, N, magmaqueue);
+
+            for(ii=0; ii<N; ii++)
+                for(jj=0; jj<N; jj++)
+                    data.image[ID_M2].array.F[jj*N+ii] = magma_h_M2[jj*N+ii];
+        }
+
+        save_fits("mM2", "!test_mM2.fits");
+
+
+        //	magma_dsetmatrix( N, N, h_M2, N, d_M2, N, magmaqueue);
+        if(MAGMAfloat==1)
+            TESTING_FREE_CPU( magmaf_h_M2 );
+        else
+            TESTING_FREE_CPU( magma_h_M2 );
+    }
+
+    if(LOOPmode == 0)
+    {
+        if(MAGMAfloat==1)
+        {
+            TESTING_FREE_DEV( magmaf_d_VT1 );
+            TESTING_FREE_DEV( magmaf_d_AtA );
+        }
+        else
+        {
+            TESTING_FREE_DEV( magma_d_VT1 );
+            TESTING_FREE_DEV( magma_d_AtA );
+        }
+    }
+
+    // d_A d_M2
+    //  w1
+
+    // compute M3 = M2 A
+    if(MAGMAloop_iter==0)
+    {
+        if(MAGMAfloat==1)
+        {
+            TESTING_MALLOC_DEV( magmaf_d_Ainv, float, N*M);
+        }
+        else
+        {
+            TESTING_MALLOC_DEV( magma_d_Ainv, double, N*M);
+        }
+    }
+
+    if(MAGMAfloat==1)
+        magma_sgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magmaf_d_A, M, magmaf_d_M2, N, 0.0, magmaf_d_Ainv, M, magmaqueue);
+    else
+        magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magma_d_A, M, magma_d_M2, N, 0.0, magma_d_Ainv, M, magmaqueue);
+
+
+    if(LOOPmode==0)
+    {
+        if(MAGMAfloat==1)
+        {
+			TESTING_FREE_DEV( magmaf_d_A);
+		}
+        else
+        {
+            TESTING_FREE_DEV( magma_d_A);
+		}
 	}
 
 
-
-    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    if(MAGMAloop_iter==0)
     {
-        arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
-        arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
-        arraysizetmp[2] = m;
+        if(MAGMAfloat==1)
+        {
+		    TESTING_MALLOC_CPU( magmaf_h_Ainv, float, N*M);
+        }
+        else
+        {
+		    TESTING_MALLOC_CPU( magma_h_Ainv, double, N*M);
+		}
+    }
+
+    if(LOOPmode==0)
+    {
+        if(MAGMAfloat==1)
+            TESTING_FREE_DEV( magmaf_d_M2 );
+        else
+            TESTING_FREE_DEV( magma_d_M2 );
+    }
+
+
+
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t7);
+
+    if(MAGMAfloat==1)
+        magma_sgetmatrix( M, N, magmaf_d_Ainv, M, magmaf_h_Ainv, M, magmaqueue);
+    else
+        magma_dgetmatrix( M, N, magma_d_Ainv, M, magma_h_Ainv, M, magmaqueue);
+
+
+
+    if(testmode == 1)
+    {
+        ID_Ainv = create_2Dimage_ID("mAinv", M, N);
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<M; ii++)
+                for(jj=0; jj<N; jj++)
+                    data.image[ID_Ainv].array.F[jj*M+ii] = magmaf_h_Ainv[jj*M+ii];
+        }
+        else
+        {
+            for(ii=0; ii<M; ii++)
+                for(jj=0; jj<N; jj++)
+                    data.image[ID_Ainv].array.F[jj*M+ii] = magma_h_Ainv[jj*M+ii];
+        }
+        save_fits("mAinv", "!test_mAinv.fits");
+    }
+
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t8);
+
+
+    if(MAGMAloop_iter==0)
+    {
+        if(data.image[ID_Rmatrix].md[0].naxis==3)
+        {
+            arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
+            arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
+            arraysizetmp[2] = m;
+        }
+        else
+        {
+            arraysizetmp[0] = n;
+            arraysizetmp[1] = m;
+        }
+
+        if(atype==FLOAT)
+            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+        else
+            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
     }
     else
-    {
-        arraysizetmp[0] = n;
-        arraysizetmp[1] = m;
-    }
+        ID_Cmatrix = image_ID(ID_Cmatrix_name);
 
+    /* write result */
+    // 	M = n;
+    //	N = m;
     if(atype==FLOAT)
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
-    else
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
-
-
-	 /* write result */
-	// 	M = n;
-	//	N = m;
-    if(atype==FLOAT)
     {
-        for(ii=0; ii<M; ii++) // sensors
-            for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.F[k*M+ii] = (float) h_Ainv[k*M+ii];
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_Cmatrix].array.F[ii] = magmaf_h_Ainv[ii];
+        }
+        else
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_Cmatrix].array.F[ii] = (float) magma_h_Ainv[ii];
+        }
     }
     else
     {
-        for(ii=0; ii<M; ii++) // sensors
-            for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.D[k*M+ii] = h_Ainv[k*M+ii];
+        // sensors : M
+        // actuator modes: N
+        if(MAGMAfloat==1)
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_Cmatrix].array.D[ii] = magmaf_h_Ainv[ii];
+        }
+        else
+        {
+            for(ii=0; ii<M*N; ii++)
+                data.image[ID_Cmatrix].array.D[ii] = magma_h_Ainv[ii];
+        }
     }
-	
-
-	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t7);
 
 
-
-	TESTING_FREE_DEV( d_Ainv );
-	TESTING_FREE_CPU( h_Ainv );
-	
-	
-	 
-	
+    if(timing==1)
+        clock_gettime(CLOCK_REALTIME, &t9);
 
 
-	
-	magma_queue_destroy( queue );
-	magma_finalize ();                               //  finalize  Magma
+    if(LOOPmode==0)
+    {
+        if(MAGMAfloat==1)
+        {
+            TESTING_FREE_DEV( magmaf_d_Ainv );
+            TESTING_FREE_CPU( magmaf_h_Ainv );
+        }
+        else
+        {
+            TESTING_FREE_DEV( magma_d_Ainv );
+            TESTING_FREE_CPU( magma_h_Ainv );
+        }
+    }
 
-	free(arraysizetmp);
-	
-	
-		if(timing==1)
-	{
-		tdiff = info_time_diff(t0, t1);
+
+
+
+
+    if(LOOPmode==0)
+    {
+        magma_queue_destroy( magmaqueue );
+        magma_finalize ();                               //  finalize  Magma
+    }
+
+    free(arraysizetmp);
+
+
+    if(timing==1)
+    {
+        tdiff = info_time_diff(t0, t1);
         t01d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t1, t2);
+        tdiff = info_time_diff(t1, t2);
         t12d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t2, t3);
+        tdiff = info_time_diff(t2, t3);
         t23d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t3, t4);
+        tdiff = info_time_diff(t3, t4);
         t34d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t4, t5);
+        tdiff = info_time_diff(t4, t5);
         t45d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t5, t6);
+        tdiff = info_time_diff(t5, t6);
         t56d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		tdiff = info_time_diff(t6, t7);
+        tdiff = info_time_diff(t6, t7);
         t67d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-		printf("Timing info: \n");
-		printf("  0-1	%12.3f ms\n", t01d*1000.0);
-		printf("  1-2	%12.3f ms\n", t12d*1000.0);
-		printf("  2-3	%12.3f ms\n", t23d*1000.0);
-		printf("  3-4	%12.3f ms\n", t34d*1000.0);
-		printf("  4-5	%12.3f ms\n", t45d*1000.0);
-		printf("  5-6	%12.3f ms\n", t56d*1000.0);
-		printf("  6-7	%12.3f ms\n", t67d*1000.0);
-	}
+        tdiff = info_time_diff(t7, t8);
+        t78d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
+        tdiff = info_time_diff(t8, t9);
+        t89d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+        tdiff = info_time_diff(t0, t9);
+        t09d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+
+      //  printf("%6ld  Timing info: \n", MAGMAloop_iter);
+      //  printf("  0-1	%12.3f ms\n", t01d*1000.0);
+      //  printf("  1-2	%12.3f ms\n", t12d*1000.0);
+      //  printf("  2-3	%12.3f ms\n", t23d*1000.0);
+      //  printf("  3-4	%12.3f ms\n", t34d*1000.0);
+      //  printf("  4-5	%12.3f ms\n", t45d*1000.0);
+      //  printf("  5-6	%12.3f ms\n", t56d*1000.0);
+      //  printf("  6-7	%12.3f ms\n", t67d*1000.0);
+      //  printf("  7-8	%12.3f ms\n", t78d*1000.0);
+      //  printf("  8-9	%12.3f ms\n", t89d*1000.0);
+      //  printf("\n");
+      //  printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+    }
+
+
+
+   // printf("\n\n");
+
+
+    if(LOOPmode == 1)
+        MAGMAloop_iter++;
 
     return(ID_Cmatrix);
 }
+
 
 
 
@@ -2783,24 +3211,27 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 // extract mode coefficients from data stream
 // modes need to be orthogonal
 // single GPU computation
-// 
+//
 // in_stream                  input stream
-// intot_strem   [optional]   input normalization stream 
+// intot_strem   [optional]   input normalization stream
 // IDmodes_name               Modes
 // IDrefin_name               input reference  - to be subtracted
 // IDrefout_name [optional]   output reference - to be added
-// IDmodes_val_name           ouput 
+// IDmodes_val_name           ouput
 // GPUindex                   GPU index
 // PROCESS                    1 if postprocessing
 // TRACEMODE                  1 if writing trace
 // MODENORM                   1 if input modes should be normalized
 // insem                      input semaphore index
 // axmode                     0 for normal mode extraction, 1 for expansion
+// twait					  if >0, insert time wait [us] at each iteration
+//
+// IMPORTANT: if IDmodes_val_name exits, use it and do not compute it
 //
 // if IDrefout_name exists, match output image size to IDrefout_name
 //
 
-int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode)
+int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)
 {
     long IDin;
     long IDintot;
@@ -2855,186 +3286,219 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     long IDprocave;
     long IDprocrms;
     long step;
-    
+
     long semnb;
     double tmpv;
-    
-	int INNORMMODE = 0; // 1 if input normalized
-    
-    float *modevalarray;
-	float *modevalarrayref;
 
-	int initref = 0; // 1 when reference has been processed
-	int BETAMODE = 0;
-	long IDrefout;
-				
-				
-	
+    int INNORMMODE = 0; // 1 if input normalized
+
+    float *modevalarray;
+    float *modevalarrayref;
+
+    int initref = 0; // 1 when reference has been processed
+    int BETAMODE = 0;
+    long IDrefout;
+
+    long refindex;
+	long twait1;
+    struct timespec t0;
+    struct timespec t1;
+
+    int MODEVALCOMPUTE = 1; // 1 if compute, 0 if import
+
+
+	int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+
+
+    schedpar.sched_priority = RT_priority;
+#ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
+#endif
+
+
 
 
     IDin = image_ID(in_stream);
     m = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];
     COREMOD_MEMORY_image_set_createsem(in_stream, 10);
-   
-   // total flux
-   IDintot = image_ID(intot_stream);
-   
-   if(IDintot==-1)
-	{
-		INNORMMODE = 0;
-		IDintot = create_2Dimage_ID("intot_tmp", 1, 1);
-		data.image[IDintot].array.F[0] = 1.0;
-	}
-	else
-		INNORMMODE = 1;
 
-   // reference
-   IDref = image_ID(IDrefin_name);
-   if(IDref==-1)
-		{
-		IDref = create_2Dimage_ID("_tmprefin", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
-		for(ii=0;ii<data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];ii++)
-			data.image[IDref].array.F[ii] = 0.0;
-	}
+    // total flux
+    IDintot = image_ID(intot_stream);
+
+    if(IDintot==-1)
+    {
+        INNORMMODE = 0;
+        IDintot = create_2Dimage_ID("intot_tmp", 1, 1);
+        data.image[IDintot].array.F[0] = 1.0;
+    }
+    else
+        INNORMMODE = 1;
+
+    // reference
+    IDref = image_ID(IDrefin_name);
+    if(IDref==-1)
+    {
+        IDref = create_2Dimage_ID("_tmprefin", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
+        for(ii=0; ii<data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]; ii++)
+            data.image[IDref].array.F[ii] = 0.0;
+    }
 
 
 
-   if(axmode==0)
-		{
-			IDmodes = image_ID(IDmodes_name);
-			n = data.image[IDmodes].md[0].size[2];
-			NBmodes = n;
-		}
-	else
-	{
-		ID = image_ID(IDmodes_name);
-		printf("ID = %ld\n", ID);
-		fflush(stdout);
-		
-		NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
-		n = NBmodes;
-		printf("NBmodes = %ld\n", NBmodes);
-		fflush(stdout);
-		
-		IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
-		
-		for(ii=0;ii<data.image[IDin].md[0].size[0]; ii++)
-			for(jj=0;jj<data.image[IDin].md[0].size[1]; jj++)
-				{
-					for(kk=0;kk<NBmodes;kk++)
-						data.image[IDmodes].array.F[kk*data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii] = data.image[ID].array.F[NBmodes*(jj*data.image[IDin].md[0].size[0]+ii)+kk];
-				}
-		save_fits("_tmpmodes", "!_test_tmpmodes.fits");
-	}
-	
+    if(axmode==0)
+    {
+        IDmodes = image_ID(IDmodes_name);
+        n = data.image[IDmodes].md[0].size[2];
+        NBmodes = n;
+    }
+    else
+    {
+        ID = image_ID(IDmodes_name);
+        printf("ID = %ld\n", ID);
+        fflush(stdout);
 
-		
-	normcoeff = (float*) malloc(sizeof(float)*NBmodes);
-	
-	if(MODENORM==1)
-	{
-	for(k=0;k<NBmodes;k++)
-		{
-			normcoeff[k] = 0.0;
-			for(ii=0;ii<m;ii++)
-				normcoeff[k] += data.image[IDmodes].array.F[k*m+ii] * data.image[IDmodes].array.F[k*m+ii];
-		}
-	}
-	else
-		for(k=0;k<NBmodes;k++)
-			normcoeff[k] = 1.0;
-			
-			
+        NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
+        n = NBmodes;
+        printf("NBmodes = %ld\n", NBmodes);
+        fflush(stdout);
+
+        IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
+
+        for(ii=0; ii<data.image[IDin].md[0].size[0]; ii++)
+            for(jj=0; jj<data.image[IDin].md[0].size[1]; jj++)
+            {
+                for(kk=0; kk<NBmodes; kk++)
+                    data.image[IDmodes].array.F[kk*data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii] = data.image[ID].array.F[NBmodes*(jj*data.image[IDin].md[0].size[0]+ii)+kk];
+            }
+        save_fits("_tmpmodes", "!_test_tmpmodes.fits");
+    }
+
+
+
+    normcoeff = (float*) malloc(sizeof(float)*NBmodes);
+
+    if(MODENORM==1)
+    {
+        for(k=0; k<NBmodes; k++)
+        {
+            normcoeff[k] = 0.0;
+            for(ii=0; ii<m; ii++)
+                normcoeff[k] += data.image[IDmodes].array.F[k*m+ii] * data.image[IDmodes].array.F[k*m+ii];
+        }
+    }
+    else
+        for(k=0; k<NBmodes; k++)
+            normcoeff[k] = 1.0;
+
+
 
     modevalarray = (float*) malloc(sizeof(float)*n);
-	modevalarrayref = (float*) malloc(sizeof(float)*n);
+    modevalarrayref = (float*) malloc(sizeof(float)*n);
 
 
     arraytmp = (long*) malloc(sizeof(long)*2);
 
-	IDrefout = image_ID(IDrefout_name);
-	if(IDrefout==-1)
-	{
-		arraytmp[0] = NBmodes;
-		arraytmp[1] = 1;
-	}
-	else
-	{
-		arraytmp[0] = data.image[IDrefout].md[0].size[0];
-		arraytmp[1] = data.image[IDrefout].md[0].size[1];
-	}
-	
-    ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, FLOAT, 1, 0);
-    free(arraytmp);
-    COREMOD_MEMORY_image_set_createsem(IDmodes_val_name, 10);
-
-
-    cudaGetDeviceCount(&deviceCount);
-    printf("%d devices found\n", deviceCount);
-    fflush(stdout);
-    printf("\n");
-    for (k = 0; k < deviceCount; ++k) {
-        cudaGetDeviceProperties(&deviceProp, k);
-        printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
-               k, deviceProp.name, deviceProp.major, deviceProp.minor);
-        printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
-        printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
-        printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
-        printf("\n");
+    IDrefout = image_ID(IDrefout_name);
+    if(IDrefout==-1)
+    {
+        arraytmp[0] = NBmodes;
+        arraytmp[1] = 1;
     }
-
-
-    if(GPUindex<deviceCount)
-        cudaSetDevice(GPUindex);
     else
     {
-        printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
-        exit(0);
+        arraytmp[0] = data.image[IDrefout].md[0].size[0];
+        arraytmp[1] = data.image[IDrefout].md[0].size[1];
     }
 
 
-    printf("Create cublas handle ...");
-    fflush(stdout);
-    cublas_status = cublasCreate(&cublasH);
-    if (cublas_status != CUBLAS_STATUS_SUCCESS) {
-        printf ("CUBLAS initialization failed\n");
-        return EXIT_FAILURE;
-    }
-    printf(" done\n");
-    fflush(stdout);
-
-
-    // load modes to GPU
-    cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
-    if (cudaStat != cudaSuccess)
+    ID_modeval = image_ID(IDmodes_val_name);
+    if(ID_modeval==-1) // CREATE IT
     {
-        printf("cudaMalloc d_modes returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
+        ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(IDmodes_val_name, 10);
+        MODEVALCOMPUTE = 1;
     }
-    cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
-    if (cudaStat != cudaSuccess)
+    else // USE STREAM, DO NOT COMPUTE IT
     {
-        printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
+        MODEVALCOMPUTE = 0;
+        // drive semaphore to zero
+        while(sem_trywait(data.image[ID_modeval].semptr[insem])==0) {}
     }
 
+    free(arraytmp);
 
-    // create d_in
-    cudaStat = cudaMalloc((void**)&d_in, sizeof(float)*m);
-    if (cudaStat != cudaSuccess)
+    if(MODEVALCOMPUTE == 1)
     {
-        printf("cudaMalloc d_in returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+        cudaGetDeviceCount(&deviceCount);
+        printf("%d devices found\n", deviceCount);
+        fflush(stdout);
+        printf("\n");
+        for (k = 0; k < deviceCount; ++k) {
+            cudaGetDeviceProperties(&deviceProp, k);
+            printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
+                   k, deviceProp.name, deviceProp.major, deviceProp.minor);
+            printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
+            printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
+            printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+            printf("\n");
+        }
 
 
-    // create d_modeval
-    cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMalloc d_modeval returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
+        if(GPUindex<deviceCount)
+            cudaSetDevice(GPUindex);
+        else
+        {
+            printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
+            exit(0);
+        }
+
+
+        printf("Create cublas handle ...");
+        fflush(stdout);
+        cublas_status = cublasCreate(&cublasH);
+        if (cublas_status != CUBLAS_STATUS_SUCCESS) {
+            printf ("CUBLAS initialization failed\n");
+            return EXIT_FAILURE;
+        }
+        printf(" done\n");
+        fflush(stdout);
+
+
+        // load modes to GPU
+        cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_modes returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+        cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+
+
+        // create d_in
+        cudaStat = cudaMalloc((void**)&d_in, sizeof(float)*m);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_in returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+
+
+        // create d_modeval
+        cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_modeval returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
     }
+
 
 
     if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
@@ -3065,7 +3529,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
-   if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
@@ -3075,304 +3539,338 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     iter = 0;
 
 
-       
+
     if(TRACEMODE==1)
-        {
-            sizearraytmp = (long*) malloc(sizeof(long)*2);
-            sprintf(traceim_name, "%s_trace", IDmodes_val_name);
-            sizearraytmp[0] = TRACEsize;
-            sizearraytmp[1] = NBmodes;
-            IDtrace = image_ID(traceim_name);
-            imOK = 1;
-            if(IDtrace == -1)
-                imOK = 0;
-            else
-                {
-                    if((data.image[IDtrace].md[0].size[0]!=TRACEsize)||(data.image[IDtrace].md[0].size[1]!=NBmodes))
-                        {
-                            imOK = 0;
-                            delete_image_ID(traceim_name);
-                        }
-                }
-            if(imOK==0)
-                IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
-            COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
-            free(sizearraytmp);
-        }
-
-
-  
-       if(PROCESS==1)
-            {
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_ave_name, "%s_ave", IDmodes_val_name);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = NBaveSTEP;
-                IDprocave = image_ID(process_ave_name);
-                imOK = 1;
-                if(IDprocave == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=NBaveSTEP))
-                            {
-                                imOK = 0;
-                                delete_image_ID(process_ave_name);
-                            }
-                    }
-                if(imOK==0)
-                    IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_ave_name, 10);
-                free(sizearraytmp);
-            
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_rms_name, "%s_rms", IDmodes_val_name);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = NBaveSTEP;
-                IDprocrms = image_ID(process_rms_name);
-                imOK = 1;
-                if(IDprocrms == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=NBaveSTEP))
-                            {
-                                imOK = 0;
-                                delete_image_ID(process_rms_name);
-                            }
-                    }
-                if(imOK==0)
-                    IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_rms_name, 10);
-                free(sizearraytmp);            
-            }
-            
-
-	initref = 0;
-
-    while(loopOK == 1)
     {
-		if(initref==1)
-		{
-        if(data.image[IDin].sem==0)
-        {
-            while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
-                usleep(5);
-            cnt = data.image[IDin].md[0].cnt0;
-            semr = 0;
-        }
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(traceim_name, "%s_trace", IDmodes_val_name);
+        sizearraytmp[0] = TRACEsize;
+        sizearraytmp[1] = NBmodes;
+        IDtrace = image_ID(traceim_name);
+        imOK = 1;
+        if(IDtrace == -1)
+            imOK = 0;
         else
         {
-   
-            
-            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
-                perror("clock_gettime");
-                exit(EXIT_FAILURE);
-            }
-            ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
-
-
-            if(iter == 0)
+            if((data.image[IDtrace].md[0].size[0]!=TRACEsize)||(data.image[IDtrace].md[0].size[1]!=NBmodes))
             {
-                printf("driving semaphore to zero ... ");
-                fflush(stdout);
-                sem_getvalue(data.image[IDin].semptr[2], &semval);
-                for(scnt=0; scnt<semval; scnt++)
-                    sem_trywait(data.image[IDin].semptr[2]);
-                printf("done\n");
-                fflush(stdout);
+                imOK = 0;
+                delete_image_ID(traceim_name);
             }
         }
-		}
-		else // compute response of reference immediately
-			{
-				semr = 0;
-			}
-
-
-
-        if(semr==0)
-        {
-            // load in_stream to GPU
-			
-			if(initref==0)
-				cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-			else
-				cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-				
-				
-            if (cudaStat != cudaSuccess)
-            {
-				printf("initref = %d    %ld  %ld\n", initref, IDref, IDin);
-                printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-		
-
-			if(BETAMODE == 1)
-				{
-					beta = -1.0;
-					cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);					
-				}
-
-            // compute
-            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
-            if (cudaStat != CUBLAS_STATUS_SUCCESS)
-            {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-                exit(EXIT_FAILURE);
-            }
-            
-
-            // copy result
-            data.image[ID_modeval].md[0].write = 1;
-
-			if(initref==0) // construct reference to be subtracted 
-				{
-					cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);						
-
-
-
-					IDrefout = image_ID(IDrefout_name);
-					if(IDrefout != -1)
-						for(k=0;k<NBmodes;k++)
-							modevalarrayref[k] -= data.image[IDrefout].array.F[k];  
-					
-
-					if((INNORMMODE==0)&&(MODENORM==0))
-						BETAMODE = 1; // include ref subtraction in GPU operation
-					else
-						BETAMODE = 0;
-				}
-            else
-				{
-					cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
-					
-					if(BETAMODE==0)
-					{
-							for(k=0;k<NBmodes;k++)
-								data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
-					}
-					else
-						for(k=0;k<NBmodes;k++)
-								data.image[ID_modeval].array.F[k] = modevalarray[k];
-								
-                
-					COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
-			
-					data.image[ID_modeval].md[0].cnt0++;
-					data.image[ID_modeval].md[0].write = 0;
-				}
-	
-	
-
-		
-		
-            if(TRACEMODE == 1)
-                {
-                    data.image[ID_modeval].md[0].write = 1;
-                    
-                    for(k=0;k<NBmodes;k++)
-                        data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k]; 
-                    data.image[IDtrace].md[0].cnt1 = TRACEindex;
-                    
-                    sem_getvalue(data.image[IDtrace].semptr[0], &semval);
-                    if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[IDtrace].semptr[0]);
-                    sem_getvalue(data.image[IDtrace].semptr[1], &semval);
-                    if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[IDtrace].semptr[1]);
-                    data.image[IDtrace].md[0].cnt0++;
-                    data.image[IDtrace].md[0].write = 0;
-                    
-                    TRACEindex++;
-                    if(TRACEindex>=TRACEsize)
-                        {
-                            TRACEindex = 0;
-                            // copy to tracef shared memory (frozen trace)
-                        }   
-                }
-
-
-            
-            if(PROCESS==1)
-                {
-                    stepcoeff = stepcoeff0;                    
-                    data.image[IDprocave].md[0].write = 1;
-                    for(step=0;step<NBaveSTEP;step++)
-                        {
-                            for(k=0;k<NBmodes;k++)
-                                data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
-                            stepcoeff *= stepcoeff0;
-                        }
-                    for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
-                        {
-                            sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
-                            if(semval<SEMAPHORE_MAXVAL)
-                                sem_post(data.image[IDprocave].semptr[semnb]);
-                        }
-                    data.image[IDprocave].md[0].cnt0++;
-                    data.image[IDprocave].md[0].write = 0;   
-                
-                    stepcoeff = stepcoeff0;                
-                    data.image[IDprocrms].md[0].write = 1;
-                    for(step=0;step<NBaveSTEP;step++)
-                        {
-                            for(k=0;k<NBmodes;k++)
-                            {
-                                tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
-                                tmpv = tmpv*tmpv;
-                                data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
-                            }
-                            stepcoeff *= stepcoeff0;
-                        }
-                    for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
-                        {
-                            sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
-                            if(semval<SEMAPHORE_MAXVAL)
-                                sem_post(data.image[IDprocrms].semptr[semnb]);
-                        }
-                    data.image[IDprocrms].md[0].cnt0++;
-                    data.image[IDprocrms].md[0].write = 0;   
-                }
-        }
-
-        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
-            {
-				loopOK = 0;
-				printf("Exiting loop\n");
-				fflush(stdout);
-				sleep(1.0);
-			}
-			
-		initref = 1;
-        iter++;
+        if(imOK==0)
+            IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
+        free(sizearraytmp);
     }
 
 
-    cudaFree(d_modes);
-    cudaFree(d_in);
-    cudaFree(d_modeval);
+
+    if(PROCESS==1)
+    {
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(process_ave_name, "%s_ave", IDmodes_val_name);
+        sizearraytmp[0] = NBmodes;
+        sizearraytmp[1] = NBaveSTEP;
+        IDprocave = image_ID(process_ave_name);
+        imOK = 1;
+        if(IDprocave == -1)
+            imOK = 0;
+        else
+        {
+            if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=NBaveSTEP))
+            {
+                imOK = 0;
+                delete_image_ID(process_ave_name);
+            }
+        }
+        if(imOK==0)
+            IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(process_ave_name, 10);
+        free(sizearraytmp);
+
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(process_rms_name, "%s_rms", IDmodes_val_name);
+        sizearraytmp[0] = NBmodes;
+        sizearraytmp[1] = NBaveSTEP;
+        IDprocrms = image_ID(process_rms_name);
+        imOK = 1;
+        if(IDprocrms == -1)
+            imOK = 0;
+        else
+        {
+            if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=NBaveSTEP))
+            {
+                imOK = 0;
+                delete_image_ID(process_rms_name);
+            }
+        }
+        if(imOK==0)
+            IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(process_rms_name, 10);
+        free(sizearraytmp);
+    }
+
+
+    initref = 0;
+
+
+	twait1 = twait;
+
+    while(loopOK == 1)
+    {
+		clock_gettime(CLOCK_REALTIME, &t0);
+				
+        if(MODEVALCOMPUTE==1)
+        {
+            if(refindex != data.image[IDref].md[0].cnt0)
+            {
+                initref = 0;
+                refindex = data.image[IDref].md[0].cnt0;
+            }
+
+            if(initref==1)
+            {
+                if(data.image[IDin].sem==0)
+                {
+                    while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
+                        usleep(5);
+                    cnt = data.image[IDin].md[0].cnt0;
+                    semr = 0;
+                }
+                else
+                {
+                    if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                        perror("clock_gettime");
+                        exit(EXIT_FAILURE);
+                    }
+                    ts.tv_sec += 1;
+                    semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
+
+                    // drive semaphore to zero
+                    while(sem_trywait(data.image[IDin].semptr[insem])==0) {}
+                }
+            }
+            else // compute response of reference immediately
+            {
+                printf("COMPUTE NEW REFERENCE RESPONSE\n");
+                semr = 0;
+            }
 
 
 
-    if (cublasH ) cublasDestroy(cublasH);
+            if(semr==0)
+            {
+                // load in_stream to GPU
+                if(initref==0)
+                    cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+                else
+                    cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
 
-	free(normcoeff);
+
+                if (cudaStat != cudaSuccess)
+                {
+                    printf("initref = %d    %ld  %ld\n", initref, IDref, IDin);
+                    printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+
+                if(BETAMODE == 1)
+                {
+                    beta = -1.0;
+                    cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
+                }
+
+                // compute
+                cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
+                if (cudaStat != CUBLAS_STATUS_SUCCESS)
+                {
+                    printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                    if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                        printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                    if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                        printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                    if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                        printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                    if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                        printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                    exit(EXIT_FAILURE);
+                }
+
+                // copy result
+                data.image[ID_modeval].md[0].write = 1;
+
+
+                if(initref==0) // construct reference to be subtracted
+                {
+                    cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+
+                    IDrefout = image_ID(IDrefout_name);
+                    if(IDrefout != -1)
+                        for(k=0; k<NBmodes; k++)
+                            modevalarrayref[k] -= data.image[IDrefout].array.F[k];
+
+
+                    if((INNORMMODE==0)&&(MODENORM==0))
+                        BETAMODE = 1; // include ref subtraction in GPU operation
+                    else
+                        BETAMODE = 0;
+                }
+                else
+                {
+                    cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+
+                    if(BETAMODE==0)
+                    {
+                        for(k=0; k<NBmodes; k++)
+                            data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
+                    }
+                    else
+                        for(k=0; k<NBmodes; k++)
+                            data.image[ID_modeval].array.F[k] = modevalarray[k];
+
+
+                    COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
+
+                    data.image[ID_modeval].md[0].cnt0++;
+                    data.image[ID_modeval].md[0].write = 0;
+                }
+            }
+        }
+        else // WAIT FOR NEW MODEVAL
+        {
+			sem_wait(data.image[ID_modeval].semptr[insem]);
+		}
+
+
+
+
+
+
+
+
+
+
+        if(TRACEMODE == 1)
+        {
+            data.image[ID_modeval].md[0].write = 1;
+
+            for(k=0; k<NBmodes; k++)
+                data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k];
+            data.image[IDtrace].md[0].cnt1 = TRACEindex;
+
+            sem_getvalue(data.image[IDtrace].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDtrace].semptr[0]);
+            sem_getvalue(data.image[IDtrace].semptr[1], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDtrace].semptr[1]);
+            data.image[IDtrace].md[0].cnt0++;
+            data.image[IDtrace].md[0].write = 0;
+
+            TRACEindex++;
+            if(TRACEindex>=TRACEsize)
+            {
+                TRACEindex = 0;
+                // copy to tracef shared memory (frozen trace)
+            }
+        }
+
+
+
+        if(PROCESS==1)
+        {
+            stepcoeff = stepcoeff0;
+            data.image[IDprocave].md[0].write = 1;
+            for(step=0; step<NBaveSTEP; step++)
+            {
+                for(k=0; k<NBmodes; k++)
+                    data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
+                stepcoeff *= stepcoeff0;
+            }
+            for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
+            {
+                sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDprocave].semptr[semnb]);
+            }
+            data.image[IDprocave].md[0].cnt0++;
+            data.image[IDprocave].md[0].write = 0;
+
+            stepcoeff = stepcoeff0;
+            data.image[IDprocrms].md[0].write = 1;
+            for(step=0; step<NBaveSTEP; step++)
+            {
+                for(k=0; k<NBmodes; k++)
+                {
+                    tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
+                    tmpv = tmpv*tmpv;
+                    data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
+                }
+                stepcoeff *= stepcoeff0;
+            }
+            for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
+            {
+                sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDprocrms].semptr[semnb]);
+            }
+            data.image[IDprocrms].md[0].cnt0++;
+            data.image[IDprocrms].md[0].write = 0;
+        }
+
+
+		if(twait>0)
+			usleep(twait1);
+		
+		if(twait1<0)
+			twait1 = 0;
+		
+		clock_gettime(CLOCK_REALTIME, &t1);
+        tdiff = info_time_diff(t0, t1);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	
+		if(tdiffv<1.0e-6*twait) 
+			twait1 ++;
+		else
+			twait1 --;
+		//printf("timing info : %11.9lf  %ld  %ld\n", tdiffv, );
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+        {
+            loopOK = 0;
+            printf("Exiting loop\n");
+            fflush(stdout);
+            sleep(1.0);
+        }
+
+        initref = 1;
+        iter++;
+    }
+
+    if(MODEVALCOMPUTE==1)
+    {
+        cudaFree(d_modes);
+        cudaFree(d_in);
+        cudaFree(d_modeval);
+
+
+
+        if (cublasH ) cublasDestroy(cublasH);
+    }
+
+    free(normcoeff);
     free(modevalarray);
     free(modevalarrayref);
 
+
+
+
     return(0);
 }
+
+
+
 
 
 

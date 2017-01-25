@@ -118,10 +118,46 @@ int AOloopControl_DM_CombineChannels_cli()
 int AOloopControl_DM_chan_setgain_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
-        AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+        AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
     else
         return 1;
 }
+
+int AOloopControl_DM_setvoltON_cli()
+{
+	if(CLI_checkarg(1,2)==0)
+        AOloopControl_DM_setvoltON(data.cmdargtoken[1].val.numl);
+    else
+        return 1;
+}
+
+int AOloopControl_DM_setvoltOFF_cli()
+{
+	if(CLI_checkarg(1,2)==0)
+        AOloopControl_DM_setvoltOFF(data.cmdargtoken[1].val.numl);
+    else
+        return 1;
+}
+
+
+int AOloopControl_DM_setMAXVOLT_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+        AOloopControl_DM_setMAXVOLT(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    else
+        return 1;
+}
+
+
+int AOloopControl_DM_setDClevel_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+        AOloopControl_DM_setDClevel(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    else
+        return 1;
+}
+
+// int AOloopControl_DM_chan_setMAXVOLT(long DMindex, float maxvolt);
 
 
 int AOloopControl_DM_dmdispcomboff_cli()
@@ -153,7 +189,15 @@ int AOloopControl_DM_dmtrigoff_cli()
 int AOloopControl_DM_dmturb_cli()
 {
     if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl);
+        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 0, "NULL", 0);
+    else
+        return 1;
+}
+
+int AOloopControl_DM_dmturb2im_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(3,2)+CLI_checkarg(3,2)==0)
+        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 1, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
     else
         return 1;
 }
@@ -228,7 +272,42 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aoldmvoltON");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltON_cli;
+    strcpy(data.cmd[data.NBcmd].info,"turn on DM voltage");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoldmvoltON 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltON(long DMindex)");
+    data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aoldmvoltOFF");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltOFF_cli;
+    strcpy(data.cmd[data.NBcmd].info,"turn off DM voltage");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoldmvoltOFF 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltOFF(long DMindex)");
+    data.NBcmd++;
+ 
+ 
+    strcpy(data.cmd[data.NBcmd].key,"aolsetdmvoltmax");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setMAXVOLT_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set maximum DM voltage");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <max voltage [V]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmvoltmax 120.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmDC");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setDClevel_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM DC level [um]");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <DC level [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmDC 0.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setDClevel(long DMindex, float DClevel)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcomboff");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -264,9 +343,20 @@ int init_AOloopControl_DM()
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_cli;
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex)");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
     data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturb2im");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb2im_cli;
+    strcpy(data.cmd[data.NBcmd].info,"DM turbulence to image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-09) <imoutname> <NBsamples>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb2im 00 wftout 100000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
+    data.NBcmd++;
+
+
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -350,16 +440,28 @@ int AOloopControl_DM_disp2V(long DMindex)
     long ii;
     float volt;
 
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
-    for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
-    {
-        volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
-        if(volt>dmdispcombconf[DMindex].MAXVOLT)
-            volt = dmdispcombconf[DMindex].MAXVOLT;
-        data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
-    }
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
+
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
+		
+	if(dmdispcombconf[DMindex].voltON==1)
+		{
+			for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+				{
+					volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
+					if(volt>dmdispcombconf[DMindex].MAXVOLT)
+						volt = dmdispcombconf[DMindex].MAXVOLT;
+					data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+				}
+		}
+	else
+		for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+			data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = 0;
+			
+
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
+    
+    
     COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
 
 
@@ -636,6 +738,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].xysize = xsize*ysize;
     dmdispcombconf[DMindex].NBchannel = NBchannel;
     dmdispcombconf[DMindex].voltmode = voltmode;
+    dmdispcombconf[DMindex].voltON = 1;
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
     dmdispcombconf[DMindex].AveMode = AveMode;
     sprintf(dmdispcombconf[DMindex].voltname, "%s", IDvolt_name);
@@ -885,7 +988,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             {
                     for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                 {
-                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel-ave;
+                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel - ave;
                 
 					if(dmdispcombconf[DMindex].voltmode==1)
 						if(data.image[IDdispt].array.F[ii]<0.0)
@@ -955,8 +1058,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
             dmdispcombconf[DMindex].status = 7;
 
-            if(dmdispcombconf[DMindex].voltmode==1)
-                AOloopControl_DM_disp2V(DMindex);
+            AOloopControl_DM_disp2V(DMindex);
+			
 
             dmdispcombconf[DMindex].status = 8;
 
@@ -996,6 +1099,54 @@ int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain)
 
     return 0;
 }
+
+
+
+
+int AOloopControl_DM_setvoltON(long DMindex)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].voltON = 1;
+	AOloopControl_printDMconf();
+	
+    return 0;
+}
+
+
+int AOloopControl_DM_setvoltOFF(long DMindex)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].voltON = 0;
+	AOloopControl_printDMconf();
+	
+    return 0;
+}
+
+
+int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].MAXVOLT = maxvolt;
+	AOloopControl_printDMconf();
+	
+    return 0;
+}
+
+
+int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].DClevel = DClevel;
+	AOloopControl_printDMconf();
+
+    return 0;
+}
+
+
+
+
+
+
 
 
 
@@ -1056,15 +1207,18 @@ int AOloopControl_DM_dmdispcomboff(long DMindex)
 {
     AOloopControl_DM_loadconf();
     dmdispcombconf[DMindex].ON = 0;
-
+	AOloopControl_printDMconf();
+	
     return 0;
 }
 
+
 int AOloopControl_DM_dmtrigoff(long DMindex)
 {
-   AOloopControl_DM_loadconf();
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].status = 101;
-
+	AOloopControl_DM_loadconf();
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].status = 101;
+	AOloopControl_printDMconf();
+    
     return 0;
 }
 
@@ -1105,8 +1259,9 @@ int AOloopControl_DMturb_createconf()
     char name[200];
     long DMindex;
     char errstr[200];
-    
-    AOloopControl_DM_loadconf();
+
+    AOloopControl_DM_loadconf();    
+    AOloopControl_DMturb_loadconf();
 
 
     if( dmturb_loaded == 0 )
@@ -1413,12 +1568,13 @@ int make_master_turbulence_screen_local(char *ID_name1, char *ID_name2, long siz
 
 
 
+// mode = 0 : send to DM
+// mode = 1 : write to file, so that it can be later sent to DM
 
 
-
-
-int AOloopControl_DM_dmturb(long DMindex)
+int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)
 {
+	float DMsizeM = 10.0; // DM size in meter
     long size_sx; // screen size
     long size_sy;
     long IDs1, IDs2;
@@ -1457,6 +1613,18 @@ int AOloopControl_DM_dmturb(long DMindex)
     double totim;
     long IDk;
 
+	long k0 = 100;
+	int k0init = 0;
+	
+	long k;
+	int turbON;
+	long IDout;
+	FILE *fp;
+	double dX, dY;
+	double wspeedx, wspeedy;
+	double RMSvaltot;
+	long RMSvaltotcnt;
+
 
     AOloopControl_DMturb_createconf();
 
@@ -1485,9 +1653,11 @@ int AOloopControl_DM_dmturb(long DMindex)
     size_sx = data.image[IDs1].md[0].size[0];
     size_sy = data.image[IDs1].md[0].size[1];
 
+	if(mode==0)
+	{
     clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tstart);
     dmturbconf[DMindex].tend = dmturbconf[DMindex].tstart;
-
+	}
 
     DM_Xsize = dmdispcombconf[DMindex].xsize;
     DM_Ysize = dmdispcombconf[DMindex].ysize;
@@ -1496,26 +1666,96 @@ int AOloopControl_DM_dmturb(long DMindex)
     sprintf(name, "dm%02lddisp10", DMindex);
     read_sharedmem_image(name);
     list_image_ID();
-    dmturbconf[DMindex].on = 1;
+    
+    if(mode==0)
+		dmturbconf[DMindex].on = 1;
 
     IDturbs1 = create_2Dimage_ID("turbs1", DM_Xsize, DM_Ysize);
     IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
 
-    while(dmturbconf[DMindex].on == 1) // computation loop
+
+	if(mode==1)
+		IDout = create_3Dimage_ID(IDout_name, DM_Xsize, DM_Ysize, NBsamples);
+		
+
+	k = 0;
+	if(mode == 0)
+		turbON = dmturbconf[DMindex].on;
+	else
+		turbON = 1;
+		
+	printf("MODE = %d\n", mode);
+	
+	
+	if(mode==1) // force periodic sequence if wind speed is sufficiently large
+	{
+		printf("Wind speed = %f m/s\n", dmturbconf[DMindex].wspeed);
+		printf("angle      = %f rad\n", angle);
+		printf("time interval = %.6f sec\n", 1.0e-6*dmturbconf[DMindex].tint);
+		printf("NBsamples = %ld\n", NBsamples);
+		printf("sequence time = %f sec\n", 1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		dX = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*cos(angle);
+		dY = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*sin(angle);
+		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
+		printf("turb screen size = %f m\n", size_sx*pixscale);
+		printf("->   %10.5f  x  %10.5f screen\n", dX/(size_sx*pixscale), dY/(size_sy*pixscale));
+	
+		dX = (floor( dX/(size_sx*pixscale) + 1000.5 ) - 1000.0) * size_sx*pixscale;
+		dY = (floor( dY/(size_sy*pixscale) + 1000.5 ) - 1000.0) * size_sy*pixscale;
+
+		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
+		wspeedx = dX / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		wspeedy = dY / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		
+		if(sqrt(wspeedx*wspeedx+wspeedy*wspeedy)<0.0001)
+			{				
+				wspeedx = dmturbconf[DMindex].wspeed*cos(angle);
+				wspeedy = dmturbconf[DMindex].wspeed*sin(angle);
+			}
+		
+		printf("wspeed = %f x %f m/s  -> %f m/s\n", wspeedx, wspeedy, sqrt(wspeedx*wspeedx+wspeedy*wspeedy));
+	}
+	
+	
+//	fp = fopen("test.txt", "w");
+	
+	RMSvaltot = 0.0;
+	RMSvaltotcnt = 0;
+	
+    while(turbON == 1) // computation loop
     {
-        usleep(dmturbconf[DMindex].tint);
 
-        tlast = dmturbconf[DMindex].tend;
-        clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tend);
-        tdiff = time_diff(dmturbconf[DMindex].tstart, dmturbconf[DMindex].tend);
-        tdiff1 =  time_diff(tlast, dmturbconf[DMindex].tend);
-        tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
+		if(mode==0)
+		{
+			usleep(dmturbconf[DMindex].tint);
 
-        screen0_X += dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
-        screen0_Y += dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
+			tlast = dmturbconf[DMindex].tend;
+			clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tend);
+			tdiff = time_diff(dmturbconf[DMindex].tstart, dmturbconf[DMindex].tend);
+			tdiff1 =  time_diff(tlast, dmturbconf[DMindex].tend);
+			tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
+		
+			 dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+		}
+		else
+		{
+			tdiff1v = 1.0e-6*dmturbconf[DMindex].tint*k;
+			
+			dmturbconf[DMindex].simtime = tdiff1v;
+		}
+		
+		if(mode == 0)
+		{
+			screen0_X += dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
+			screen0_Y += dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
+		}
+		else
+		{
+			screen0_X = wspeedx*tdiff1v; // [m]
+			screen0_Y = wspeedy*tdiff1v; // [m]
+		}
 
-
-        dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        //dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
 
         for(ii=0; ii<DM_Xsize; ii++)
@@ -1523,8 +1763,8 @@ int AOloopControl_DM_dmturb(long DMindex)
             {
                 ii1 = jj*DM_Xsize+ii;
 
-                x = 10.0*ii/DM_Xsize + screen0_X; // [m]
-                y = 10.0*jj/DM_Ysize + screen0_Y; // [m]
+                x = DMsizeM*ii/DM_Xsize + screen0_X; // [m]
+                y = DMsizeM*jj/DM_Ysize + screen0_Y; // [m]
 
                 xpix = 0.5*size_sx + x/pixscale;
                 ypix = 0.5*size_sy + y/pixscale;
@@ -1558,6 +1798,7 @@ int AOloopControl_DM_dmturb(long DMindex)
             }
 
         // proccess array
+        
         ave = 0.0;
         for(ii1=0; ii1<DM_Xsize*DM_Ysize; ii1++)
             ave += data.image[IDturb].array.F[ii1];
@@ -1586,24 +1827,74 @@ int AOloopControl_DM_dmturb(long DMindex)
             }
         RMSval = sqrt(RMSval/RMSvalcnt);
 
+	if(mode == 0)
+	{
         x1 = log10(RMSval/dmturbconf[DMindex].ampl);
         fx1 = 1.0 + 50.0*exp(-5.0*x1*x1);
         coeff /= pow(10.0,x1/fx1);
-
+	}
+	else
+	{	if(k0init==1)
+		{
+			RMSvaltot += RMSval;
+			RMSvaltotcnt ++;
+		}
+	}
         
-        printf("STEP 001  %f %f\n", screen0_X, screen0_Y);
-        fflush(stdout);
-        list_image_ID();
+//        printf("STEP 001  %f %f\n", screen0_X, screen0_Y);
+//        fflush(stdout);
         
-        sprintf(name, "dm%02lddisp10", DMindex);
-        copy_image_ID("turbs", name, 0);
-        save_fits("turbs", "!turbs.fits");
-        save_fits("turbs1", "!turbs1.fits");
+		if(mode == 0)
+		{
+			sprintf(name, "dm%02lddisp10", DMindex);
+			copy_image_ID("turbs", name, 0);
+		}
+		else
+		{
+			if(k0init==1)
+			{
+			//printf("STEP %5ld / %5ld       time = %12.6f    coeff = %18g   RMSval = %18g    %18f x %18f\n", k, NBsamples, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
+			//fflush(stdout);
+			//fprintf(fp, "%5ld  %12.6f      %18g     %18g    %18f  %18f  %18f\n", k, tdiff1v, coeff, RMSval, screen0_X, screen0_Y, dmturbconf[DMindex].wspeed);
+			
+			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
+				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
+			}
+		//	usleep(dmturbconf[DMindex].tint);
+		//	sprintf(name, "dm%02lddisp10", DMindex);
+		//	copy_image_ID("turbs", name, 0);
+		}
+   
+   //     save_fits("turbs", "!turbs.fits");
+   //     save_fits("turbs1", "!turbs1.fits");
+    
+		
+		if(mode==0)
+			turbON = dmturbconf[DMindex].on;
+		else
+			{
+				k ++;
+				if((k==k0)&&(k0init==0))
+				{
+					k0init = 1;
+					k = 0;
+				}
+				
+				if(k<NBsamples)
+					turbON = 1;
+				else
+					turbON = 0;
+			}
+		
     }
+	//fclose(fp);
+
+
+	RMSval = RMSvaltot/RMSvaltotcnt;
+	for(k=0;k<NBsamples;k++)
+		for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
+			data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] *= dmturbconf[DMindex].ampl/RMSval;
 
 
     return(0);
 }
-
-
-

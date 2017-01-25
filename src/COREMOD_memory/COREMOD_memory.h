@@ -168,12 +168,42 @@ long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush(char *IDname, long index);
 
+
+
+
+
+
+/* ========================================================================================================================================= */
+/*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
+/* ========================================================================================================================================= */
+
+// difference between two streams
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig);
+
+// difference between two halves of stream image
+long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig);
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 
-long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
-long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode);
+
+long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus);
+
+long COREMOD_MEMORY_SaveAll_snapshot(char *dirname);
+long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes);
+
+long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode, int RT_priority);
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority);
 
 long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname);
+
+
+/* ========================================================================================================================================= */
+/*                                                                DATA LOGGING                                                               */
+/* ========================================================================================================================================= */
+
 
 int COREMOD_MEMORY_logshim_printstatus(char *IDname);
 int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv);

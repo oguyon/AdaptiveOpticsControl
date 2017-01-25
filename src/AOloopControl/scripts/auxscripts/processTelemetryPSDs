@@ -9,7 +9,6 @@ NBARGS=0
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-loopnb=$(cat LOOPNUMBER)
 
 
 
@@ -40,6 +39,30 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Process telemetry: create open and closed loop PSDs\n" "$0" 
+}
+
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
 
 
 # ================= OPTIONS =============================
@@ -47,7 +70,11 @@ echo "------------------------------------------------------------------------"
 while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     \?) #unrecognized option - show help
@@ -74,6 +101,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

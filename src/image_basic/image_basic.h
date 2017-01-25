@@ -12,6 +12,7 @@ int basic_lmin_im(char *ID_name, char *out_name);
 int basic_lmax_im(char *ID_name, char *out_name);
 
 long basic_add(char *ID1_name, char *ID2_name, char *ID3_name, long off1, long off2);
+long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2, long off3);
 
 long basic_diff(char *ID1_name, char *ID2_name, char *ID3_name, long off1, long off2);
 

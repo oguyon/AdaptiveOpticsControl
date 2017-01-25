@@ -16,7 +16,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/$1/
-tmux send-keys -t $tmuxnameC "logshim $1 30000 $savedir/$datestr/$1/" C-m
+tmux send-keys -t $tmuxnameC "logshim -c aol${LOOPNUMBER}log $1 30000 $savedir/$datestr/$1/" C-m
 tmuxname="log_$1"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon $1" C-m

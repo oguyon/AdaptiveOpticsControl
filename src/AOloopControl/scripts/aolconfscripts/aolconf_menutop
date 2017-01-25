@@ -50,6 +50,7 @@ stringcenter "DM CHANNELS AND OUTPUT (dmcomb process)"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
+
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
 dmxsize=$(cat "./conf/conf_dm${DMindex}xsize.txt")
@@ -58,8 +59,29 @@ dmysize=$(cat "./conf/conf_dm${DMindex}ysize.txt")
 menuitems+=( "dmys" "[${dmysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
-menuitems+=( "nolink" "Auto-configure main DM (no link)" )
-menuitems+=( "dmolink" "Auto-configure link DM output to loop number" )
+menuitems+=( "nolink"  "Auto-configure: main DM  (no link)             -> DM actuators are physical actuators" )
+menuitems+=( "dmolink" "Auto-configure: DM output linked to other loop -> DM actuators represent modes" )
+menuitems+=( " " " " )
+
+
+# DM mode
+# ZONAL : physical actuators on spatial coordinates
+# MODAL : each DM actuiator represents a single WF mode
+DMMODEfile="conf/conf_DMMODE.txt"
+if [ -f $DMMODEfile ]; then
+DMMODE=$( cat ${DMMODEfile} )
+else
+DMMODE="ZONAL"
+echo "$DMMODE" > $DMMODEfile
+fi
+
+if [ "$DMMODE" = "ZONAL" ]; then
+menuitems+=( "DMmodeM" "\Zb\Zr DM is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+else
+menuitems+=( "DMmodeZ" "\Zb\Zr DM is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+fi
+
+
 
 
 file="./conf/conf_dm2dm_mode.txt"
@@ -256,7 +278,7 @@ menuitems+=( " " " ")
 menuitems+=( "M" "load all (M)emory" )
 menuitems+=( "C" "(C)onfigure/link AO loop" )
 
-menuitems+=( "CM" "Control Matrix" )
+menuitems+=( "CM" "Modes and Control Matrix" )
 
 menuitems+=( " " " ")
 
@@ -323,7 +345,7 @@ stringcenter "CUSTOM EXTERNAL SCRIPTS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 menuitems+=( "A" "Align")
-
+menuitems+=( "HC" "Hardware Control")
 
 
 
@@ -403,6 +425,11 @@ aoconflog "set dm${DMindex}ysize = $dmysize"
 
     nolink)
 aoconflog "set DM nolink"
+
+DMMODE="ZONAL"
+DMMODEfile="conf/conf_DMMODE.txt"
+echo "$DMMODE" > $DMMODEfile
+
 echo "0" > "./conf/conf_dm2dm_mode.txt"
 echo "0" > "./conf/conf_dmwfsref_mode.txt"
 echo "1" > "./conf/conf_dmvolt_mode.txt"
@@ -437,11 +464,16 @@ ReaddmRMname
 
     dmolink)
 aoconflog "set DM link"
+
+DMMODE="MODAL"
+DMMODEfile="conf/conf_DMMODE.txt"
+echo "$DMMODE" > $DMMODEfile
+
 echo "1" > "./conf/conf_dm2dm_mode.txt"
 echo "1" > "./conf/conf_dmwfsref_mode.txt"
 echo "0" > "./conf/conf_dmvolt_mode.txt"
 echo "2" > "./conf/conf_dmcombavemode.txt"
-menuitems1=( "0" "loop 0" )
+menuitems1=( "0" "loop 0 (directory ../AOloop0/)" )
 for i in 1 2 3 4 5 6 7 8 9;
         do
 menuitems1+=( "$i" "loop $i (directory ../AOloop$i/)" )
@@ -526,6 +558,26 @@ Readdmdispname
 echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
 ReaddmRMname
 ;;
+
+
+
+
+DMmodeM)
+DMMODE="MODAL"
+DMMODEfile="conf/conf_DMMODE.txt"
+echo "$DMMODE" > $DMMODEfile
+menutop_default="DMmodeZ"
+;;
+
+DMmodeZ)
+DMMODE="ZONAL"
+DMMODEfile="conf/conf_DMMODE.txt"
+echo "$DMMODE" > $DMMODEfile
+menutop_default="DMmodeM"
+;;
+
+
+
 
 
    dm2dmMode0)
@@ -669,6 +721,7 @@ AOloadMem 1
 # ===========================================  CUSTOM EXTERNAL SCRIPTS ================================================
 # =====================================================================================================================
    	 A) state="menualign";;
+   	 HC) state="menuhardwarecontrol";;
 
 	esac;;
    1) state="menuexit";;   
@@ -686,6 +739,15 @@ fi
 if [ $state = "menualign" ]; then
 stateok=1
 . ./aocustomscripts/AOloopAlign_${LOOPNAME}.bash
+state="menutop"
+fi
+
+
+
+
+if [ $state = "menuhardwarecontrol" ]; then
+stateok=1
+. ./aocustomscripts/AOloopHardwareControl_${LOOPNAME}.bash
 state="menutop"
 fi
 

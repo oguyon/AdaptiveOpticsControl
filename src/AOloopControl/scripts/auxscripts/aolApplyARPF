@@ -45,7 +45,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Example script\n" "$0" 
+    printf "%25s       Apply AR linear predictive filter\n" "$0" 
 }
 
 

@@ -134,6 +134,12 @@ menuitems+=( " " " " )
 
 file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 logwfsimstat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logwfsimstat="0"
+fi
 if [ "${logwfsimstat}" = "0" ];
 then
 menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim" )
@@ -146,6 +152,12 @@ fi
 
 file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 logwfsrefstat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsrefstat" = "0" || "$logwfsrefstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logwfsrefstat="0"
+fi
 if [ "${logwfsrefstat}" = "0" ];
 then
 menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref" )
@@ -160,8 +172,8 @@ if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; the
 echo "OK"
 else
 echo "0" > $file
+logdmdispstat=0
 fi
-
 if [ "${logdmdispstat}" = "0" ];
 then
 menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp" )
@@ -172,6 +184,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp00.txt"
 logdmdisp00stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp00stat" = "0" || "$logdmdisp00stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp00stat=0
+fi
 if [ "${logdmdisp00stat}" = "0" ];
 then
 menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp00" )
@@ -183,6 +201,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp01.txt"
 logdmdisp01stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp01stat" = "0" || "$logdmdisp01stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp01stat=0
+fi
 if [ "${logdmdisp01stat}" = "0" ];
 then
 menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp01" )
@@ -193,6 +217,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp02.txt"
 logdmdisp02stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp02stat" = "0" || "$logdmdisp02stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp02stat=0
+fi
 if [ "${logdmdisp02stat}" = "0" ];
 then
 menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp02" )
@@ -203,6 +233,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp03.txt"
 logdmdisp03stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp03stat" = "0" || "$logdmdisp03stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp03stat=0
+fi
 if [ "${logdmdisp03stat}" = "0" ];
 then
 menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp03" )
@@ -213,6 +249,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp04.txt"
 logdmdisp04stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp04stat" = "0" || "$logdmdisp04stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp04stat=0
+fi
 if [ "${logdmdisp04stat}" = "0" ];
 then
 menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp04" )
@@ -223,6 +265,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp05.txt"
 logdmdisp05stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp05stat" = "0" || "$logdmdisp05stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp05stat=0
+fi
 if [ "${logdmdisp05stat}" = "0" ];
 then
 menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp05" )
@@ -234,6 +282,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp06.txt"
 logdmdisp06stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp06stat" = "0" || "$logdmdisp06stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp06stat=0
+fi
 if [ "${logdmdisp06stat}" = "0" ];
 then
 menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp06" )
@@ -244,6 +298,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp07.txt"
 logdmdisp07stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp07stat" = "0" || "$logdmdisp07stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp07stat=0
+fi
 if [ "${logdmdisp07stat}" = "0" ];
 then
 menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp07" )
@@ -254,6 +314,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp08.txt"
 logdmdisp08stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp08stat" = "0" || "$logdmdisp08stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp08stat=0
+fi
 if [ "${logdmdisp08stat}" = "0" ];
 then
 menuitems+=( "ldmdisp081" "START logging dm${DMindex}disp08" )
@@ -264,6 +330,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp09.txt"
 logdmdisp09stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp09stat" = "0" || "$logdmdisp09stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp09stat=0
+fi
 if [ "${logdmdisp09stat}" = "0" ];
 then
 menuitems+=( "ldmdisp091" "START logging dm${DMindex}disp09" )
@@ -274,6 +346,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp10.txt"
 logdmdisp10stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp10stat" = "0" || "$logdmdisp10stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp10stat=0
+fi
 if [ "${logdmdisp10stat}" = "0" ];
 then
 menuitems+=( "ldmdisp101" "START logging dm${DMindex}disp10" )
@@ -284,6 +362,12 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp11.txt"
 logdmdisp11stat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdisp11stat" = "0" || "$logdmdisp11stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logdmdisp11stat=0
+fi
 if [ "${logdmdisp11stat}" = "0" ];
 then
 menuitems+=( "ldmdisp111" "START logging dm${DMindex}disp11" )
@@ -295,9 +379,14 @@ fi
 
 if [ "${dm2dm_mode}" = "0" ];
 then
-
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevalstat" = "0" || "$logmodevalstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevalstat=0
+fi
 if [ "${logmodevalstat}" = "0" ];
 then
 menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval" )
@@ -308,6 +397,12 @@ fi
 
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevalolstat" = "0" || "$logmodevalolstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevalolstat=0
+fi
 if [ "${logmodevalolstat}" = "0" ];
 then
 menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol" )
@@ -329,6 +424,12 @@ menuitems+=( "setdmCaveC" "[${dmCavecoeff}] Set dmC averaging coefficient value"
 
 file="./status/stat_taveC_ON.txt"
 taveC_ON=$( cat $file )
+if [[ -f "$file" && ( "$taveC_ON" = "0" || "$taveC_ON" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+taveC_ON=0
+fi
 if [ "${taveC_ON}" = "0" ];
 then
 menuitems+=( "taveC1" "START temporal average of DM correction -> aol2_dmCave" )

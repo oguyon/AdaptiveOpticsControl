@@ -7,7 +7,7 @@ NBARGS=1
 # ======================= PROCESS NAME =================================
 pname="aol${loopnb}linsimD"
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 function printHELP {
@@ -17,20 +17,22 @@ echo "------------------------------------------------------------------------"
 echo "  adds delay between dm${loopnb}disp and dm${loopnb}dispD"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <delay>"
+echo "     $0 [-h] <delay [us]>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
-echo "     <GPUdevice>     delay [int]"
-echo ""
-echo " $(tput bold)OUTPUT:$(tput sgr0)"
-echo "     aol${loopnb}_dmdisp      linear simulation WFS image"
+echo "     <delay>     delay [us]"
 echo ""
 echo "------------------------------------------------------------------------"
 }
 
+
+printHELP1 ()
+{
+    printf "%25s       Introduce DM delay\n" "$0" 
+}
 
 
 
@@ -40,10 +42,30 @@ echo "------------------------------------------------------------------------"
 
 # ================= OPTIONS =============================
 
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
 while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     \?) #unrecognized option - show help
@@ -74,10 +96,7 @@ fi
 
 Cfits -n $pname << EOF
 readshmim aol${loopnb}_dmdisp
-ks=$1+1
-creaim kern ks 1
-setpix kern 1.0 $1 0
-aolframedelay aol${loopnb}_dmdisp kern aol${loopnb}_dmdispD 7
+streamdelay aol${loopnb}_dmdisp aol${loopnb}_dmdispD $1 50
 exit
 EOF
 

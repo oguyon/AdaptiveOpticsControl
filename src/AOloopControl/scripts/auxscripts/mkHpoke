@@ -7,7 +7,6 @@ NBARGS=0
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
 
@@ -30,6 +29,53 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 if [ "$#" -ne $NBARGS ]; then
@@ -40,16 +86,27 @@ printHELP
 fi
 
 
+
+
+
+
+
 loopnb=$(cat LOOPNUMBER)
+
+DMindex=$(cat ./conf/conf_DMindex.txt)
+dmxsize=$(cat conf/conf_dm${DMindex}xsize.txt)
+dmysize=$(cat conf/conf_dm${DMindex}ysize.txt)
+echo "DM size = $dmxsize $dmysize"
+
 
 if [ ! -f "./conf/HRM_DMmask.fits" ]; then
 Cfits << EOF
-readshmim aol${loopnb}_dmC
-imstats aol${loopnb}_dmC
-cx=0.5*imsize0-0.5
-cy=0.5*imsize1-0.5
-rad=0.5*imsize0+0.6
-mkdisk dmmask imsize0 imsize1 cx cy rad
+#readshmim aol${loopnb}_dmC
+#imstats aol${loopnb}_dmC
+cx=0.5*${dmxsize}-0.5
+cy=0.5*${dmysize}-0.5
+rad=0.5*${dmxsize}+0.6
+mkdisk dmmask ${dmxsize} ${dmysize} cx cy rad
 savefits dmmask "!./conf/HRM_DMmask.fits"
 itot(dmmask)
 exit

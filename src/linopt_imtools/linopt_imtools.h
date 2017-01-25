@@ -10,6 +10,10 @@ int init_linopt_imtools();
 long linopt_compute_linRM_from_inout(char *IDinput_name, char *IDinmask_name, char *IDoutput_name, char *IDRM_name);
 
 // creating modal basis
+long linopt_imtools_make1Dpolynomials(char *IDout_name, long NBpts, long MaxOrder, float r0pix);
+
+long linopt_compute_1Dfit(char *fnamein, long NBpt, long MaxOrder, char *fnameout, int MODE);
+
 long linopt_imtools_makeCosRadModes(char *ID_name, long size, long kmax, float radius, float radfactlim);
 
 long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float deltaCPA, float radius, float radfactlim, int writeMfile);

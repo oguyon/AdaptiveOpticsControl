@@ -423,7 +423,10 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
     int n;
 
     int LOAD_FITS_ERROR = 0;
-
+	int fileOK;
+	int try;
+	int NBtry = 3;
+	
     nulval = 0;
     anynul = 0;
     bscale = 1;
@@ -434,24 +437,41 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
     naxes[2] = 0;
 
 
-    if (fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
+
+
+	fileOK = 0;
+	
+	
+	for(try=0; try<NBtry; try++)
+	{
+    if(fileOK==0)
     {
+		if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
+		{
 		 if(errcode!=0)
 		 {
-			 if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
+			 if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
 			{
                 fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                 list_image_ID();
+                
                 if(errcode>1)
                     exit(0);
+            
+				usleep(10000);
             }
 			}
         LOAD_FITS_ERROR = 1;
         ID = -1;
+		}
+		else
+			fileOK = 1;
     }
-    else
+    }
+    
+    if(fileOK==1)
     {
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
        if(errcode!=0)
@@ -1381,7 +1401,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 
 
 
-int save_fits(char *ID_name, char *file_name)
+/*int save_fits(char *ID_name, char *file_name)
 {
     long ID;
     int atype;
@@ -1405,9 +1425,19 @@ int save_fits(char *ID_name, char *file_name)
     }
 
     return 0;
+}*/
+
+
+int save_fits(char *ID_name, char *file_name)
+{
+    char savename[1000];
+    if (file_name[0] == '!')
+        strcpy(savename, file_name+1); // avoid the leading '!'
+    else
+        strcpy(savename, file_name);
+    
+    return save_fits_atomic(ID_name, savename);
 }
-
-
 
 
 int save_fits_atomic(char *ID_name, char *file_name)

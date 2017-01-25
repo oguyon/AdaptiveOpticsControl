@@ -9,7 +9,6 @@ NBARGS=0
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-loopnb=$(cat LOOPNUMBER)
 
 
 
@@ -37,6 +36,31 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+}
+
+
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
 selCORR=0
 
 # ================= OPTIONS =============================
@@ -44,7 +68,11 @@ selCORR=0
 while getopts :hc FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     c) #select for correction
@@ -75,6 +103,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

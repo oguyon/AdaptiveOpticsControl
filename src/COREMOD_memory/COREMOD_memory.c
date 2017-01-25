@@ -46,6 +46,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 #include "CLIcore.h"
+#include "info/info.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -600,9 +601,35 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
+int COREMOD_MEMORY_streamDiff_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
+    {
+        COREMOD_MEMORY_streamDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+int COREMOD_MEMORY_stream_halfimDiff_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
+    {
+        COREMOD_MEMORY_stream_halfimDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
 int COREMOD_MEMORY_image_streamupdateloop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
     {
         COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
         return 0;
@@ -613,13 +640,61 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 
 
 
+int COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
+    {
+        COREMOD_MEMORY_image_streamupdateloop_semtrig(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+int COREMOD_MEMORY_streamDelay_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+        COREMOD_MEMORY_streamDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+int COREMOD_MEMORY_SaveAll_snapshot_cli()
+{
+	 if(CLI_checkarg(1,5)==0)
+    {
+        COREMOD_MEMORY_SaveAll_snapshot(data.cmdargtoken[1].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+int COREMOD_MEMORY_SaveAll_sequ_cli()
+{
+	 if(CLI_checkarg(1,5)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+        COREMOD_MEMORY_SaveAll_sequ(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 
 int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
     {
-        COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
         return 0;
     }
     else
@@ -629,9 +704,9 @@ int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 
 int COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
     {
-        COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -1008,13 +1083,50 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_semtrig_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube, use other stream to synchronize");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index> <timing mode>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"streamdelay");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDelay_cli;
+    strcpy(data.cmd[data.NBcmd].info,"delay 2D image stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image2d in> <image2d out> <delay [us]> <resolution [us]>");
+    strcpy(data.cmd[data.NBcmd].example,"streamdelay instream outstream 1000 10");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"imsaveallsnap");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_snapshot_cli;
+    strcpy(data.cmd[data.NBcmd].info,"save all images in directory");
+    strcpy(data.cmd[data.NBcmd].syntax,"<directory>");
+    strcpy(data.cmd[data.NBcmd].example,"imsaveallsnap dir1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsaveallseq");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_sequ_cli;
+    strcpy(data.cmd[data.NBcmd].info,"save all images in directory - sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<directory> <trigger image name> <trigger semaphore> <NB frames>");
+    strcpy(data.cmd[data.NBcmd].example,"imsaveallsequ dir1 im1 3 20");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
     strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <sync mode [int]>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
     data.NBcmd++;
 
@@ -1038,6 +1150,29 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].example,"impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits");
     strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)");
     data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"streamdiff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDiff_cli;
+    strcpy(data.cmd[data.NBcmd].info,"compute difference between two image streams");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <optional mask> <sem trigger index>");
+    strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 null outstream 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)");
+	data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"streamhalfdiff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_stream_halfimDiff_cli;
+    strcpy(data.cmd[data.NBcmd].info,"compute difference between two halves of an image stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <out stream> <sem trigger index>");
+    strcpy(data.cmd[data.NBcmd].example,"streamhalfdiff stream outstream 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)");
+	data.NBcmd++;
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
@@ -2473,9 +2608,9 @@ long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize)
     naxes[2]=zsize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name,naxis,naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name,naxis,naxes, 4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -4402,7 +4537,187 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
 
 
 
-/// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========================================================================================================================================= */
+
+/*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
+
+/* ========================================================================================================================================= */
+
+
+
+//
+// compute difference between two 2D streams
+// triggers on stream0
+//
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig)
+{
+	long ID0, ID1, IDout;
+	long xsize, ysize, xysize;
+	long ii;
+	long *arraysize;
+	long long cnt;
+	long IDmask; // optional 
+	
+	ID0 = image_ID(IDstream0_name);
+	ID1 = image_ID(IDstream1_name);
+	IDmask = image_ID(IDstreammask_name);
+	
+	xsize = data.image[ID0].md[0].size[0];
+	ysize = data.image[ID0].md[0].size[1];	
+	xysize = xsize*ysize;
+	
+	arraysize = (long*) malloc(sizeof(long)*2);
+	arraysize[0] = xsize;
+	arraysize[1] = ysize;
+	
+	IDout = image_ID(IDstreamout_name);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDstreamout_name, 2, arraysize, FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDstreamout_name, 10);
+	}
+
+	free(arraysize);
+	
+	
+	while(1)
+	{
+		// has new frame arrived ?
+		if(data.image[ID0].sem==0)
+        {
+            while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID0].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[ID0].semptr[semtrig]);
+
+
+
+
+        data.image[IDout].md[0].write = 1;
+		if(IDmask==-1)
+		{
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii];		        
+		}
+		else
+		{
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = (data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii]) * data.image[IDmask].array.F[ii];		  
+		}
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+	}
+	
+	
+	return(IDout);
+}
+
+
+
+
+
+//
+// compute difference between two halves of an image stream
+// triggers on instream
+//
+long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)
+{
+	long ID0, IDout;
+	long xsizein, ysizein, xysizein;
+	long xsize, ysize, xysize;
+	long ii;
+	long *arraysize;
+	long long cnt;
+	int atype;
+	
+	
+	ID0 = image_ID(IDstream_name);
+	
+	xsizein = data.image[ID0].md[0].size[0];
+	ysizein = data.image[ID0].md[0].size[1];	
+	xysizein = xsizein*ysizein;
+	
+	xsize = xsizein;
+	ysize = ysizein/2;
+	xysize = xsize*ysize;
+	
+	
+	arraysize = (long*) malloc(sizeof(long)*2);
+	arraysize[0] = xsize;
+	arraysize[1] = ysize;
+	
+	IDout = image_ID(IDstreamout_name);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDstreamout_name, 2, arraysize, FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDstreamout_name, 10);
+	}
+
+	free(arraysize);
+	
+	atype = data.image[ID0].md[0].atype;
+	
+	
+	
+	while(1)
+	{
+		// has new frame arrived ?
+		if(data.image[ID0].sem==0)
+        {
+            while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID0].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[ID0].semptr[semtrig]);
+
+        data.image[IDout].md[0].write = 1;
+        switch ( atype ) {
+		case USHORT:
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.U[ii] - data.image[ID0].array.U[xysize+ii];		        
+			break;
+		case FLOAT:
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID0].array.F[xysize+ii];		        
+			break;
+		}
+
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+	}
+	
+	
+	return(IDout);
+}
+
+
+
+
+
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
 {
     long IDin;
@@ -4415,9 +4730,27 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr0; // source
     char *ptr1; // dest
     long framesize;
-    int semval;
+    int semval;      
+    
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
 
-    printf("Creating image stream ...\n");
+	long twait1;
+    struct timespec t0;
+    struct timespec t1;
+	double tdiffv;
+    struct timespec tdiff;
+	
+	
+	
+	
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    #endif
+
+
+    printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
 
     IDin = image_ID(IDinname);
@@ -4432,11 +4765,17 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     arraysize[1] = data.image[IDin].md[0].size[1];
     arraysize[2] = data.image[IDin].md[0].size[2];
 
+
+
     atype = data.image[IDin].md[0].atype;
+
+	IDout = image_ID(IDoutname);
+	if(IDout == -1)
+	{
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
-
-    COREMOD_MEMORY_image_set_createsem(IDoutname, 4);
-
+    COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
+	}
+	
     switch ( atype ) {
     case CHAR:
         ptr0s = (char*) data.image[IDin].array.C;
@@ -4471,16 +4810,17 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     }
 
 
+    twait1 = usperiod;
     kk = 0;
     while(1)
     {
+		clock_gettime(CLOCK_REALTIME, &t0);
+		
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
         
-        sem_getvalue(data.image[IDout].semptr[0], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[IDout].semptr[0]);
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
 
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
@@ -4489,7 +4829,149 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         if(kk==data.image[IDin].md[0].size[2])
             kk = 0;
 
-        usleep(usperiod);
+       
+		
+		usleep(twait1);
+			
+		clock_gettime(CLOCK_REALTIME, &t1);
+        tdiff = info_time_diff(t0, t1);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	
+		if(tdiffv<1.0e-6*usperiod) 
+			twait1 ++;
+		else
+			twait1 --;
+		
+		if(twait1<0)
+			twait1 = 0;
+		if(twait1>usperiod)
+			twait1 = usperiod;
+
+
+    }
+
+    return(IDout);
+}
+
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)
+{
+	long IDin;
+    long IDout;
+    long IDsync;
+    
+    long kk, kk1; 
+    
+    long *arraysize;
+    long naxis;
+    int atype;
+    char *ptr0s; // source start 3D array ptr
+    char *ptr0; // source
+    char *ptr1; // dest
+    long framesize;
+    int semval;      
+    
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+	
+	
+	
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    #endif
+
+
+    printf("Creating / connecting to image stream ...\n");
+    fflush(stdout);
+
+    IDin = image_ID(IDinname);
+    naxis = data.image[IDin].md[0].naxis;
+    arraysize = (long*) malloc(sizeof(long)*3);
+    if(naxis != 3)
+    {
+        printf("ERROR: input image %s should be 3D\n", IDinname);
+        exit(0);
+    }
+    arraysize[0] = data.image[IDin].md[0].size[0];
+    arraysize[1] = data.image[IDin].md[0].size[1];
+    arraysize[2] = data.image[IDin].md[0].size[2];
+
+
+
+
+
+    atype = data.image[IDin].md[0].atype;
+
+	IDout = image_ID(IDoutname);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
+	}
+	
+    switch ( atype ) {
+    case CHAR:
+        ptr0s = (char*) data.image[IDin].array.C;
+        ptr1 = (char*) data.image[IDout].array.C;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(char);
+        break;
+    case INT:
+        ptr0s = (char*) data.image[IDin].array.I;
+        ptr1 = (char*) data.image[IDout].array.I;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(int);
+        break;
+    case FLOAT:
+        ptr0s = (char*) data.image[IDin].array.F;
+        ptr1 = (char*) data.image[IDout].array.F;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(float);
+        break;
+    case DOUBLE:
+        ptr0s = (char*) data.image[IDin].array.D;
+        ptr1 = (char*) data.image[IDout].array.D;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(double);
+        break;
+    case USHORT:
+        ptr0s = (char*) data.image[IDin].array.U;
+        ptr1 = (char*) data.image[IDout].array.U;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(unsigned short);
+        break;
+    case LONG:
+        ptr0s = (char*) data.image[IDin].array.L;
+        ptr1 = (char*) data.image[IDout].array.L;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(long);
+        break;
+    }
+
+
+
+
+	IDsync = image_ID(IDsync_name);
+
+    kk = 0;
+    kk1 = 0;
+    
+    while(1)
+    {				
+        sem_wait(data.image[IDsync].semptr[semtrig]);
+     
+        kk++;
+        if(kk==period) // UPDATE
+			{
+				kk = 0;
+				kk1++;
+				if(kk1==data.image[IDin].md[0].size[2])
+					kk1 = 0;
+				usleep(offsetus);
+				ptr0 = ptr0s + kk1*framesize;
+				data.image[IDout].md[0].write = 1;
+				memcpy((void *) ptr1, (void *) ptr0, framesize);
+				COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+				data.image[IDout].md[0].cnt0++;
+				data.image[IDout].md[0].write = 0;
+			}        		
     }
 
     return(IDout);
@@ -4497,14 +4979,311 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 
+
+
+
+long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)
+{
+	long IDimc;
+	long IDin, IDout;
+	long xsize, ysize, xysize;
+	long zsize;
+	long kkin;
+	long cnt0, cnt0old;
+	long ii;
+	struct timespec *t0array;
+	struct timespec tnow;
+	double tdiffv;
+	struct timespec tdiff;
+	long *arraytmp;
+	long cntskip = 0;
+	long kkout;
+	long kk;
+	  
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	zsize = (long) (delayus/dtus);
+	xysize = xsize*ysize;
+	
+	t0array = (struct timespec*) malloc(sizeof(struct timespec)*zsize);
+	
+	IDimc = create_3Dimage_ID("_tmpc", xsize, ysize, zsize);
+	
+	
+	IDout = image_ID(IDout_name);
+    if(IDout==-1) // CREATE IT
+    {
+		arraytmp = (long*) malloc(sizeof(long)*2);
+		arraytmp[0] = xsize;
+		arraytmp[1] = ysize;
+        IDout = create_image_ID(IDout_name, 2, arraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+		free(arraytmp);
+    }
+    
+    
+	kkin = 0;
+	kkout = 0;
+	cnt0old = data.image[IDin].md[0].cnt0;
+
+	clock_gettime(CLOCK_REALTIME, &tnow);
+	for(kk=0;kk<zsize;kk++)
+		t0array[kk] = tnow;
+		
+	
+	while(1)
+	{
+		// has new frame arrived ?
+		cnt0 = data.image[IDin].md[0].cnt0;
+		if(cnt0!=cnt0old)
+		{
+			clock_gettime(CLOCK_REALTIME, &t0array[kkin]);
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDimc].array.F[kkin*xysize+ii] = data.image[IDin].array.F[ii];
+			kkin++;
+			if(kkin==zsize)
+				kkin = 0;
+			cnt0old = cnt0;		
+		//	printf("New frame detected: %ld  ->  %ld\n", cnt0, kkin);
+	//		fflush(stdout);
+		}
+		
+		clock_gettime(CLOCK_REALTIME, &tnow);
+		
+		
+		cntskip = 0;
+		tdiff = info_time_diff(t0array[kkout], tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	//	printf("tdiff = %f us   ", tdiffv*1e6);
+	//	fflush(stdout);
+		while((tdiffv>1.0e-6*delayus)&&(cntskip<zsize))
+			{
+				cntskip++;				
+				kkout++;
+				if(kkout==zsize)
+					kkout = 0;
+				tdiff = info_time_diff(t0array[kkout], tnow);
+				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+			}
+	//	printf("cntskip = %ld\n", cntskip);
+//		fflush(stdout);
+		if(cntskip>0)
+		{
+			data.image[IDout].md[0].write = 1;
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];	
+			
+			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
+			data.image[IDout].md[0].cnt0++;
+			data.image[IDout].md[0].write = 0;
+		}
+		
+	
+		usleep(dtus);
+	}
+	
+	delete_image_ID("_tmpc");
+	
+	free(t0array);
+	
+	return(0);
+}
+
+
+
+
+
+//
+// save all current images/stream onto file
+//
+long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
+{
+	long *IDarray;
+	long *IDarraycp;
+	long i;
+	long imcnt = 0;
+	char imnamecp[200];
+	char fnamecp[500];
+	long ID;
+	char command[500];
+	int ret;
+	
+	
+	for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		imcnt++;
+    
+    IDarray = (long*) malloc(sizeof(long)*imcnt);
+    IDarraycp = (long*) malloc(sizeof(long)*imcnt);
+    
+    imcnt = 0;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		{
+			IDarray[imcnt] = i;
+			imcnt++;
+		}
+		
+	
+	sprintf(command, "mkdir -p %s", dirname);
+	ret = system(command);
+	
+	// create array for each image
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnamecp, "%s_cp", data.image[ID].name); 
+			//printf("image %s\n", data.image[ID].name);
+			IDarraycp[i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
+		}
+	
+	list_image_ID();
+	
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnamecp, "%s_cp", data.image[ID].name);
+			sprintf(fnamecp, "!./%s/%s.fits", dirname, data.image[ID].name);
+			save_fits(imnamecp, fnamecp);
+		}
+		
+    free(IDarray);
+    free(IDarraycp);
+   
+    
+	return(0);
+}
+
+
+
+//
+// save all current images/stream onto file
+// only saves 2D float streams into 3D cubes
+//
+long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)
+{
+	long *IDarray;
+	long *IDarrayout;
+	long i;
+	long imcnt = 0;
+	char imnameout[200];
+	char fnameout[500];
+	long ID;
+	char command[500];
+	int ret;
+	long IDtrig;
+	
+	long frame = 0;
+	char *ptr0;
+	char *ptr1;
+	long *imsizearray;
+	
+	
+	
+	
+	for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		imcnt++;
+    
+    IDarray = (long*) malloc(sizeof(long)*imcnt);
+    IDarrayout = (long*) malloc(sizeof(long)*imcnt);
+    
+    imcnt = 0;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		{
+			IDarray[imcnt] = i;
+			imcnt++;
+		}
+	imsizearray = (long*) malloc(sizeof(long)*imcnt);	
+	
+	
+	
+	sprintf(command, "mkdir -p %s", dirname);
+	ret = system(command);
+	
+	IDtrig = image_ID(IDtrig_name);
+
+
+	printf("Creating arrays\n");
+	fflush(stdout);
+	
+	// create 3D arrays	
+	for(i=0;i<imcnt;i++)
+	{	
+		sprintf(imnameout, "%s_out", data.image[IDarray[i]].name); 
+		imsizearray[i] = sizeof(float)*data.image[IDarray[i]].md[0].size[0]*data.image[IDarray[i]].md[0].size[1];
+		printf("Creating image %s  size %ld x %ld x %ld\n", imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
+		fflush(stdout);
+		IDarrayout[i] = create_3Dimage_ID(imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
+	}
+	list_image_ID();
+	
+	printf("filling arrays\n");
+	fflush(stdout);
+	
+	// drive semaphore to zero
+	while(sem_trywait(data.image[IDtrig].semptr[semtrig])==0) {}
+	
+	frame = 0;
+	while ( frame < NBframes )
+	{
+		sem_wait(data.image[IDtrig].semptr[semtrig]);
+		for(i=0;i<imcnt;i++)
+			{
+				ID = IDarray[i];
+				ptr0 = (char*) data.image[IDarrayout[i]].array.F;
+				ptr1 = ptr0 + imsizearray[i]*frame;
+				memcpy(ptr1, data.image[ID].array.F, imsizearray[i]);
+			}
+		frame++;
+	}
+	
+	
+	printf("Saving images\n");
+	fflush(stdout);
+	
+	list_image_ID();
+	
+
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnameout, "%s_out", data.image[ID].name);
+			sprintf(fnameout, "!./%s/%s_out.fits", dirname, data.image[ID].name);
+			save_fits(imnameout, fnameout);
+		}
+		
+    free(IDarray);
+    free(IDarrayout);
+	free(imsizearray);
+    
+	return(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** continuously transmits 2D image through TCP link
- * mode is not currently used
+ * mode = 1, force counter to be used for synchronization, ignore semaphores if they exist
  */
- 
 
- 
 
-long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
+long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode, int RT_priority)
 {
     long ID;
     struct sockaddr_in sock_server;
@@ -4519,7 +5298,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     char *ptr1; // source - offset by slice
     int rs;
     int sockOK;
-    int RT_priority = 80; //any number from 0-99
+   
     struct sched_param schedpar;
     struct timespec ts;
     long scnt;
@@ -4674,7 +5453,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     
     while(sockOK==1)
     {
-        if(data.image[ID].sem==0)
+        if((data.image[ID].sem==0)||(mode==1))
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);
@@ -4707,6 +5486,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 fflush(stdout);
             }
         }
+        
         if(semr==0)
         {
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
@@ -4773,7 +5553,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
 
 
-long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 {
     struct sockaddr_in sock_server, sock_client;
     int fds_server, fds_client;
@@ -4794,7 +5574,10 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     int socketOpen = 1; // 0 if socket is closed
     int semval;
     int semnb;
-
+	int OKim;
+	int axis;
+	
+	
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
     TCP_BUFFER_METADATA *frame_md;
@@ -4802,7 +5585,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     char *buff; // buffer
    
 
-    int RT_priority = 80; //any number from 0-99
+
     struct sched_param schedpar;
     
 
@@ -4876,18 +5659,55 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     }
 
 
-    ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-    COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
-    printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
-    list_image_ID();
-    
-    
-    
+	// is image already in memory ?
+	OKim = 0;
+	
+	ID = image_ID(imgmd[0].name);
+	if(ID==-1)
+	{
+		// is it in shared memory ?
+		ID = read_sharedmem_image(imgmd[0].name);
+	}	
+	
+	list_image_ID();
+	
+	if(ID == -1)
+		OKim = 0;
+	else
+	{
+		OKim = 1;
+		if(imgmd[0].naxis != data.image[ID].md[0].naxis)
+			OKim = 0;
+		if(OKim==1)
+			{
+				for(axis=0;axis<imgmd[0].naxis;axis++)
+					if(imgmd[0].size[axis] != data.image[ID].md[0].size[axis])
+						OKim = 0;
+			}
+		if(imgmd[0].atype != data.image[ID].md[0].atype)
+			OKim = 0;
+			
+		if(OKim==0)
+			{
+				delete_image_ID(imgmd[0].name);
+				ID = -1;
+			}
+	}
+	
 
-/*        sprintf(fname, "sock%d_stream", port);
-        ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-        COREMOD_MEMORY_image_set_createsem(fname, 4);
-   */
+
+	if(OKim==0)
+	{
+		printf("IMAGE %s HAS TO BE CREATED\n", imgmd[0].name);
+		ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+		printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
+    }
+    else
+		printf("REUSING EXISTING IMAGE %s\n", imgmd[0].name);
+    
+    
+	COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
+
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
     NBslices = 1;
@@ -4991,7 +5811,6 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if(recvsize!=0)
         {
             totsize += recvsize;
-            //   printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
         else
             socketOpen = 0;
@@ -4999,17 +5818,12 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if(socketOpen==1)
             {
                 frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
+
             
                 data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
-                
-                    
-               // printf("[%ld]", data.image[ID].md[0].cnt1); // TEST
+                                    
 
-/*                if(data.image[ID].md[0].cnt1==0)
-                    {
-                        printf("\n"); // TEST
-                        fflush(stdout);
-                    }*/
+           
                 if(NBslices>1)
                     memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
                 else
@@ -5021,6 +5835,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                     if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[ID].semptr[semnb]);
                 }
+                
             }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
@@ -5100,7 +5915,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     sizearray[0] = xsizeim;
     sizearray[1] = ysizeim;
     IDout = create_image_ID(IDout_name, 2, sizearray, data.image[IDin].md[0].atype, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(IDout_name, 7); // create 7 semaphores
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 10); // create 10 semaphores
     IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
@@ -5293,7 +6108,17 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
 
 
-/// ---------------------------------------- LOGGING FUNCTIONS --------------------------------
+
+
+
+
+/* ========================================================================================================================================= */
+
+/*                                                                DATA LOGGING                                                               */
+
+/* ========================================================================================================================================= */
+
+
 
 
 
@@ -5393,6 +6218,19 @@ int COREMOD_MEMORY_logshim_printstatus(char *IDname)
     }
     return(0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5537,10 +6375,27 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     int wOK;
     int noframe;
 
+
+	char logb0name[500];
+	char logb1name[500];
+
     int is3Dcube = 0; // this is a rolling buffer
     int exitflag = 0; // toggles to 1 when loop must exit
 
     LOGSHIM_CONF* logshimconf;
+
+
+    int RT_priority = 60; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+    #endif
+
 
 
     IDlogdata = image_ID(IDlogdata_name);
@@ -5581,9 +6436,14 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     imsizearray[0] = xsize;
     imsizearray[1] = ysize;
     imsizearray[2] = zsize;
-
-    IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
-    IDb1 = create_image_ID("logbuff1", 3, imsizearray, atype, 0, 1);
+    
+    sprintf(logb0name, "%s_logbuff0", IDname);
+    sprintf(logb1name, "%s_logbuff1", IDname);
+    
+    IDb0 = create_image_ID(logb0name, 3, imsizearray, atype, 1, 1);
+    IDb1 = create_image_ID(logb1name, 3, imsizearray, atype, 1, 1);
+	COREMOD_MEMORY_image_set_semflush(logb0name, -1);
+	COREMOD_MEMORY_image_set_semflush(logb1name, -1);
 
     IDb = IDb0;
 
@@ -5760,7 +6620,14 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
         if(  (index>zsize-1)  ||  ((wOK==0)&&(index>0)) )
         {
             /// save image
-            sprintf(iname, "logbuff%d", buffer);
+           // sprintf(iname, "logbuff%d", buffer);
+            sprintf(iname, "%s_logbuff%d", IDname, buffer);
+            if(buffer==0)
+				IDb = IDb0;
+			else
+				IDb = IDb1;
+            
+            
             //          printf("Saving %s -> %s\n", iname, fname);
             //         fflush(stdout);
             if(wOK==1) // image has arrived
@@ -5780,6 +6647,11 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                 //          printf("OK\n");
                 //          fflush(stdout);
             }
+
+			COREMOD_MEMORY_image_set_sempost_byID(IDb, -1);
+			data.image[IDb].md[0].cnt0++;
+			data.image[IDb].md[0].write = 0;
+			
 
             strcpy(tmsg->iname, iname);
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
@@ -5803,7 +6675,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                 IDb = IDb0;
             else
                 IDb = IDb1;
-
+			data.image[IDb].md[0].write = 1;
             logshimconf[0].filecnt ++;
         }
 

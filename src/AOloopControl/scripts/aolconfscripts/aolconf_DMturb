@@ -11,12 +11,10 @@ fi
 
 function TestStartTurb {
 aoconflog "TEST START TURB, DMindex = ${DMindex}"
-sleep 1
 echo " ON" > ./status/testdm${DMindex}turbstatus.txt
 mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
 echo "tmuxname = $tmuxname"
-sleep 5
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname 
 tmux send-keys -t $tmuxname "$execname -n dmturbrun" C-m
@@ -24,7 +22,7 @@ if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 fi
 tmux send-keys -t $tmuxname "aoloopcontroldmturb ${DMindex}" C-m
-
+sleep 1
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turbctrl"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
@@ -62,3 +60,16 @@ EOF
 fi
 }
 
+
+
+function DMturb_WriteToFile {
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}mkturb"
+logRunningProcess "dmmkturb2file" "$tmuxname" "Creating DM turbulence sequence"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
+tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux send-keys -t $tmuxname "rm dmmkturb2file.runproc" C-m
+}

@@ -5,9 +5,9 @@
 NBARGS=1
 
 # ======================= PROCESS NAME =================================
-pname="aol${loopnb}modeval0"
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
+pname="aol${loopnb}mexwfs"
 
-loopnb=$(cat LOOPNUMBER)
 
 
 function printHELP {
@@ -17,10 +17,11 @@ echo "------------------------------------------------------------------------"
 echo "  computes mode coefficients from WFS image stream"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <GPUdevice>"
+echo "     $0 [-hr] <GPUdevice>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-r$(tput sgr0)          read from aol${loopnb}_DMmode_meas instead of computing"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <GPUdevice>     GPU device"
@@ -34,18 +35,46 @@ echo "------------------------------------------------------------------------"
 
 
 
+printHELP1 ()
+{
+    printf "%25s       Extract mode values from WFS images\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
 
 
 
 
 # ================= OPTIONS =============================
-
-while getopts :h FLAG; do
+IMPORTmodeval="0"
+while getopts :hr FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
+    r)
+    IMPORTmodeval="1"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -72,20 +101,43 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 # this version does not use masking (yet)
 
+if [ "$IMPORTmodeval" = "0" ]; then
+
 Cfits -n $pname << EOF
-csetpmove aolRT1
+csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
 readshmim aol${loopnb}_imWFS0tot
-readshmim aol${loopnb}_wfsref0
+readshmim aol${loopnb}_wfsref
 
 readshmim aol${loopnb}_wfsmask
-cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref0 nullim aol${loopnb}_modeval $1 1 1 1 2 0
-
+cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
 exit
 EOF
+
+else
+
+#echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
+#rm /tmp/aol${loopnb}_modeval.im.shm
+#ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
+
+Cfits -n $pname << EOF
+csetpmove aol${loopnb}RT1
+readshmim aol${loopnb}_respM
+readshmim aol${loopnb}_imWFS0
+readshmim aol${loopnb}_imWFS0tot
+readshmim aol${loopnb}_wfsref
+readshmim aol${loopnb}_modeval
+readshmim aol${loopnb}_wfsmask
+cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
+
+exit
+EOF
+
+fi
 

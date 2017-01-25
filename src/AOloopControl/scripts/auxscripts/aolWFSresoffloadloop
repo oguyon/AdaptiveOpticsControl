@@ -6,7 +6,6 @@
 NBARGS=3
 
 
-loopnb=$(cat LOOPNUMBER)
 # ======================= PROCESS NAME =================================
 pname=`echo "$0${loopnb}" | sed "s/\.\///g"`
 
@@ -35,36 +34,50 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+}
 
 
-# ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
 
-while getopts :hH:L:N:Cc FLAG; do
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+
+
+while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
-      #If you just want to display a simple error message instead of the full
-      #help, remove the 2 lines above and uncomment the 2 lines below.
-      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
-      #exit 2
       ;;
   esac
 done
 
-shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
-
-### End getopts code ###
-
+shift $((OPTIND-1)) 
 
 
 
@@ -81,6 +94,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

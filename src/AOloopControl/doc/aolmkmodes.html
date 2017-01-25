@@ -67,6 +67,116 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#! /bin/bash</span>
 <span class="co"># args: &lt;confindex&gt; &lt;maxCPA&gt;</span>
 
+
+
+<span class="ot">NBARGS=</span>4
+<span class="ot">pname=</span><span class="kw">`echo</span> <span class="st">&quot;</span><span class="ot">$0</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="kw">sed</span> <span class="st">&quot;s/\.\///g&quot;</span><span class="kw">`</span>
+
+<span class="kw">function</span><span class="fu"> printHELP</span> <span class="kw">{</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st"> </span><span class="ot">$pname</span><span class="st"> : CREATE MODES FOR AO LOOP</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  CREATE MODES FOR AO LOOP&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   &quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">USAGE:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     </span><span class="ot">$0</span><span class="st"> [-h] &lt;maxCPA&gt; &lt;Block&gt; &lt;SVDlim&gt; &lt;skip DMmodes&gt;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">OPTIONS:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">-h</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">          help&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">INPUT:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   &lt;maxCPA&gt;       : maximum spatial frequency in cycles per aperture&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   &lt;Block&gt;        : if -1, perform full comp. Otherwise, update block number only&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   &lt;SVDlim&gt;       : SVD limit, relative to strongest mode&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   &lt;skip DMmodes&gt; : 1 if re-using previous DM modes, 0 otherwise&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">OUTPUT:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/fmodesall.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/fmodesWFSall.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/cmat.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/fmodes_xx.fits.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/respM_xx.fits.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/contrM_xx.fits.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/contrMc_xx.fits.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   ./mkmodestmp/contrMcact_xx.fits.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;   dmmask.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">NOTES:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  USES (OPTIONAL) : ./conf/TPind.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                  Modes to be excluded&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">}</span>
+
+
+<span class="fu">printHELP1 ()</span>
+<span class="kw">{</span>
+    <span class="kw">printf</span> <span class="st">&quot;%20s       CREATE MODES FOR AO LOOP\n&quot;</span> <span class="st">&quot;</span><span class="ot">$0</span><span class="st">&quot;</span> 
+<span class="kw">}</span>
+
+
+
+
+<span class="co"># Transform long options to short ones</span>
+<span class="ot">singlelinehelp=</span>0
+<span class="kw">for</span> <span class="kw">arg</span> in <span class="st">&quot;</span><span class="ot">$@</span><span class="st">&quot;</span><span class="kw">;</span> <span class="kw">do</span>
+  <span class="kw">shift</span>
+  <span class="kw">case</span> <span class="st">&quot;</span><span class="ot">$arg</span><span class="st">&quot;</span><span class="kw"> in</span>
+    <span class="st">&quot;--help&quot;</span><span class="kw">)</span> <span class="kw">set</span> <span class="kw">--</span> <span class="st">&quot;</span><span class="ot">$@</span><span class="st">&quot;</span> <span class="st">&quot;-h&quot;</span> <span class="kw">;;</span>
+    <span class="st">&quot;--help1&quot;</span>) 
+<span class="kw">set</span> <span class="kw">--</span> <span class="st">&quot;</span><span class="ot">$@</span><span class="st">&quot;</span> <span class="st">&quot;-h&quot;</span> 
+<span class="ot">singlelinehelp=</span>1;
+<span class="kw">;;</span>
+    *<span class="kw">)</span>        <span class="kw">set</span> <span class="kw">--</span> <span class="st">&quot;</span><span class="ot">$@</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$arg</span><span class="st">&quot;</span>
+  <span class="kw">esac</span>
+<span class="kw">done</span>
+
+
+<span class="kw">while</span> <span class="kw">getopts</span> :h FLAG<span class="kw">;</span> <span class="kw">do</span>
+  <span class="kw">case</span> <span class="ot">$FLAG</span><span class="kw"> in</span>
+    h<span class="kw">)</span>  <span class="co">#show help</span>
+      <span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$singlelinehelp</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;0&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+      <span class="kw">printHELP</span>
+      <span class="kw">else</span>
+      <span class="kw">printHELP1</span>
+      <span class="kw">fi</span>
+      <span class="kw">exit</span>
+      <span class="kw">;;</span>
+    \?<span class="kw">)</span> <span class="co">#unrecognized option - show help</span>
+      <span class="kw">echo</span> -e <span class="dt">\\</span>n<span class="st">&quot;Option -</span><span class="ot">${BOLD}$OPTARG${NORM}</span><span class="st"> not allowed.&quot;</span>
+      <span class="kw">printHELP</span>
+      <span class="kw">;;</span>
+  <span class="kw">esac</span>
+<span class="kw">done</span>
+
+<span class="kw">shift</span> <span class="ot">$((</span>OPTIND-1<span class="ot">))</span> 
+
+
+
+
+
+
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;help&quot;</span><span class="kw"> ]</span> <span class="kw">|| [</span> <span class="st">&quot;</span><span class="ot">$#</span><span class="st">&quot;</span> <span class="ot">-ne</span> <span class="ot">$NBARGS</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$#</span><span class="st">&quot;</span> <span class="ot">-ne</span> <span class="ot">$NBARGS</span><span class="kw"> ]</span>; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$(</span><span class="kw">tput</span> setaf 1<span class="ot">)$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st"> Illegal number of parameters (</span><span class="ot">$NBARGS</span><span class="st"> params required, </span><span class="ot">$#</span><span class="st"> entered) </span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
+<span class="kw">fi</span>
+<span class="kw">printHELP</span>
+        <span class="kw">exit</span>
+<span class="kw">fi</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="ot">EXPECTED_ARGS=</span>4
 
 <span class="kw">if [</span> <span class="ot">$#</span> <span class="ot">-ne</span> <span class="ot">$EXPECTED_ARGS</span><span class="kw"> ]</span>

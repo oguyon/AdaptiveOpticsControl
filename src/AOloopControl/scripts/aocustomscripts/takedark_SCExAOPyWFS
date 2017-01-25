@@ -31,7 +31,7 @@ cpsh dark aol${loopnb}_wfsdark
 exit
 EOF
 
-echo "./darks/dark_${datestr}.fits" > conf/conf_wfsdark_fname.txt
+echo "./darks/dark_${datestr}.fits" > conf/conf_wfsdark_name.txt
 
 wn="1"
 pywfs_filter $wn

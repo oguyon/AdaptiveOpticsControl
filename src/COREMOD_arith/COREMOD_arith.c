@@ -465,6 +465,9 @@ long arith_image_zero(char *ID_name)
     int n;
 
     ID = image_ID(ID_name);
+    
+    if(ID!=-1)
+    {
     nelem = data.image[ID].md[0].nelement;
 
     data.image[ID].md[0].write = 0;
@@ -493,7 +496,8 @@ long arith_image_zero(char *ID_name)
     data.image[ID].md[0].write = 0;
     data.image[ID].md[0].cnt0++;
     COREMOD_MEMORY_image_set_sempost(ID_name, -1);
-
+	}
+	
     return(ID);
 }
 
@@ -595,7 +599,7 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
     printf("CROP: \n");
     for(i=0; i<3; i++)
     {
-        printf("axis %ld: %ld -> %ld\n",i,start_c[i],end_c[i]);
+        printf("axis %ld: %ld -> %ld\n", i, start_c[i], end_c[i]);
     }
 
 
@@ -693,6 +697,7 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
     }
     if(naxis==3)
     {
+		printf("naxis = 3\n");
         if(atype == FLOAT)
         {
             for(ii=start_c[0]; ii<end_c[0]; ii++)
@@ -812,7 +817,7 @@ int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_
     end[0]=xstart+size_x;
     end[1]=ystart+size_y;
     end[2]=zstart+size_z;
-    arith_image_crop(in_name,out_name,start,end,3);
+    arith_image_crop(in_name, out_name, start, end, 3);
 
     free(start);
     free(end);
@@ -2052,14 +2057,19 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
 {
   long ID1,ID2;
   long IDout;
-  long ii;
-  long *naxes = NULL;
-  long nelement1,nelement2,nelement;
-  long naxis;
-  int atype1,atype2;
+  long ii, kk;
+  long *naxes = NULL; // input, output
+  long *naxes2 = NULL; 
+  long nelement1, nelement2, nelement;
+  long naxis, naxis2;
+  int atype1, atype2, atypeout;
   long i;
   int n;
+	int op3D2Dto3D = 0; // 3D image, 2D image -> 3D image
+	long xysize;
   char errmsg[SBUFFERSIZE];
+
+
 
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
@@ -2084,8 +2094,10 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
 
   atype1 = data.image[ID1].md[0].atype;
   atype2 = data.image[ID2].md[0].atype;
-  naxis=data.image[ID1].md[0].naxis;
+  naxis = data.image[ID1].md[0].naxis;
+  naxis2 = data.image[ID2].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
+    naxes2 = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
@@ -2093,88 +2105,207 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
      }
 
   for(i=0;i<naxis;i++)
-      {
-		  naxes[i] = data.image[ID1].md[0].size[i];
-		//printf("axis %ld:  %ld\n", i, naxes[i]);
-//fflush(stdout);
-	  }
+	naxes[i] = data.image[ID1].md[0].size[i];
+  for(i=0;i<naxis2;i++)
+	naxes2[i] = data.image[ID2].md[0].size[i];
+	  
   
-  
-  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT, data.NBKEWORD_DFT);
-  free(naxes);
+  atypeout = FLOAT; // default
+
+	// other cases
+	
+	// DOUBLE * -> DOUBLE
+  if (atype1 == DOUBLE )
+	atypeout = DOUBLE;
+	
+	// * DOUBLE -> DOUBLE
+  if (atype2 == DOUBLE )
+	atypeout = DOUBLE;
+	
+	
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+
   nelement1 = data.image[ID1].md[0].nelement;
   nelement2 = data.image[ID2].md[0].nelement;
   
+	// test if 3D 2D -> 3D operation
+	printf("naxis   %ld (%d)   %ld (%d)\n", naxis, atype1, naxis2, atype2);
+	fflush(stdout);
+	
+	op3D2Dto3D = 0;
+	xysize = 0;
+	if((naxis==3)&&(naxis2==2))
+	{
+		printf("naxes:  %ld %ld     %ld %ld\n", naxes[0], naxes2[0], naxes[1], naxes2[1]);
+		fflush(stdout);
+		if((naxes[0]==naxes2[0])&&(naxes[1]==naxes2[1]))
+			{
+				op3D2Dto3D = 1;
+				xysize = naxes[0]*naxes[1];
+				printf("input : 3D im, 2D im -> output : 3D im\n");
+				fflush(stdout);
+				list_image_ID();
+			}
+	}
+  
+  
   nelement = nelement1;
-  if(nelement1!=nelement2)
+  if(op3D2Dto3D == 0)
+	if(nelement1!=nelement2)
     {
       n = snprintf(errmsg, SBUFFERSIZE, "images %s and %s have different number of elements ( %ld %ld )\n", ID_name1, ID_name2, nelement1, nelement2);
       if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
       printERROR(__FILE__,__func__,__LINE__,errmsg);
-
-  //      fprintf(stderr,"ERROR [arith_image_function_2_1_inplace]: images %s and %s have different number of elements ( %ld %ld )\n",ID_name1,ID_name2,nelement1,nelement2);
       exit(0);
     }
 
 	//list_image_ID();
+
+
 
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {  
   # endif
 
-  if((atype1==CHAR)&&(atype2==CHAR))
+  if((atype1==CHAR)&&(atype2==CHAR))  // CHAR CHAR -> FLOAT
     {
-  		//printf("CHAR CHAR\n");
-		//fflush(stdout);
-		//exit(0);
-     # ifdef _OPENMP
-      #pragma omp for
-      # endif
 
-      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.C[ii]),(double) (data.image[ID2].array.C[ii]));
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (ii = 0; ii < nelement; ii++)
+			data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.C[ii]),(double) (data.image[ID2].array.C[ii]));
+	
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.F[kk*xysize+ii] = pt2function((double) (data.image[ID1].array.C[kk*xysize+ii]), (double) (data.image[ID2].array.C[ii]));
+		
     }
-  if((atype1==INT)&&(atype2==INT))
+
+  if((atype1==INT)&&(atype2==INT))  // INT INT -> FLOAT
     {
-  		//printf("INT INT\n");
-		//fflush(stdout);
-		//exit(0);
-     # ifdef _OPENMP
-      #pragma omp for
-      # endif
+   //  # ifdef _OPENMP
+    //  #pragma omp for
+    //  # endif
+	
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.I[ii]));
+		data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.I[ii]));
+
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.F[kk*xysize+ii] = pt2function((double) (data.image[ID1].array.I[kk*xysize+ii]), (double) (data.image[ID2].array.I[ii]));
     }
-  if((atype1==FLOAT)&&(atype2==FLOAT))
+
+  if((atype1==INT)&&(atype2==FLOAT))  // INT FLOAT -> FLOAT
     {
-//		printf("FLOAT FLOAT\n");
-	//	fflush(stdout);
-		//exit(0);
-      # ifdef _OPENMP
-      #pragma omp for
-      # endif
-      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.F[ii]),(double) (data.image[ID2].array.F[ii]));
+     //# ifdef _OPENMP
+     // #pragma omp for
+     // # endif
+      
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+     for (ii = 0; ii < nelement; ii++)
+		data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.F[ii]));
+
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.F[kk*xysize+ii] = pt2function((double) (data.image[ID1].array.I[kk*xysize+ii]), (double) (data.image[ID2].array.F[ii]));
     }
-  if((atype1==DOUBLE)&&(atype2==DOUBLE))
+
+  if((atype1==USHORT)&&(atype2==FLOAT))  // INT FLOAT -> FLOAT
     {
-// 		printf("DOUBLE DOUBLE\n");
-	//	fflush(stdout);
-		//exit(0);
-     # ifdef _OPENMP
-      #pragma omp for
-      # endif
+     //# ifdef _OPENMP
+     // #pragma omp for
+     // # endif
+      
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+     for (ii = 0; ii < nelement; ii++)
+		data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.U[ii]),(double) (data.image[ID2].array.F[ii]));
+
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.F[kk*xysize+ii] = pt2function((double) (data.image[ID1].array.U[kk*xysize+ii]), (double) (data.image[ID2].array.F[ii]));
+    }
+
+
+
+  if((atype1==FLOAT)&&(atype2==FLOAT))  // FLOAT FLOAT -> FLOAT
+    {
+     // # ifdef _OPENMP
+     // #pragma omp for
+     // # endif
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
+		data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.F[ii]),(double) (data.image[ID2].array.F[ii]));
+
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.F[kk*xysize+ii] = pt2function((double) (data.image[ID1].array.F[kk*xysize+ii]), (double) (data.image[ID2].array.F[ii]));
+    }
+
+  if((atype1==DOUBLE)&&(atype2==DOUBLE)) // DOUBLE DOUBLE -> DOUBLE
+    {
+    // # ifdef _OPENMP
+    //  #pragma omp for
+    //  # endif
+	if(op3D2Dto3D == 0)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+      for (ii = 0; ii < nelement; ii++)
+		data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
+
+	if(op3D2Dto3D == 1)
+	# ifdef _OPENMP
+    #pragma omp for
+    # endif
+		for (kk = 0; kk < naxes[2]; kk++)
+			for (ii = 0; ii < xysize; ii++)
+				data.image[IDout].array.D[kk*xysize+ii] = (double) pt2function((double) (data.image[ID1].array.D[kk*xysize+ii]), (double) (data.image[ID2].array.D[ii]));
     }
 
   # ifdef _OPENMP
   }
   # endif
-
-
+	
+	  free(naxes);
+	    free(naxes2);
+	
   return(0);
 }
 

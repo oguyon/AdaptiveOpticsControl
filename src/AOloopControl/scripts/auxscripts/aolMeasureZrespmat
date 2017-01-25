@@ -5,7 +5,6 @@ NBARGS=5
 
 
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
 
@@ -16,11 +15,14 @@ echo "------------------------------------------------------------------------"
 echo "  measures system zonal response matrix"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-hr] <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize flag>"
+echo "     $0 [-hrc] <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize flag>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
-echo "     $(tput bold)-m$(tput sgr0)          (r)e-use AO shared memory structure, do not re-create it"
+echo "     $(tput bold)-h$(tput sgr0)                help"
+echo "     $(tput bold)-c$(tput sgr0) <CPUset>       use CPU set"
+echo "     $(tput bold)-d$(tput sgr0) <delayRM1us>   DM command delay [us]"
+echo "     $(tput bold)-n$(tput sgr0) <NBcycle>      Number of poke cycles (default=0: poke until killed)"
+echo "     $(tput bold)-r$(tput sgr0)                (r)e-use AO shared memory structure, do not re-create it"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <ampl[um]>           RM amplitude on DM"
@@ -30,13 +32,15 @@ echo "     <nb frames excl>     Number of WFS frames to be excluded upon DM stat
 echo "     <normalize flag>     1 if WFS frames to be normalized"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
-  echo "  zrespmat.fits  : zonal response matrix"
-  echo "  wfsref0.fits   : wfs reference"
-  echo "  wfsmap.fits    : WFS response map"
-  echo "  dmmap.fits     : DM response map"
-  echo
-  echo "runs forever until killed with USR1 signal"
-  echo "Default output files updated at each cycle" 
+echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, positive pokes"
+echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, negative pokes"
+echo "    ./zresptmp/wfsref0_NNN.fits         : wfs reference"
+echo "    ./zresptmp/wfsimRMS_NNN.fits         : wfs reference"
+#echo "    ./zresptmp/wfsmap.fits    : WFS response map"
+#echo "    ./zresptmp/dmmap.fits     : DM response map"
+echo
+echo "runs forever until killed with USR1 signal"
+#echo "Default output files updated at each cycle" 
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -44,7 +48,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Acquire zonal response matrix\n" "$0" 
+    printf "%25s       Acquire zonal response matrix\n" "$0" 
 }
 
 
@@ -67,12 +71,24 @@ done
 
 
 AOinitMode="0"      # default
+CPUset="NULL"
+delayRM1us="0"
+NBpokeCycle="0"
 
-while getopts :hr FLAG; do
+while getopts :hrc:d:n: FLAG; do
   case $FLAG in
     r) # re-use AO configuration
     AOinitMode="1"
     echo "AOinitMode = ${AOinitMode}"
+    ;;
+    c)
+    CPUset="$OPTARG"
+    ;;
+    d)
+    delayRM1us="$OPTARG"
+    ;;
+    n)
+    NBpokeCycle="$OPTARG"
     ;;
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -124,8 +140,9 @@ pname="aol${loopnb}zrespM"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
+csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube
-aolmeaszrm $1 $2 $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 ${AOinitMode}
+aolmeaszrm $1 $2 ${delayRM1us} $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 ${AOinitMode} ${NBpokeCycle}
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim

@@ -7,7 +7,6 @@ NBARGS=3
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
 
@@ -52,7 +51,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Measure AO loop DM modes recovery\n" "$0" 
+    printf "%25s       Measure AO loop DM modes recovery\n" "$0" 
 }
 
 

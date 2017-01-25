@@ -1,24 +1,111 @@
 #!/bin/bash
 
-EXPECTED_ARGS=3
 
-if [ $# -ne $EXPECTED_ARGS ]
-then
-  echo
-  echo "------ CREATE DM SLAVED ACTUATORS MAP ----"
-  echo
-  echo "Usage: $0 <dmmap> <lim>"
-  echo
-  echo "  INPUT <dmmap>      : DM response map"
-  echo "  INPUT <lim>        : limit value (usually 0.7)"
-  echo "  INPUT <gauss>      : edge blurr (usually 1.0)"
-  echo
-  echo "EXAMPLE: $0 dmmap 0.7 1.0"
-  echo
-  echo "  OUTPUT: dmslaved.fits"
-  echo
-  exit
+
+
+
+NBARGS=3
+pname=`echo "$0" | sed "s/\.\///g"`
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : CREATE DM SLAVED ACTUATORS MAP $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  CREATE DM SLAVED ACTUATORS MAP"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h] <dmmap> <lim>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "   <dmmap>      : DM response map"
+echo "   <lim>        : limit value (usually 0.7)"
+echo "   <gauss>      : edge blurr (usually 1.0)"
+echo ""
+echo " $(tput bold)OUTPUT:$(tput sgr0)"
+echo "        dmslaved.fits"
+echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "        $0 dmmap 0.7 1.0"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%25s       Create DM slaved actuators map\n" "$0" 
+}
+
+
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
+printHELP
+        exit
+fi
+
+
+
+
+
+
+
+
+
+
+
 
 
 

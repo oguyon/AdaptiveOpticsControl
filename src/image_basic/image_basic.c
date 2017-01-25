@@ -135,6 +135,18 @@ int image_basic_add_cli()
 }
 
 
+int image_basic_add3D_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2) == 0)
+    {  
+      basic_add3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 int image_basic_contract_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
@@ -322,6 +334,16 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
     data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"addim3D");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_add3D_cli;
+    strcpy(data.cmd[data.NBcmd].info,"add two 3D images of different size");
+    strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety> <offsetz>");
+    strcpy(data.cmd[data.NBcmd].example,"addim3D im1 im2 outim 23 201 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2, long off3)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"imcontract3D");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -624,6 +646,133 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
 
 
 
+long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2, long off3)
+{
+    int ID1, ID2; /* ID for the 2 images added */
+    int ID_out; /* ID for the output image */
+    long ii, jj, kk;
+    long naxes1[3], naxes2[3], naxes[3];
+    long xmin, ymin, zmin, xmax, ymax, zmax; /* extrema in the ID1 coordinates */
+    int atype1, atype2, atype;
+    int atypeOK;
+
+    ID1 = image_ID(ID_name1);
+    ID2 = image_ID(ID_name2);
+    naxes1[0] = data.image[ID1].md[0].size[0];
+    naxes1[1] = data.image[ID1].md[0].size[1];
+    naxes1[2] = data.image[ID1].md[0].size[2];
+        
+    naxes2[0] = data.image[ID2].md[0].size[0];
+    naxes2[1] = data.image[ID2].md[0].size[1];
+    naxes2[2] = data.image[ID2].md[0].size[2];
+
+    atype1 = data.image[ID1].md[0].atype;
+    atype2 = data.image[ID2].md[0].atype;
+
+    atypeOK = 0;
+
+    if((atype1==FLOAT)&&(atype2==FLOAT))
+    {
+        atype = FLOAT;
+        atypeOK = 1;
+    }
+    if((atype1==DOUBLE)&&(atype2==DOUBLE))
+    {
+        atype = DOUBLE;
+        atypeOK = 1;
+    }
+
+    if(atypeOK == 0)
+    {
+        printf("ERROR in basic_add: data type combination not supported\n");
+        exit(0);
+    }
+
+    /*  if(data.quiet==0)*/
+    /* printf("add called with %s ( %ld x %ld ) %s ( %ld x %ld ) and offset ( %ld x %ld )\n",ID_name1,naxes1[0],naxes1[1],ID_name2,naxes2[0],naxes2[1],off1,off2);*/
+    xmin = 0;
+    if (off1<0) xmin = off1;
+
+    ymin = 0;
+    if (off2<0) ymin = off2;
+
+    zmin = 0;
+    if (off3<0) zmin = off3;
+
+    xmax = naxes1[0];
+    if ((naxes2[0]+off1)>naxes1[0]) xmax = (naxes2[0]+off1);
+
+    ymax = naxes1[1];
+    if ((naxes2[1]+off2)>naxes1[1]) ymax = (naxes2[1]+off2);
+
+    zmax = naxes1[2];
+    if ((naxes2[2]+off3)>naxes1[2]) ymax = (naxes2[2]+off3);
+
+
+
+    if(atype==FLOAT)
+    {
+        create_3Dimage_ID(ID_name_out,(xmax-xmin),(ymax-ymin),(zmax-zmin));
+        ID_out = image_ID(ID_name_out);
+        naxes[0] = data.image[ID_out].md[0].size[0];
+        naxes[1] = data.image[ID_out].md[0].size[1];
+        naxes[2] = data.image[ID_out].md[0].size[2];
+        
+        for (kk = 0; kk < naxes[2]; kk++)
+        for (jj = 0; jj < naxes[1]; jj++)
+            for (ii = 0; ii < naxes[0]; ii++)  
+            {
+                {
+                    data.image[ID_out].array.F[kk*naxes[1]*naxes[0]+jj*naxes[0]+ii] = 0;
+                    /* if pixel is in ID1 */
+                    
+                    if(((ii+xmin)>=0)&&((ii+xmin)<naxes1[0]))
+                        if(((jj+ymin)>=0)&&((jj+ymin)<naxes1[1]))
+                        if(((kk+zmin)>=0)&&((kk+zmin)<naxes1[2]))
+                            data.image[ID_out].array.F[kk*naxes[1]*naxes[0] + jj*naxes[0] + ii] += data.image[ID1].array.F[ (kk+zmin)*naxes1[1]*naxes1[0] + (jj+ymin)*naxes1[0] + (ii+xmin)];
+                    /* if pixel is in ID2 */
+                    if(((ii+xmin-off1)>=0)&&((ii+xmin-off1)<naxes2[0]))
+                        if(((jj+ymin-off2)>=0)&&((jj+ymin-off2)<naxes2[1]))
+                        if(((kk+zmin-off3)>=0)&&((kk+zmin-off3)<naxes2[2]))
+                            data.image[ID_out].array.F[kk*naxes[1]*naxes[0] + jj*naxes[0] + ii] += data.image[ID2].array.F[ (kk+zmin-off3)*naxes2[1]*naxes2[0] + (jj+ymin-off2)*naxes2[0] + (ii+xmin-off1)];
+                }
+            }
+    }
+
+    if(atype==DOUBLE)
+    {
+        create_3Dimage_ID_double(ID_name_out,(xmax-xmin),(ymax-ymin),(zmax-zmin));
+        ID_out = image_ID(ID_name_out);
+        naxes[0] = data.image[ID_out].md[0].size[0];
+        naxes[1] = data.image[ID_out].md[0].size[1];
+        naxes[2] = data.image[ID_out].md[0].size[2];
+
+        for (kk = 0; kk < naxes[2]; kk++)
+        for (jj = 0; jj < naxes[1]; jj++)
+            for (ii = 0; ii < naxes[0]; ii++) {
+                {
+                    data.image[ID_out].array.D[kk*naxes[1]*naxes[0]+jj*naxes[0]+ii] = 0;
+                    /* if pixel is in ID1 */
+                    if(((ii+xmin)>=0)&&((ii+xmin)<naxes1[0]))
+                        if(((jj+ymin)>=0)&&((jj+ymin)<naxes1[1]))
+                        if(((kk+zmin)>=0)&&((kk+zmin)<naxes1[2]))
+                            data.image[ID_out].array.D[ kk*naxes[1]*naxes[0] + jj*naxes[0] + ii] += data.image[ID1].array.D[ (kk+zmin)*naxes1[1]*naxes1[0] + (jj+ymin)*naxes1[0] + (ii+xmin) ];
+                    /* if pixel is in ID2 */
+                    if(((ii+xmin-off1)>=0)&&((ii+xmin-off1)<naxes2[0]))
+                        if(((jj+ymin-off2)>=0)&&((jj+ymin-off2)<naxes2[1]))
+                        if(((kk+zmin-off3)>=0)&&((kk+zmin-off3)<naxes2[2]))
+                            data.image[ID_out].array.D[kk*naxes[1]*naxes[0]+jj*naxes[0]+ii] += data.image[ID2].array.D[(kk+zmin-off3)*naxes2[1]*naxes2[0]+(jj+ymin-off2)*naxes2[0]+(ii+xmin-off1)];
+                }
+            }
+    }
+
+    return(ID_out);
+}
+
+
+
+
+
 long basic_diff(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2) {
     int ID1, ID2; /* ID for the 2 images added */
     int ID_out; /* ID for the output image */
@@ -777,7 +926,10 @@ long basic_expand3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
     ID = image_ID(ID_name);
 
     naxes[0] = data.image[ID].md[0].size[0];
-    naxes[1] = data.image[ID].md[0].size[1];
+    if(data.image[ID].md[0].naxis>1)
+		naxes[1] = data.image[ID].md[0].size[1];
+	else
+		naxes[1] = 1;
 	if(data.image[ID].md[0].naxis==3)
 		naxes[2] = data.image[ID].md[0].size[2];
 	else
@@ -3789,6 +3941,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     int createim;
     long offset;
 
+	int semindex = 4;
+
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
@@ -3828,7 +3982,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
 
     if(data.image[ID].sem>0) // drive semaphore to zero
-        while(sem_trywait(data.image[ID].semptr[0])==0) {}
+        while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
 
     printf("\n\n");
     k = 0;
@@ -3849,7 +4003,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
         else
         {
             printf("[sem]...");
-            sem_wait(data.image[ID].semptr[0]);
+            sem_wait(data.image[ID].semptr[semindex]);
         }
 
         if(data.image[ID].md[0].naxis == 3)

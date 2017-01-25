@@ -6,8 +6,6 @@ NBARGS=4
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
-
 
 
 
@@ -20,7 +18,7 @@ echo " n = mode number"
 echo " limit = lmin + lmax exp(-(n/n0)^alpha)"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 <lmin> <lmax> <n0> <alpha>"
+echo "     $0 [-h] <lmin> <lmax> <n0> <alpha>"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <lmin>     floor value (for high order modes)"
@@ -32,6 +30,46 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+}
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
 
 
 

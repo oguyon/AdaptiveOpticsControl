@@ -77,6 +77,129 @@ Scripts in the `auxscripts` directory are called by aolconf to perform various t
 Script                         Description
 ------------------------------ -----------------------------------------------------------
 **acquRespM**                  Acquire response matrix
+
+**aolARPFautoApply**   
+
+**aolctr**
+
+**aolmcoeffs2dmmap**
+
+**aolmkmodes**
+
+**aolRMmeas_sensitivity**
+
+**cmmake**
+
+**MeasDMmodesRec**
+
+**modesextract0**         
+
+**selectLatestTelemetry**
+
+**xp2test**
+
+**alignPcam**
+
+**aolARPFautoUpdate**  
+
+**aol_dmCave**
+
+**aolMeasureLOrespmat**  
+
+**aolmkWFSres**      
+
+**aolrun**                 
+
+**cmmake1**
+
+**MeasLoopModeResp**
+
+**modesextract1**
+
+**setMultRange**
+
+**xptest**
+
+**alignPyrTT**
+
+**aolARPFblock**
+
+**aolgetshmimsize**
+
+**aolMeasureZrespmat**
+
+**aolmon**
+
+**aolscangain**
+
+**fitactmappup**
+
+**MeasureLatency**
+
+**modesextractwfs**
+
+**setTTmult**
+
+**aolApplyARPF**
+
+**aolblockstats**
+
+**aollindm2wfsim**
+
+**aolMergeRMmat**
+
+**aoloffloadloop**
+
+**aolSetmcLimit**
+
+**Fits2shm**
+
+**mkDMslaveAct**
+
+**modesTTextact**
+
+**shmimzero**
+
+**aolApplyARPFblock**
+
+**aolCleanLOrespmat**
+
+**aolLinSim**
+
+**aolmkLO_DMmodes**
+
+**aolReadConfFile**
+
+**aolWFSresoffloadloop**
+
+**fits2shmim**
+
+**mkDMslaveActprox**
+
+**processTelemetryPSDs**
+
+**waitforfilek**
+
+**aolARPF**
+
+**aolCleanZrespmat**
+
+**aollinsimDelay**
+
+**aolmkMasks**
+
+**aolRM2CM**
+
+**aolzploopon**
+
+**listrunproc**
+
+**mkHpoke**
+
+**script_aol2test**
+
+**waitonfile**
+
 ------------------------------ -----------------------------------------------------------
 
 
@@ -398,16 +521,6 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 # AOloopControl setup
 
 
-## Files 
-
-SM = shared memory
-
-
----------------------------------- -------------- -----------------------------------------------------------
-File                               stream         Description
----------------------------------- -------------- -----------------------------------------------------------
-**./conf/HRM_DMmask.fits**                        DM mask to construct Hadamard RM pokes, created by **auxscripts/mkHpoke** if not present
----------------------------------- -------------- -----------------------------------------------------------
 
 
 
@@ -430,24 +543,31 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 aolconf -L 3 -N testsim
 ~~~~~
 
-The loop name (`testsim` in the above example) will allow the correct custom setup script to be used. The software package comes with a few pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran.
+The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
 
 
 
 
-- **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will need to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
+- **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
 
-- **autoconfigure streams** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
-	- dm##disp03 is linked to aol#_dmC      (loop dm control channel)
-	- dm##disp00 is linked to aol#_dmO      (flat offset channel)
-	- dm##disp04 is linked to aol#_dmZP0    (zero point offset 0 actuation channel)
-	- dm##disp05 is linked to aol#_dmZP1    (zero point offset 1 actuation channel)
-	- dm##disp06 is linked to aol#_dmZP2    (zero point offset 2 actuation channel)
-	- dm##disp07 is linked to aol#_dmZP3    (zero point offset 3 actuation channel)
-	- dm##disp08 is linked to aol#_dmZP4    (zero point offset 4 actuation channel)
-	- dm##disp   is linked to aol#_dmdisp   (total dm displacement channel)
-	- dm##disp02 is linked to aol#_dmRM     (response matrix actuation channel)
+- **autoconfigure DM streams** 
+There are two possible setup configurations:
+	- **set physical DM** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
+		- dm##disp03 is linked to aol#_dmC      (loop dm control channel)
+		- dm##disp00 is linked to aol#_dmO      (flat offset channel)
+		- dm##disp04 is linked to aol#_dmZP0    (zero point offset 0 actuation channel)
+		- dm##disp05 is linked to aol#_dmZP1    (zero point offset 1 actuation channel)
+		- dm##disp06 is linked to aol#_dmZP2    (zero point offset 2 actuation channel)
+		- dm##disp07 is linked to aol#_dmZP3    (zero point offset 3 actuation channel)
+		- dm##disp08 is linked to aol#_dmZP4    (zero point offset 4 actuation channel)
+		- dm##disp   is linked to aol#_dmdisp   (total dm displacement channel)
+		- dm##disp02 is linked to aol#_dmRM     (response matrix actuation channel)
+	- **set virtual DM**, which is a link to another DM (`dmolink` in `Top Menu` screen)
 	
+- **OPTIONAL: set DM delay** ('setDMdelayON' and 'setDMdelayval' in `Top Menu` screen)
+	
+- **(Re-)Start DM comb if needed** ('stopDM' and 'initDM' commands in `Top Menu` screen)
+
 - **load Memory** (`M` in `Top Menu` screen). The dm performs the symbolic links to the DM channels.
 
 - **link to WFS camera** (`wfs` to `Loop Configuration` screen). Select the WFS shared memory stream. 
@@ -780,26 +900,96 @@ Launches script `./auxscripts/aol_dmCave 0.0005` :
 ~~~ {.numberLines}
 #!/bin/bash
 
-EXPECTED_ARGS=1
+NBARGS=1
+pname=`echo "$0" | sed "s/\.\///g"`
 
 
-if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
-then
-  echo
-  echo " command : $@"  
-  echo
-  echo "------ dmC temporal averaging ------"
-  echo 
-  echo "temporal averaging of zonal correction in AO system"
-  echo "Usage: $0 <averaging coefficient>"
-  echo 
-  echo " INPUT <time interval>   : " 
-  echo 
-  echo 
-  echo "Example: $0 0.001"
-  echo 
-  exit
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : dmC temporal averaging $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  dmC temporal averaging"
+echo "temporal averaging of zonal correction in AO system"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h] <coeff>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <coeff>   time interval"
+echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "     $0 0.001"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       dmC temporal averaging\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
+printHELP
+        exit
+fi
+
+
+
+
 
 
 
@@ -822,25 +1012,105 @@ Launches script `./auxscripts/aolmkWFSres 0.0005` :
 ~~~ {.numberLines}
 #!/bin/bash
 
-EXPECTED_ARGS=1
+
+NBARGS=1
+pname=`echo "$0" | sed "s/\.\///g"`
 
 
-if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
-then
-  echo
-  echo " command : $@"  
-  echo
-  echo "------ Compute real-time WFS residual image ------"
-  echo 
-  echo "Usage: $0 <averaging coeff>"
-  echo
-  echo "creates streams :"
-  echo "        aol<loop>_wfsres"
-  echo "        aol<loop>_wfsres_ave"
-  echo "        aol<loop>_wfsres_rms"
-  echo 
-  exit
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : Compute real-time WFS residual image $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  Align Pyramid camera"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h] <averaging coeff>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "   <averaging coeff>    averaging coefficient"
+echo ""
+echo " $(tput bold)OUTPUT:$(tput sgr0)"
+echo "creates streams :"
+echo "        aol<loop>_wfsres"
+echo "        aol<loop>_wfsres_ave"
+echo "        aol<loop>_wfsres_rms"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       Compute real-time WFS residual image\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
+printHELP
+        exit
+fi
+
+
+
+
+
+
+
+
+
+
+
+
 
 loopnb=$(cat LOOPNUMBER)
 

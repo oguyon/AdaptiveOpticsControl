@@ -7,8 +7,8 @@ NBARGS=1
 # ======================= PROCESS NAME =================================
 pname="aol${loopnb}lindm2wfsim"
 
-loopnb=$(cat LOOPNUMBER)
 
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -18,15 +18,17 @@ echo "  computes WFS image from DM stream"
 echo "  uses response matrix and WFS reference"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <GPUdevice>"
+echo "     $0 [-hw] <GPUdevice>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-h$(tput sgr0)             help"
+echo "     $(tput bold)-w$(tput sgr0) <twait>     wait time per loop [us]"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <GPUdevice>     GPU device"
 echo ""
 echo " $(tput bold)AUTOMATIC INPUT:$(tput sgr0)"
+echo "     aol${loopnb}_dmdisp             input DM stream"
 echo "     aol${loopnb}_zrespMlinsim       WFS reference"
 echo "     aol${loopnb}_wfsref0linsim      zonal response matrix"
 echo ""
@@ -37,20 +39,47 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       Convert DM stream to WFS image stream\n" "$0" 
+}
 
 
 
 
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
 
+
+
+twaitus="0"
 
 # ================= OPTIONS =============================
 
-while getopts :h FLAG; do
+while getopts :hw: FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
+    w)
+    twaitus=$OPTARG
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -77,13 +106,14 @@ fi
 
 
 
+
 Cfits -n $pname << EOF
-csetpmove aolRT1
-readshmim aol${loopnb}_dmdisp
+csetpmove aol${loopnb}RT1
+readshmim aol${loopnb}_dmdispD
 readshmim aol${loopnb}_zrespMlinsim
 readshmim aol${loopnb}_wfsref0linsim
 readshmim aol${loopnb}_wfsmask
-cudaextrmodes aol${loopnb}_dmdisp NULLim aol${loopnb}_zrespMlinsim NULLim aol${loopnb}_wfsref0linsim aol${loopnb}_linsimWFS $1 0 0 0 6 1
+cudaextrmodes aol${loopnb}_dmdispD NULLim aol${loopnb}_zrespMlinsim NULLim aol${loopnb}_wfsref0linsim aol${loopnb}_linsimWFS $1 0 0 0 6 1 ${twaitus}
 
 exit
 EOF

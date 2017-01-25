@@ -5,24 +5,24 @@
 
 # number of arguments to script
 NBARGS=1
-
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
+pname="$aol${loopnb}mc2dmmap"
 
 # ======================= PROCESS NAME =================================
-pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
-loopnb=$(cat LOOPNUMBER)
+
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP (included filtering) $(tput sgr0)"
+echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Computes DM map from modal loop coefficients"
 echo "  Requires Open Loop modes extraction process to be running"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h -o <outputstream> -f -g <gain>] <GPU index>"
+echo "     $0 [-h -p <pname> -o <outputstream> -f -g <gain>] <GPU index>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)             help"
@@ -36,37 +36,58 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%25s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
+}
+
+
+
+
 OUTMODE=0 # default output : outDM_map
 OFFLOADMODE=0
 OUTCNAME="aol${loopnb}_dmCoutfilt"
 
 # ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
 
-while getopts :ho:g:f FLAG; do
+
+while getopts :ho:g:fp: FLAG; do
   case $FLAG in
     o) # set output correction channel
     OUTCNAME=$OPTARG
     OUTMODE=1
     ;;
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     f) # offload correction to dmC
     OFFLOADMODE=1
     ;;
+    p)
+    pname="$OPTARG"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
-      #If you just want to display a simple error message instead of the full
-      #help, remove the 2 lines above and uncomment the 2 lines below.
-      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
-      #exit 2
       ;;
   esac
 done
@@ -97,35 +118,39 @@ fi
 
 
 
-
+csetname="aol${loopnb}RT"
 
 
 
 if [ "$OUTMODE" = "0" ]; then
 
 Cfits -n $pname << EOF
-readshmim aol${loopnb}_modeval_dm_now
-readshmim aol${loopnb}_DMmode_LIMIT
+csetpmove ${csetname}
+readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
+listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+listim
+aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
 else
 
 Cfits -n $pname << EOF
-readshmim aol${loopnb}_modeval_dm_now
-readshmim aol${loopnb}_DMmode_LIMIT
+csetpmove ${csetname}
+readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
+listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+listim
+aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 

@@ -1,33 +1,104 @@
 #!/bin/bash
 
-EXPECTED_ARGS=7
+NBARGS=7
+pname=`echo "$0" | sed "s/\.\///g"`
 
 
-# example args
-#  conf/Hpoke.fits zrespm_Hadamard.fits respM_LOmodes.fits LOrespmat.fits ./conf/DMmask.fits zrespmat.fits 10
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : Merge HO and LO resp matrices $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  Merge HO and LO resp matrices"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <HOpoke>        : High order poke matrix" 
+echo "     <HOresp>        : High order response"
+echo "     <LOpoke>        : Low order poke"
+echo "     <LOresp>        : Low order resp" 
+echo "     <RMmask>        : input RM mask"
+echo "     <RM>            : zonal response matrix estimate"
+echo "     <coeff>         : relative coeff of second matrix"
+echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "     $0 HOpoke.fits HOresp.fits LOpoke.fits LOresp.fits RespMat.fits 50"
+echo ""
+echo "------------------------------------------------------------------------"
+}
 
-if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
-then
-  echo
-  echo " command : $@"  
-  echo
-  echo "------ Merge HO and LO resp matrices ------"
-  echo 
-  echo ""
-  echo "Usage: $0 <HOpoke> <HOresp> <LOpoke> <LOresp> <RM> <coeff>"
-  echo 
-  echo " INPUT <HOpoke>        : High order poke matrix" 
-  echo " INPUT <HOresp>        : High order response"
-  echo " INPUT <LOpoke>        : Low order poke"
-  echo " INPUT <LOresp>        : Low order resp" 
-  echo " INPUT <RMmask>        : input RM mask"
-  echo " INPUT <RM>            : zonal response matrix estimate"
-  echo " INPUT <coeff>         : relative coeff of second matrix"
-  echo 
-  echo "Example: $0 HOpoke.fits HOresp.fits LOpoke.fits LOresp.fits RespMat.fits 50.0"
-  echo 
-  exit
+
+printHELP1 ()
+{
+    printf "%25s       Merge HO and LO resp matrices\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
+printHELP
+        exit
+fi
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

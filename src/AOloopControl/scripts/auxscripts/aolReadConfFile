@@ -5,7 +5,7 @@
 NBARGS=1
 
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 
@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       AOloop load file to stream\n" "$0" 
+    printf "%25s       AOloop load file to stream\n" "$0" 
 }
 
 

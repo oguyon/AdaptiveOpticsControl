@@ -109,13 +109,13 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 int GPU_loop_MultMat_free(int index);
 
 #ifdef HAVE_MAGMA
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name);
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode);
 #endif
 
 void *compute_function( void *ptr );
 int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name);
 
-int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode);
+int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait);
 
 int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
 

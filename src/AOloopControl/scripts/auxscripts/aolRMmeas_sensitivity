@@ -7,7 +7,7 @@ NBARGS=2
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 
@@ -46,7 +46,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Measure photon sensitivity of zonal response matrix\n" "$0" 
+    printf "%25s       Measure photon sensitivity of zonal response matrix\n" "$0" 
 }
 
 

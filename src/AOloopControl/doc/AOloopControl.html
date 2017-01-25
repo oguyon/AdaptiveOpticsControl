@@ -83,23 +83,22 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview-2"><span class="toc-section-number">3.1</span> Overview</a></li>
 </ul></li>
 <li><a href="#aoloopcontrol-setup"><span class="toc-section-number">4</span> AOloopControl setup</a><ul>
-<li><a href="#files"><span class="toc-section-number">4.1</span> Files</a></li>
-<li><a href="#gui-description"><span class="toc-section-number">4.2</span> GUI description</a></li>
-<li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4.3</span> Setting up the hardware interfaces</a><ul>
-<li><a href="#manual-setup"><span class="toc-section-number">4.3.1</span> Manual setup</a></li>
-<li><a href="#setup-script"><span class="toc-section-number">4.3.2</span> Setup script</a></li>
+<li><a href="#gui-description"><span class="toc-section-number">4.1</span> GUI description</a></li>
+<li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4.2</span> Setting up the hardware interfaces</a><ul>
+<li><a href="#manual-setup"><span class="toc-section-number">4.2.1</span> Manual setup</a></li>
+<li><a href="#setup-script"><span class="toc-section-number">4.2.2</span> Setup script</a></li>
 </ul></li>
-<li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">4.4</span> Acquiring a zonal response matrix</a></li>
-<li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">4.5</span> Acquiring a modal response matrix (optional)</a></li>
-<li><a href="#automatic-system-calibration-recommended"><span class="toc-section-number">4.6</span> Automatic system calibration (recommended)</a></li>
-<li><a href="#managing-configurations"><span class="toc-section-number">4.7</span> Managing configurations</a></li>
-<li><a href="#building-control-matrix"><span class="toc-section-number">4.8</span> Building control matrix</a></li>
-<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">4.9</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
-<li><a href="#auxilliary-processes"><span class="toc-section-number">4.10</span> Auxilliary processes</a><ul>
-<li><a href="#extract-wfs-modes"><span class="toc-section-number">4.10.1</span> Extract WFS modes</a></li>
-<li><a href="#extract-open-loop-modes"><span class="toc-section-number">4.10.2</span> Extract open loop modes</a></li>
-<li><a href="#running-average-of-dmc"><span class="toc-section-number">4.10.3</span> Running average of dmC</a></li>
-<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">4.10.4</span> Compute and average wfsres</a></li>
+<li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">4.3</span> Acquiring a zonal response matrix</a></li>
+<li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">4.4</span> Acquiring a modal response matrix (optional)</a></li>
+<li><a href="#automatic-system-calibration-recommended"><span class="toc-section-number">4.5</span> Automatic system calibration (recommended)</a></li>
+<li><a href="#managing-configurations"><span class="toc-section-number">4.6</span> Managing configurations</a></li>
+<li><a href="#building-control-matrix"><span class="toc-section-number">4.7</span> Building control matrix</a></li>
+<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">4.8</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
+<li><a href="#auxilliary-processes"><span class="toc-section-number">4.9</span> Auxilliary processes</a><ul>
+<li><a href="#extract-wfs-modes"><span class="toc-section-number">4.9.1</span> Extract WFS modes</a></li>
+<li><a href="#extract-open-loop-modes"><span class="toc-section-number">4.9.2</span> Extract open loop modes</a></li>
+<li><a href="#running-average-of-dmc"><span class="toc-section-number">4.9.3</span> Running average of dmC</a></li>
+<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">4.9.4</span> Compute and average wfsres</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#offsetting"><span class="toc-section-number">5</span> Offsetting</a><ul>
@@ -233,6 +232,250 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <tr class="odd">
 <td align="left"><strong>acquRespM</strong></td>
 <td align="left">Acquire response matrix</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolARPFautoApply</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolctr</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolmcoeffs2dmmap</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolmkmodes</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolRMmeas_sensitivity</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>cmmake</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>MeasDMmodesRec</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>modesextract0</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>selectLatestTelemetry</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>xp2test</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>alignPcam</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolARPFautoUpdate</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aol_dmCave</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolMeasureLOrespmat</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolmkWFSres</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolrun</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>cmmake1</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>MeasLoopModeResp</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>modesextract1</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>setMultRange</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>xptest</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>alignPyrTT</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolARPFblock</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolgetshmimsize</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolMeasureZrespmat</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolmon</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolscangain</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>fitactmappup</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>MeasureLatency</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>modesextractwfs</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>setTTmult</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolApplyARPF</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolblockstats</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aollindm2wfsim</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolMergeRMmat</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aoloffloadloop</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolSetmcLimit</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Fits2shm</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>mkDMslaveAct</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>modesTTextact</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>shmimzero</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolApplyARPFblock</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolCleanLOrespmat</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolLinSim</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolmkLO_DMmodes</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolReadConfFile</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolWFSresoffloadloop</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>fits2shmim</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>mkDMslaveActprox</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>processTelemetryPSDs</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>waitforfilek</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolARPF</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolCleanZrespmat</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aollinsimDelay</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolmkMasks</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolRM2CM</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolzploopon</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>listrunproc</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>mkHpoke</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>script_aol2test</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>waitonfile</strong></td>
+<td align="left"></td>
 </tr>
 </tbody>
 </table>
@@ -610,33 +853,8 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 <div id="aoloopcontrol-setup" class="section level1">
 <h1><span class="header-section-number">4</span> AOloopControl setup</h1>
-<div id="files" class="section level2">
-<h2><span class="header-section-number">4.1</span> Files</h2>
-<p>SM = shared memory</p>
-<table>
-<colgroup>
-<col width="32%" />
-<col width="13%" />
-<col width="54%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">File</th>
-<th align="left">stream</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><strong>./conf/HRM_DMmask.fits</strong></td>
-<td align="left"></td>
-<td align="left">DM mask to construct Hadamard RM pokes, created by <strong>auxscripts/mkHpoke</strong> if not present</td>
-</tr>
-</tbody>
-</table>
-</div>
 <div id="gui-description" class="section level2">
-<h2><span class="header-section-number">4.2</span> GUI description</h2>
+<h2><span class="header-section-number">4.1</span> GUI description</h2>
 <p>The script <code>aolconf</code> starts the main GUI, from which all setup and control can be done. The GUI consists of several main screens, as shown below.</p>
 <div class="figure">
 <img src="./figures/aolconfGUIscreens.jpg" title="GUI screens" alt="aolconf GUI screens" />
@@ -644,17 +862,19 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 </div>
 <div id="setting-up-the-hardware-interfaces" class="section level2">
-<h2><span class="header-section-number">4.3</span> Setting up the hardware interfaces</h2>
+<h2><span class="header-section-number">4.2</span> Setting up the hardware interfaces</h2>
 <div id="manual-setup" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> Manual setup</h3>
+<h3><span class="header-section-number">4.2.1</span> Manual setup</h3>
 <ul>
 <li>start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</li>
 </ul>
 <pre><code>aolconf -L 3 -N testsim</code></pre>
-<p>The loop name (<code>testsim</code> in the above example) will allow the correct custom setup script to be used. The software package comes with a few pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran.</p>
+<p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
 <ul>
-<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will need to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
-<li><strong>autoconfigure streams</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
+<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
+<li><strong>autoconfigure DM streams</strong> There are two possible setup configurations:
+<ul>
+<li><strong>set physical DM</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
 <ul>
 <li>dm##disp03 is linked to aol#_dmC (loop dm control channel)</li>
 <li>dm##disp00 is linked to aol#_dmO (flat offset channel)</li>
@@ -666,19 +886,23 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <li>dm##disp is linked to aol#_dmdisp (total dm displacement channel)</li>
 <li>dm##disp02 is linked to aol#_dmRM (response matrix actuation channel)</li>
 </ul></li>
+<li><strong>set virtual DM</strong>, which is a link to another DM (<code>dmolink</code> in <code>Top Menu</code> screen)</li>
+</ul></li>
+<li><p><strong>OPTIONAL: set DM delay</strong> ('setDMdelayON' and 'setDMdelayval' in <code>Top Menu</code> screen)</p></li>
+<li><p><strong>(Re-)Start DM comb if needed</strong> ('stopDM' and 'initDM' commands in <code>Top Menu</code> screen)</p></li>
 <li><p><strong>load Memory</strong> (<code>M</code> in <code>Top Menu</code> screen). The dm performs the symbolic links to the DM channels.</p></li>
 <li><p><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</p></li>
 </ul>
 </div>
 <div id="setup-script" class="section level3">
-<h3><span class="header-section-number">4.3.2</span> Setup script</h3>
+<h3><span class="header-section-number">4.2.2</span> Setup script</h3>
 <p>An <code>aosetup</code> script may be used to perform all these operations. Inspect the content of directory <code>aosetup</code> to see such scripts. You may use or modify as needed. If you use a <code>aosetup</code> script, execute it from the working directory, and then start aolconf:</p>
 <pre><code>./aosetup/aosetup_&lt;myLoop&gt;
 ./aolconf</code></pre>
 </div>
 </div>
 <div id="acquiring-a-zonal-response-matrix" class="section level2">
-<h2><span class="header-section-number">4.4</span> Acquiring a zonal response matrix</h2>
+<h2><span class="header-section-number">4.3</span> Acquiring a zonal response matrix</h2>
 <ul>
 <li><p><strong>set response matrix parameters</strong> in <code>Loop Configure</code> screen: amplitude, time delay, frame averaging, excluded frames</p></li>
 <li><p><strong>set normalization and Hadmard modes</strong> in <code>Loop Configure</code> screen. Normalization should probably be set to 1.</p></li>
@@ -749,7 +973,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 </div>
 <div id="acquiring-a-modal-response-matrix-optional" class="section level2">
-<h2><span class="header-section-number">4.5</span> Acquiring a modal response matrix (optional)</h2>
+<h2><span class="header-section-number">4.4</span> Acquiring a modal response matrix (optional)</h2>
 <p>In addition to the zonal response matrix, a modal response matrix can be acquired to improve sensitivity to low-oder modes.</p>
 <p>To do so:</p>
 <ul>
@@ -817,7 +1041,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 </div>
 <div id="automatic-system-calibration-recommended" class="section level2">
-<h2><span class="header-section-number">4.6</span> Automatic system calibration (recommended)</h2>
+<h2><span class="header-section-number">4.5</span> Automatic system calibration (recommended)</h2>
 <p>The automatic system calibration performs all steps listed above under zonal and modal response matrix acquisition.</p>
 <p>The old calibrations are archived as follows:</p>
 <ul>
@@ -828,12 +1052,12 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 </div>
 <div id="managing-configurations" class="section level2">
-<h2><span class="header-section-number">4.7</span> Managing configurations</h2>
+<h2><span class="header-section-number">4.6</span> Managing configurations</h2>
 <p>At any given time, the current configuration (including control matrices if they have been computed) can be saved using the <code>SAVE CURRENT SYSTEM CALIBRATION</code> command. Saving a configuration will save all files in the conf directory into a user-specified directory.</p>
 <p>Previously saved configurations can be loaded with the <code>LOAD SAVED SYSTEM CALIBRATION</code> command. This will load saved files into the conf directory and load all files into shared memory.</p>
 </div>
 <div id="building-control-matrix" class="section level2">
-<h2><span class="header-section-number">4.8</span> Building control matrix</h2>
+<h2><span class="header-section-number">4.7</span> Building control matrix</h2>
 <ul>
 <li><p><strong>set SVDlimit</strong> (<code>SVDla</code> in <code>Control Matrix</code> screen). Set value is 0.1 as a starting point for a stable loop.</p></li>
 <li><p><strong>perform full CM computation</strong> (<code>mkModes0</code> in <code>Control Matrix</code> screen). Enter first the number of CPA blocks you wish to use. Computation takes a few minutes, and takes place in tmux session <code>aol#mkmodes</code>.</p></li>
@@ -913,7 +1137,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 </div>
 <div id="running-the-loop-choosing-hardware-mode-cpugpu" class="section level2">
-<h2><span class="header-section-number">4.9</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
+<h2><span class="header-section-number">4.8</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
 <p>There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:</p>
 <ul>
 <li><p><strong>GPU</strong> : 0 if matrix multiplication(s) done on CPU, &gt;0 for GPU use. This is the number GPUs to use for matrix mult.</p></li>
@@ -984,10 +1208,10 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </table>
 </div>
 <div id="auxilliary-processes" class="section level2">
-<h2><span class="header-section-number">4.10</span> Auxilliary processes</h2>
+<h2><span class="header-section-number">4.9</span> Auxilliary processes</h2>
 <p>A number of auxilliary processes can be running in addition to the main loop operation.</p>
 <div id="extract-wfs-modes" class="section level3">
-<h3><span class="header-section-number">4.10.1</span> Extract WFS modes</h3>
+<h3><span class="header-section-number">4.9.1</span> Extract WFS modes</h3>
 <p>Launches script <code>./auxscripts/modesextractwfs</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1172,7 +1396,7 @@ EOF</code></pre></td></tr></table></div>
 <p>Converts WFS residuals into modes.</p>
 </div>
 <div id="extract-open-loop-modes" class="section level3">
-<h3><span class="header-section-number">4.10.2</span> Extract open loop modes</h3>
+<h3><span class="header-section-number">4.9.2</span> Extract open loop modes</h3>
 <p>Launches script C function (CPU-based):</p>
 <pre><code>key       :    aolcompolm
 module    :    AOloopControl.c
@@ -1184,7 +1408,7 @@ C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)</code></pre>
 <p>Optionally, it also includes <code>aolN_modeval_pC</code>, the predictive control mode values that are added to the correction in predictive mode.</p>
 </div>
 <div id="running-average-of-dmc" class="section level3">
-<h3><span class="header-section-number">4.10.3</span> Running average of dmC</h3>
+<h3><span class="header-section-number">4.9.3</span> Running average of dmC</h3>
 <p>Launches script <code>./auxscripts/aol_dmCave 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1219,28 +1443,168 @@ C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)</code></pre>
 31
 32
 33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
 </pre></td><td class="sourceCode"><pre><code class="sourceCode">#!/bin/bash
 
-EXPECTED_ARGS=1
+NBARGS=1
+pname=`echo &quot;$0&quot; | sed &quot;s/\.\///g&quot;`
 
 
-if [ $# -ne $EXPECTED_ARGS ] || [ &quot;$1&quot; == &quot;help&quot; ]
-then
-  echo
-  echo &quot; command : $@&quot;  
-  echo
-  echo &quot;------ dmC temporal averaging ------&quot;
-  echo 
-  echo &quot;temporal averaging of zonal correction in AO system&quot;
-  echo &quot;Usage: $0 &lt;averaging coefficient&gt;&quot;
-  echo 
-  echo &quot; INPUT &lt;time interval&gt;   : &quot; 
-  echo 
-  echo 
-  echo &quot;Example: $0 0.001&quot;
-  echo 
-  exit
+
+
+
+
+function printHELP {
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;$(tput bold) $pname : dmC temporal averaging $(tput sgr0)&quot;
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;  dmC temporal averaging&quot;
+echo &quot;temporal averaging of zonal correction in AO system&quot;
+echo &quot;   &quot;
+echo &quot; $(tput bold)USAGE:$(tput sgr0)&quot;
+echo &quot;     $0 [-h] &lt;coeff&gt;&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)OPTIONS:$(tput sgr0)&quot;
+echo &quot;     $(tput bold)-h$(tput sgr0)          help&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)INPUT:$(tput sgr0)&quot;
+echo &quot;     &lt;coeff&gt;   time interval&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)EXAMPLE:$(tput sgr0)&quot;
+echo &quot;     $0 0.001&quot;
+echo &quot;&quot;
+echo &quot;------------------------------------------------------------------------&quot;
+}
+
+
+printHELP1 ()
+{
+    printf &quot;%20s       dmC temporal averaging\n&quot; &quot;$0&quot; 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in &quot;$@&quot;; do
+  shift
+  case &quot;$arg&quot; in
+    &quot;--help&quot;) set -- &quot;$@&quot; &quot;-h&quot; ;;
+    &quot;--help1&quot;) 
+set -- &quot;$@&quot; &quot;-h&quot; 
+singlelinehelp=1;
+;;
+    *)        set -- &quot;$@&quot; &quot;$arg&quot;
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ &quot;$singlelinehelp&quot; -eq &quot;0&quot; ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n&quot;Option -${BOLD}$OPTARG${NORM} not allowed.&quot;
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ &quot;$1&quot; = &quot;help&quot; ] || [ &quot;$#&quot; -ne $NBARGS ]; then
+if [ &quot;$#&quot; -ne $NBARGS ]; then
+    echo &quot;$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)&quot;
 fi
+printHELP
+        exit
+fi
+
+
+
+
 
 
 
@@ -1254,7 +1618,7 @@ exit
 EOF</code></pre></td></tr></table></div>
 </div>
 <div id="compute-and-average-wfsres" class="section level3">
-<h3><span class="header-section-number">4.10.4</span> Compute and average wfsres</h3>
+<h3><span class="header-section-number">4.9.4</span> Compute and average wfsres</h3>
 <p>Launches script <code>./auxscripts/aolmkWFSres 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1287,27 +1651,187 @@ EOF</code></pre></td></tr></table></div>
 29
 30
 31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
 </pre></td><td class="sourceCode"><pre><code class="sourceCode">#!/bin/bash
 
-EXPECTED_ARGS=1
+
+NBARGS=1
+pname=`echo &quot;$0&quot; | sed &quot;s/\.\///g&quot;`
 
 
-if [ $# -ne $EXPECTED_ARGS ] || [ &quot;$1&quot; == &quot;help&quot; ]
-then
-  echo
-  echo &quot; command : $@&quot;  
-  echo
-  echo &quot;------ Compute real-time WFS residual image ------&quot;
-  echo 
-  echo &quot;Usage: $0 &lt;averaging coeff&gt;&quot;
-  echo
-  echo &quot;creates streams :&quot;
-  echo &quot;        aol&lt;loop&gt;_wfsres&quot;
-  echo &quot;        aol&lt;loop&gt;_wfsres_ave&quot;
-  echo &quot;        aol&lt;loop&gt;_wfsres_rms&quot;
-  echo 
-  exit
+
+
+function printHELP {
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;$(tput bold) $pname : Compute real-time WFS residual image $(tput sgr0)&quot;
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;  Align Pyramid camera&quot;
+echo &quot;   &quot;
+echo &quot; $(tput bold)USAGE:$(tput sgr0)&quot;
+echo &quot;     $0 [-h] &lt;averaging coeff&gt;&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)OPTIONS:$(tput sgr0)&quot;
+echo &quot;     $(tput bold)-h$(tput sgr0)          help&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)INPUT:$(tput sgr0)&quot;
+echo &quot;   &lt;averaging coeff&gt;    averaging coefficient&quot;
+echo &quot;&quot;
+echo &quot; $(tput bold)OUTPUT:$(tput sgr0)&quot;
+echo &quot;creates streams :&quot;
+echo &quot;        aol&lt;loop&gt;_wfsres&quot;
+echo &quot;        aol&lt;loop&gt;_wfsres_ave&quot;
+echo &quot;        aol&lt;loop&gt;_wfsres_rms&quot;
+echo &quot;&quot;
+echo &quot;------------------------------------------------------------------------&quot;
+}
+
+
+printHELP1 ()
+{
+    printf &quot;%20s       Compute real-time WFS residual image\n&quot; &quot;$0&quot; 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in &quot;$@&quot;; do
+  shift
+  case &quot;$arg&quot; in
+    &quot;--help&quot;) set -- &quot;$@&quot; &quot;-h&quot; ;;
+    &quot;--help1&quot;) 
+set -- &quot;$@&quot; &quot;-h&quot; 
+singlelinehelp=1;
+;;
+    *)        set -- &quot;$@&quot; &quot;$arg&quot;
+  esac
+done
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ &quot;$singlelinehelp&quot; -eq &quot;0&quot; ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n&quot;Option -${BOLD}$OPTARG${NORM} not allowed.&quot;
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ &quot;$1&quot; = &quot;help&quot; ] || [ &quot;$#&quot; -ne $NBARGS ]; then
+if [ &quot;$#&quot; -ne $NBARGS ]; then
+    echo &quot;$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)&quot;
 fi
+printHELP
+        exit
+fi
+
+
+
+
+
+
+
+
+
+
+
+
 
 loopnb=$(cat LOOPNUMBER)
 
