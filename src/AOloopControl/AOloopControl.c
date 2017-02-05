@@ -94,6 +94,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
+// TIMING
 struct timespec tnow;
 struct timespec tdiff;
 double tdiffv;
@@ -135,6 +136,12 @@ int MATRIX_COMPUTATION_MODE = 0;
 int wcol, wrow; // window size
 
 
+
+
+/* =============================================================================================== */
+/*                    aoconfID are global variables for convenience                                */
+/* =============================================================================================== */
+
 long aoconfID_wfsim = -1;
 int WFSatype;
 long aoconfID_wfsdark = -1;
@@ -170,11 +177,6 @@ long aoconfID_GAIN_modes = -1;
 long aoconfID_LIMIT_modes = -1;
 long aoconfID_MULTF_modes = -1;
 
-
-
-
-
-
 long aoconfID_cmd_modesRM = -1;
 
 long aoconfID_wfsmask = -1;
@@ -186,15 +188,8 @@ long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
 long aoconfID_meas_act = -1;
 long aoconfID_contrMcact[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
-
-
-
-
-
 // pixel streaming
 long aoconfID_pixstream_wfspixindex; // index of WFS pixels
-
-
 
 long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
 // currently has 20 timing slots
@@ -208,16 +203,20 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // ...
 long NBtimers = 21; 
 
-
-
+long aoconfIDlogdata = -1;
 long aoconfIDlog0 = -1;
 long aoconfIDlog1 = -1;
-
 
 int *WFS_active_map; // used to map WFS pixels into active array
 int *DM_active_map; // used to map DM actuators into active array
 long aoconfID_meas_act_active;
 long aoconfID_imWFS2_active[100];
+
+
+
+
+
+
 
 
 int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
@@ -242,9 +241,11 @@ int *GPUset1;
 
 
 
+/* =============================================================================================== */
+/*                                     MAIN DATA STRUCTURES                                        */
+/* =============================================================================================== */
 
 extern DATA data;
-
 
 #define NB_AOloopcontrol 10 // max number of loops
 long LOOPNUMBER = 0; // current loop index
@@ -256,20 +257,34 @@ AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 
 
 
+
+
+/* =============================================================================================== */
+/*                         BUFFERS (GLOBALS FOR CONVENIENCE & SPEED)                               */
+/* =============================================================================================== */
+
+// camera read
 float *arrayftmp;
 unsigned short *arrayutmp;
 int avcamarraysInit = 0;
-
 float normfloorcoeff = 1.0;
-
-
-
 float IMTOTAL = 0.0;
 
-
-
+// logging
 int loadcreateshm_log = 0; // 1 if results should be logged in ASCII file
 FILE *loadcreateshm_fplog;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -284,731 +299,416 @@ FILE *loadcreateshm_fplog;
 // 5: string 
 
 
-int AOloopControl_makeTemplateAOloopconf_cli()
-{
-    if(CLI_checkarg(1,2)==0)
+
+
+
+/* =============================================================================================== */
+/*                                         INITIALIZATION                                          */
+/* =============================================================================================== */
+
+int AOloopControl_makeTemplateAOloopconf_cli() {
+    if(CLI_checkarg(1,2)==0) {
         AOloopControl_makeTemplateAOloopconf(data.cmdargtoken[1].val.numl);
-    else
-        return 1;
+		return 0;
+    } else return 1;
 }
 
-
-int AOloopControl_CrossProduct_cli()
-{
-       if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
-        AOloopControl_CrossProduct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-    else
-        return 1;     
-}
-
-
-int AOloopControl_mkSlavedAct_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
-		AOloopControl_mkSlavedAct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
-	else
-		return 1;
-}
-
-int AOloopControl_mkloDMmodes_cli()
-{
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)==0)
-        AOloopControl_mkloDMmodes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl);
-    else
-        return 1;
-}
-
-
-int AOloopControl_mkCM_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)==0)
-		AOloopControl_mkCM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
-	else
-		return 1;
-}
-
-
-int AOloopControl_mkModes_cli()
-{
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,1)==0)
-        AOloopControl_mkModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numf);
-    else
-        return 1;
-}
-
-
-int AOloopControl_mkModes_Simple_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0)
-        AOloopControl_mkModes_Simple(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
-    else
-        return 1;
-}
-
-
-
-
-int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
-{
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
-    {
-      AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string , data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+int AOloopControl_loadconfigure_cli() {
+  if(CLI_checkarg(1,2)==0) {
+      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
       return 0;
-    }
-  else
-    return 1;
+    } else return 1;
 }
 
 
-int AOloopControl_AveStream_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
-    {
-      AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
-    }
-  else
-    return 1;
+
+
+/* =============================================================================================== */
+/*                               LOW LEVEL UTILITIES & TOOLS                                       */
+/* =============================================================================================== */
+
+int AOloopControl_CrossProduct_cli() {
+       if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0) {
+        AOloopControl_CrossProduct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+		return 0;
+	} else return 1;     
+}
+
+int AOloopControl_AveStream_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
+		AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+		return 0;
+    } else return 1;
 }
 
 
-int AOloopControl_computeCM_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)==0)
-    {
+
+
+
+/* =============================================================================================== */
+/*                                         WFS INPUT                                               */
+/* =============================================================================================== */
+
+
+int AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0) {
+      AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string , data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+      return 0; } else return 1;}
+
+/* =============================================================================================== */
+/*                                     ACQUIRING CALIBRATION                                       */
+/* =============================================================================================== */
+
+
+int AOloopControl_RespMatrix_Fast_cli() {
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0) {
+        AOloopControl_RespMatrix_Fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
+        return 0; } else return 1;}
+
+int AOloopControl_Measure_WFSrespC_cli() {
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0) {
+        AOloopControl_Measure_WFSrespC(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
+        return 0; } else return 1;}
+
+int AOloopControl_Measure_WFS_linResponse_cli() {
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)==0) {
+        AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl);
+        return 0; } else return 1;}
+
+int AOloopControl_Measure_zonalRM_cli() {
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0) {
+        AOloopControl_Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
+        return 0; } else return 1;}
+
+int AOloopControl_Measure_Resp_Matrix_cli() {
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0) {
+      Measure_Resp_Matrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
+      return 0;} else return 1;}
+
+
+/* =============================================================================================== */
+/*                                  COMPUTING CALIBRATION                                          */
+/* =============================================================================================== */
+
+int AOloopControl_mkSlavedAct_cli() {
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0) {
+		AOloopControl_mkSlavedAct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+		return 0;} else	return 1;}
+
+int AOloopControl_mkloDMmodes_cli() {
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)==0) {
+        AOloopControl_mkloDMmodes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl);
+		return 0;} else return 1;}
+
+int AOloopControl_mkCM_cli() {
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)==0) {
+		AOloopControl_mkCM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
+		return 0;} else return 1;}
+
+
+int AOloopControl_mkModes_cli() {
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,1)==0) {
+        AOloopControl_mkModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numf);
+		return 0;} else return 1;}
+
+int AOloopControl_mkModes_Simple_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0) {
+        AOloopControl_mkModes_Simple(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
+		return 0;} else return 1;}
+
+int AOloopControl_computeCM_cli() {
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)==0) {
       compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM", data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numf);
       save_fits("evecM","!evecM.fits");
       delete_image_ID("evecM");
-    }
-  else
-    return 1;
-}
+    } else return 1;}
 
-
-int AOloopControl_loadCM_cli()
-{
-  if(CLI_checkarg(1,3)==0)
-    {
+int AOloopControl_loadCM_cli() {
+  if(CLI_checkarg(1,3)==0) {
       AOloopControl_loadCM(LOOPNUMBER, data.cmdargtoken[1].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;} else return 1;}
 
-
-int AOloopControl_loadconfigure_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    {
-      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-int AOloopControl_set_modeblock_gain_cli()
-{
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
-    {
-        AOloopControl_set_modeblock_gain(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-int AOloopControl_mkHadamardModes_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
-    {
+int AOloopControl_mkHadamardModes_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0) {
       AOloopControl_mkHadamardModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0; } else return 1;}
 
-
-int AOloopControl_Hadamard_decodeRM_cli() 
-{
-     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
-    {   
+int AOloopControl_Hadamard_decodeRM_cli() {
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0) {   
         AOloopControl_Hadamard_decodeRM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0; } else return 1;}
 
+int AOloopControl_mkCalib_map_mask_cli() {
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,1)+CLI_checkarg(11,1)==0) {
+            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numf, data.cmdargtoken[11].val.numf);
+            return 0; } else return 1;}
+
+int AOloopControl_Process_zrespM_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
+        AOloopControl_Process_zrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+        return 0;} else return 1;}
+
+int AOloopControl_ProcessZrespM_cli() {
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0) {
+        AOloopControl_ProcessZrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numl);
+        return 0;} else return 1;}
+
+int AOloopControl_compute_CombinedControlMatrix_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0) {
+      compute_CombinedControlMatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
+      return 0; } else return 1;}
+
+
+
+/* =============================================================================================== */
+/*                                     COMPUTING ROUTINES                                          */
+/* =============================================================================================== */
+
+int AOloopControl_WFSzpupdate_loop_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)==0) {
+        AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        return 0; } else return 1;}
+
+int AOloopControl_WFSzeropoint_sum_update_loop_cli() {
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0) {
+        AOloopControl_WFSzeropoint_sum_update_loop(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      return 0; } else return 1;}
+
+int AOloopControl_CompModes_loop_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0) {
+      AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+      return 0; } else return 1;}
+
+int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli(){
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0){
+		AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+		return 0; } else return 1;}
+
+int AOloopControl_computeWFSresidualimage_cli(){
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0){		
+		AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+		return 0; } else return 1;}
+
+int AOloopControl_ComputeOpenLoopModes_cli(){
+	 if(CLI_checkarg(1,2)==0){
+     AOloopControl_ComputeOpenLoopModes(data.cmdargtoken[1].val.numl);
+      return 0;
+    } else return 1;}
+
+int AOloopControl_AutoTuneGains_cli(){
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,3)==0){
+		AOloopControl_AutoTuneGains(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
+		return 0; } else return 1;}
+
+int AOloopControl_dm2dm_offload_cli(){
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0) {		
+		AOloopControl_dm2dm_offload(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+		return 0; } else return 1;}
+
+int AOloopControl_sig2Modecoeff_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0) {
+      AOloopControl_sig2Modecoeff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string,  data.cmdargtoken[4].val.string);
+      return 0;
+    } else return 1;}
+
+
+
+
+/* =============================================================================================== */
+/*                                           PREDICTIVE CONTROL                                    */
+/* =============================================================================================== */
+
+int AOloopControl_builPFloop_WatchInput_cli(){
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0){
+			AOloopControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+			return 0;
+		} else return 1;}
+
+int AOloopControl_mapPredictiveFilter_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0){
+        AOloopControl_mapPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+		return 0;} else return 1;}
+
+int AOloopControl_testPredictiveFilter_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0){
+        AOloopControl_testPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, 1e-10);
+      return 0; } else return 1;}
+
+
+
+
+/* =============================================================================================== */
+/*                                         LOOP CONTROL INTERFACE                                  */
+/* =============================================================================================== */
+
+int AOloopControl_setLoopNumber_cli(){
+  if(CLI_checkarg(1,2)==0) {
+      AOloopControl_setLoopNumber(data.cmdargtoken[1].val.numl);
+      return 0; } else return 1;}
+
+int AOloopControl_set_modeblock_gain_cli() {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0) {
+        AOloopControl_set_modeblock_gain(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
+        return 0;} else return 1;}
+
+int AOloopControl_loopstep_cli(){
+  if(CLI_checkarg(1,2)==0) {
+      AOloopControl_loopstep(LOOPNUMBER, data.cmdargtoken[1].val.numl);
+      return 0;} else return 1;}
+
+int AOloopControl_set_loopfrequ_cli(){
+  if(CLI_checkarg(1,1)==0){
+      AOloopControl_set_loopfrequ(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_set_hardwlatency_frame_cli(){
+  if(CLI_checkarg(1,1)==0){
+      AOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_set_complatency_frame_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_set_complatency_frame(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_set_wfsmextrlatency_frame_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_set_wfsmextrlatency_frame(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_set_AUTOTUNE_LIMITS_delta_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_set_AUTOTUNE_LIMITS_delta(data.cmdargtoken[1].val.numf);
+      return 0;} else return 1;}
+
+int AOloopControl_set_AUTOTUNE_LIMITS_perc_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_set_AUTOTUNE_LIMITS_perc(data.cmdargtoken[1].val.numf);
+      return 0;} else return 1;}
+
+int AOloopControl_setgain_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_setgain(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_setARPFgain_cli(){
+  if(CLI_checkarg(1,1)==0){
+      AOloopControl_setARPFgain(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_setWFSnormfloor_cli(){
+  if(CLI_checkarg(1,1)==0){
+      AOloopControl_setWFSnormfloor(data.cmdargtoken[1].val.numf);
+      return 0;
+    } else return 1;}
+
+int AOloopControl_setmaxlimit_cli() {
+  if(CLI_checkarg(1,1)==0){
+      AOloopControl_setmaxlimit(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_setmult_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_setmult(data.cmdargtoken[1].val.numf);
+      return 0; } else return 1;}
+
+int AOloopControl_setframesAve_cli(){
+  if(CLI_checkarg(1,2)==0) {
+      AOloopControl_setframesAve(data.cmdargtoken[1].val.numl);
+      return 0; } else return 1;}
+
+int AOloopControl_setgainrange_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0){
+      AOloopControl_setgainrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0; } else return 1; }
+
+int AOloopControl_setlimitrange_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0){
+      AOloopControl_setlimitrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0; } else return 1; }
+
+int AOloopControl_setmultfrange_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0) {
+      AOloopControl_setmultfrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0; } else return 1; }
+
+int AOloopControl_setgainblock_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
+      AOloopControl_setgainblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0; } else return 1; }
+
+int AOloopControl_setlimitblock_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
+      AOloopControl_setlimitblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0; } else return 1; }
+
+int AOloopControl_setmultfblock_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
+      AOloopControl_setmultfblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0; } else return 1; }
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                STATUS / TESTING / PERF MEASUREMENT                              */
+/* =============================================================================================== */
 
 int AOcontrolLoop_TestDMSpeed_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0)
-    {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0) {
         AOcontrolLoop_TestDMSpeed( data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0; } else return 1;}
 
-
-
-
-int AOcontrolLoop_TestSystemLatency_cli()
-{
-      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0)
-    {
+int AOcontrolLoop_TestSystemLatency_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0) {
         AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0; } else return 1;}
 
-
-int AOloopControl_RespMatrix_Fast_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0)
-    {
-        AOloopControl_RespMatrix_Fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-int AOloopControl_TestDMmodeResp_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,4)+CLI_checkarg(10,4)+CLI_checkarg(11,4)+CLI_checkarg(12,3)==0)
-    {
+int AOloopControl_TestDMmodeResp_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,4)+CLI_checkarg(10,4)+CLI_checkarg(11,4)+CLI_checkarg(12,3)==0) {
         AOloopControl_TestDMmodeResp(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0; } else return 1;}
 
-int AOloopControl_TestDMmodes_Recovery_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,4)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,3)+CLI_checkarg(10,3)+CLI_checkarg(11,3)+CLI_checkarg(12,3)==0)
-    {
+int AOloopControl_TestDMmodes_Recovery_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,4)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,3)+CLI_checkarg(10,3)+CLI_checkarg(11,3)+CLI_checkarg(12,3)==0) {
         AOloopControl_TestDMmodes_Recovery(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0; } else return 1;}
 
-
-
-/* =============================================================================================== */
-/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
-/* =============================================================================================== */
-
-int AOloopControl_Measure_WFSrespC_cli()
-{
-	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
-    {
-        AOloopControl_Measure_WFSrespC(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-int AOloopControl_Measure_WFS_linResponse_cli()
-{
-	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)==0)
-    {
-        AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-int AOloopControl_Measure_zonalRM_cli()
-{
-    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
-    {
-        AOloopControl_Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-
-
-int AOloopControl_mkCalib_map_mask_cli()
-{
-     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,1)+CLI_checkarg(11,1)==0)
-        {
-            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numf, data.cmdargtoken[11].val.numf);
-            return 0;
-        }
-    else
-        return 1;
-}
-
-// 1: float
-// 2: long
-// 3: string, not existing image
-// 4: existing image
-// 5: string 
-
-
-
-int AOloopControl_Process_zrespM_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
-    {
-        AOloopControl_Process_zrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-int AOloopControl_ProcessZrespM_cli()
-{
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0)
-    {
-        AOloopControl_ProcessZrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-int AOloopControl_WFSzpupdate_loop_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)==0)
-    {
-        AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-int AOloopControl_WFSzeropoint_sum_update_loop_cli()
-{
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0)
-    {
-        AOloopControl_WFSzeropoint_sum_update_loop(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-int AOloopControl_Measure_Resp_Matrix_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
-    {
-      Measure_Resp_Matrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_compute_CombinedControlMatrix_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0)
-    {
-      compute_CombinedControlMatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-int AOloopControl_CompModes_loop_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0)
-    {
-      AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
-		{
-			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
-		return 0;
-		}
-	else
-		return 1;
-}
-
-
-
-int AOloopControl_blockstats_cli()
-{
-	if(CLI_checkarg(1,2)+CLI_checkarg(2,5)==0)
-	{		
+int AOloopControl_blockstats_cli(){
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,5)==0){		
 		AOloopControl_blockstats(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
-		return 0;
-	}
-	else
-		return 1;
-}
+		return 0;} else return 1;}
 
-
-int AOloopControl_computeWFSresidualimage_cli()
-{
-	if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
-	{		
-		AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
-		return 0;
-	}
-	else
-		return 1;
-}
-
-
-int AOloopControl_builPFloop_WatchInput_cli()
-{
-	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
-		{
-			AOloopControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
-			return 0;
-		}
-	else
-		return 1;
-}
-
-
-int AOloopControl_ComputeOpenLoopModes_cli()
-{
-	 if(CLI_checkarg(1,2)==0)
-    {
-     AOloopControl_ComputeOpenLoopModes(data.cmdargtoken[1].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-// 1: float
-// 2: long
-// 3: string, not existing image
-// 4: existing image
-// 5: string 
-
-
-int AOloopControl_AutoTuneGains_cli()
-{
-	if(CLI_checkarg(1,2)+CLI_checkarg(2,3)==0)
-    {
-		AOloopControl_AutoTuneGains(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
-		return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_dm2dm_offload_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
-	{		
-		AOloopControl_dm2dm_offload(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
-		return 0;
-	}
-	else
-		return 1;
-}
-
-
-int AOloopControl_mapPredictiveFilter_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
-        AOloopControl_mapPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
-    else
-        return 1;
-}
-
-
-
-int AOloopControl_testPredictiveFilter_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
-    {
-        AOloopControl_testPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, 1e-10);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_sig2Modecoeff_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
-    {
-      AOloopControl_sig2Modecoeff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string,  data.cmdargtoken[4].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_loopMonitor_cli()
-{
- if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0)
-   {
+int AOloopControl_loopMonitor_cli(){
+ if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0) {
      AOloopControl_loopMonitor(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl);
      return 0;
-   }
- else
-   {
-     AOloopControl_loopMonitor(LOOPNUMBER, 1.0, 8);
-     return 0;
-   }
-}
+   } else { AOloopControl_loopMonitor(LOOPNUMBER, 1.0, 8); return 0;} }
+
+int AOloopControl_statusStats_cli(){
+    if(CLI_checkarg(1,2)==0){
+        AOloopControl_statusStats(data.cmdargtoken[1].val.numl);
+        return 0;} else return 1;}
 
 
 
-int AOloopControl_setLoopNumber_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    {
-      AOloopControl_setLoopNumber(data.cmdargtoken[1].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-int AOloopControl_loopstep_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    {
-      AOloopControl_loopstep(LOOPNUMBER, data.cmdargtoken[1].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-int AOloopControl_set_loopfrequ_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_loopfrequ(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_set_hardwlatency_frame_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_set_complatency_frame_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_complatency_frame(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_set_wfsmextrlatency_frame_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_wfsmextrlatency_frame(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-
-
-
-
-
-
-int AOloopControl_set_AUTOTUNE_LIMITS_delta_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_AUTOTUNE_LIMITS_delta(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_set_AUTOTUNE_LIMITS_perc_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_set_AUTOTUNE_LIMITS_perc(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-
-int AOloopControl_setgain_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_setgain(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_setARPFgain_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_setARPFgain(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-int AOloopControl_setWFSnormfloor_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_setWFSnormfloor(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_setmaxlimit_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_setmaxlimit(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int AOloopControl_setmult_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
-      AOloopControl_setmult(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-
-
-
-
-
-int AOloopControl_setframesAve_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    {
-      AOloopControl_setframesAve(data.cmdargtoken[1].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
-
-
-
-
-// 1: float
-// 2: long
-// 3: string, not existing image
-// 4: existing image
-// 5: string 
 
 
 /* =============================================================================================== */
 /*                                         PROCESS LOG FILES                                       */
 /* =============================================================================================== */
 
-
-int AOloopControl_logprocess_modeval_cli()
-{
-  if(CLI_checkarg(1,4)==0)
-    {
+int AOloopControl_logprocess_modeval_cli(){
+  if(CLI_checkarg(1,4)==0) {
       AOloopControl_logprocess_modeval(data.cmdargtoken[1].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0; } else return 1;}
 
 
 
@@ -1017,80 +717,51 @@ int AOloopControl_logprocess_modeval_cli()
 
 
 
-int AOloopControl_setgainrange_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
-    {
-      AOloopControl_setgainrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
-
-
-int AOloopControl_setlimitrange_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
-    {
-      AOloopControl_setlimitrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
-
-
-int AOloopControl_setmultfrange_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
-    {
-      AOloopControl_setmultfrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
 
 
 
-int AOloopControl_setgainblock_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
-    {
-      AOloopControl_setgainblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
-
-
-int AOloopControl_setlimitblock_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
-    {
-      AOloopControl_setlimitblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
-
-
-int AOloopControl_setmultfblock_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
-    {
-      AOloopControl_setmultfblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
-      return 0;
-    }
-  else
-    return 1; 
-}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 1: float
+// 2: long
+// 3: string, not existing image
+// 4: existing image
+// 5: string 
+
+
+
+
+
+
+
+// OBSOLETE ??
 
 int AOloopControl_InjectMode_cli()
 {
@@ -1102,7 +773,6 @@ int AOloopControl_InjectMode_cli()
   else
     return 1; 
 }
-
 
 
 int AOloopControl_mkTestDynamicModeSeq_cli()
@@ -1130,16 +800,15 @@ int AOloopControl_scanGainBlock_cli()
 }
 
 
-int AOloopControl_statusStats_cli()
-{
-    if(CLI_checkarg(1,2)==0)
-    {
-        AOloopControl_statusStats(data.cmdargtoken[1].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
+
+
+
+
+
+
+
+
+
 
 
 int AOloopControl_setparam_cli()
@@ -5662,12 +5331,12 @@ int AOloopControl_InitializeMemory(int mode)
         AOconf[loop].init_CMc = 0;
         
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
-        if((AOconf[loop].logdataID = image_ID(cntname))==-1)
+        if((aoconfIDlogdata = image_ID(cntname))==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*2);
             sizearray[0] = 1;
             sizearray[1] = 1;
-            AOconf[loop].logdataID = create_image_ID(cntname, 2, sizearray, FLOAT, 1, 0);
+            aoconfIDlogdata = create_image_ID(cntname, 2, sizearray, FLOAT, 1, 0);
             free(sizearray);
         }
     }
@@ -12474,8 +12143,8 @@ int AOloopControl_run()
 
 
 
-                data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
-                data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
+                data.image[aoconfIDlogdata].md[0].cnt0 = AOconf[loop].cnt;
+                data.image[aoconfIDlogdata].array.F[0] = AOconf[loop].gain;
 
 
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)

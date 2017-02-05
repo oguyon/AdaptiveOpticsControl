@@ -10,19 +10,65 @@
 
 typedef struct
 {
-    struct timespec tnow;  // computed at time of sending DM commands
-    double time_sec; // converted in second
 
-    // SETUP
+    /* =============================================================================================== */
+	/*                                         TIMING                                                  */
+	/* =============================================================================================== */
+	
+	// LOOP Timing info
+
+
+	float loopfrequ; // Hz
+
+	// Hardware latency = time from DM command issued to WFS response changed
+	float hardwlatency; // hardware latency between DM command and WFS response [sec] 
+	float hardwlatency_frame; // hardware latency between DM command and WFS response 
+
+	// computation time for direct WFS->DM mode through single matrix multiplication
+	float complatency;
+	float complatency_frame; // computation latency (main loop) from WFS image reception to DM command output
+
+	// computation time for full computation including open loop computation
+	float wfsmextrlatency;
+	float wfsmextrlatency_frame; // WFS mode extraction latency
+
+    int status; // loop status for main loop
+    int statusM; // loop status for modal loop
+    int statusM1; // loop status for modal loop
+  
+    int GPUstatus[50];
+    unsigned int NBtimer; // number of active timers - 1 timer per status value
+    struct timespec timer[MAX_NUMBER_TIMER];
+    
+
+
+
+
+    /* =============================================================================================== */
+	/*                              SETUP & INITIALIZATION STATE                                       */
+	/* =============================================================================================== */
+
     int init; // has been initialized
     unsigned long long cnt;
     unsigned long long cntmax;
     unsigned long long DMupdatecnt;
     int kill; // set to 1 to kill computation loop
-
     char name[80];
 
-    // Wavefront sensor camera
+    int init_RM;         // Response Matrix loaded
+    int init_CM;         // Control Matrix loaded
+    int init_CMc;        // combine control matrix computed
+    int initmapping;
+    char respMname[80];
+    char contrMname[80];
+
+
+
+
+    /* =============================================================================================== */
+	/*                                       WFS CAMERA                                                */
+	/* =============================================================================================== */
+
     char WFSname[80];
     float DarkLevel;
     long sizexWFS;
@@ -36,7 +82,13 @@ typedef struct
     float WFSnormfloor;
     float WFStotalflux; // after dark subtraction
 
-    // DM
+
+
+
+    /* =============================================================================================== */
+	/*                                    DEFORMABLE MIRROR                                            */
+	/* =============================================================================================== */
+
     char dmCname[80];
     char dmdispname[80];
     char dmRMname[80];
@@ -46,44 +98,42 @@ typedef struct
     long activeDMcnt; // number of active actuators
     long sizeDM_active; // only takes into account DM actuators that are active/in use
 
-    // Modes
+
+
+
+    /* =============================================================================================== */
+	/*                                       CONTROL MODES                                             */
+	/* =============================================================================================== */
+
     char DMmodesname[80];
     long DMmodesNBblock; // number of mode blocks
     long NBmodes_block[100]; // number of modes within each block
 
+    // BLOCKS OF MODES
+    long NBMblocks; // number of mode blocks
+    long indexmaxMB[maxNBMB]; 
+
+	long NBDMmodes;
+
+
+
     int init_wfsref0;    // WFS reference image loaded
 
-    int init_RM;         // Response Matrix loaded
-    int init_CM;         // Control Matrix loaded
-    int init_CMc;        // combine control matrix computed
-    int initmapping;
-    char respMname[80];
-    char contrMname[80];
 
 
-    long NBDMmodes;
     float maxlimit; // maximum absolute value for mode values
     float mult; // multiplication coefficient to be applied at each loop iteration
 
-	// Timing info
-	float loopfrequ; // Hz
-	float hardwlatency; // hardware latency between DM command and WFS response [sec] 
-	float hardwlatency_frame; // hardware latency between DM command and WFS response 
-	float complatency;
-	float complatency_frame; // computation latency (main loop) from WFS image reception to DM command output
-	float wfsmextrlatency;
-	float wfsmextrlatency_frame; // WFS mode extraction latency
 	
 
-
-    // LOOP CONTROL
+    /* =============================================================================================== */
+	/*                                        LOOP CONTROL                                             */
+	/* =============================================================================================== */
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     long framesAve; // number of frames to average
-	
 	int DMprimaryWrite_ON; // primary DM write
 	
- 
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -96,42 +146,33 @@ typedef struct
 	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
 	
  
-	// PREDICTICE CONTROL
+ 
+    /* =============================================================================================== */
+	/*                                      PREDICTICE CONTROL                                         */
+	/* =============================================================================================== */
+
     int ARPFon; // 1 if auto-regressive predictive filter is ON
 	float ARPFgain; 
  
 
-    int status; // loop status for main loop
-    int statusM; // loop status for modal loop
-    int statusM1; // loop status for modal loop
-  
-    int GPUstatus[50];
-    unsigned int NBtimer; // number of active timers - 1 timer per status value
-    struct timespec timer[MAX_NUMBER_TIMER];
-    
-    int RMstatus;
-    // 2: wait for image
 
 
-    // BLOCKS OF MODES
-    long NBMblocks; // number of mode blocks
-    long indexmaxMB[maxNBMB]; 
-
-
-    // COMPUTATION
+    /* =============================================================================================== */
+	/*                                     COMPUTATION MODE                                            */
+	/* =============================================================================================== */
     int GPU; // 1 if matrix multiplication  done by GPU
     int GPUall; // 1 if scaling computations done by GPU
     int GPUusesem; // 1 if using semaphores to control GPU
-
-    
     int AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
     
 
     
 
-    // LOOP TELEMETRY AND PERFORMANCE 
+    /* =============================================================================================== */
+	/*                             LOOP TELEMETRY AND PERFORMANCE                                      */
+	/* =============================================================================================== */
+
     // COMPUTED BY OPEN LOOP RETRIEVAL PROCESS
-    
     double RMSmodes;
     double RMSmodesCumul;
     long long RMSmodesCumulcnt;
@@ -161,7 +202,6 @@ typedef struct
 
 
 
-    long logdataID; // image ID containing additional info that can be attached to a image stream log
 
 
     // semaphores for communication with GPU computing threads
@@ -183,87 +223,150 @@ typedef struct
 } THDATA_IMTOTAL;
 
 
-int init_AOloopControl();
 
 
-long AOloopControl_makeTemplateAOloopconf(long loopnb);
-long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name);
-long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode);
-
-long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim);
-long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name);
-long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim);
-long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim);
-
-int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
-int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);
-int AOloopControl_InitializeMemory();
-void *compute_function_imtotal( void *ptr );
-void *compute_function_dark_subtract( void *ptr );
-int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
-//long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
-int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS);
-long AOloopControl_loadCM(long loop, char *CMfname);
-
-long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize);
-long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize);
-int AOloopControl_loadconfigure(long loop, int mode, int level);
-
-int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add);// modal blocks
-
-int set_DM_modes(long loop);
-int set_DM_modesRM(long loop);
-//long AOloopControl_mkHadamardModes50(char *outname);
-long AOloopControl_mkHadamardModes(char *DMmask_name, char *outname);
-long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
-long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
-
-long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter);
-long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname);
-long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name);
-
-long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name);
 
 
 /* =============================================================================================== */
-/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
+/*                                         INITIALIZATION                                          */
+/* =============================================================================================== */
+
+int init_AOloopControl();
+
+long AOloopControl_makeTemplateAOloopconf(long loopnb);
+
+int AOloopControl_loadconfigure(long loop, int mode, int level);
+
+int AOloopControl_InitializeMemory();
+
+
+
+/* =============================================================================================== */
+/*                               LOW LEVEL UTILITIES & TOOLS                                       */
+/* =============================================================================================== */
+
+long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name);
+
+void *compute_function_imtotal( void *ptr );
+
+void *compute_function_dark_subtract( void *ptr );
+
+int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS);
+
+long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize);
+
+long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize);
+
+
+
+
+/* =============================================================================================== */
+/*                                         WFS INPUT                                               */
+/* =============================================================================================== */
+
+int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
+
+int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
+
+
+
+
+/* =============================================================================================== */
+/*                                     ACQUIRING CALIBRATION                                       */
 /* =============================================================================================== */
 
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
+
 long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle);
+
 long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle);
 
+int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
+
+long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname);
+
+
+
+/* =============================================================================================== */
+/*                                  COMPUTING CALIBRATION                                          */
+/* =============================================================================================== */
+
+long AOloopControl_mkHadamardModes(char *DMmask_name, char *outname);
+
+long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
+
+long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode);
 
 int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh);
 
 int AOloopControl_Process_zrespM(long loop, char *IDzrespm0_name, char *IDwfsref_name, char *IDzrespm_name, char *WFSmap_name, char *DMmap_name);
-int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl, int normalize);
-int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name);
-int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name);
 
-int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
-int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
+int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl, int normalize);
+
+long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim);
+
+long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name);
+
+long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim);
+
+long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim);
+
+int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);
+
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
-int AOcompute(long loop, int normalize);
-int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode);
- 
-long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
-double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps);
+
+long AOloopControl_loadCM(long loop, char *CMfname);
+
+
+
+
+/* =============================================================================================== */
+/*                                     COMPUTING ROUTINES                                          */
+/* =============================================================================================== */
+
+int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name);
+
+int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name);
 
 int AOloopControl_run();
 
+int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
+
+int set_DM_modes(long loop);
+
+int set_DM_modesRM(long loop);
+
+int AOcompute(long loop, int normalize);
+
+int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
+
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode);
+
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);
-int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
-int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
-int AOloopControl_statusStats(int updateconf);
-int AOloopControl_showparams(long loop);
-long AOloopControl_blockstats(long loop, char *IDout_name);
+
 long AOloopControl_computeWFSresidualimage(long loop, float alpha);
-long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
+
 long AOloopControl_ComputeOpenLoopModes(long loop);
+
 long AOloopControl_AutoTuneGains(long loop, char *IDout_name);
+
 long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff);
+
+
+
+
+
+/* =============================================================================================== */
+/*                                           PREDICTIVE CONTROL                                    */
+/* =============================================================================================== */
+
+long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
+
+double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps);
+
+long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
+
+
 
 
 
@@ -304,6 +407,35 @@ int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setmult(float multcoeff);
 int AOloopControl_setframesAve(long nbframes);
 
+int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add);// modal blocks
+
+
+
+
+
+/* =============================================================================================== */
+/*                                STATUS / TESTING / PERF MEASUREMENT                              */
+/* =============================================================================================== */
+
+int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
+
+int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
+
+int AOloopControl_statusStats(int updateconf);
+
+int AOloopControl_showparams(long loop);
+
+long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
+
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter);
+
+long AOloopControl_blockstats(long loop, char *IDout_name);
+
+long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *
+IDout_name);
+
+long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name);
+
 
 
 
@@ -316,6 +448,26 @@ int AOloopControl_logprocess_modeval(char *IDname);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/*                                              OBSOLETE                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
 
 // "old" blocks (somewhat obsolete)
 int AOloopControl_setgainrange(long m0, long m1, float gainval);
