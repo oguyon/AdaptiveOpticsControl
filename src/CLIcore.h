@@ -79,6 +79,8 @@ typedef struct {
     char Ccall[1000];
 } CMD;
 
+
+
 typedef struct {
     char name[50];   // module name
     char info[1000]; // short description
@@ -349,6 +351,7 @@ typedef struct
 
 void sig_handler(int signo);
 
+int RegisterCLIcommand(char *CLIkey, char *CLImodule, int (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall);
 
 
 

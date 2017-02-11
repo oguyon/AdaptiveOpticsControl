@@ -531,6 +531,31 @@ void rl_cb(char* linein)
 
 
 
+
+
+
+
+int RegisterCLIcommand(char *CLIkey, char *CLImodule, int (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall)
+{
+
+//	printf("Registering command    %20s   [%5ld]\n", CLIkey, data.NBcmd);
+
+	strcpy(data.cmd[data.NBcmd].key, CLIkey);
+    strcpy(data.cmd[data.NBcmd].module, CLImodule);
+    data.cmd[data.NBcmd].fp = CLIfptr;
+    strcpy(data.cmd[data.NBcmd].info, CLIinfo);
+    strcpy(data.cmd[data.NBcmd].syntax, CLIsyntax);
+    strcpy(data.cmd[data.NBcmd].example, CLIexample);
+    strcpy(data.cmd[data.NBcmd].Ccall, CLICcall);
+    data.NBcmd++;
+
+	return(data.NBcmd);
+}
+
+
+
+
+
 /**
  * @brief Command Line Interface (CLI) main\n 
  *

@@ -95,45 +95,45 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 // TIMING
-struct timespec tnow;
-struct timespec tdiff;
-double tdiffv;
+static struct timespec tnow;
+static struct timespec tdiff;
+static double tdiffv;
 
 
 
 
-int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
-sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
-int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
+static int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
+static sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
+static int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
 
 
-int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
-int COMPUTE_DARK_SUBTRACT_NBTHREADS = 1;
-sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name[32];
-sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[32];
+static int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
+static int COMPUTE_DARK_SUBTRACT_NBTHREADS = 1;
+static sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name[32];
+static sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[32];
 
-int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
-int initWFSref_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-int initcontrMcact_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-float GPU_alpha = 0.0;
-float GPU_beta = 0.0;
-
-
-int COMPUTE_PIXELSTREAMING = 0; // multiple pixel groups 
-int PIXSTREAM_NBSLICES = 1; // number of image slices (= pixel groups)
-int PIXSTREAM_SLICE; // slice index 0 = all pixels
+static int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
+static int initWFSref_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int initcontrMcact_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static float GPU_alpha = 0.0;
+static float GPU_beta = 0.0;
 
 
+static int COMPUTE_PIXELSTREAMING = 0; // multiple pixel groups 
+static int PIXSTREAM_NBSLICES = 1; // number of image slices (= pixel groups)
+static int PIXSTREAM_SLICE; // slice index 0 = all pixels
 
-long ti; // thread index
 
-int MATRIX_COMPUTATION_MODE = 0; 
+
+static long ti; // thread index
+
+static int MATRIX_COMPUTATION_MODE = 0; 
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
 
 
-int wcol, wrow; // window size
+static int wcol, wrow; // window size
 
 
 
@@ -142,25 +142,25 @@ int wcol, wrow; // window size
 /*                    aoconfID are global variables for convenience                                */
 /* =============================================================================================== */
 
-long aoconfID_wfsim = -1;
-int WFSatype;
-long aoconfID_wfsdark = -1;
-long aoconfID_imWFS0 = -1;
-long aoconfID_imWFS0tot = -1;
-long aoconfID_imWFS1 = -1;
-long aoconfID_imWFS2 = -1;
-long aoconfID_wfsref0 = -1;
-long aoconfID_wfsref = -1;
-long aoconfID_dmC = -1;
-long aoconfID_dmRM = -1;
-long aoconfID_DMmodes = -1;
-long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
+static long aoconfID_wfsim = -1;
+static int WFSatype;
+static long aoconfID_wfsdark = -1;
+static long aoconfID_imWFS0 = -1;
+static long aoconfID_imWFS0tot = -1;
+static long aoconfID_imWFS1 = -1;
+static long aoconfID_imWFS2 = -1;
+static long aoconfID_wfsref0 = -1;
+static long aoconfID_wfsref = -1;
+static long aoconfID_dmC = -1;
+static long aoconfID_dmRM = -1;
+static long aoconfID_DMmodes = -1;
+static long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
 
 // Control Modes
-long aoconfID_cmd_modes = -1;
-long aoconfID_meas_modes = -1; // measured
-long aoconfID_RMS_modes = -1;
-long aoconfID_AVE_modes = -1;
+static long aoconfID_cmd_modes = -1;
+static long aoconfID_meas_modes = -1; // measured
+static long aoconfID_RMS_modes = -1;
+static long aoconfID_AVE_modes = -1;
 
 // mode gains, multf, limit are set in 3 tiers
 // global gain
@@ -168,30 +168,30 @@ long aoconfID_AVE_modes = -1;
 // individual gains
 
 // blocks
-long aoconfID_gainb = -1; // block modal gains
-long aoconfID_multfb = -1; // block modal gains
-long aoconfID_limitb = -1; // block modal gains
+static long aoconfID_gainb = -1; // block modal gains
+static long aoconfID_multfb = -1; // block modal gains
+static long aoconfID_limitb = -1; // block modal gains
 
 // individual modes
-long aoconfID_GAIN_modes = -1;
-long aoconfID_LIMIT_modes = -1;
-long aoconfID_MULTF_modes = -1;
+static long aoconfID_GAIN_modes = -1;
+static long aoconfID_LIMIT_modes = -1;
+static long aoconfID_MULTF_modes = -1;
 
-long aoconfID_cmd_modesRM = -1;
+static long aoconfID_cmd_modesRM = -1;
 
-long aoconfID_wfsmask = -1;
-long aoconfID_dmmask = -1;
+static long aoconfID_wfsmask = -1;
+static long aoconfID_dmmask = -1;
 
-long aoconfID_respM = -1;
-long aoconfID_contrM = -1; // pixels -> modes
-long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
-long aoconfID_meas_act = -1;
-long aoconfID_contrMcact[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+static long aoconfID_respM = -1;
+static long aoconfID_contrM = -1; // pixels -> modes
+static long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
+static long aoconfID_meas_act = -1;
+static long aoconfID_contrMcact[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 // pixel streaming
-long aoconfID_pixstream_wfspixindex; // index of WFS pixels
+static long aoconfID_pixstream_wfspixindex; // index of WFS pixels
 
-long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
+static long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
 // currently has 20 timing slots
 // beginning of iteration is defined when entering "wait for image"
 // md[0].wtime is absolute time at beginning of iteration
@@ -201,41 +201,41 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // pixel 1 is time from beginning of loop to status 01
 // pixel 2 is time from beginning of loop to status 02
 // ...
-long NBtimers = 21; 
+static long NBtimers = 21; 
 
-long aoconfIDlogdata = -1;
-long aoconfIDlog0 = -1;
-long aoconfIDlog1 = -1;
+static long aoconfIDlogdata = -1;
+static long aoconfIDlog0 = -1;
+static long aoconfIDlog1 = -1;
 
-int *WFS_active_map; // used to map WFS pixels into active array
-int *DM_active_map; // used to map DM actuators into active array
-long aoconfID_meas_act_active;
-long aoconfID_imWFS2_active[100];
-
-
+static int *WFS_active_map; // used to map WFS pixels into active array
+static int *DM_active_map; // used to map DM actuators into active array
+static long aoconfID_meas_act_active;
+static long aoconfID_imWFS2_active[100];
 
 
 
 
 
 
-int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
-long wfsrefcnt0 = -1;
-long contrMcactcnt0[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};;
+static int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
+
+
+static long wfsrefcnt0 = -1;
+static long contrMcactcnt0[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};;
 
 
 
 // variables used by functions 
-char Average_cam_frames_dname[200];
-long Average_cam_frames_IDdark = -1;
-long Average_cam_frames_nelem = 1;
+static char Average_cam_frames_dname[200];
+static long Average_cam_frames_IDdark = -1;
+static long Average_cam_frames_nelem = 1;
 
 
-int GPUcntMax = 100;
-int *GPUset0;
-int *GPUset1;
+static int GPUcntMax = 100;
+static int *GPUset0;
+static int *GPUset1;
 
 
 
@@ -248,12 +248,12 @@ int *GPUset1;
 extern DATA data;
 
 #define NB_AOloopcontrol 10 // max number of loops
-long LOOPNUMBER = 0; // current loop index
-int AOloopcontrol_meminit = 0;
-int AOlooploadconf_init = 0;
+static long LOOPNUMBER = 0; // current loop index
+static int AOloopcontrol_meminit = 0;
+static int AOlooploadconf_init = 0;
 
 #define AOconfname "/tmp/AOconf.shm"
-AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
+static AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 
 
 
@@ -264,15 +264,15 @@ AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 /* =============================================================================================== */
 
 // camera read
-float *arrayftmp;
-unsigned short *arrayutmp;
-int avcamarraysInit = 0;
-float normfloorcoeff = 1.0;
-float IMTOTAL = 0.0;
+static float *arrayftmp;
+static unsigned short *arrayutmp;
+static int avcamarraysInit = 0;
+static float normfloorcoeff = 1.0;
+static float IMTOTAL = 0.0;
 
 // logging
-int loadcreateshm_log = 0; // 1 if results should be logged in ASCII file
-FILE *loadcreateshm_fplog;
+static int loadcreateshm_log = 0; // 1 if results should be logged in ASCII file
+static FILE *loadcreateshm_fplog;
 
 
 
@@ -280,6 +280,36 @@ FILE *loadcreateshm_fplog;
 
 
 
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                        DATA STREAMS SEMAPHORES                                  */
+/* =============================================================================================== */
+/*
+
+NOTATIONS:
+ wn >- : operations waits on semaphore #n 
+  
+  
+  
+  [aol#_wfsim] : raw WFS input image, all semaphore posted when image is read 
+  [aol#_wfsim]w0 >--(Read_cam_frame)--> [aol#_imWFS0]pa [aol#_imWFS1]pa
+  
+ 
+  [aol#_imWFS0] : dark-subtracted WFS input image
+  
+  
+  [aol#_imWFS1] : normalized dark-subtracted WFS input image
+  
+   
+  [aol#_imWFS2] : 
+  
+ */
 
 
 
@@ -306,19 +336,10 @@ FILE *loadcreateshm_fplog;
 /*                                         INITIALIZATION                                          */
 /* =============================================================================================== */
 
-int AOloopControl_makeTemplateAOloopconf_cli() {
-    if(CLI_checkarg(1,2)==0) {
-        AOloopControl_makeTemplateAOloopconf(data.cmdargtoken[1].val.numl);
-		return 0;
-    } else return 1;
-}
-
 int AOloopControl_loadconfigure_cli() {
   if(CLI_checkarg(1,2)==0) {
       AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
-      return 0;
-    } else return 1;
-}
+      return 0;    } else return 1;}
 
 
 
@@ -330,16 +351,18 @@ int AOloopControl_loadconfigure_cli() {
 int AOloopControl_CrossProduct_cli() {
        if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0) {
         AOloopControl_CrossProduct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-		return 0;
-	} else return 1;     
-}
+		return 0;	} else return 1;     }
 
 int AOloopControl_AveStream_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
 		AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
-		return 0;
-    } else return 1;
-}
+		return 0;    } else return 1;}
+
+int AOloopControl_frameDelay_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,2)==0)    {
+        AOloopControl_frameDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        return 0;    }    else        return 1;}
 
 
 
@@ -386,6 +409,7 @@ int AOloopControl_Measure_Resp_Matrix_cli() {
       return 0;} else return 1;}
 
 
+
 /* =============================================================================================== */
 /*                                  COMPUTING CALIBRATION                                          */
 /* =============================================================================================== */
@@ -404,7 +428,6 @@ int AOloopControl_mkCM_cli() {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)==0) {
 		AOloopControl_mkCM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
 		return 0;} else return 1;}
-
 
 int AOloopControl_mkModes_cli() {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,1)==0) {
@@ -457,6 +480,7 @@ int AOloopControl_compute_CombinedControlMatrix_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0) {
       compute_CombinedControlMatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
       return 0; } else return 1;}
+
 
 
 
@@ -655,7 +679,6 @@ int AOloopControl_setmultfblock_cli(){
 
 
 
-
 /* =============================================================================================== */
 /*                                STATUS / TESTING / PERF MEASUREMENT                              */
 /* =============================================================================================== */
@@ -697,6 +720,29 @@ int AOloopControl_statusStats_cli(){
         AOloopControl_statusStats(data.cmdargtoken[1].val.numl);
         return 0;} else return 1;}
 
+int AOloopControl_mkTestDynamicModeSeq_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0) {
+		AOloopControl_mkTestDynamicModeSeq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+      return 0;   } else  return 1; }
+
+int AOloopControl_AnalyzeRM_sensitivity_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0)    {
+        AOloopControl_AnalyzeRM_sensitivity(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
+        return 0;    }    else        return 1;}
+
+
+/* =============================================================================================== */
+/*                          FOCAL PLANE SPECKLE MODULATION / CONTROL                               */
+/* =============================================================================================== */
+
+
+int AOloopControl_DMmodulateAB_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)==0)   {
+        AOloopControl_DMmodulateAB(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl);
+        return 0;    }    else        return 1;}
 
 
 
@@ -761,6 +807,24 @@ int AOloopControl_logprocess_modeval_cli(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // OBSOLETE ??
 
 int AOloopControl_InjectMode_cli()
@@ -774,20 +838,6 @@ int AOloopControl_InjectMode_cli()
     return 1; 
 }
 
-
-int AOloopControl_mkTestDynamicModeSeq_cli()
-{
-	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
-		AOloopControl_mkTestDynamicModeSeq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
-      return 0;
-    }
-  else
-    return 1; 
-}
-
-
-
 int AOloopControl_scanGainBlock_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,2)==0)
@@ -798,18 +848,6 @@ int AOloopControl_scanGainBlock_cli()
   else
     return 1; 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 int AOloopControl_setparam_cli()
 {
@@ -823,6 +861,17 @@ int AOloopControl_setparam_cli()
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -831,47 +880,6 @@ int AOloopControl_setparam_cli()
 // 3: string, not existing image
 // 4: existing image
 // 5: string 
-
-
-int AOloopControl_DMmodulateAB_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)==0)
-    {
-        AOloopControl_DMmodulateAB(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-
-
-int AOloopControl_frameDelay_cli()
-{
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,2)==0)
-    {
-        AOloopControl_frameDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
-
-int AOloopControl_AnalyzeRM_sensitivity_cli()
-{
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0)
-    {
-        AOloopControl_AnalyzeRM_sensitivity(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-
 
 
 int init_AOloopControl()
@@ -894,612 +902,286 @@ int init_AOloopControl()
     data.NBmodule++;
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmkconf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_makeTemplateAOloopconf_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make template configuration file");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loopnb [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkconf 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_makeTemplateAOloopconf(long loopnb)");
-    data.NBcmd++;
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolcrossp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_CrossProduct_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute cross product between two cubes. Apply mask if image xpmask exists");
-    strcpy(data.cmd[data.NBcmd].syntax,"<cube1> <cube2> <output image>");
-    strcpy(data.cmd[data.NBcmd].example,"aolcrossp imc0 imc1 crosspout");
-    strcpy(data.cmd[data.NBcmd].Ccall,"AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmkslact");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkSlavedAct_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create slaved actuators map based on proximity");
-    strcpy(data.cmd[data.NBcmd].syntax,"<maskRM> <distance> <outslact>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkslact DMmaskRM 2.5 DMslavedact");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolmklodmmodes");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkloDMmodes_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make low order DM modes");
-    strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmklodmmodes modes 50 50 5.0 0.8 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolloadconf",__FILE__, AOloopControl_loadconfigure_cli, "load AO loop configuration", "<loop #>", "AOlooploadconf 1", "int AOloopControl_loadconfigure(long loopnb, 1, 10)");
 
 
-	strcpy(data.cmd[data.NBcmd].key,"aolRM2CM");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkCM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make control matrix from response matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<RMimage> <CMimage> <SVDlim>");
-    strcpy(data.cmd[data.NBcmd].example,"aolRM2CM respM contrM 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmkmodes");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkModes_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make control modes");
-    strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode> <block> <SVDlim>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkmodes modes 50 50 5.0 0.8 1 2 0.01");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolcrossp", __FILE__, AOloopControl_CrossProduct_cli, "compute cross product between two cubes. Apply mask if image xpmask exists", "<cube1> <cube2> <output image>", "aolcrossp imc0 imc1 crosspout", "AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
 
-
-    strcpy(data.cmd[data.NBcmd].key,"aolmkmodesM");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkModes_Simple_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make control modes in modal DM mode");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input WFS modes> <NBmblock> <block> <SVDlim>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkmodesM wfsallmodes 5 2 0.01");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"cropshim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_camimage_extract2D_sharedmem_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"crop shared mem image");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sizex> <sizey> <xstart> <ystart>");
-    strcpy(data.cmd[data.NBcmd].example,"cropshim imin imout 32 32 153 201");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aveACshmim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AveStream_cli;
-    strcpy(data.cmd[data.NBcmd].info,"average and AC shared mem image");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <coeff> <output image ave> <output AC> <output RMS>");
-    strcpy(data.cmd[data.NBcmd].example,"aveACshmim imin 0.01 outave outAC outRMS");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
-    data.NBcmd++;
+    RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
 
 
 
-
-    strcpy(data.cmd[data.NBcmd].key,"aolloadconf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loadconfigure_cli;
-    strcpy(data.cmd[data.NBcmd].info,"load AO loop configuration");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #>");
-    strcpy(data.cmd[data.NBcmd].example,"AOlooploadconf 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loadconfigure(long loopnb, 1, 10)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/*  3. WFS INPUT                                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetmbgain");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_modeblock_gain_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal block gain");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <gain> <compute sum flag>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmbgain 2 0.2 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolRMmkmasks");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkCalib_map_mask_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make sensitivity maps and masks from response matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]> <percentile low> <coefficient low> <percentile high> <coefficient high>");
-    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks .. 0.2 1.0 0.5 0.3 0.05 1.0 0.65 0.3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolproczrm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Process_zrespM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"process zonal resp mat, WFS ref -> DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input zrespm fname [string]> <input WFS ref fname [string]> <output zrespm [string]> <output WFS response map fname [string]>  <output DM response map fname [string]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolproczrm zrespmat0 wfsref0 zrespm wfsmap dmmap");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_Process_zrespM(long loop, char *IDzrespm0_name, char *IDwfsref_name, char *IDzrespm_name, char *WFSmap_name, char *DMmap_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolcleanzrm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_ProcessZrespM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"clean zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS ref fname [string]>  <output WFS response map fname [string]>  <output DM response map fname [string]> <RM ampl [um]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolcleanzrm zrm wfsref wfsmap dmmap 0.05");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double ampl)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolmkH");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkHadamardModes_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make Hadamard poke sequence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DM pixel mask> <output fname [string]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkH dm50mask h50pokec");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkHadamardModes50(char *DMmask_name, char outname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolHaddec");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Hadamard_decodeRM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"decode Hadamard matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input RM> <Hadamard matrix> <DMpix index frame> <output RM>");
-    strcpy(data.cmd[data.NBcmd].example,"aolHaddec imRMh Hmat pixiind imRM");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aoldmtestsp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOcontrolLoop_TestDMSpeed_cli;
-    strcpy(data.cmd[data.NBcmd].info,"test DM speed by sending circular tip-tilt");
-    strcpy(data.cmd[data.NBcmd].syntax,"<dmname> <delay us [long]> <NB pts> <ampl>");
-    strcpy(data.cmd[data.NBcmd].example,"aoldmtestsp dmdisp2 100 20 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)");
-    data.NBcmd++;
-    
-    strcpy(data.cmd[data.NBcmd].key,"aoltestlat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOcontrolLoop_TestSystemLatency_cli;
-    strcpy(data.cmd[data.NBcmd].info,"test system latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream> <ampl [um]> <NBiter>");
-    strcpy(data.cmd[data.NBcmd].example,"aoltestlat dmC wfsim 0.1 5000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter)");
-    data.NBcmd++;
-
-    
-    strcpy(data.cmd[data.NBcmd].key,"aolmRMfast");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_RespMatrix_Fast_cli;
-    strcpy(data.cmd[data.NBcmd].info,"acquire fast modal response matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modes> <dm RM stream> <WFS stream> <sem trigger> <hardware latency [s]> <loop frequ [Hz]> <ampl [um]> <outname>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmRMfast DMmodes aol0_dmRM aol0_wfsim 4 0.00112 2000.0 0.03 rm000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aoltestmresp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodeResp_cli;
-    strcpy(data.cmd[data.NBcmd].info,"Measure system response for a single mode");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <fstep> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]>  <output [2D im]>"); 
-    strcpy(data.cmd[data.NBcmd].example,"aoltestmresp DMmodesC 5 0.05 10.0 100.0 1.2 1.0 1000 dmmask dmdisp3 dmC out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aoltestdmrec");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodes_Recovery_cli;
-    strcpy(data.cmd[data.NBcmd].info,"Test system DM modes recovery");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <ampl [um]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <meas out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]> <out meas ave [2D im]> <out meas rms [2D im]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoltestdmrec DMmodesC 0.05 DMmask dmsisp2 dmoutr 2000  20 outave outrms outmave outmrms");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name)");
-    data.NBcmd++;
+    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
 
 
 
 
 /* =============================================================================================== */
-/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
+/*                                                                                                 */
+/* 4. ACQUIRING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("aolacqresp", __FILE__, AOloopControl_Measure_Resp_Matrix_cli, "acquire AO response matrix and WFS reference", "<ave# [long]> <ampl [float]> <nbloop [long]> <frameDelay [long]> <NBiter [long]>", "aolacqresp 50 0.1 5 2", "int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)");
+    
+    RegisterCLIcommand("aolmRMfast", __FILE__, AOloopControl_RespMatrix_Fast_cli, "acquire fast modal response matrix", "<modes> <dm RM stream> <WFS stream> <sem trigger> <hardware latency [s]> <loop frequ [Hz]> <ampl [um]> <outname>", "aolmRMfast DMmodes aol0_dmRM aol0_wfsim 4 0.00112 2000.0 0.03 rm000", "long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname)");
+
+    RegisterCLIcommand("aolmeasWFSrespC",__FILE__, AOloopControl_Measure_WFSrespC_cli, "measure WFS resp to DM patterns", "<delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <normalize flag> <AOinitMode> <NBcycle>", "aolmeasWFSrespC 2 135 20 0 dmmodes wfsresp 1 0 5", "long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);");
+
+    RegisterCLIcommand("aolmeaslWFSrespC",__FILE__, AOloopControl_Measure_WFS_linResponse_cli, "measure linear WFS response to DM patterns", "<ampl [um]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <output reference [string]> <normalize flag> <AOinitMode> <NBcycle>", "aolmeasWFSrespC 0.05 2 135 20 0 dmmodes wfsresp wfsref 1 0 5", "long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)");
+
+    RegisterCLIcommand("aolmeaszrm",__FILE__, AOloopControl_Measure_zonalRM_cli, "measure zonal resp mat, WFS ref, DM and WFS response maps", "<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode> <NBcycle>", "aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0 0", "long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. COMPUTING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes50(char *DMmask_name, char outname)");
+    
+    RegisterCLIcommand("aolHaddec", __FILE__, AOloopControl_Hadamard_decodeRM_cli, "decode Hadamard matrix", "<input RM> <Hadamard matrix> <DMpix index frame> <output RM>", "aolHaddec imRMh Hmat pixiind imRM", "long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
+
+    RegisterCLIcommand("aolmkslact",__FILE__, AOloopControl_mkSlavedAct_cli, "create slaved actuators map based on proximity", "<maskRM> <distance> <outslact>", "aolmkslact DMmaskRM 2.5 DMslavedact", "long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name)");
+
+    RegisterCLIcommand("aolmklodmmodes",__FILE__, AOloopControl_mkloDMmodes_cli, "make low order DM modes", "<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode>", "aolmklodmmodes modes 50 50 5.0 0.8 1", "long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode)");
+
+	RegisterCLIcommand("aolRM2CM",__FILE__, AOloopControl_mkCM_cli, "make control matrix from response matrix", "<RMimage> <CMimage> <SVDlim>", "aolRM2CM respM contrM 0.1", "long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)");
+
+    RegisterCLIcommand("aolmkmodes", __FILE__, AOloopControl_mkModes_cli, "make control modes", "<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode> <block> <SVDlim>", "aolmkmodes modes 50 50 5.0 0.8 1 2 0.01", "long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim)");
+
+    RegisterCLIcommand("aolmkmodesM", __FILE__, AOloopControl_mkModes_Simple_cli, "make control modes in modal DM mode", "<input WFS modes> <NBmblock> <block> <SVDlim>", "aolmkmodesM wfsallmodes 5 2 0.01", "long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim)");
+
+    RegisterCLIcommand("aolRMmkmasks",__FILE__, AOloopControl_mkCalib_map_mask_cli, "make sensitivity maps and masks from response matrix", "<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]> <percentile low> <coefficient low> <percentile high> <coefficient high>", "aolRMmkmasks .. 0.2 1.0 0.5 0.3 0.05 1.0 0.65 0.3", "int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh)");
+
+    RegisterCLIcommand("aolproczrm",__FILE__, AOloopControl_Process_zrespM_cli, "process zonal resp mat, WFS ref -> DM and WFS response maps", "<input zrespm fname [string]> <input WFS ref fname [string]> <output zrespm [string]> <output WFS response map fname [string]>  <output DM response map fname [string]>", "aolproczrm zrespmat0 wfsref0 zrespm wfsmap dmmap", "int AOloopControl_Process_zrespM(long loop, char *IDzrespm0_name, char *IDwfsref_name, char *IDzrespm_name, char *WFSmap_name, char *DMmap_name)");
+
+    RegisterCLIcommand("aolcleanzrm",__FILE__, AOloopControl_ProcessZrespM_cli, "clean zonal resp mat, WFS ref, DM and WFS response maps", "<zrespm fname [string]> <output WFS ref fname [string]>  <output WFS response map fname [string]>  <output DM response map fname [string]> <RM ampl [um]>", "aolcleanzrm zrm wfsref wfsmap dmmap 0.05", "int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double ampl)");
+
+    RegisterCLIcommand("aolcompcmatc",__FILE__, AOloopControl_compute_CombinedControlMatrix_cli, "compute combined control matrix", "<modal control matrix> <modes> <wfs mask> <dm mask> <combined cmat> <combined cmat, only active elements>", "aolcompcmatc cmat fmodes wfsmask dmmask cmatc cmatcact", "long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)");
+
+    RegisterCLIcommand("aolcmmake",__FILE__, AOloopControl_computeCM_cli, "make control matrix", "<NBmodes removed> <RespMatrix> <ContrMatrix> <beta> <nbremovedstep> <eigenvlim>", "aolcmmake 8 respm cmat", "int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim)");
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 6. REAL TIME COMPUTING ROUTINES                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("aolrun", __FILE__, AOloopControl_run, "run AO loop", "no arg", "aolrun", "int AOloopControl_run()");
+
+    RegisterCLIcommand("aolzpwfsloop",__FILE__, AOloopControl_WFSzpupdate_loop_cli, "WFS zero point offset loop", "<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>", "aolzpwfsloop dmZP zrespM wfszp", "int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name)");
+
+    RegisterCLIcommand("aolzpwfscloop", __FILE__, AOloopControl_WFSzeropoint_sum_update_loop_cli, "WFS zero point offset loop: combine multiple input channels", "<name prefix> <number of channels> <wfsref0> <wfsref>", "aolzpwfscloop wfs2zpoffset 4 wfsref0 wfsref", "int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)");
+    
+    RegisterCLIcommand("aocmlrun", __FILE__, AOloopControl_CompModes_loop_cli, "run AO compute modes loop", "<CM> <wfsref> <WFS image stream> <WFS image total stream> <output stream>", "aocmlrun CM wfsref wfsim wfsimtot aomodeval", "int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
+
+	RegisterCLIcommand("aolmc2dmfilt", __FILE__, AOloopControl_GPUmodecoeffs2dm_filt_loop_cli, "convert mode coefficients to DM map", "<mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex> <loopnb> <offloadMode>", "aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1", "int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, long offloadMode)");
+
+	RegisterCLIcommand("aolsig2mcoeff", __FILE__, AOloopControl_sig2Modecoeff_cli, "convert signals to mode coeffs", "<signal data cube> <reference> <Modes data cube> <output image>", "aolsig2mcoeff wfsdata wfsref wfsmodes outim", "long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)");
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. PREDICTIVE CONTROL                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+	RegisterCLIcommand("aolmappfilt", __FILE__, AOloopControl_mapPredictiveFilter_cli, "map/search predictive filter", "<input coeffs> <mode number> <delay [frames]>", "aolmkapfilt coeffim 23 2.4", "long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr)");
+
+   	RegisterCLIcommand("aolmkpfilt", __FILE__, AOloopControl_testPredictiveFilter_cli, "test predictive filter", "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>", "aolmkpfilt traceim 23 2.4 20 filt23","long AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)");
+    
+    RegisterCLIcommand("aolmkpfilt", __FILE__, AOloopControl_testPredictiveFilter_cli, "test predictive filter", "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>", "aolmkpfilt traceim 23 2.4 20 filt23","long AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)");
+
+    
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/*  8. LOOP CONTROL INTERFACE                                                                      */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+	RegisterCLIcommand("aolnb", __FILE__, AOloopControl_setLoopNumber_cli, "set AO loop #", "<loop nb>", "AOloopnb 0", "int AOloopControl_setLoopNumber(long loop)");
+
+/* =============================================================================================== */
+/* 		8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET                                      */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/* 		8.2. DATA LOGGING                                                                          */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/* 		8.3. PRIMARY DM WRITE                                                                      */
 /* =============================================================================================== */
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmeasWFSrespC");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFSrespC_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measure WFS resp to DM patterns");
-    strcpy(data.cmd[data.NBcmd].syntax,"<delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <normalize flag> <AOinitMode> <NBcycle>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 2 135 20 0 dmmodes wfsresp 1 0 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);");
-    data.NBcmd++;
+/* =============================================================================================== */
+/* 		8.4. INTEGRATOR AUTO TUNING                                                                */
+/* =============================================================================================== */
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmeaslWFSrespC");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFS_linResponse_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measure linear WFS response to DM patterns");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <output reference [string]> <normalize flag> <AOinitMode> <NBcycle>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 0.05 2 135 20 0 dmmodes wfsresp wfsref 1 0 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/* 		8.5. PREDICTIVE FILTER ON/OFF                                                              */
+/* =============================================================================================== */
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Measure_zonalRM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode> <NBcycle>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/* 		8.6. TIMING PARAMETERS                                                                     */
+/* =============================================================================================== */
 
+/* =============================================================================================== */
+/* 		8.7. CONTROL LOOP PARAMETERS                                                               */
+/* =============================================================================================== */
 
-
-    strcpy(data.cmd[data.NBcmd].key,"aolzpwfsloop");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_WFSzpupdate_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"WFS zero point offset loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>");
-    strcpy(data.cmd[data.NBcmd].example,"aolzpwfsloop dmZP zrespM wfszp");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolzpwfscloop");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_WFSzeropoint_sum_update_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"WFS zero point offset loop: combine multiple input channels");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name prefix> <number of channels> <wfsref0> <wfsref>");
-    strcpy(data.cmd[data.NBcmd].example,"aolzpwfscloop wfs2zpoffset 4 wfsref0 wfsref");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolacqresp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_Measure_Resp_Matrix_cli;
-    strcpy(data.cmd[data.NBcmd].info,"acquire AO response matrix and WFS reference");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ave# [long]> <ampl [float]> <nbloop [long]> <frameDelay [long]> <NBiter [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolacqresp 50 0.1 5 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolcompcmatc");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_compute_CombinedControlMatrix_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute combined control matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modal control matrix> <modes> <wfs mask> <dm mask> <combined cmat> <combined cmat, only active elements>");
-    strcpy(data.cmd[data.NBcmd].example,"aolcompcmatc cmat fmodes wfsmask dmmask cmatc cmatcact");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aocmlrun");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_CompModes_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"run AO compute modes loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<CM> <wfsref> <WFS image stream> <WFS image total stream> <output stream>");
-    strcpy(data.cmd[data.NBcmd].example,"aocmlrun CM wfsref wfsim wfsimtot aomodeval");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetgain", __FILE__, AOloopControl_setgain_cli, "set gain", "<gain value>", "aolsetgain 0.1", "int AOloopControl_setgain(float gain)");
     
+    RegisterCLIcommand("aolsetARPFgain", __FILE__, AOloopControl_setARPFgain_cli, "set auto-regressive predictive filter gain", "<gain value>", "aolsetARPFgain 0.1", "int AOloopControl_setARPFgain(float gain)");
+
+
+
+
+
+
+
+
+
+
+    RegisterCLIcommand("aolkill", __FILE__, AOloopControl_loopkill, "kill AO loop", "no arg", "aolkill", "int AOloopControl_setLoopNumber()");
+
+    RegisterCLIcommand("aolon", __FILE__, AOloopControl_loopon, "turn loop on", "no arg", "aolon", "int AOloopControl_loopon()");
+
+    RegisterCLIcommand("aoloff", __FILE__, AOloopControl_loopoff, "turn loop off", "no arg", "aoloff", "int AOloopControl_loopoff()");
+
+    RegisterCLIcommand("aolstep",__FILE__, AOloopControl_loopstep_cli, "turn loop on for N steps", "<nbstep>", "aolstep", "int AOloopControl_loopstep(long loop, long NBstep)");
+
+    RegisterCLIcommand("aolreset", __FILE__, AOloopControl_loopreset, "reset loop, and turn it off", "no arg", "aolreset", "int AOloopControl_loopreset()");
+
+    RegisterCLIcommand("aolsetmbgain",__FILE__, AOloopControl_set_modeblock_gain_cli, "set modal block gain", "<loop #> <gain> <compute sum flag>", "aolsetmbgain 2 0.2 1", "int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)");
+
+    RegisterCLIcommand("aolDMprimWon", __FILE__, AOloopControl_DMprimaryWrite_on, "turn DM primary write on", "no arg", "aolDMprimWon", "int AOloopControl_DMprimaryWrite_on()");
     
-    strcpy(data.cmd[data.NBcmd].key,"aolmc2dmfilt");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex> <loopnb> <offloadMode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, long offloadMode)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolDMprimWoff", __FILE__, AOloopControl_DMprimaryWrite_off, "turn DM primary write off", "no arg", "aolDMprimWoff", "int AOloopControl_DMprimaryWrite_off()");
 
+    RegisterCLIcommand("aolAUTOTUNELIMon", __FILE__, AOloopControl_AUTOTUNE_LIMITS_on, "turn auto-tuning modal limits on", "no arg", "aolAUTOTUNELIMon", "int AOloopControl_AUTOTUNE_LIMITS_on()");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmappfilt");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mapPredictiveFilter_cli;
-    strcpy(data.cmd[data.NBcmd].info, "map/search predictive filter");
-    strcpy(data.cmd[data.NBcmd].syntax, "<input coeffs> <mode number> <delay [frames]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkapfilt coeffim 23 2.4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr)");
-    data.NBcmd++;
-  
-    strcpy(data.cmd[data.NBcmd].key,"aolmkpfilt");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_testPredictiveFilter_cli;
-    strcpy(data.cmd[data.NBcmd].info, "test predictive filter");
-    strcpy(data.cmd[data.NBcmd].syntax, "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkpfilt traceim 23 2.4 20 filt23");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)");
-    data.NBcmd++;
-    
-    
-    strcpy(data.cmd[data.NBcmd].key,"aolmkpfilt");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_testPredictiveFilter_cli;
-    strcpy(data.cmd[data.NBcmd].info, "test predictive filter");
-    strcpy(data.cmd[data.NBcmd].syntax, "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkpfilt traceim 23 2.4 20 filt23");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)");
-    data.NBcmd++;
-    
-    
-    strcpy(data.cmd[data.NBcmd].key,"aolrun");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_run;
-    strcpy(data.cmd[data.NBcmd].info,"run AO loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolrun");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_run()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsig2mcoeff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_sig2Modecoeff_cli;
-    strcpy(data.cmd[data.NBcmd].info,"convert signals to mode coeffs");
-    strcpy(data.cmd[data.NBcmd].syntax,"<signal data cube> <reference> <Modes data cube> <output image>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsig2mcoeff wfsdata wfsref wfsmodes outim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)");
-    data.NBcmd++;
-    
-    strcpy(data.cmd[data.NBcmd].key,"aolnb");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setLoopNumber_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set AO loop #");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop nb>");
-    strcpy(data.cmd[data.NBcmd].example,"AOloopnb 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setLoopNumber(long loop)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolkill");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopkill;
-    strcpy(data.cmd[data.NBcmd].info,"kill AO loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolkill");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setLoopNumber()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopon;
-    strcpy(data.cmd[data.NBcmd].info,"turn loop on");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolon");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopon()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aoloff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopoff;
-    strcpy(data.cmd[data.NBcmd].info,"turn loop off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aoloff");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopoff()");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolstep");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopstep_cli;
-    strcpy(data.cmd[data.NBcmd].info,"turn loop on for N steps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<nbstep>");
-    strcpy(data.cmd[data.NBcmd].example,"aolstep");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopstep(long loop, long NBstep)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolreset");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopreset;
-    strcpy(data.cmd[data.NBcmd].info,"reset loop, and turn it off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolreset");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopreset()");
-    data.NBcmd++;
-
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolDMprimWon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_DMprimaryWrite_on;
-    strcpy(data.cmd[data.NBcmd].info,"turn DM primary write on");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolDMprimWon");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_on()");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolDMprimWoff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_DMprimaryWrite_off;
-    strcpy(data.cmd[data.NBcmd].info,"turn DM primary write off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolDMprimWoff");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_off()");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNELIMon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_LIMITS_on;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal limits on");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNELIMon");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_LIMITS_on()");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNELIMoff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_LIMITS_off;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal limits off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNELIMoff");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_LIMITS_off()");
-    data.NBcmd++;
-
+    RegisterCLIcommand("aolAUTOTUNELIMoff", __FILE__, AOloopControl_AUTOTUNE_LIMITS_off, "turn auto-tuning modal limits off", "no arg", "aolAUTOTUNELIMoff", "int AOloopControl_AUTOTUNE_LIMITS_off()");
 	
-	strcpy(data.cmd[data.NBcmd].key,"aolsetATlimd");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_AUTOTUNE_LIMITS_delta_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set auto-tuning modal limits delta");
-    strcpy(data.cmd[data.NBcmd].syntax,"<delta value [um]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetATlimd 0.0001");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)");
-    data.NBcmd++;
+	RegisterCLIcommand("aolsetATlimd", __FILE__, AOloopControl_set_AUTOTUNE_LIMITS_delta_cli, "set auto-tuning modal limits delta", "<delta value [um]>", "aolsetATlimd 0.0001", "int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)");
 
-	strcpy(data.cmd[data.NBcmd].key,"aolsetATlimp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_AUTOTUNE_LIMITS_perc_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set auto-tuning modal limits percentile");
-    strcpy(data.cmd[data.NBcmd].syntax,"<percentile value [percent]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetATlimp 1.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)");
-    data.NBcmd++;
+	RegisterCLIcommand("aolsetATlimp", __FILE__, AOloopControl_set_AUTOTUNE_LIMITS_perc_cli, "set auto-tuning modal limits percentile", "<percentile value [percent]>", "aolsetATlimp 1.0", "int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)");
 
+    RegisterCLIcommand("aolAUTOTUNEGAINon", __FILE__, AOloopControl_AUTOTUNE_GAINS_on, "turn auto-tuning modal gains on", "no arg", "aolAUTOTUNEGAINon", "int AOloopControl_AUTOTUNE_GAINS_on()");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNEGAINon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_GAINS_on;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal gains on");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNEGAINon");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_GAINS_on()");
-    data.NBcmd++;
+    RegisterCLIcommand("aolAUTOTUNEGAINoff", __FILE__, AOloopControl_AUTOTUNE_GAINS_off, "turn auto-tuning modal gains off", "no arg", "aolAUTOTUNEGAINoff", "int AOloopControl_AUTOTUNE_GAINS_off()");
 
+    RegisterCLIcommand("aolARPFon", __FILE__, AOloopControl_ARPFon, "turn auto-regressive predictive filter on", "no arg", "aolARPFon", "int AOloopControl_ARPFon()");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNEGAINoff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_GAINS_off;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal gains off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNEGAINoff");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_GAINS_off()");
-    data.NBcmd++;
+    RegisterCLIcommand("aolARPFoff", __FILE__, AOloopControl_ARPFoff, "turn auto-regressive predictive filter off", "no arg", "aolARPFoff", "int AOloopControl_ARPFoff()");
 
 
 
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. STATUS / TESTING / PERF MEASUREMENT                                                          */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("aoldmtestsp", __FILE__, AOcontrolLoop_TestDMSpeed_cli, "test DM speed by sending circular tip-tilt", "<dmname> <delay us [long]> <NB pts> <ampl>", "aoldmtestsp dmdisp2 100 20 0.1", "long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)");
+    
+    RegisterCLIcommand("aoltestlat", __FILE__, AOcontrolLoop_TestSystemLatency_cli, "test system latency", "<dm stream> <wfs stream> <ampl [um]> <NBiter>", "aoltestlat dmC wfsim 0.1 5000", "long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter)");
+
+    RegisterCLIcommand("aoltestmresp", __FILE__, AOloopControl_TestDMmodeResp_cli, "Measure system response for a single mode", "<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <fstep> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]>  <output [2D im]>", "aoltestmresp DMmodesC 5 0.05 10.0 100.0 1.2 1.0 1000 dmmask dmdisp3 dmC out", "long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name)");
+
+    RegisterCLIcommand("aoltestdmrec", __FILE__, AOloopControl_TestDMmodes_Recovery_cli, "Test system DM modes recovery", "<DM modes [3D im]> <ampl [um]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <meas out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]> <out meas ave [2D im]> <out meas rms [2D im]>", "aoltestdmrec DMmodesC 0.05 DMmask dmsisp2 dmoutr 2000  20 outave outrms outmave outmrms", "long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name)");
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. PROCESS LOG FILES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
 
 
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolARPFon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_ARPFon;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-regressive predictive filter on");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolARPFon");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ARPFon()");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolARPFoff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_ARPFoff;
-    strcpy(data.cmd[data.NBcmd].info,"turn auto-regressive predictive filter off");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolARPFoff");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ARPFoff()");
-    data.NBcmd++;
 
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetgain");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setgain_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set gain");
-    strcpy(data.cmd[data.NBcmd].syntax,"<gain value>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetgain 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgain(float gain)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsetARPFgain");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setARPFgain_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set auto-regressive predictive filter gain");
-    strcpy(data.cmd[data.NBcmd].syntax,"<gain value>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetARPFgain 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setARPFgain(float gain)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsetloopfrequ");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_loopfrequ_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set loop frequency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop frequ [Hz]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetloopfrequ 2000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_loopfrequ(float loopfrequ)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsethlat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_hardwlatency_frame_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set hardware latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<hardware latency [frame]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsethlat 2.7");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsetclat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_complatency_frame_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set computation latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<computation latency [frame]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetclat 0.6");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_complatency_frame(float complatency_frame)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolsetwlat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_wfsmextrlatency_frame_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set WFS mode extraction latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<latency [frame]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetwlat 0.8");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame)");
-    data.NBcmd++;
 
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetwfsnormf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setWFSnormfloor_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set WFS normalization floor");
-    strcpy(data.cmd[data.NBcmd].syntax,"<floor value (total flux)>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetwfsnormf 10000.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setWFSnormfloor(float WFSnormfloor)");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetmaxlim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setmaxlimit_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set max limit for AO mode correction");
-    strcpy(data.cmd[data.NBcmd].syntax,"<limit value>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmaxlim 0.01");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmaxlimit(float maxlimit)");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetmult");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setmult_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set mult coeff for AO mode correction");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mult value>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmult 0.98");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmult(float multcoeff)");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetnbfr");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setframesAve_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set number of frames to be averaged");
-    strcpy(data.cmd[data.NBcmd].syntax,"<nb frames>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetnbfr 10");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setframesAve(long nbframes)");
-    data.NBcmd++;
+
+
+
+
+
+    
+
+    
+
+
+
+
+
+
+
+    RegisterCLIcommand("aolsetloopfrequ",__FILE__, AOloopControl_set_loopfrequ_cli, "set loop frequency", "<loop frequ [Hz]>", "aolsetloopfrequ 2000", "int AOloopControl_set_loopfrequ(float loopfrequ)");
+
+    RegisterCLIcommand("aolsethlat", __FILE__, AOloopControl_set_hardwlatency_frame_cli, "set hardware latency", "<hardware latency [frame]>", "aolsethlat 2.7", "int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
+
+    RegisterCLIcommand("aolsetclat",__FILE__, AOloopControl_set_complatency_frame_cli,"set computation latency", "<computation latency [frame]>", "aolsetclat 0.6", "int AOloopControl_set_complatency_frame(float complatency_frame)");
+
+    RegisterCLIcommand("aolsetwlat", __FILE__, AOloopControl_set_wfsmextrlatency_frame_cli, "set WFS mode extraction latency", "<latency [frame]>", "aolsetwlat 0.8", "int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame)");
+
+    RegisterCLIcommand("aolsetwfsnormf", __FILE__, AOloopControl_setWFSnormfloor_cli, "set WFS normalization floor", "<floor value (total flux)>", "aolsetwfsnormf 10000.0", "int AOloopControl_setWFSnormfloor(float WFSnormfloor)");
+
+    RegisterCLIcommand("aolsetmaxlim", __FILE__, AOloopControl_setmaxlimit_cli, "set max limit for AO mode correction", "<limit value>", "aolsetmaxlim 0.01", "int AOloopControl_setmaxlimit(float maxlimit)");
+
+    RegisterCLIcommand("aolsetmult", __FILE__, AOloopControl_setmult_cli, "set mult coeff for AO mode correction", "<mult value>", "aolsetmult 0.98", "int AOloopControl_setmult(float multcoeff)");
+
+    RegisterCLIcommand("aolsetnbfr",__FILE__, AOloopControl_setframesAve_cli, "set number of frames to be averaged", "<nb frames>", "aolsetnbfr 10", "int AOloopControl_setframesAve(long nbframes)");
+
+
+
+
+
+
+
 
 
 
@@ -1508,14 +1190,7 @@ int init_AOloopControl()
 /* =============================================================================================== */
 /*                                         PROCESS LOG FILES                                       */
 /* =============================================================================================== */
-    strcpy(data.cmd[data.NBcmd].key,"aollogprocmodeval");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_logprocess_modeval_cli;
-    strcpy(data.cmd[data.NBcmd].info,"process log image modeval");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modeval image>");
-    strcpy(data.cmd[data.NBcmd].example,"aollogprocmodeval imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_logprocess_modeval(char *IDname);");
-    data.NBcmd++;
+    RegisterCLIcommand("aollogprocmodeval",__FILE__, AOloopControl_logprocess_modeval_cli, "process log image modeval", "<modeval image>", "aollogprocmodeval imc", "int AOloopControl_logprocess_modeval(char *IDname);");
 
 
 
@@ -1525,236 +1200,69 @@ int init_AOloopControl()
 
 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolcmmake");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_computeCM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make control matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<NBmodes removed> <RespMatrix> <ContrMatrix> <beta> <nbremovedstep> <eigenvlim>");
-    strcpy(data.cmd[data.NBcmd].example,"aolcmmake 8 respm cmat");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim)");
-    data.NBcmd++;
 
+    RegisterCLIcommand("aolloadcm", __FILE__, AOloopControl_loadCM_cli, "load new control matrix from file", "<fname>", "aolloadcm cm32.fits", "long AOloopControl_loadCM(long loop, char *CMfname)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolloadcm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loadCM_cli;
-    strcpy(data.cmd[data.NBcmd].info,"load new control matrix from file");
-    strcpy(data.cmd[data.NBcmd].syntax,"<fname>");
-    strcpy(data.cmd[data.NBcmd].example,"aolloadcm cm32.fits");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_loadCM(long loop, char *CMfname)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolmon", __FILE__, AOloopControl_loopMonitor_cli, "monitor loop", "<frequ> <Nbcols>", "aolmon 10.0 3", "int AOloopControl_loopMonitor(long loop, double frequ)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_loopMonitor_cli;
-    strcpy(data.cmd[data.NBcmd].info,"monitor loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<frequ> <Nbcols>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmon 10.0 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopMonitor(long loop, double frequ)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetgainr", __FILE__, AOloopControl_setgainrange_cli, "set modal gains from m0 to m1 included", "<modemin [long]> <modemax [long]> <gainval>", "aolsetgainr 20 30 0.2", "int AOloopControl_setgainrange(long m0, long m1, float gainval)");
 
+    RegisterCLIcommand("aolsetlimitr",__FILE__, AOloopControl_setlimitrange_cli, "set modal limits", "<modemin [long]> <modemax [long]> <limval>", "aolsetlimitr 20 30 0.02", "int AOloopControl_setlimitrange(long m0, long m1, float gainval)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetgainr");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setgainrange_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal gains from m0 to m1 included");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <gainval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetgainr 20 30 0.2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainrange(long m0, long m1, float gainval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetmultfr", __FILE__, AOloopControl_setmultfrange_cli, "set modal multf", "<modemin [long]> <modemax [long]> <multfval>", "aolsetmultfr 10 30 0.98", "int AOloopControl_setmultfrange(long m0, long m1, float multfval)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetlimitr");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setlimitrange_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal limits");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <limval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetlimitr 20 30 0.02");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitrange(long m0, long m1, float gainval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetgainb", __FILE__, AOloopControl_setgainblock_cli, "set modal gains by block", "<block [long]> <gainval>", "aolsetgainb 2 0.2", "int AOloopControl_setgainblock(long m0, long m1, float gainval)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetmultfr");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setmultfrange_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal multf");
-    strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <multfval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmultfr 10 30 0.98");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfrange(long m0, long m1, float multfval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetlimitb",__FILE__, AOloopControl_setlimitblock_cli, "set modal limits by block", "<block [long]> <limval>", "aolsetlimitb 2 0.02", "int AOloopControl_setlimitblock(long mb, float limitval)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetgainb");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setgainblock_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal gains by block");
-    strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <gainval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetgainb 2 0.2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainblock(long m0, long m1, float gainval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolsetmultfb", __FILE__, AOloopControl_setmultfblock_cli, "set modal multf by block", "<block [long]> <multfval>", "aolsetmultfb 2 0.98", "int AOloopControl_setmultfblock(long mb, float multfval)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetlimitb");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setlimitblock_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal limits by block");
-    strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <limval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetlimitb 2 0.02");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitblock(long mb, float limitval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolresetrms", __FILE__, AOloopControl_resetRMSperf, "reset RMS performance monitor", "no arg", "aolresetrms", "int AOloopControl_resetRMSperf()");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolsetmultfb");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setmultfblock_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal multf by block");
-    strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <multfval>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmultfb 2 0.98");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfblock(long mb, float multfval)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolscangainb", __FILE__, AOloopControl_scanGainBlock_cli, "scan gain for block", "<blockNB> <NBAOsteps> <gainstart> <gainend> <NBgainpts>", "aolscangainb", "int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)");
 
+    RegisterCLIcommand("aolstatusstats", __FILE__, AOloopControl_statusStats_cli, "measures distribution of status values", "<update flag [int]>", "aolstatusstats 0", "int AOloopControl_statusStats(int updateconf)");
 
-    strcpy(data.cmd[data.NBcmd].key,"aolresetrms");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_resetRMSperf;
-    strcpy(data.cmd[data.NBcmd].info,"reset RMS performance monitor");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolresetrms");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_resetRMSperf()");
-    data.NBcmd++;
+    RegisterCLIcommand("aolblockstats", __FILE__, AOloopControl_blockstats_cli, "measures mode stats per block", "<loopnb> <outim>", "aolblockstats 2 outstats", "long AOloopControl_blockstats(long loop, char *IDout_name)");
 
-
-    strcpy(data.cmd[data.NBcmd].key,"aolscangainb");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_scanGainBlock_cli;
-    strcpy(data.cmd[data.NBcmd].info,"scan gain for block");
-    strcpy(data.cmd[data.NBcmd].syntax,"<blockNB> <NBAOsteps> <gainstart> <gainend> <NBgainpts>");
-    strcpy(data.cmd[data.NBcmd].example,"aolscangainb");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolstatusstats");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_statusStats_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measures distribution of status values");
-    strcpy(data.cmd[data.NBcmd].syntax,"<update flag [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolstatusstats 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_statusStats(int updateconf)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolblockstats");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_blockstats_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measures mode stats per block");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loopnb> <outim>");
-    strcpy(data.cmd[data.NBcmd].example,"aolblockstats 2 outstats");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_blockstats(long loop, char *IDout_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"aolmkwfsres");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_computeWFSresidualimage_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute WFS residual real time");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loopnb> <averaging coeff>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkwfsres 2 0.001");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_computeWFSresidualimage(long loop, float alpha)");
-    data.NBcmd++;
+    RegisterCLIcommand("aolmkwfsres", __FILE__, AOloopControl_computeWFSresidualimage_cli, "compute WFS residual real time", "<loopnb> <averaging coeff>", "aolmkwfsres 2 0.001", "long AOloopControl_computeWFSresidualimage(long loop, float alpha)");
     
+   	RegisterCLIcommand("aolPFwatchin",__FILE__, AOloopControl_builPFloop_WatchInput_cli, "watch telemetry for predictive filter input", "<loop #> <PFblock #>", "aolPFwatchin 0 2", "long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)");
+    
+   	RegisterCLIcommand("aolcompolm", __FILE__, AOloopControl_ComputeOpenLoopModes_cli, "compute open loop mode values", "<loop #>", "aolcompolm 2", "long AOloopControl_ComputeOpenLoopModes(long loop)");
+    
+    RegisterCLIcommand("aolautotunegains", __FILE__, AOloopControl_AutoTuneGains_cli, "compute optimal gains", "<loop #> <gain stream>", "aolautotunegains 0 autogain", "long AOloopControl_AutoTuneGains(long loop, char *IDout_name)");
+    
+    RegisterCLIcommand("aoldm2dmoffload", __FILE__, AOloopControl_dm2dm_offload_cli, "slow offload from dm to dm", "<streamin> <streamout> <timestep[sec]> <offloadcoeff> <multcoeff>", "aoldm2dmoffload dmin dmout 0.5 -0.01 0.999", "long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff)");
+
+    RegisterCLIcommand("aolmktestmseq", __FILE__, AOloopControl_mkTestDynamicModeSeq_cli, "make modal periodic test sequence", "<outname> <number of slices> <number of modes>", "aolmktestmseq outmc 100 50", "long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes)");
+
+    RegisterCLIcommand("aolautotune",  __FILE__, AOloopControl_AutoTune, "auto tuning of loop parameters", "no arg", "aolautotune", "int AOloopControl_AutoTune()");
+   
+    RegisterCLIcommand("aolset", __FILE__, AOloopControl_setparam_cli, "set parameter", "<parameter> <value>" , "aolset", "int AOloopControl_setparam(long loop, char *key, double value)");
+    
+    RegisterCLIcommand("aoldmmodAB", __FILE__, AOloopControl_DMmodulateAB_cli, "module DM with linear combination of probes A and B", "<probeA> <probeB> <dmstream> <WFS resp mat> <WFS ref stream> <delay [sec]> <NB probes>", "aoldmmodAB probeA probeB wfsrespmat wfsref 0.1 6","int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes)");
      
-   	strcpy(data.cmd[data.NBcmd].key,"aolPFwatchin");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_builPFloop_WatchInput_cli;
-    strcpy(data.cmd[data.NBcmd].info,"watch telemetry for predictive filter input");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <PFblock #>");
-    strcpy(data.cmd[data.NBcmd].example,"aolPFwatchin 0 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)");
-    data.NBcmd++;   
+    RegisterCLIcommand("aolframedelay", __FILE__, AOloopControl_frameDelay_cli, "introduce temporal delay", "<in> <temporal kernel> <out> <sem index>","aolframedelay in kern out 0","long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem)");
     
-   	strcpy(data.cmd[data.NBcmd].key,"aolcompolm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_ComputeOpenLoopModes_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute open loop mode values");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #>");
-    strcpy(data.cmd[data.NBcmd].example,"aolcompolm 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_ComputeOpenLoopModes(long loop)");
-    data.NBcmd++;
-    
-    strcpy(data.cmd[data.NBcmd].key,"aolautotunegains");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AutoTuneGains_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute optimal gains");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <gain stream>");
-    strcpy(data.cmd[data.NBcmd].example,"aolautotunegains 0 autogain");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_AutoTuneGains(long loop, char *IDout_name)");
-    data.NBcmd++;
-    
-    
-    strcpy(data.cmd[data.NBcmd].key,"aoldm2dmoffload");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_dm2dm_offload_cli;
-    strcpy(data.cmd[data.NBcmd].info,"slow offload from dm to dm");
-    strcpy(data.cmd[data.NBcmd].syntax,"<streamin> <streamout> <timestep[sec]> <offloadcoeff> <multcoeff>");
-    strcpy(data.cmd[data.NBcmd].example,"aoldm2dmoffload dmin dmout 0.5 -0.01 0.999");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff)");
-    data.NBcmd++;
+	RegisterCLIcommand("aolzrmsens", __FILE__, AOloopControl_AnalyzeRM_sensitivity_cli, "Measure zonal RM sensitivity", "<DMmodes> <DMmask> <WFSref> <WFSresp> <WFSmask> <amplitude[nm]> <lambda[nm]> <outname>", "aolzrmsens DMmodes dmmask wfsref0 zrespmat wfsmask 0.1 outfile.txt", "long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, float amplimitnm, float lambdanm, char *foutname)");
+ 
 
-    strcpy(data.cmd[data.NBcmd].key,"aolinjectmode");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_InjectMode_cli;
-    strcpy(data.cmd[data.NBcmd].info,"inject single mode error into RM channel");
-    strcpy(data.cmd[data.NBcmd].syntax,"<index> <ampl>");
-    strcpy(data.cmd[data.NBcmd].example,"aolinjectmode 20 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_InjectMode()");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmktestmseq");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkTestDynamicModeSeq_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make modal periodic test sequence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<outname> <number of slices> <number of modes>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmktestmseq outmc 100 50");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes)");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolautotune");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AutoTune;
-    strcpy(data.cmd[data.NBcmd].info,"auto tuning of loop parameters");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aolautotune");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AutoTune()");
-    data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolset");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_setparam_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set parameter");
-    strcpy(data.cmd[data.NBcmd].syntax,"<parameter> <value>");
-    strcpy(data.cmd[data.NBcmd].example,"aolset");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setparam(long loop, char *key, double value)");
-    data.NBcmd++;
-    
-    strcpy(data.cmd[data.NBcmd].key,"aoldmmodAB");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_DMmodulateAB_cli;
-    strcpy(data.cmd[data.NBcmd].info,"module DM with linear combination of probes A and B");
-    strcpy(data.cmd[data.NBcmd].syntax,"<probeA> <probeB> <dmstream> <WFS resp mat> <WFS ref stream> <delay [sec]> <NB probes>");
-    strcpy(data.cmd[data.NBcmd].example,"aoldmmodAB probeA probeB wfsrespmat wfsref 0.1 6");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes)");
-    data.NBcmd++;
-     
-    strcpy(data.cmd[data.NBcmd].key,"aolframedelay");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_frameDelay_cli;
-    strcpy(data.cmd[data.NBcmd].info,"introduce temporal delay");
-    strcpy(data.cmd[data.NBcmd].syntax,"<in> <temporal kernel> <out> <sem index>");
-    strcpy(data.cmd[data.NBcmd].example,"aolframedelay in kern out 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem)");
-    data.NBcmd++;
-    
-	strcpy(data.cmd[data.NBcmd].key,"aolzrmsens");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_AnalyzeRM_sensitivity_cli;
-    strcpy(data.cmd[data.NBcmd].info,"Measure zonal RM sensitivity");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMmodes> <DMmask> <WFSref> <WFSresp> <WFSmask> <amplitude[nm]> <lambda[nm]> <outname>");
-    strcpy(data.cmd[data.NBcmd].example,"aolzrmsens DMmodes dmmask wfsref0 zrespmat wfsmask 0.1 outfile.txt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, float amplimitnm, float lambdanm, char *foutname)");
-    data.NBcmd++;
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/*                                              OBSOLETE                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+	
+    RegisterCLIcommand("aolinjectmode",__FILE__, AOloopControl_InjectMode_cli, "inject single mode error into RM channel", "<index> <ampl>", "aolinjectmode 20 0.1", "int AOloopControl_InjectMode()");
+
 
 
     // add atexit functions here
@@ -1770,45 +1278,120 @@ int init_AOloopControl()
 
 
 
-/** \brief Creates a blank configuration
- *
- *
- *
- */
-
-long AOloopControl_makeTemplateAOloopconf(long loopnb)
-{
-    FILE *fp;
-    char fname[256];
-    int r;
-    char command[256];
-    char line[256];
-
-    // make configuration directory
-    r = system("mkdir -p ./conf/");
-
-    /*  sprintf(fname, "./conf/AOloop.conf");
-
-       fp = fopen(fname, "w");
-       fprintf(fp, "logsize         1000            number of consecutive entries in single log file\n");
-       fprintf(fp, "logdir          ./\n");
-       fprintf(fp, "NBMblocks	3		number of modes blocks\n");
-       fclose(fp);
-      */
 
 
-    // LOOP NAME
-    printf("Enter loop name: ");
-    if (fgets(line, sizeof(line), stdin)) {
-        printf("LOOP NAME = %s\n", line);
-    }
-    fp = fopen("./conf/conf_LOOPNAME.txt", "w");
-    fprintf(fp, "%s", line);
-    fclose(fp);
 
 
-    return(0);
-}
+
+
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. WFS INPUT                                                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. ACQUIRING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. COMPUTING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 6. REAL TIME COMPUTING ROUTINES                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. PREDICTIVE CONTROL                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 8. LOOP CONTROL INTERFACE                                                                       */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. STATUS / TESTING / PERF MEASUREMENT                                                          */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. PROCESS LOG FILES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // measures cross product between 2 cubes

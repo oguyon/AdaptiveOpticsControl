@@ -5,10 +5,10 @@
 # It is necessary for linking the library.
 
 # The name that we can dlopen(3).
-dlname=''
+dlname='libwfpropagate.so.0'
 
 # Names of this library.
-library_names=''
+library_names='libwfpropagate.so.0.0.0 libwfpropagate.so.0 libwfpropagate.so'
 
 # The name of the static archive.
 old_library='libwfpropagate.a'
@@ -23,9 +23,9 @@ dependency_libs=' -lgomp -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -
 weak_library_names=''
 
 # Version information for libwfpropagate.
-current=
-age=
-revision=
+current=0
+age=0
+revision=0
 
 # Is this an already installed library?
 installed=no
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir=''
+libdir='/home/olivier/src/Cfits/lib'

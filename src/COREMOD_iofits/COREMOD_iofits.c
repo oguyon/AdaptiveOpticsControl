@@ -145,6 +145,16 @@ int images_to_cube_cli()
   return 0;
  }
 
+
+
+
+
+
+
+
+
+
+
 int init_COREMOD_iofits()
 {
 
@@ -152,75 +162,38 @@ int init_COREMOD_iofits()
   strcpy(data.module[data.NBmodule].info, "FITS format input/output");
   data.NBmodule++;
   
-  strcpy(data.cmd[data.NBcmd].key,"loadfits");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = load_fits_cli;
-  strcpy(data.cmd[data.NBcmd].info,"load FITS format file");
-  strcpy(data.cmd[data.NBcmd].syntax,"input output");
-  strcpy(data.cmd[data.NBcmd].example,"loadfits im.fits im");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long load_fits()");
-  data.NBcmd++;
+  
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. LOAD / SAVE                                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+  
+  RegisterCLIcommand("loadfits", __FILE__, load_fits_cli, "load FITS format file", "input output", "loadfits im.fits im", "long load_fits()");
  
-  strcpy(data.cmd[data.NBcmd].key,"saveflfits");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = save_fl_fits_cli;
-  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, float");
-  strcpy(data.cmd[data.NBcmd].syntax,"input output");
-  strcpy(data.cmd[data.NBcmd].example,"saveflfits im im.fits");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int save_fl_fits(char *ID_name, char *file_name)");
-  data.NBcmd++;
+  RegisterCLIcommand("saveflfits", __FILE__, save_fl_fits_cli, "save FITS format file, float", "input output", "saveflfits im im.fits", "int save_fl_fits(char *ID_name, char *file_name)");
  
-  strcpy(data.cmd[data.NBcmd].key,"savedbfits");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = save_db_fits_cli;
-  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, double");
-  strcpy(data.cmd[data.NBcmd].syntax,"input output");
-  strcpy(data.cmd[data.NBcmd].example,"savedbfits im im.fits");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int save_db_fits(char *ID_name, char *file_name)");
-  data.NBcmd++;
+  RegisterCLIcommand("savedbfits", __FILE__, save_db_fits_cli, "save FITS format file, double", "input output", "savedbfits im im.fits", "int save_db_fits(char *ID_name, char *file_name)");
 
-  strcpy(data.cmd[data.NBcmd].key,"saveshfits");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = save_sh_fits_cli;
-  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, short");
-  strcpy(data.cmd[data.NBcmd].syntax,"input output");
-  strcpy(data.cmd[data.NBcmd].example,"saveshfits im im.fits");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int save_sh_fits(char *ID_name, char *file_name)");
-  data.NBcmd++;
+  RegisterCLIcommand("saveshfits", __FILE__, save_sh_fits_cli, "save FITS format file, short", "input output", "saveshfits im im.fits", "int save_sh_fits(char *ID_name, char *file_name)");
 
-  strcpy(data.cmd[data.NBcmd].key,"savefits");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = save_fits_cli;
-  strcpy(data.cmd[data.NBcmd].info,"save FITS format file");
-  strcpy(data.cmd[data.NBcmd].syntax,"input output");
-  strcpy(data.cmd[data.NBcmd].example,"savefits im im.fits");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int save_fits(char *ID_name, char *file_name)");
-  data.NBcmd++;
+  RegisterCLIcommand("savefits", __FILE__, save_fits_cli, "save FITS format file", "input output", "savefits im im.fits", "int save_fits(char *ID_name, char *file_name)");
  
-  strcpy(data.cmd[data.NBcmd].key,"breakcube");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = break_cube_cli;
-  strcpy(data.cmd[data.NBcmd].info,"break cube into individual images (slices)");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input image>");
-  strcpy(data.cmd[data.NBcmd].example,"breakcube imc");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int break_cube(char *ID_name)");
-  data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. CUBES                                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
+  
+  RegisterCLIcommand("breakcube", __FILE__, break_cube_cli, "break cube into individual images (slices)", "<input image>", "breakcube imc", "int break_cube(char *ID_name)");
  
-  strcpy(data.cmd[data.NBcmd].key,"imgs2cube");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = images_to_cube_cli;
-  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube, image name is prefix followed by 5 digits");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input image format> <max index> <output cube>");
-  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ 100 imc");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int images_to_cube(char *img_name, long nbframes, char *cube_name)");
-  data.NBcmd++;
+  RegisterCLIcommand("imgs2cube", __FILE__, images_to_cube_cli, "combine individual images into cube, image name is prefix followed by 5 digits", "<input image format> <max index> <output cube>", "imgs2cube im_ 100 imc", "int images_to_cube(char *img_name, long nbframes, char *cube_name)");
 
 
   // add atexit functions here
 
   return 0;
 }
-
 
 
 
@@ -396,6 +369,25 @@ int data_type_code(int bitpix)
     if (bitpix==-64) code=82;
     return(code);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. LOAD / SAVE                                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+ 
+
 
 /// if errcode = 0, do not show error messages
 /// errcode = 1: print error, continue
@@ -1499,6 +1491,21 @@ int saveall_fits(char *savedirname)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. CUBES                                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
 
 
 int break_cube(char *ID_name)

@@ -43,125 +43,52 @@ char errmsg_arith[SBUFFERSIZE];
 //
 
 
-int arith_image_extract2D_cli()
-{
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
-    {
+int arith_image_extract2D_cli() {
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)    {
       arith_image_extract2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
-      //      arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;}  else    return 1;}
 
-
-int arith_image_extract3D_cli()
-{
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
-    {
+int arith_image_extract3D_cli(){
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)    {
       arith_image_extract3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-
-
-
-
-int arith_set_pixel_cli()
-{
-
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
-    {
+int arith_set_pixel_cli(){
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)    {
       arith_set_pixel(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-
-int arith_set_pixel_1Drange_cli()
-{
-
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
-    {
+int arith_set_pixel_1Drange_cli(){
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)    {
       arith_set_pixel_1Drange(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-int arith_set_row_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
-    {
+int arith_set_row_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)    {
       arith_set_row(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-int arith_set_col_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
-    {
+int arith_set_col_cli(){
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)    {
       arith_set_col(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-
-int arith_image_zero_cli()
-{
-    if(CLI_checkarg(1,4)==0)
-    {
+int arith_image_zero_cli(){
+    if(CLI_checkarg(1,4)==0)    {
       arith_image_zero(data.cmdargtoken[1].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-//long arith_image_zero(char *ID_name)
-//long arith_set_row(char *ID_name, double value, long y)
-
-int arith_image_trunc_cli()
-{
-
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)
-    {
+int arith_image_trunc_cli(){
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)    {
       arith_image_trunc(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-
-
-
-
-
-//long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name);
-
-int arith_image_merge3D_cli()
-{
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
-    {
+int arith_image_merge3D_cli(){
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)    {
       arith_image_merge3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
+
+
 
 
 

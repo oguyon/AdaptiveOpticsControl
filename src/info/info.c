@@ -144,51 +144,34 @@ int init_info()
     data.NBmodule++;
 
 
-    strcpy(data.cmd[data.NBcmd].key,"imgmon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = info_image_monitor_cli;
-    strcpy(data.cmd[data.NBcmd].info,"image monitor");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <frequ>");
-    strcpy(data.cmd[data.NBcmd].example,"imgmon im1 30");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_monitor(char *ID_name, double frequ)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. GENERAL IMAGE STATS & INFO                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+	RegisterCLIcommand("imstats", __FILE__, info_image_stats_cli, "image stats", "<image>", "imgstats im1", "int info_image_stats(char *ID_name, \"\")");
+	
+	RegisterCLIcommand("cubestats", __FILE__,  info_cubestats_cli, "image cube stats", "<3Dimage> <mask> <output file>", "cubestats imc immask imc_stats.txt", "long info_cubestats(char *ID_name, char *IDmask_name, char *outfname)");
+
+	RegisterCLIcommand("imstatsf", __FILE__,  info_image_statsf_cli, "image stats with file output", "<image>", "imgstatsf im1","int info_image_stats(char *ID_name, \"fileout\")");
+
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. IMAGE MONITORING                                                                             */
+/*                                                                                                 */
+/* =============================================================================================== */
+
+	RegisterCLIcommand("imgmon", __FILE__,  info_image_monitor_cli, "image monitor", "<image> <frequ>", "imgmon im1 30", "int info_image_monitor(char *ID_name, double frequ)");
 
 
-    strcpy(data.cmd[data.NBcmd].key,"profile");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = info_profile_cli;
-    strcpy(data.cmd[data.NBcmd].info,"radial profile");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <output file> <xcenter> <ycenter> <step> <Nbstep>");
-    strcpy(data.cmd[data.NBcmd].example,"profile psf psf.prof 256 256 1.0 100");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)");
-    data.NBcmd++;
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. SIMPLE PROCESSING                                                                            */
+/*                                                                                                 */
+/* =============================================================================================== */
 
-    strcpy(data.cmd[data.NBcmd].key,"imstats");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = info_image_stats_cli;
-    strcpy(data.cmd[data.NBcmd].info,"image stats");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-    strcpy(data.cmd[data.NBcmd].example,"imgstats im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_stats(char *ID_name, \"\")");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"cubestats");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = info_cubestats_cli;
-    strcpy(data.cmd[data.NBcmd].info,"image cube stats");
-    strcpy(data.cmd[data.NBcmd].syntax,"<3Dimage> <mask> <output file>");
-    strcpy(data.cmd[data.NBcmd].example,"cubestats imc immask imc_stats.txt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long info_cubestats(char *ID_name, char *IDmask_name, char *outfname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imstatsf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = info_image_statsf_cli;
-    strcpy(data.cmd[data.NBcmd].info,"image stats with file output");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-    strcpy(data.cmd[data.NBcmd].example,"imgstatsf im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_stats(char *ID_name, \"fileout\")");
-    data.NBcmd++;
+	RegisterCLIcommand("profile", __FILE__, info_profile_cli, "radial profile", "<image> <output file> <xcenter> <ycenter> <step> <Nbstep>", "profile psf psf.prof 256 256 1.0 100", "int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)");
 
 
     return 0;

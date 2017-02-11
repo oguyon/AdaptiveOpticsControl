@@ -226,42 +226,84 @@ typedef struct
 
 
 
+// image streams and semaphores
 
-/* =============================================================================================== */
-/*                                         INITIALIZATION                                          */
-/* =============================================================================================== */
+
+
+
+
+
+
+
+
+
+
 
 int init_AOloopControl();
 
-long AOloopControl_makeTemplateAOloopconf(long loopnb);
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 int AOloopControl_loadconfigure(long loop, int mode, int level);
 
+// initialize memory - function called within C code only (no CLI call)
 int AOloopControl_InitializeMemory();
 
 
 
 /* =============================================================================================== */
-/*                               LOW LEVEL UTILITIES & TOOLS                                       */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
-long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name);
-
-void *compute_function_imtotal( void *ptr );
-
-void *compute_function_dark_subtract( void *ptr );
-
-int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS);
+/* =============================================================================================== */
+/* 		2.1. LOAD DATA STREAMS                                                                     */
+/* =============================================================================================== */
 
 long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize);
 
 long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize);
 
+/* =============================================================================================== */
+/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/* =============================================================================================== */
+
+int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS);
+
+long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem);
+
+/* =============================================================================================== */
+/* 		2.3. MISC COMPUTATION ROUTINES                                                             */
+/* =============================================================================================== */
+
+// compute cross product between two 3D arrays
+long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name);
+
+// compute sum of image pixels
+void *compute_function_imtotal( void *ptr );
+
+void *compute_function_dark_subtract( void *ptr );
+
+
+
 
 
 
 /* =============================================================================================== */
-/*                                         WFS INPUT                                               */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. WFS INPUT                                                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
@@ -271,8 +313,13 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
 
 
 
+
 /* =============================================================================================== */
-/*                                     ACQUIRING CALIBRATION                                       */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. ACQUIRING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
@@ -288,7 +335,11 @@ long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *im
 
 
 /* =============================================================================================== */
-/*                                  COMPUTING CALIBRATION                                          */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. COMPUTING CALIBRATION                                                                        */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 long AOloopControl_mkHadamardModes(char *DMmask_name, char *outname);
@@ -321,7 +372,11 @@ long AOloopControl_loadCM(long loop, char *CMfname);
 
 
 /* =============================================================================================== */
-/*                                     COMPUTING ROUTINES                                          */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 6. REAL TIME COMPUTING ROUTINES                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name);
@@ -357,7 +412,11 @@ long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, f
 
 
 /* =============================================================================================== */
-/*                                           PREDICTIVE CONTROL                                    */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. PREDICTIVE CONTROL                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
@@ -370,41 +429,97 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
 
 
 
+
 /* =============================================================================================== */
-/*                                         LOOP CONTROL INTERFACE                                  */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 8. LOOP CONTROL INTERFACE                                                                       */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 int AOloopControl_setLoopNumber(long loop);
-int AOloopControl_loopkill();
+
+/* =============================================================================================== */
+/* 		8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET                                      */
+/* =============================================================================================== */
+
 int AOloopControl_loopon();
+
 int AOloopControl_loopoff();
-int AOloopControl_logon();
+
+int AOloopControl_loopkill();
+
 int AOloopControl_loopstep(long loop, long NBstep);
-int AOloopControl_logoff();
+
 int AOloopControl_loopreset();
+
+/* =============================================================================================== */
+/* 		8.2. DATA LOGGING                                                                          */
+/* =============================================================================================== */
+
+int AOloopControl_logon();
+
+int AOloopControl_logoff();
+
+/* =============================================================================================== */
+/* 		8.3. PRIMARY DM WRITE                                                                      */
+/* =============================================================================================== */
+
 int AOloopControl_DMprimaryWrite_on();
+
 int AOloopControl_DMprimaryWrite_off();
 
+/* =============================================================================================== */
+/* 		8.4. INTEGRATOR AUTO TUNING                                                                */
+/* =============================================================================================== */
+
 int AOloopControl_AUTOTUNE_LIMITS_on();
+
 int AOloopControl_AUTOTUNE_LIMITS_off();
+
 int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
+
 int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
+
 int AOloopControl_AUTOTUNE_GAINS_on();
+
 int AOloopControl_AUTOTUNE_GAINS_off();
 
+/* =============================================================================================== */
+/* 		8.5. PREDICTIVE FILTER ON/OFF                                                              */
+/* =============================================================================================== */
 
 int AOloopControl_ARPFon();
+
 int AOloopControl_ARPFoff();
 
+/* =============================================================================================== */
+/* 		8.6. TIMING PARAMETERS                                                                     */
+/* =============================================================================================== */
+
 int AOloopControl_set_loopfrequ(float loopfrequ);
+
 int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame);
+
 int AOloopControl_set_complatency_frame(float complatency_frame);
+
 int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
+
+/* =============================================================================================== */
+/* 		8.7. CONTROL LOOP PARAMETERS                                                               */
+/* =============================================================================================== */
+
 int AOloopControl_setgain(float gain);
+
 int AOloopControl_setARPFgain(float gain);
+
 int AOloopControl_setWFSnormfloor(float WFSnormfloor);
+
 int AOloopControl_setmaxlimit(float maxlimit);
+
 int AOloopControl_setmult(float multcoeff);
+
 int AOloopControl_setframesAve(long nbframes);
 
 int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add);// modal blocks
@@ -414,7 +529,11 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
 
 
 /* =============================================================================================== */
-/*                                STATUS / TESTING / PERF MEASUREMENT                              */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. STATUS / TESTING / PERF MEASUREMENT                                                          */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
@@ -436,12 +555,32 @@ IDout_name);
 
 long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name);
 
+long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes);
+
+long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, float amplimitnm, float lambdanm, char *foutname);
+
 
 
 
 
 /* =============================================================================================== */
-/*                                         PROCESS LOG FILES                                       */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes);
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. PROCESS LOG FILES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 int AOloopControl_logprocess_modeval(char *IDname);
@@ -480,7 +619,6 @@ int AOloopControl_resetRMSperf();
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 
 int AOloopControl_InjectMode( long index, float ampl );
-long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes);
 int AOloopControl_AutoTune();
 
 
@@ -491,11 +629,5 @@ int AOloopControl_setparam(long loop, char *key, double value);
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name); // OBSOLETE
 int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha); // OBSOLETE
 
-
-int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes);
-
-long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem);
-
-long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, float amplimitnm, float lambdanm, char *foutname);
 
 #endif
