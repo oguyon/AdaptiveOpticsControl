@@ -24,6 +24,10 @@ SUBDIRS += AOloopControl
 AdaptiveOpticsControl_LDADD += AOloopControl/libaoloopcontrol.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
 
+SUBDIRS += linARfilterPred
+AdaptiveOpticsControl_LDADD += linARfilterPred/liblinarfilterpred.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/linARfilterPred
+
 SUBDIRS += AOloopControl_DM
 AdaptiveOpticsControl_LDADD += AOloopControl_DM/libaoloopcontroldm.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM

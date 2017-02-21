@@ -3,7 +3,7 @@
 #
 
 m4_define([PROGNAME], AdaptiveOpticsControl)
-m4_define([PVERSION], 1.2.05)
+m4_define([PVERSION], 1.2.06)
 
 AC_INIT([PROGNAME], [PVERSION], [oliv.guyon@gmail.com], [PROGNAME])
 
@@ -363,7 +363,7 @@ LIBS="$LIBS -lpthread"
 #	LIBS="$LIBS -lcuda -lcudart -lcufft"
 #fi
 
-AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_tools/Makefile src/COREMOD_memory/Makefile src/COREMOD_iofits/Makefile src/COREMOD_arith/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/AOloopControl_DM/Makefile src/AOloopControl/Makefile src/cudacomp/Makefile )
+AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_tools/Makefile src/COREMOD_memory/Makefile src/COREMOD_iofits/Makefile src/COREMOD_arith/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/AOloopControl_DM/Makefile src/linARfilterPred/Makefile src/AOloopControl/Makefile src/cudacomp/Makefile )
 
 
 AC_OUTPUT

@@ -113,6 +113,7 @@ am_AdaptiveOpticsControl_OBJECTS =  \
 AdaptiveOpticsControl_OBJECTS = $(am_AdaptiveOpticsControl_OBJECTS)
 AdaptiveOpticsControl_DEPENDENCIES = cudacomp/libcudacomp.la \
 	AOloopControl/libaoloopcontrol.la \
+	linARfilterPred/liblinarfilterpred.la \
 	AOloopControl_DM/libaoloopcontroldm.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \
@@ -379,6 +380,7 @@ AdaptiveOpticsControl_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp \
 	-I@abs_top_srcdir@/src/cudacomp \
 	-I@abs_top_srcdir@/src/AOloopControl \
+	-I@abs_top_srcdir@/src/linARfilterPred \
 	-I@abs_top_srcdir@/src/AOloopControl_DM \
 	-I@abs_top_srcdir@/src/ZernikePolyn \
 	-I@abs_top_srcdir@/src/WFpropagate \
@@ -398,12 +400,13 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = cudacomp AOloopControl AOloopControl_DM ZernikePolyn \
-	WFpropagate image_basic image_filter kdtree image_gen \
-	linopt_imtools statistic fft info COREMOD_arith COREMOD_iofits \
-	COREMOD_memory COREMOD_tools 00CORE
+SUBDIRS = cudacomp AOloopControl linARfilterPred AOloopControl_DM \
+	ZernikePolyn WFpropagate image_basic image_filter kdtree \
+	image_gen linopt_imtools statistic fft info COREMOD_arith \
+	COREMOD_iofits COREMOD_memory COREMOD_tools 00CORE
 AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
 	AOloopControl/libaoloopcontrol.la \
+	linARfilterPred/liblinarfilterpred.la \
 	AOloopControl_DM/libaoloopcontroldm.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \

@@ -2,6 +2,7 @@
 
 #include "cudacomp/cudacomp.h"
 #include "AOloopControl/AOloopControl.h"
+#include "linARfilterPred/linARfilterPred.h"
 #include "AOloopControl_DM/AOloopControl_DM.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 #include "WFpropagate/WFpropagate.h"
@@ -26,6 +27,7 @@ int init_modules()
 {
   init_cudacomp();
   init_AOloopControl();
+  init_linARfilterPred();
   init_AOloopControl_DM();
   init_ZernikePolyn();
   init_WFpropagate();
