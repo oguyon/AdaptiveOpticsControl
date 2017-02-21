@@ -1,11 +1,11 @@
-#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
 
 
 
-
+#include <fitsio.h>  /* required by every program that uses CFITSIO  */
 
 #include "CLIcore.h"
 
@@ -36,7 +36,7 @@ ZERNIKE Zernike;
 // 4: existing image
 //
 
-int mk_zer_cli()
+int_fast8_t mk_zer_cli()
 {
   if(CLI_checkarg(1, 3)+CLI_checkarg(2, 2)+CLI_checkarg(3, 2)+CLI_checkarg(4, 1)==0)
     {
@@ -50,7 +50,7 @@ int mk_zer_cli()
 
 
 
-int ZERNIKEPOLYN_rmPiston_cli()
+int_fast8_t ZERNIKEPOLYN_rmPiston_cli()
 {
   if(CLI_checkarg(1, 4)+CLI_checkarg(2, 4)==0)
     {
@@ -66,7 +66,7 @@ int ZERNIKEPOLYN_rmPiston_cli()
 
 
 
-int init_ZernikePolyn()
+int_fast8_t init_ZernikePolyn()
 {
  
   Zernike.init = 0;
@@ -82,7 +82,7 @@ int init_ZernikePolyn()
   strcpy(data.cmd[data.NBcmd].info,"create Zernike polynomial");
   strcpy(data.cmd[data.NBcmd].syntax,"<output image> <size> <zern index> <rpix>");
   strcpy(data.cmd[data.NBcmd].example,"mkzer z43 512 43 100.0");
-  strcpy(data.cmd[data.NBcmd].Ccall,"mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix)");
   data.NBcmd++;
  
  
@@ -92,7 +92,7 @@ int init_ZernikePolyn()
   strcpy(data.cmd[data.NBcmd].info,"remove piston term from WF cube");
   strcpy(data.cmd[data.NBcmd].syntax,"<WF cube> <aperture mask>");
   strcpy(data.cmd[data.NBcmd].example,"rmcpiston wfc mask");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name);");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name);");
   data.NBcmd++;
  
  // add atexit functions here
@@ -236,7 +236,7 @@ double Zernike_value(long j, double r, double PA)
   return(value);
 }
 
-long mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)
+long mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
     double r,theta;
@@ -352,7 +352,7 @@ long mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)
 }
 
 // continue Zernike exp. beyond nominal radius, using the same polynomial expression
-long mk_zer_unbounded(char *ID_name, long SIZE, long zer_nb, float rpix)
+long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
     double r,theta;
@@ -406,7 +406,7 @@ long mk_zer_unbounded(char *ID_name, long SIZE, long zer_nb, float rpix)
 }
 
 // continue Zernike exp. beyond nominal radius, using the r=1 for r>1
-long mk_zer_unbounded1(char *ID_name, long SIZE, long zer_nb, float rpix)
+long mk_zer_unbounded1(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
     double r,theta;
@@ -458,7 +458,7 @@ long mk_zer_unbounded1(char *ID_name, long SIZE, long zer_nb, float rpix)
     return(ID);
 }
 
-int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix)
+int mk_zer_series(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
   long ii, jj;
   double *r;
@@ -534,7 +534,7 @@ int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix)
 }
 
 
-long mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
+long mk_zer_seriescube(const char *ID_namec, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
     double *r;
@@ -604,7 +604,7 @@ long mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
 
 
 
-double get_zer(char *ID_name, long zer_nb, double radius)
+double get_zer(const char *ID_name, long zer_nb, double radius)
 {
   double value;
   long SIZE;
@@ -637,7 +637,7 @@ double get_zer(char *ID_name, long zer_nb, double radius)
   return(value);
 }
 
-double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1)
+double get_zer_crop(const char *ID_name, long zer_nb, double radius, double radius1)
 {
   double value;
   long SIZE;
@@ -674,7 +674,7 @@ double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1)
 
 
 
-int get_zerns(char *ID_name, long max_zer, double radius)
+int get_zerns(const char *ID_name, long max_zer, double radius)
 {
   long i;
   
@@ -686,7 +686,7 @@ int get_zerns(char *ID_name, long max_zer, double radius)
 
 
 
-int get_zern_array(char *ID_name, long max_zer, double radius, double *array)
+int get_zern_array(const char *ID_name, long max_zer, double radius, double *array)
 {
   long i;
   double tmp;
@@ -703,7 +703,7 @@ int get_zern_array(char *ID_name, long max_zer, double radius, double *array)
 
 
 
-int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
+int remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, double radius)
 {
   int i;
   double coeff;
@@ -728,7 +728,7 @@ int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
 }
 
 
-long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name)
+long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name)
 {
 	long ID, IDmask;
 	long xsize, ysize, zsize, xysize;
@@ -766,7 +766,7 @@ long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name)
 	
 
 
-int remove_TTF(char *ID_name, char *ID_name_out, double radius)
+int remove_TTF(const char *ID_name, const char *ID_name_out, double radius)
 {
   int i;
   double coeff;
@@ -807,7 +807,7 @@ int remove_TTF(char *ID_name, char *ID_name_out, double radius)
 
 
 
-double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual)
+double fit_zer(const char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual)
 {
   long SIZE;
   long ID,IDZ,IDdisk,ID0;

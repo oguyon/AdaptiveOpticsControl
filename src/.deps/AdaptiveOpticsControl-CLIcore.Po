@@ -1,9 +1,10 @@
 AdaptiveOpticsControl-CLIcore.o: CLIcore.c /usr/include/stdc-predef.h \
- /usr/include/string.h /usr/include/features.h \
- /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h /usr/include/stdint.h \
+ /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/string.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h /usr/include/xlocale.h \
  /usr/include/x86_64-linux-gnu/bits/string.h \
  /usr/include/x86_64-linux-gnu/bits/string2.h /usr/include/endian.h \
@@ -64,8 +65,6 @@ AdaptiveOpticsControl-CLIcore.o: CLIcore.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/curses.h \
  /usr/include/ncurses_dll.h \
- /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/stdbool.h /usr/include/unctrl.h \
  /usr/include/curses.h /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h /usr/include/fcntl.h \
@@ -100,7 +99,9 @@ AdaptiveOpticsControl-CLIcore.o: CLIcore.c /usr/include/stdc-predef.h \
 
 /usr/include/stdc-predef.h:
 
-/usr/include/string.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h:
+
+/usr/include/stdint.h:
 
 /usr/include/features.h:
 
@@ -111,6 +112,10 @@ AdaptiveOpticsControl-CLIcore.o: CLIcore.c /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+/usr/include/string.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h:
 
@@ -275,12 +280,6 @@ CLIcore.h:
 /usr/include/curses.h:
 
 /usr/include/ncurses_dll.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h:
-
-/usr/include/stdint.h:
-
-/usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/5/include/stdbool.h:
 

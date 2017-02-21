@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,13 +20,13 @@ extern DATA data;
 
 
 
-//int put_poisson_noise(char *ID_in_name, char *ID_out_name);
+//int put_poisson_noise(const char *ID_in_name, const char *ID_out_name);
 
 
 
 // CLI commands
 
-int statistic_putphnoise_cli()
+int_fast8_t statistic_putphnoise_cli()
 {
  
   if(CLI_checkarg(1, 4)+CLI_checkarg(2, 3)==0)
@@ -38,7 +39,7 @@ int statistic_putphnoise_cli()
 }
 
 
-int statistic_putgaussnoise_cli()
+int_fast8_t statistic_putgaussnoise_cli()
 {
  
   if(CLI_checkarg(1, 4)+CLI_checkarg(2, 3)+CLI_checkarg(3, 1)==0)
@@ -52,7 +53,7 @@ int statistic_putgaussnoise_cli()
 
 
 
-int init_statistic()
+int_fast8_t init_statistic()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "statistics functions and tools");
@@ -64,7 +65,7 @@ int init_statistic()
   strcpy(data.cmd[data.NBcmd].info,"add photon noise to image");
   strcpy(data.cmd[data.NBcmd].syntax,"input output");
   strcpy(data.cmd[data.NBcmd].example,"putphnoise im0 im1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int put_poisson_noise(char *ID_in_name, char *ID_out_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int put_poisson_noise(const char *ID_in_name, const char *ID_out_name)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"putgaussnoise");
@@ -73,7 +74,7 @@ int init_statistic()
   strcpy(data.cmd[data.NBcmd].info,"add gaussian noise to image");
   strcpy(data.cmd[data.NBcmd].syntax,"input output amplitude");
   strcpy(data.cmd[data.NBcmd].example,"putgaussnoise im0 im1 0.2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long put_gauss_noise(char *ID_in_name, char *ID_out_name, doule ampl)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long put_gauss_noise(const char *ID_in_name, const char *ID_out_name, doule ampl)");
   data.NBcmd++; 
  
  // add atexit functions here
@@ -218,7 +219,7 @@ double better_poisson(double mu) {
 }
 
 
-long put_poisson_noise(char *ID_in_name, char *ID_out_name)
+long put_poisson_noise(const char *ID_in_name, const char *ID_out_name)
 {
   long ID_in;
   long ID_out;
@@ -246,7 +247,7 @@ long put_poisson_noise(char *ID_in_name, char *ID_out_name)
 
 
 
-long put_gauss_noise(char *ID_in_name, char *ID_out_name, double ampl)
+long put_gauss_noise(const char *ID_in_name, const char *ID_out_name, double ampl)
 {
   long ID_in;
   long ID_out;

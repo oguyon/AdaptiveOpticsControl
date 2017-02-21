@@ -1,7 +1,10 @@
+#define _GNU_SOURCE
+
+
 #ifndef _CLICORE_H
 #define _CLICORE_H
 
-
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -70,12 +73,12 @@ extern uid_t suid;
 
 
 typedef struct {
-    char key[100];        // command keyword
-    char module[50];      // module name
-    int (* fp) ();         // command function pointer
-    char info   [1000];     // short description/help
-    char syntax [1000];   // command syntax
-    char example[1000];  // command example
+    char key[100];            // command keyword
+    char module[50];          // module name
+    int_fast8_t (* fp) ();    // command function pointer
+    char info   [1000];       // short description/help
+    char syntax [1000];       // command syntax
+    char example[1000];       // command example
     char Ccall[1000];
 } CMD;
 
@@ -296,7 +299,7 @@ typedef struct
     int fifoON;
     char processname[100];
     char fifoname[100];
-    long NBcmd;
+    uint_fast16_t NBcmd;
     long NB_MAX_COMMAND;
     CMD *cmd;
     int parseerror; // 1 if error, 0 otherwise
@@ -351,7 +354,7 @@ typedef struct
 
 void sig_handler(int signo);
 
-int RegisterCLIcommand(char *CLIkey, char *CLImodule, int (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall);
+uint_fast16_t RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall);
 
 
 

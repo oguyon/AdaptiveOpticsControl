@@ -10,7 +10,7 @@
 #include <device_types.h>
 #include <pthread.h>
 
- #endif
+#endif
 
 #ifdef HAVE_CUDA
 
@@ -20,7 +20,7 @@ typedef struct
     int thread_no;
     long numl0;
     int cindex; // computation index
-    int *status; // where to white status
+    int_fast8_t *status; // where to white status
 } THDATA;
 
 
@@ -34,20 +34,21 @@ typedef struct
 
 typedef struct
 {
-    int init; /// 1 if initialized
-    int *refWFSinit; /// reference init
-    int alloc; /// 1 if memory has been allocated
+    int_fast8_t init; /// 1 if initialized
+    int_fast8_t *refWFSinit; /// reference init
+    int_fast8_t alloc; /// 1 if memory has been allocated
     long CM_ID;
     long CM_cnt;
     long timerID;
     
-    int M;
-    int N;
+    uint_fast32_t M;
+    uint_fast32_t N;
 
 
     // synchronization
-    int sem; // if sem = 1, wait for semaphore to perform computation
-    int gpuinit;
+    int_fast8_t sem; // if sem = 1, wait for semaphore to perform computation
+    int_fast8_t gpuinit;
+    
     // one semaphore per thread
     sem_t **semptr1; // command to start matrix multiplication (input)
     sem_t **semptr2; // memory transfer to device completed (output)
@@ -78,17 +79,18 @@ typedef struct
     THDATA *thdata;
     int *iret;
     pthread_t *threadarray;
-    int NBstreams;
+    int_fast8_t NBstreams;
     cudaStream_t *stream;
     cublasHandle_t *handle;
 
     // splitting limits
-    int *Nsize;
-    int *Noffset;
+    uint_fast32_t *Nsize;
+    uint_fast32_t *Noffset;
 
     int *GPUdevice;
 
-    int orientation;
+    int_fast8_t orientation;
+
     long IDout;
 
 
@@ -97,27 +99,32 @@ typedef struct
 
 
 
-int init_cudacomp();
+int_fast8_t init_cudacomp();
 
-int CUDACOMP_init();
+int_fast8_t CUDACOMP_init();
 
 #ifdef HAVE_CUDA
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N);
+
 int GPUloadCmat(int index);
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
-int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing);
+
+int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
+
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing);
+
 int GPU_loop_MultMat_free(int index);
 
+
 #ifdef HAVE_MAGMA
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode);
+int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode);
 #endif
 
 void *compute_function( void *ptr );
-int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name);
+int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name);
 
-int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait);
+int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, const char *IDmodes_name, const char *IDrefin_name, const char *IDrefout_name, const char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait);
 
-int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
+int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
 
 #endif
 

@@ -3,32 +3,32 @@
 
 int init_image_filter();
 
-int median_filter(char *ID_name, char *out_name, int filter_size);
+int median_filter(const char *ID_name, const char *out_name, int filter_size);
 
-long FILTER_percentile_interpol_fast(char *ID_name, char *IDout_name, double perc, long boxrad);
+long FILTER_percentile_interpol_fast(const char *ID_name, const char *IDout_name, double perc, long boxrad);
 
-long FILTER_percentile_interpol(char *ID_name, char *IDout_name, double perc, double sigma);
+long FILTER_percentile_interpol(const char *ID_name, const char *IDout_name, double perc, double sigma);
 
-long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size);
+long gauss_filter(const char *ID_name, const char *out_name, float sigma, int filter_size);
 
-int gauss_3Dfilter(char *ID_name, char *out_name, float sigma, int filter_size);
+int gauss_3Dfilter(const char *ID_name, const char *out_name, float sigma, int filter_size);
 
-int f_filter(char *ID_name, char *ID_out, float f1, float f2);
+int f_filter(const char *ID_name, const char *ID_out, float f1, float f2);
 
-long fconvolve(char *ID_in, char *ID_ke, char *ID_out);
+long fconvolve(const char *ID_in, const char *ID_ke, const char *ID_out);
 
-long fconvolve_padd(char *ID_in, char *ID_ke, long paddsize, char *ID_out);
+long fconvolve_padd(const char *ID_in, const char *ID_ke, long paddsize, const char *ID_out);
 
-int fconvolve_1(char *name_in, char *kefft, char *name_out);
+int fconvolve_1(const char *name_in, const char *kefft, const char *name_out);
 
-int fconvolveblock(char *name_in, char *name_ke, char *name_out, long blocksize);
+int fconvolveblock(const char *name_in, const char *name_ke, const char *name_out, long blocksize);
 
-int film_scanner_vsripes_remove(char *IDname, char *IDout, long l1, long l2);
+int film_scanner_vsripes_remove(const char *IDname, const char *IDout, long l1, long l2);
 
-int filter_fit2DcosKernel(char *IDname, float radius);
+int filter_fit2DcosKernel(const char *IDname, float radius);
 
-long filter_CubePercentile(char *IDcin_name, float perc, char *IDout_name);
+long filter_CubePercentile(const char *IDcin_name, float perc, const char *IDout_name);
 
-long filter_CubePercentileLimit(char *IDcin_name, float perc, float limit, char *IDout_name);
+long filter_CubePercentileLimit(const char *IDcin_name, float perc, float limit, const char *IDout_name);
 
 #endif

@@ -15,7 +15,7 @@ typedef struct /* structure to store Zernike coefficients */
 
 
 
-int init_ZernikePolyn();
+int_fast8_t init_ZernikePolyn();
 
 
 
@@ -29,28 +29,28 @@ long Zernike_m(long i);
 
 double Zernike_value(long j, double r, double PA);
 
-long mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix);
+long mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix);
 
-long mk_zer_unbounded(char *ID_name, long SIZE, long zer_nb, float rpix);
+long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix);
 
-int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix);
+int mk_zer_series(const char *ID_name, long SIZE, long zer_nb, float rpix);
 
-long mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix);
+long mk_zer_seriescube(const char *ID_namec, long SIZE, long zer_nb, float rpix);
 
-double get_zer(char *ID_name, long zer_nb, double radius);
+double get_zer(const char *ID_name, long zer_nb, double radius);
 
-double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1);
+double get_zer_crop(const char *ID_name, long zer_nb, double radius, double radius1);
 
-int get_zerns(char *ID_name, long max_zer, double radius);
+int get_zerns(const char *ID_name, long max_zer, double radius);
 
-int get_zern_array(char *ID_name, long max_zer, double radius, double *array);
+int get_zern_array(const char *ID_name, long max_zer, double radius, double *array);
 
-int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius);
+int remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, double radius);
 
-long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name);
+long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name);
 
-int remove_TTF(char *ID_name, char *ID_name_out, double radius);
+int remove_TTF(const char *ID_name, const char *ID_name_out, double radius);
 
-double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual);
+double fit_zer(const char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual);
 
 #endif

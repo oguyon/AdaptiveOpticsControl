@@ -6,31 +6,31 @@ int init_COREMOD_iofits();
 
 
 
-int file_exists(char *file_name);
+int file_exists(const char *file_name);
 
-int is_fits_file(char *file_name);
+int is_fits_file(const char *file_name);
 
-int read_keyword(char* file_name, char* KEYWORD, char* content);
+int read_keyword(const char* file_name, const char* KEYWORD, char* content);
 
-int read_keyword_alone(char* file_name, char* KEYWORD);
+int read_keyword_alone(const char* file_name, const char* KEYWORD);
 
 int data_type_code(int bitpix);
 
-long load_fits(char *file_name, char *ID_name, int errcode); 
+long load_fits(const char *file_name, const char *ID_name, int errcode); 
 
-int save_db_fits(char *ID_name, char *file_name);
+int save_db_fits(const char *ID_name, const char *file_name);
 
-int save_fl_fits(char *ID_name, char *file_name);
+int save_fl_fits(const char *ID_name, const char *file_name);
 
-int save_sh_fits(char *ID_name, char *file_name);
+int save_sh_fits(const char *ID_name, const char *file_name);
 
-int save_fits(char *ID_name, char *file_name);
-int save_fits_atomic(char *ID_name, char *file_name);
+int save_fits(const char *ID_name, const char *file_name);
+int save_fits_atomic(const char *ID_name, const char *file_name);
 
-int saveall_fits(char *savedirname);
+int saveall_fits(const char *savedirname);
 
-int break_cube(char *ID_name);
+int break_cube(const char *ID_name);
 
-int images_to_cube(char *img_name, long nbframes, char *cube_name);
+int images_to_cube(const char *img_name, long nbframes, const char *cube_name);
 
 #endif

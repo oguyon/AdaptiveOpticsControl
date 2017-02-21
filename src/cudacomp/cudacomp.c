@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -90,26 +91,26 @@ extern DATA data;
 extern pid_t CLIPID;
 
 
-struct timespec tnow;
-struct timespec tdiff;
-double tdiffv;
+static struct timespec tnow;
+static struct timespec tdiff;
+static double tdiffv;
 
-int IDtimerinit = 0;
-long IDtiming = -1; // index to image where timing should be written
+static int IDtimerinit = 0;
+static long IDtiming = -1; // index to image where timing should be written
 
 
 
 
 #ifdef HAVE_CUDA
-int deviceCount;
+static int deviceCount;
 
 GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations per process
 
 
-cudaError_t error;
-cublasStatus_t stat;
-float cublasSgemv_alpha = 1.0;
-float cublasSgemv_beta  = 0.0;
+static cudaError_t error;
+static cublasStatus_t stat;
+static float cublasSgemv_alpha = 1.0;
+static float cublasSgemv_beta  = 0.0;
 
 
 #endif
@@ -121,46 +122,46 @@ float cublasSgemv_beta  = 0.0;
 
 #ifdef HAVE_MAGMA
 
-int INIT_MAGMA = 0;
+static int INIT_MAGMA = 0;
 
 // queue for default magma device
-magma_queue_t   magmaqueue;
+static magma_queue_t   magmaqueue;
 
-long MAGMAloop_iter = 0;
+static long MAGMAloop_iter = 0;
 
-double *magma_h_A;
-double *magma_d_A;
-double *magma_d_AtA;
-double *magma_h_AtA;
-double *magma_w1; // eigenvalues
-double *magma_h_R;
-double *magma_h_work;
-double *magma_d_VT1;
-double *magma_h_VT1;
-double *magma_d_M2;
-double *magma_d_Ainv;
-double *magma_h_Ainv;
-double *magma_h_M2;
-
-
-float *magmaf_h_A;
-float *magmaf_d_A;
-float *magmaf_d_AtA;
-float *magmaf_h_AtA;
-float *magmaf_w1; // eigenvalues
-float *magmaf_h_R;
-float *magmaf_h_work;
-float *magmaf_d_VT1;
-float *magmaf_h_VT1;
-float *magmaf_d_M2;
-float *magmaf_d_Ainv;
-float *magmaf_h_Ainv;
-float *magmaf_h_M2;
+static double *magma_h_A;
+static double *magma_d_A;
+static double *magma_d_AtA;
+static double *magma_h_AtA;
+static double *magma_w1; // eigenvalues
+static double *magma_h_R;
+static double *magma_h_work;
+static double *magma_d_VT1;
+static double *magma_h_VT1;
+static double *magma_d_M2;
+static double *magma_d_Ainv;
+static double *magma_h_Ainv;
+static double *magma_h_M2;
 
 
-magma_int_t magma_aux_iwork[1];
-magma_int_t magma_lwork, magma_liwork;
-magma_int_t *magma_iwork;
+static float *magmaf_h_A;
+static float *magmaf_d_A;
+static float *magmaf_d_AtA;
+static float *magmaf_h_AtA;
+static float *magmaf_w1; // eigenvalues
+static float *magmaf_h_R;
+static float *magmaf_h_work;
+static float *magmaf_d_VT1;
+static float *magmaf_h_VT1;
+static float *magmaf_d_M2;
+static float *magmaf_d_Ainv;
+static float *magmaf_h_Ainv;
+static float *magmaf_h_M2;
+
+
+static magma_int_t magma_aux_iwork[1];
+static magma_int_t magma_lwork, magma_liwork;
+static magma_int_t *magma_iwork;
 
 
 #endif
@@ -180,7 +181,8 @@ magma_int_t *magma_iwork;
 //
 
 #ifdef HAVE_CUDA
-int CUDACOMP_test_cli()
+
+int_fast8_t CUDACOMP_test_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
         GPUcomp_test(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
@@ -188,7 +190,7 @@ int CUDACOMP_test_cli()
         return 1;
 }
 
-int CUDACOMP_Coeff2Map_Loop_cli()
+int_fast8_t CUDACOMP_Coeff2Map_Loop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)==0)
         CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, 0, " ");
@@ -197,7 +199,7 @@ int CUDACOMP_Coeff2Map_Loop_cli()
 }
 
 
-int CUDACOMP_Coeff2Map_offset_Loop_cli()
+int_fast8_t CUDACOMP_Coeff2Map_offset_Loop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,4)==0)
         CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, 1, data.cmdargtoken[5].val.string);
@@ -206,7 +208,7 @@ int CUDACOMP_Coeff2Map_offset_Loop_cli()
 }
 
 
-int CUDACOMP_extractModesLoop_cli()
+int_fast8_t CUDACOMP_extractModesLoop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,5)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
         CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
@@ -217,7 +219,7 @@ int CUDACOMP_extractModesLoop_cli()
 
 
 
-int init_cudacomp()
+int_fast8_t init_cudacomp()
 {
     long i;
 #ifdef HAVE_CUDA
@@ -257,7 +259,7 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"CUDA multiply vector by modes");
     strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs vector> <GPU index [long]> <output map>");
     strcpy(data.cmd[data.NBcmd].example,"cudacoeff2map modes coeff 4 outmap");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"cudacoeffo2map");
@@ -266,7 +268,7 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"CUDA multiply vector by modes and add offset");
     strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs vector> <GPU index [long]> <output map> <offset image>");
     strcpy(data.cmd[data.NBcmd].example,"cudacoeffo2map modes coeff 4 outmap offsetim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"cudaextrmodes");
@@ -275,7 +277,7 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop. Note that intot and refout parameters can be NULL");
     strcpy(data.cmd[data.NBcmd].syntax,"<inval stream> <intot stream> <modes> <refin val> <refout_val> <outmode vals> <GPU index [long]> <PROCESS flag> <TRACEMODE flag> <MODE norm flag> <input semaphore> <axis orientation> <twait [us]>");
     strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes inmap inmaptot modes imref imoutref modeval 3 1 1 1 3 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, const char *IDmodes_name, const char *IDrefin_name, const char *IDrefout_name, const char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)");
     data.NBcmd++;
     
 
@@ -295,7 +297,7 @@ int init_cudacomp()
 
 
 #ifdef HAVE_CUDA
-int CUDACOMP_init()
+int_fast8_t CUDACOMP_init()
 {
     int device;
     struct cudaDeviceProp deviceProp;
@@ -454,7 +456,7 @@ int GPUloadCmat(int index)
  * 
 */
 
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)
+int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)
 {
     long IDcontrM, IDwfsim, IDwfsref;
     long *sizearraytmp;
@@ -547,8 +549,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                     gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0];
                     cmatdim = 2;
                }
-            printf("[0] [%ld] M = %d\n", IDcontrM, gpumatmultconf[index].M);
-            printf("[0] [%ld] N = %d\n", IDcontrM, gpumatmultconf[index].N);
+            printf("[0] [%ld] M = %d\n", IDcontrM, (int) gpumatmultconf[index].M);
+            printf("[0] [%ld] N = %d\n", IDcontrM, (int) gpumatmultconf[index].N);
         }
         else
         {
@@ -565,8 +567,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 cmatdim = 2;
             }
 
-            printf("[1] [%ld] M = %d\n", IDcontrM, gpumatmultconf[index].M);
-            printf("[1] [%ld] N = %d\n", IDcontrM, gpumatmultconf[index].N);
+            printf("[1] [%ld] M = %d\n", IDcontrM, (int) gpumatmultconf[index].M);
+            printf("[1] [%ld] N = %d\n", IDcontrM, (int) gpumatmultconf[index].N);
         }
 
         gpumatmultconf[index].cMat =  data.image[IDcontrM].array.F;
@@ -582,9 +584,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         {            
             printf("[0] Input vector size: %ld %ld\n", data.image[IDwfsim].md[0].size[0], data.image[IDwfsim].md[0].size[1]);
             
-            if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]!=gpumatmultconf[index].N)
+            if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1] != (int) gpumatmultconf[index].N)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], gpumatmultconf[index].N);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], (int) gpumatmultconf[index].N);
                 fflush(stdout);
                 sleep(2);
                 exit(0);
@@ -593,9 +595,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         else
         {
             printf("[1] Input vector size: %ld \n", data.image[IDwfsim].md[0].size[0]);
-            if(data.image[IDwfsim].md[0].size[0]!=gpumatmultconf[index].N)
+            if(data.image[IDwfsim].md[0].size[0] != (int) gpumatmultconf[index].N)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], gpumatmultconf[index].N);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], (int) gpumatmultconf[index].N);
                 fflush(stdout);
                 sleep(2);
                 exit(0);
@@ -616,9 +618,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         }
         else
         {
-            if(data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1] != gpumatmultconf[index].M)
+            if(data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1] != (int) gpumatmultconf[index].M)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], gpumatmultconf[index].M);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], (int) gpumatmultconf[index].M);
                 printf("gpumatmultconf[index].IDout = %ld\n", gpumatmultconf[index].IDout);
                 list_image_ID();
                 fflush(stdout);
@@ -658,8 +660,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
-        gpumatmultconf[index].Nsize = (int*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].Noffset = (int*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].Nsize = (uint_fast32_t*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].Noffset = (uint_fast32_t*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].Noffset[0] = 0;
         for(device=1; device<gpumatmultconf[index].NBstreams; device++)
         {
@@ -689,7 +691,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         fflush(stdout);
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
         {
-            printf("DEVICE %2d  [%2d]:  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].GPUdevice[device], gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
+            printf("DEVICE %2d  [%2d]:  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].GPUdevice[device], (int) gpumatmultconf[index].Noffset[device], (int) (gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]), (int) gpumatmultconf[index].Nsize[device]);
             fflush(stdout);
         }
         printf("-----------------------------------------------------\n");
@@ -715,7 +717,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
         gpumatmultconf[index].dmRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference (for checking only)
 
-        gpumatmultconf[index].refWFSinit = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].refWFSinit = (int_fast8_t*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
 
 
         gpumatmultconf[index].semptr1 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
@@ -791,7 +793,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device]);
+				printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, (int) gpumatmultconf[index].M, (int) gpumatmultconf[index].Nsize[device]);
 			}
 
 
@@ -803,7 +805,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
 			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsRef[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
@@ -814,7 +816,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
 			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmVec[device], sizeof(float)*gpumatmultconf[index].M);
@@ -825,7 +827,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, gpumatmultconf[index].M);
+				printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
 			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M);
@@ -836,7 +838,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             }
 			else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, gpumatmultconf[index].M);
+				printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
 			}
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
@@ -915,7 +917,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing)
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing)
 {
     int m;
     int ptn;
@@ -1175,8 +1177,8 @@ void *compute_function( void *ptr )
     int device;
     int n, m;
     int index;
-    char *ptr0; // source
-    char *ptr1; // dest
+    const char *ptr0; // source
+    const char *ptr1; // dest
     float *ptr0f; // test
     int *ptrstat;
     long IDtest;
@@ -1306,8 +1308,8 @@ void *compute_function( void *ptr )
                 printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
                 printf("alpha                               = %f\n", alpharef);
                 printf("alpha                               = %f\n", betaref);
-                printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
-                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                printf("gpumatmultconf[index].M             = %d\n", (int) gpumatmultconf[index].M);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
                 fflush(stdout);
                 exit(EXIT_FAILURE);
             }
@@ -1394,7 +1396,7 @@ void *compute_function( void *ptr )
 
                 printf("alpha = %f\n", cublasSgemv_alpha);
                 printf("alpha = %f\n", cublasSgemv_beta);
-                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
                 fflush(stdout);
 
                 exit(EXIT_FAILURE);
@@ -1534,7 +1536,7 @@ void *compute_function( void *ptr )
 // Conventions:
 //   m: number of actuators 
 //   n: number of sensors  
-int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works for m != n */
+int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name) /* works for m != n */
 {
 	long *arraysizetmp;
 	magma_int_t M, N, min_mn;
@@ -1758,7 +1760,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 //
 // use LOOPmode = 1 for computing the same size SVD, same input and output location
 //
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode) /* works for m != n */
+int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode) /* works for m != n */
 {
     long ID_Rmatrix;
     int atype;
@@ -2504,7 +2506,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 //   m: number of sensors  (= # of pixels)
 // assumes m = n
 
-int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name)
+int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, const char *ID_VTmatrix_name)
 {
     cusolverDnHandle_t  cudenseH = NULL;
     cublasHandle_t cublasH = NULL;
@@ -2913,7 +2915,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 // single GPU
 // semaphore input = 3
 //
-int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)
+int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name)
 {
     long NBmodes;
     long IDmodes;
@@ -3231,7 +3233,7 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 // if IDrefout_name exists, match output image size to IDrefout_name
 //
 
-int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)
+int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, const char *IDmodes_name, const char *IDrefin_name, const char *IDrefout_name, const char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)
 {
     long IDin;
     long IDintot;
@@ -3887,7 +3889,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
 // extract mode coefficients from data stream
 /*
-int CUDACOMP_createModesLoop(char *DMmodeval_stream, char *DMmodes, char *DMact_stream, int GPUindex)
+int CUDACOMP_createModesLoop(const char *DMmodeval_stream, const char *DMmodes, const char *DMact_stream, int GPUindex)
 {
     long ID_DMmodeval;
     long ID_DMmodes;
@@ -4162,7 +4164,7 @@ int CUDACOMP_createModesLoop(char *DMmodeval_stream, char *DMmodes, char *DMact_
  
 
 
-int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
+int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 {
     long ID_contrM;
     long ID_WFS;
@@ -4170,8 +4172,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     long *cmsize;
     long *wfssize;
     long *cmdmodessize;
-    int status;
-    int GPUstatus[100];
+    int_fast8_t status;
+    int_fast8_t GPUstatus[100];
     long iter;
     long NBiter = 50000;
     double time1sec, time2sec;

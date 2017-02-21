@@ -2,7 +2,7 @@
 #define _STATISTIC_H
 
 
-int init_statistic();
+int_fast8_t init_statistic();
 
 
 double ran1();
@@ -22,8 +22,8 @@ double better_poisson(double mu);
 
 double fast_poisson(double mu);
 
-long put_poisson_noise(char *ID_in_name, char *ID_out_name);
+long put_poisson_noise(const char *ID_in_name, const char *ID_out_name);
 
-long put_gauss_noise(char *ID_in_name, char *ID_out_name, double ampl);
+long put_gauss_noise(const char *ID_in_name, const char *ID_out_name, double ampl);
 
 #endif

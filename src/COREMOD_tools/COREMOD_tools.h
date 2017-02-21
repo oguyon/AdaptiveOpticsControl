@@ -6,9 +6,9 @@
 int init_COREMOD_tools();
 
 
-int COREMOD_TOOLS_mvProcCPUset(char *csetname);
+int COREMOD_TOOLS_mvProcCPUset(const char *csetname);
 
-int create_counter_file(char *fname, long NBpts);
+int create_counter_file(const char *fname, long NBpts);
 
 int bubble_sort(double *array, long count);
 
@@ -42,38 +42,38 @@ int lin_regress(double *a, double *b, double *Xi2, double *x, double *y, double 
 
 int replace_char(char *content, char cin, char cout);
 
-int read_config_parameter_exists(char *config_file, char *keyword);
+int read_config_parameter_exists(const char *config_file, const char *keyword);
 
-int read_config_parameter(char *config_file, char *keyword, char *content);
+int read_config_parameter(const char *config_file, const char *keyword, char *content);
 
-float read_config_parameter_float(char *config_file, char *keyword);
+float read_config_parameter_float(const char *config_file, const char *keyword);
 
-long read_config_parameter_long(char *config_file, char *keyword);
+long read_config_parameter_long(const char *config_file, const char *keyword);
 
-int read_config_parameter_int(char *config_file, char *keyword);
+int read_config_parameter_int(const char *config_file, const char *keyword);
 
-long file_number_lines(char *file_name);
+long file_number_lines(const char *file_name);
 
-FILE* open_file_w(char *filename);
+FILE* open_file_w(const char *filename);
 
-FILE* open_file_r(char *filename);
+FILE* open_file_r(const char *filename);
 
-int write_1D_array(double *array, long nbpoints, char *filename);
+int write_1D_array(double *array, long nbpoints, const char *filename);
 
-int read_1D_array(double *array, long nbpoints, char *filename);
+int read_1D_array(double *array, long nbpoints, const char *filename);
 
-int tp(char *word);
+int tp(const char *word);
 
-int read_int_file(char *fname);
+int read_int_file(const char *fname);
 
-int write_int_file(char *fname, int value);
+int write_int_file(const char *fname, int value);
 
-int write_float_file(char *fname, float value);
+int write_float_file(const char *fname, float value);
 
 
-int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step);
+int COREMOD_TOOLS_imgdisplay3D(const char *IDname, long step);
 
-long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax);
+long COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax);
 
 
 #endif

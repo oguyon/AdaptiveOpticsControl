@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,11 +37,9 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 extern DATA data;
 
 
-char errormessage[SBUFFERSIZE];
+static char errormessage[SBUFFERSIZE];
 
-FILE *fpgnuplot;
-
-int write_float_file(char *fname, float value);
+static FILE *fpgnuplot;
 
 
 // CLI commands
@@ -52,7 +51,7 @@ int write_float_file(char *fname, float value);
 // 4: existing image
 // 5: string
 
-int COREMOD_TOOLS_mvProcCPUset_cli()
+int_fast8_t COREMOD_TOOLS_mvProcCPUset_cli()
 {
     if(CLI_checkarg(1,3)==0)
     {
@@ -64,7 +63,7 @@ int COREMOD_TOOLS_mvProcCPUset_cli()
 }
 
 
-int write_flot_file_cli()
+int_fast8_t write_flot_file_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
     {
@@ -76,7 +75,7 @@ int write_flot_file_cli()
 }
 
 
-int COREMOD_TOOLS_imgdisplay3D_cli()
+int_fast8_t COREMOD_TOOLS_imgdisplay3D_cli()
 {
  if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
     {
@@ -87,7 +86,7 @@ int COREMOD_TOOLS_imgdisplay3D_cli()
     return 1;
 }
 
-int COREMOD_TOOLS_statusStat_cli()
+int_fast8_t COREMOD_TOOLS_statusStat_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
     {
@@ -114,7 +113,7 @@ int init_COREMOD_tools()
     strcpy(data.cmd[data.NBcmd].info,"move current process to CPU set");
     strcpy(data.cmd[data.NBcmd].syntax,"<CPU set name>");
     strcpy(data.cmd[data.NBcmd].example,"csetpmove realtime");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_mvProcCPUset(char *csetname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_mvProcCPUset(const char *csetname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"writef2file");
@@ -123,7 +122,7 @@ int init_COREMOD_tools()
     strcpy(data.cmd[data.NBcmd].info,"write float to file");
     strcpy(data.cmd[data.NBcmd].syntax,"<filename> <float variable>");
     strcpy(data.cmd[data.NBcmd].example,"writef2file val.txt a");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(char *fname, float value)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(const char *fname, float value)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"dispim3d");
@@ -132,7 +131,7 @@ int init_COREMOD_tools()
     strcpy(data.cmd[data.NBcmd].info,"display 2D image as 3D surface using gnuplot");
     strcpy(data.cmd[data.NBcmd].syntax,"<imname> <step>");
     strcpy(data.cmd[data.NBcmd].example,"dispim3d im1 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_imgdisplay3D(const char *IDname, long step)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"ctsmstats");
@@ -141,7 +140,7 @@ int init_COREMOD_tools()
     strcpy(data.cmd[data.NBcmd].info,"monitors shared variable status");
     strcpy(data.cmd[data.NBcmd].syntax,"<imname> <NBstep>");
     strcpy(data.cmd[data.NBcmd].example,"ctsmstats imst 100000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)");
     data.NBcmd++;
 
 
@@ -152,7 +151,7 @@ int init_COREMOD_tools()
 
 
 
-int COREMOD_TOOLS_mvProcCPUset(char *csetname)
+int COREMOD_TOOLS_mvProcCPUset(const char *csetname)
 {
     int pid;
     char command[200];
@@ -167,7 +166,7 @@ int COREMOD_TOOLS_mvProcCPUset(char *csetname)
 
 
 
-int create_counter_file(char *fname, long NBpts)
+int create_counter_file(const char *fname, long NBpts)
 {
   long i;
   FILE *fp;
@@ -592,7 +591,7 @@ int replace_char(char *content, char cin, char cout)
 }
 
 
-int read_config_parameter_exists(char *config_file, char *keyword)
+int read_config_parameter_exists(const char *config_file, const char *keyword)
 {
   FILE *fp;
   char line[1000];
@@ -626,7 +625,7 @@ int read_config_parameter_exists(char *config_file, char *keyword)
 }
 
 
-int read_config_parameter(char *config_file, char *keyword, char *content)
+int read_config_parameter(const char *config_file, const char *keyword, char *content)
 {
   FILE *fp;
   char line[1000];
@@ -666,7 +665,7 @@ int read_config_parameter(char *config_file, char *keyword, char *content)
   return(read);
 }
 
-float read_config_parameter_float(char *config_file, char *keyword)
+float read_config_parameter_float(const char *config_file, const char *keyword)
 {
   float value;
   char content[SBUFFERSIZE];
@@ -679,7 +678,7 @@ float read_config_parameter_float(char *config_file, char *keyword)
   return(value);
 }
 
-long read_config_parameter_long(char *config_file, char *keyword)
+long read_config_parameter_long(const char *config_file, const char *keyword)
 {
   long value;
   char content[SBUFFERSIZE];
@@ -690,7 +689,7 @@ long read_config_parameter_long(char *config_file, char *keyword)
   return(value);
 }
 
-int read_config_parameter_int(char *config_file, char *keyword)
+int read_config_parameter_int(const char *config_file, const char *keyword)
 {
   int value;
   char content[SBUFFERSIZE];
@@ -704,7 +703,7 @@ int read_config_parameter_int(char *config_file, char *keyword)
 
 
 
-long file_number_lines(char *file_name)
+long file_number_lines(const char *file_name)
 {
   long cnt;
   int c;
@@ -726,7 +725,8 @@ long file_number_lines(char *file_name)
   return(cnt);
 }
 
-FILE* open_file_w(char *filename)
+
+FILE* open_file_w(const char *filename)
 {
   FILE *fp;
 
@@ -740,7 +740,8 @@ FILE* open_file_w(char *filename)
   return(fp);
 }
 
-FILE* open_file_r(char *filename)
+
+FILE* open_file_r(const char *filename)
 {
   FILE *fp;
 
@@ -754,7 +755,7 @@ FILE* open_file_r(char *filename)
   return(fp);
 }
 
-int write_1D_array(double *array, long nbpoints, char *filename)
+int write_1D_array(double *array, long nbpoints, const char *filename)
 {
   FILE *fp;
   long ii;
@@ -767,7 +768,7 @@ int write_1D_array(double *array, long nbpoints, char *filename)
   return(0);
 }
 
-int read_1D_array(double *array, long nbpoints, char *filename)
+int read_1D_array(double *array, long nbpoints, const char *filename)
 {
   FILE *fp;
   long ii;
@@ -790,7 +791,7 @@ int read_1D_array(double *array, long nbpoints, char *filename)
 
 
 /* test point */ 
-int tp(char *word)
+int tp(const char *word)
 {
   printf("---- Test point %s ----\n",word);
   fflush(stdout);
@@ -798,7 +799,7 @@ int tp(char *word)
   return(0);
 }
 
-int read_int_file(char *fname)
+int read_int_file(const char *fname)
 {
   int value;
   FILE *fp;
@@ -820,7 +821,7 @@ int read_int_file(char *fname)
   return(value);
 }
 
-int write_int_file(char *fname, int value)
+int write_int_file(const char *fname, int value)
 {
   FILE *fp;
   
@@ -837,7 +838,7 @@ int write_int_file(char *fname, int value)
   return(value);
 }
 
-int write_float_file(char *fname, float value)
+int write_float_file(const char *fname, float value)
 {
   FILE *fp;
   int mode = 0; // default, create single file
@@ -875,7 +876,7 @@ int write_float_file(char *fname, float value)
 
 // displays 2D image in 3D using gnuplot
 //
-int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)
+int COREMOD_TOOLS_imgdisplay3D(const char *IDname, long step)
 {
     char ID;
     long xsize, ysize;
@@ -932,7 +933,7 @@ int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)
 //
 // watch shared memory status image and perform timing statistics
 //
-long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax)
+long COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)
 {
     long IDout;
     int RT_priority = 91; //any number from 0-99

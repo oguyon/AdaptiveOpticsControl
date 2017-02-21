@@ -1,4 +1,6 @@
-#include <fitsio.h>
+#define _GNU_SOURCE
+
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -44,6 +46,8 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #endif
 
 
+#include <fitsio.h>
+
 
 #include "CLIcore.h"
 #include "info/info.h"
@@ -67,23 +71,23 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
-pthread_t *thrarray_semwait;
-long NB_thrarray_semwait;
+static pthread_t *thrarray_semwait;
+static long NB_thrarray_semwait;
 
 
 // MEMORY MONITOR 
-FILE *listim_scr_fpo;
-FILE *listim_scr_fpi;
-SCREEN *listim_scr; // for memory monitoring
-int MEM_MONITOR = 0; // 1 if memory monitor is on
-int listim_scr_wrow;
-int listim_scr_wcol;
+static FILE *listim_scr_fpo;
+static FILE *listim_scr_fpi;
+static SCREEN *listim_scr; // for memory monitoring
+static int MEM_MONITOR = 0; // 1 if memory monitor is on
+static int listim_scr_wrow;
+static int listim_scr_wcol;
 
 
 extern DATA data;
 
 
-char errmsg_memory[SBUFFERSIZE];
+static char errmsg_memory[SBUFFERSIZE];
 
 
 
@@ -97,7 +101,8 @@ struct savethreadmsg {
     int partial; // 1 if partial cube
     long cubesize; // if partial cube, this is the size of the cube
 };
-long tret; // thread return value
+
+static long tret; // thread return value
 
 
 
@@ -119,7 +124,7 @@ long tret; // thread return value
 
 
 
-int create_image_cli()
+int_fast8_t create_image_cli()
 {
     long *imsize;
     long naxis = 0;
@@ -236,7 +241,7 @@ int create_image_cli()
 
 
 
-int image_write_keyword_L_cli()
+int_fast8_t image_write_keyword_L_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
     image_write_keyword_L(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
@@ -246,7 +251,7 @@ int image_write_keyword_L_cli()
 
 
 
-int image_list_keywords_cli()
+int_fast8_t image_list_keywords_cli()
 {
   if(CLI_checkarg(1,4)==0)
     image_list_keywords(data.cmdargtoken[1].val.string);
@@ -255,8 +260,8 @@ int image_list_keywords_cli()
 }
 
 
-//long read_sharedmem_image_size(char *name, char *fname)
-int read_sharedmem_image_size_cli()
+//long read_sharedmem_image_size(const char *name, const char *fname)
+int_fast8_t read_sharedmem_image_size_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,3)==0)
     read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
@@ -265,7 +270,7 @@ int read_sharedmem_image_size_cli()
 }
 
 
-int read_sharedmem_image_cli()
+int_fast8_t read_sharedmem_image_cli()
 {
   if(CLI_checkarg(1,3)==0)
     read_sharedmem_image(data.cmdargtoken[1].val.string);
@@ -274,7 +279,7 @@ int read_sharedmem_image_cli()
 }
 
 
-int create_image_shared_cli() // default precision
+int_fast8_t create_image_shared_cli() // default precision
 {
     long *imsize;
     long naxis = 0;
@@ -309,7 +314,7 @@ int create_image_shared_cli() // default precision
 }
 
 
-int create_ushort_image_shared_cli() // default precision
+int_fast8_t create_ushort_image_shared_cli() // default precision
 {
     long *imsize;
     long naxis = 0;
@@ -338,7 +343,7 @@ int create_ushort_image_shared_cli() // default precision
 
 
 
-int create_2Dimage_float()
+int_fast8_t create_2Dimage_float()
 {
   long *imsize;
 
@@ -356,7 +361,7 @@ int create_2Dimage_float()
   return 0;
 }
 
-int create_3Dimage_float()
+int_fast8_t create_3Dimage_float()
 {
   long *imsize;
 
@@ -376,13 +381,14 @@ int create_3Dimage_float()
 }
 
 
-int memory_monitor_cli()
+int_fast8_t memory_monitor_cli()
 {
   memory_monitor(data.cmdargtoken[1].val.string);
   return 0;
 }
 
-int list_variable_ID_file_cli()
+
+int_fast8_t list_variable_ID_file_cli()
 {
  if(CLI_checkarg(1,3)==0)
     list_variable_ID_file(data.cmdargtoken[1].val.string);
@@ -391,7 +397,7 @@ int list_variable_ID_file_cli()
 }
 
 
-int delete_image_ID_cli()
+int_fast8_t delete_image_ID_cli()
 {
     long i = 1;
     printf("%ld : %d\n", i, data.cmdargtoken[i].type);
@@ -408,7 +414,7 @@ int delete_image_ID_cli()
 }
 
 
-int copy_image_ID_cli()
+int_fast8_t copy_image_ID_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -421,7 +427,7 @@ int copy_image_ID_cli()
   return 0;
 }
 
-int copy_image_ID_sharedmem_cli()
+int_fast8_t copy_image_ID_sharedmem_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -435,7 +441,7 @@ int copy_image_ID_sharedmem_cli()
 }
 
 
-int chname_image_ID_cli()
+int_fast8_t chname_image_ID_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -449,7 +455,7 @@ int chname_image_ID_cli()
 }
 
 
-int mk_complex_from_reim_cli()
+int_fast8_t mk_complex_from_reim_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -468,7 +474,7 @@ int mk_complex_from_reim_cli()
 }
 
 
-int mk_complex_from_amph_cli()
+int_fast8_t mk_complex_from_amph_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -487,7 +493,7 @@ int mk_complex_from_amph_cli()
 }
 
 
-int mk_reim_from_complex_cli()
+int_fast8_t mk_reim_from_complex_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -500,7 +506,7 @@ int mk_reim_from_complex_cli()
   return 0;
 }
 
-int mk_amph_from_complex_cli()
+int_fast8_t mk_amph_from_complex_cli()
 {
   if(data.cmdargtoken[1].type != 4)
     {
@@ -517,7 +523,7 @@ int mk_amph_from_complex_cli()
 
 
 
-int COREMOD_MEMORY_image_set_status_cli()
+int_fast8_t COREMOD_MEMORY_image_set_status_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_status(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
@@ -526,7 +532,7 @@ int COREMOD_MEMORY_image_set_status_cli()
 }
 
 
-int COREMOD_MEMORY_image_set_cnt0_cli()
+int_fast8_t COREMOD_MEMORY_image_set_cnt0_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_cnt0(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
@@ -534,7 +540,7 @@ int COREMOD_MEMORY_image_set_cnt0_cli()
         return 1;
 }
 
-int COREMOD_MEMORY_image_set_cnt1_cli()
+int_fast8_t COREMOD_MEMORY_image_set_cnt1_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_cnt1(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
@@ -543,7 +549,7 @@ int COREMOD_MEMORY_image_set_cnt1_cli()
 }
 
 
-int COREMOD_MEMORY_image_set_createsem_cli()
+int_fast8_t COREMOD_MEMORY_image_set_createsem_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_createsem(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
@@ -551,7 +557,7 @@ int COREMOD_MEMORY_image_set_createsem_cli()
         return 1;
 }
 
-int COREMOD_MEMORY_image_set_sempost_cli()
+int_fast8_t COREMOD_MEMORY_image_set_sempost_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_sempost(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
@@ -559,7 +565,7 @@ int COREMOD_MEMORY_image_set_sempost_cli()
         return 1;
 }
 
-int COREMOD_MEMORY_image_set_sempost_loop_cli()
+int_fast8_t COREMOD_MEMORY_image_set_sempost_loop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
         COREMOD_MEMORY_image_set_sempost_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
@@ -569,7 +575,7 @@ int COREMOD_MEMORY_image_set_sempost_loop_cli()
 
 
 
-int COREMOD_MEMORY_image_set_semwait_cli()
+int_fast8_t COREMOD_MEMORY_image_set_semwait_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_semwait(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
@@ -577,7 +583,7 @@ int COREMOD_MEMORY_image_set_semwait_cli()
         return 1;
 }
 
-int COREMOD_MEMORY_image_set_semflush_cli()
+int_fast8_t COREMOD_MEMORY_image_set_semflush_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
         COREMOD_MEMORY_image_set_semflush(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
@@ -588,7 +594,7 @@ int COREMOD_MEMORY_image_set_semflush_cli()
 
 
 
-int COREMOD_MEMORY_cp2shm_cli()
+int_fast8_t COREMOD_MEMORY_cp2shm_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -601,7 +607,7 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
-int COREMOD_MEMORY_streamDiff_cli()
+int_fast8_t COREMOD_MEMORY_streamDiff_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
@@ -613,7 +619,7 @@ int COREMOD_MEMORY_streamDiff_cli()
 }
 
 
-int COREMOD_MEMORY_stream_halfimDiff_cli()
+int_fast8_t COREMOD_MEMORY_stream_halfimDiff_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
     {
@@ -627,7 +633,7 @@ int COREMOD_MEMORY_stream_halfimDiff_cli()
 
 
 
-int COREMOD_MEMORY_image_streamupdateloop_cli()
+int_fast8_t COREMOD_MEMORY_image_streamupdateloop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
     {
@@ -640,7 +646,7 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 
 
 
-int COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
+int_fast8_t COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
     {
@@ -653,7 +659,7 @@ int COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
 
 
 
-int COREMOD_MEMORY_streamDelay_cli()
+int_fast8_t COREMOD_MEMORY_streamDelay_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {
@@ -665,7 +671,7 @@ int COREMOD_MEMORY_streamDelay_cli()
 }
 
 
-int COREMOD_MEMORY_SaveAll_snapshot_cli()
+int_fast8_t COREMOD_MEMORY_SaveAll_snapshot_cli()
 {
 	 if(CLI_checkarg(1,5)==0)
     {
@@ -677,7 +683,7 @@ int COREMOD_MEMORY_SaveAll_snapshot_cli()
 }
 
 
-int COREMOD_MEMORY_SaveAll_sequ_cli()
+int_fast8_t COREMOD_MEMORY_SaveAll_sequ_cli()
 {
 	 if(CLI_checkarg(1,5)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {
@@ -690,7 +696,7 @@ int COREMOD_MEMORY_SaveAll_sequ_cli()
 
 
 
-int COREMOD_MEMORY_image_NETWORKtransmit_cli()
+int_fast8_t COREMOD_MEMORY_image_NETWORKtransmit_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
     {
@@ -702,7 +708,7 @@ int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 }
 
 
-int COREMOD_MEMORY_image_NETWORKreceive_cli()
+int_fast8_t COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
     {
@@ -715,7 +721,7 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 
 
 
-int COREMOD_MEMORY_PixMapDecode_U_cli()
+int_fast8_t COREMOD_MEMORY_PixMapDecode_U_cli()
 {
      if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,4)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
     {
@@ -731,7 +737,7 @@ int COREMOD_MEMORY_PixMapDecode_U_cli()
 
 
 
-int COREMOD_MEMORY_logshim_printstatus_cli()
+int_fast8_t COREMOD_MEMORY_logshim_printstatus_cli()
 {
     if(CLI_checkarg(1,3)==0)
     {
@@ -743,7 +749,7 @@ int COREMOD_MEMORY_logshim_printstatus_cli()
 }
 
 
-int COREMOD_MEMORY_logshim_set_on_cli()
+int_fast8_t COREMOD_MEMORY_logshim_set_on_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
     {
@@ -755,7 +761,7 @@ int COREMOD_MEMORY_logshim_set_on_cli()
         return 1;
 }
 
-int COREMOD_MEMORY_logshim_set_logexit_cli()
+int_fast8_t COREMOD_MEMORY_logshim_set_logexit_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
     {
@@ -768,7 +774,7 @@ int COREMOD_MEMORY_logshim_set_logexit_cli()
 
 
 
-int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
+int_fast8_t COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
     //sprintf(data.cmdargtoken[4].val.string, "null");
     CLI_checkarg(4,3);
@@ -790,7 +796,7 @@ int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 
 
 
-int init_COREMOD_memory()
+int_fast8_t init_COREMOD_memory()
 {
     strcpy(data.module[data.NBmodule].name,__FILE__);
     strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
@@ -802,7 +808,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"list images in memory");
     strcpy(data.cmd[data.NBcmd].syntax,"no argument");
     strcpy(data.cmd[data.NBcmd].example,"listim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int list_image_ID()");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int_fast8_t list_image_ID()");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mmon");
@@ -811,7 +817,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"Monitor memory content");
     strcpy(data.cmd[data.NBcmd].syntax,"terminal tty name");
     strcpy(data.cmd[data.NBcmd].example,"mmon /dev/pts/4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(char *ttyname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(const char *ttyname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"listvar");
@@ -838,7 +844,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
     strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
     strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, int atype, 0, 10)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imwritekwL");
@@ -847,7 +853,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"write long type keyword");
     strcpy(data.cmd[data.NBcmd].syntax,"<imname> <kname> <value [long]> <comment>");
     strcpy(data.cmd[data.NBcmd].example,"imwritekwL im1 kw2 34 my_keyword_comment");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_write_keyword_L(char *IDname, char *kname, long value, char *comment)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_write_keyword_L(const char *IDname, const char *kname, long value, const char *comment)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imlistkw");
@@ -856,7 +862,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"list image keywords");
     strcpy(data.cmd[data.NBcmd].syntax,"<imname>");
     strcpy(data.cmd[data.NBcmd].example,"imlistkw im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_list_keywords(char *IDname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_list_keywords(const char *IDname)");
     data.NBcmd++;
 
 
@@ -866,7 +872,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"read shared memory image size");
     strcpy(data.cmd[data.NBcmd].syntax,"<name> <output file>");
     strcpy(data.cmd[data.NBcmd].example,"readshmim im1 imsize.txt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image_size(char *name, char *fname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image_size(const char *name, const char *fname)");
     data.NBcmd++;
 
 
@@ -876,7 +882,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"read shared memory image");
     strcpy(data.cmd[data.NBcmd].syntax,"<name>");
     strcpy(data.cmd[data.NBcmd].example,"readshmim im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(char *name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(const char *name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"creaimshm");
@@ -885,7 +891,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
     strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
     strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, int atype, 0, 10)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"creaushortimshm");
@@ -894,7 +900,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create unsigned short image in shared mem");
     strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
     strcpy(data.cmd[data.NBcmd].example,"creaushortimshm imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, USHORT, 0, 10)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, USHORT, 0, 10)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"crea3dim");
@@ -903,7 +909,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
     strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
     strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0, 10)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, FLOAT, 0, 10)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"rm");
@@ -921,7 +927,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"copy image");
     strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
     strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"cpsh");
@@ -930,7 +936,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
     strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
     strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mv");
@@ -939,7 +945,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"change image name");
     strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
     strcpy(data.cmd[data.NBcmd].example,"mv im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(char *name, char *newname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(const char *name, const char *newname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"ri2c");
@@ -948,7 +954,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"real, imaginary -> complex");
     strcpy(data.cmd[data.NBcmd].syntax,"real imaginary complex");
     strcpy(data.cmd[data.NBcmd].example,"ri2c imr imi imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(const char *re_name, const char *im_name, const char *out_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"ap2c");
@@ -957,7 +963,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
     strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
     strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name, int sharedmem)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"c2ri");
@@ -966,7 +972,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
     strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
     strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(char *re_name, char *im_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(const char *re_name, const char *im_name, const char *out_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"c2ap");
@@ -975,7 +981,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
     strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
     strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name, int sharedmem)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"rmall");
@@ -994,7 +1000,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"set image status variable");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
     strcpy(data.cmd[data.NBcmd].example,"imsetstatus im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(char *IDname, int status)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(const char *IDname, int status)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetcnt0");
@@ -1003,7 +1009,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"set image cnt0 variable");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
     strcpy(data.cmd[data.NBcmd].example,"imsetcnt0 im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(char *IDname, int status)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(const char *IDname, int status)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetcnt1");
@@ -1012,7 +1018,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"set image cnt1 variable");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
     strcpy(data.cmd[data.NBcmd].example,"imsetcnt1 im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(char *IDname, int status)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int status)");
     data.NBcmd++;
 
 
@@ -1023,7 +1029,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create image semaphore");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <NBsem>");
     strcpy(data.cmd[data.NBcmd].example,"imsetcreatesem im1 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
@@ -1032,7 +1038,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"post image semaphore. If sem index = -1, post all semaphores");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
     strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetsempostl");
@@ -1041,7 +1047,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"post image semaphore loop. If sem index = -1, post all semaphores");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index> <time interval [us]>");
     strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname, long index, long dtus)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index, long dtus)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
@@ -1050,7 +1056,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"wait image semaphore");
     strcpy(data.cmd[data.NBcmd].syntax,"<image>");
     strcpy(data.cmd[data.NBcmd].example,"imsetsemwait im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(char *IDname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(const char *IDname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetsemflush");
@@ -1059,7 +1065,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"flush image semaphore");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
     strcpy(data.cmd[data.NBcmd].example,"imsetsemflush im1 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)");
     data.NBcmd++;
 
 
@@ -1069,7 +1075,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"copy image ot shared memory");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <shared mem image>");
     strcpy(data.cmd[data.NBcmd].example,"imcp2shm im1 ims1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)");
     data.NBcmd++;
 
 
@@ -1080,7 +1086,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
     strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
     strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
@@ -1089,7 +1095,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube, use other stream to synchronize");
     strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index> <timing mode>");
     strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const char *IDoutname, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"streamdelay");
@@ -1098,7 +1104,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"delay 2D image stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<image2d in> <image2d out> <delay [us]> <resolution [us]>");
     strcpy(data.cmd[data.NBcmd].example,"streamdelay instream outstream 1000 10");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus)");
     data.NBcmd++;
 
 
@@ -1108,7 +1114,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"save all images in directory");
     strcpy(data.cmd[data.NBcmd].syntax,"<directory>");
     strcpy(data.cmd[data.NBcmd].example,"imsaveallsnap dir1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(const char *dirname)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsaveallseq");
@@ -1117,7 +1123,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"save all images in directory - sequence");
     strcpy(data.cmd[data.NBcmd].syntax,"<directory> <trigger image name> <trigger semaphore> <NB frames>");
     strcpy(data.cmd[data.NBcmd].example,"imsaveallsequ dir1 im1 3 20");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_sequ(const char *dirname, const char *IDtrig_name, long semtrig, long NBframes)");
     data.NBcmd++;
 
 
@@ -1127,7 +1133,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <sync mode [int]>");
     strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr, int port, int mode)");
     data.NBcmd++;
 
 
@@ -1148,7 +1154,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"decode image stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <xsize [long]> <ysize [long]> <nbpix per slice [ASCII file]> <decode map> <out stream> <out image slice index [FITS]>");
     strcpy(data.cmd[data.NBcmd].example,"impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits");
-    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, long xsizeim, long ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)");
     data.NBcmd++;
 
 
@@ -1159,7 +1165,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"compute difference between two image streams");
     strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <optional mask> <sem trigger index>");
     strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 null outstream 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(const char *IDstream0_name, const char *IDstream1_name, const char *IDstreamout_name, long semtrig)");
 	data.NBcmd++;
 
 
@@ -1170,7 +1176,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"compute difference between two halves of an image stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <out stream> <sem trigger index>");
     strcpy(data.cmd[data.NBcmd].example,"streamhalfdiff stream outstream 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDstreamout_name, long semtrig)");
 	data.NBcmd++;
 
 
@@ -1181,7 +1187,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
     strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]> <logdir>");
     strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000 /media/data");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, char *logdir)");
     data.NBcmd++;
 
 
@@ -1191,7 +1197,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"print log shared memory stream status");
     strcpy(data.cmd[data.NBcmd].syntax,"<shm image>");
     strcpy(data.cmd[data.NBcmd].example,"shmimslogstat wfscamim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(char *IDname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(const char *IDname)");
     data.NBcmd++;
 
 
@@ -1201,7 +1207,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"set on variable in log shared memory stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
     strcpy(data.cmd[data.NBcmd].example,"shmimslogonset imwfs 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(const char *IDname, int setv)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"shmimslogexitset");
@@ -1210,7 +1216,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"set exit variable in log shared memory stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
     strcpy(data.cmd[data.NBcmd].example,"shmimslogexitset imwfs 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv)");
     data.NBcmd++;
 
 
@@ -1304,7 +1310,7 @@ long compute_variable_memory()
 
 
 
-long image_ID(char *name) /* ID number corresponding to a name */
+long image_ID(const char *name) /* ID number corresponding to a name */
 {
     long i,ID;
     int found;
@@ -1338,7 +1344,7 @@ long image_ID(char *name) /* ID number corresponding to a name */
 }
 
 
-long image_ID_noaccessupdate(char *name) /* ID number corresponding to a name */
+long image_ID_noaccessupdate(const char *name) /* ID number corresponding to a name */
 {
     long i,ID;
     int found;
@@ -1369,7 +1375,7 @@ long image_ID_noaccessupdate(char *name) /* ID number corresponding to a name */
 }
 
 
-long variable_ID(char *name) /* ID number corresponding to a name */
+long variable_ID(const char *name) /* ID number corresponding to a name */
 {
     long i,ID;
     int found;
@@ -1460,7 +1466,7 @@ long next_avail_variable_ID() /* next available ID number */
 
 
 
-int delete_image_ID(char* imname) /* deletes an ID */
+int_fast8_t delete_image_ID(const char* imname) /* deletes an ID */
 {
     long ID;
     char command[200];
@@ -1611,7 +1617,7 @@ int delete_image_ID(char* imname) /* deletes an ID */
 
 
 // delete all images with a prefix
-int delete_image_ID_prefix(char *prefix)
+int_fast8_t delete_image_ID_prefix(const char *prefix)
 {
     long i;
 
@@ -1628,7 +1634,8 @@ int delete_image_ID_prefix(char *prefix)
 }
 
 
-int delete_variable_ID(char* varname) /* deletes a variable ID */
+
+int_fast8_t delete_variable_ID(const char* varname) /* deletes a variable ID */
 {
     long ID;
 
@@ -1651,7 +1658,7 @@ int delete_variable_ID(char* varname) /* deletes a variable ID */
 
 /* creates an image ID */
 /* all images should be created by this function */
-long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int NBkw)
+long create_image_ID(const char *name, long naxis, long *size, int atype, int shared, int NBkw)
 {
     long ID;
     long i,ii;
@@ -2045,7 +2052,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
 
 
-long image_write_keyword_L(char *IDname, char *kname, long value, char *comment)
+long image_write_keyword_L(const char *IDname, const char *kname, long value, const char *comment)
 {
     long ID;
     long kw, NBkw, kw0;
@@ -2074,7 +2081,7 @@ long image_write_keyword_L(char *IDname, char *kname, long value, char *comment)
     return(kw0);
 }
 
-long image_write_keyword_D(char *IDname, char *kname, double value, char *comment)
+long image_write_keyword_D(const char *IDname, const char *kname, double value, const char *comment)
 {
     long ID;
     long kw, NBkw, kw0;
@@ -2103,7 +2110,7 @@ long image_write_keyword_D(char *IDname, char *kname, double value, char *commen
     return(kw0);
 }
 
-long image_write_keyword_S(char *IDname, char *kname, char *value, char *comment)
+long image_write_keyword_S(const char *IDname, const char *kname, const char *value, const char *comment)
 {
     long ID;
     long kw, NBkw, kw0;
@@ -2135,7 +2142,7 @@ long image_write_keyword_S(char *IDname, char *kname, char *value, char *comment
 
 
 
-long image_list_keywords(char *IDname)
+long image_list_keywords(const char *IDname)
 {
     long ID;
     long kw, NBkw;
@@ -2158,7 +2165,7 @@ long image_list_keywords(char *IDname)
 }
 
 
-long image_read_keyword_D(char *IDname, char *kname, double *val)
+long image_read_keyword_D(const char *IDname, const char *kname, double *val)
 {
     long ID;
     long kw, NBkw, kw0;
@@ -2178,7 +2185,7 @@ long image_read_keyword_D(char *IDname, char *kname, double *val)
 }
 
 
-long image_read_keyword_L(char *IDname, char *kname, long *val)
+long image_read_keyword_L(const char *IDname, const char *kname, long *val)
 {
     long ID;
     long kw, NBkw, kw0;
@@ -2203,7 +2210,7 @@ long image_read_keyword_L(char *IDname, char *kname, long *val)
 
 
 
-long read_sharedmem_image_size(char *name, char *fname)
+long read_sharedmem_image_size(const char *name, const char *fname)
 {
     int SM_fd;
     struct stat file_stat;
@@ -2252,7 +2259,7 @@ long read_sharedmem_image_size(char *name, char *fname)
 
 
 
-long read_sharedmem_image(char *name)
+long read_sharedmem_image(const char *name)
 {
     long ID = -1;
     int SM_fd;
@@ -2443,7 +2450,7 @@ long read_sharedmem_image(char *name)
 
 
 
-long create_1Dimage_ID(char *ID_name, long xsize)
+long create_1Dimage_ID(const char *ID_name, long xsize)
 {
     long ID = -1;
     long naxis = 1;
@@ -2459,7 +2466,7 @@ long create_1Dimage_ID(char *ID_name, long xsize)
     return(ID);
 }
 
-long create_1DCimage_ID(char *ID_name, long xsize)
+long create_1DCimage_ID(const char *ID_name, long xsize)
 {
     long ID = -1;
     long naxis=1;
@@ -2475,7 +2482,7 @@ long create_1DCimage_ID(char *ID_name, long xsize)
     return(ID);
 }
 
-long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
+long create_2Dimage_ID(const char *ID_name, long xsize, long ysize)
 {
     long ID = -1;
     long naxis=2;
@@ -2505,7 +2512,7 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
     return(ID);
 }
 
-long create_2Dimage_ID_double(char *ID_name, long xsize, long ysize)
+long create_2Dimage_ID_double(const char *ID_name, long xsize, long ysize)
 {
     long ID = -1;
     long naxis=2;
@@ -2521,7 +2528,7 @@ long create_2Dimage_ID_double(char *ID_name, long xsize, long ysize)
 
 
 /* 2D complex image */
-long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
+long create_2DCimage_ID(const char *ID_name, long xsize, long ysize)
 {
     long ID = -1;
     long naxis=2;
@@ -2539,7 +2546,7 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
 }
 
 /* 2D complex image */
-long create_2DCimage_ID_double(char *ID_name, long xsize, long ysize)
+long create_2DCimage_ID_double(const char *ID_name, long xsize, long ysize)
 {
     long ID = -1;
     long naxis=2;
@@ -2556,7 +2563,7 @@ long create_2DCimage_ID_double(char *ID_name, long xsize, long ysize)
 
 
 /* 3D image, single precision */
-long create_3Dimage_ID_float(char *ID_name, long xsize, long ysize, long zsize)
+long create_3Dimage_ID_float(const char *ID_name, long xsize, long ysize, long zsize)
 {
     long ID = -1;
     long naxis=3;
@@ -2579,7 +2586,7 @@ long create_3Dimage_ID_float(char *ID_name, long xsize, long ysize, long zsize)
 
 
 /* 3D image, double precision */
-long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize)
+long create_3Dimage_ID_double(const char *ID_name, long xsize, long ysize, long zsize)
 {
     long ID;
     long naxis=3;
@@ -2597,7 +2604,7 @@ long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize)
 
 
 /* 3D image, default precision */
-long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize)
+long create_3Dimage_ID(const char *ID_name, long xsize, long ysize, long zsize)
 {
     long ID = -1;
     long naxis=3;
@@ -2616,7 +2623,7 @@ long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize)
 }
 
 /* 3D complex image */
-long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
+long create_3DCimage_ID(const char *ID_name, long xsize, long ysize, long zsize)
 {
     long ID = -1;
     long naxis=3;
@@ -2636,7 +2643,7 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
 
 
 
-long copy_image_ID(char *name, char *newname, int shared)
+long copy_image_ID(const char *name, const char *newname, int shared)
 {
     long ID, IDout;
     long naxis;
@@ -2740,12 +2747,7 @@ long copy_image_ID(char *name, char *newname, int shared)
     if(atype==USHORT)
         memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
 
-    for(s=0;s<data.image[IDout].sem; s++)
-    {
-        sem_getvalue(data.image[IDout].semptr[s], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[IDout].semptr[s]);
-    }
+
     
     if(data.image[IDout].semlog!=NULL)
     {
@@ -2767,7 +2769,7 @@ long copy_image_ID(char *name, char *newname, int shared)
 
 
 /* creates floating point variable */
-long create_variable_ID(char *name, double value)
+long create_variable_ID(const char *name, double value)
 {
     long ID;
     long i1,i2;
@@ -2802,7 +2804,7 @@ long create_variable_ID(char *name, double value)
 
 
 /* creates long variable */
-long create_variable_long_ID(char *name, long value)
+long create_variable_long_ID(const char *name, long value)
 {
     long ID;
     long i1,i2;
@@ -2838,7 +2840,7 @@ long create_variable_long_ID(char *name, long value)
 
 
 /* creates long variable */
-long create_variable_string_ID(char *name, char *value)
+long create_variable_string_ID(const char *name, const char *value)
 {
     long ID;
     long i1,i2;
@@ -2880,7 +2882,7 @@ long create_variable_string_ID(char *name, char *value)
 
 
 
-int init_list_image_ID_ncurses(char *termttyname)
+int_fast8_t init_list_image_ID_ncurses(const char *termttyname)
 {
     int wrow, wcol;
 
@@ -2903,7 +2905,8 @@ int init_list_image_ID_ncurses(char *termttyname)
     return 0;
 }
 
-int list_image_ID_ncurses()
+
+int_fast8_t list_image_ID_ncurses()
 {
     char str[500];
     long i, j;
@@ -3061,7 +3064,7 @@ void close_list_image_ID_ncurses( void )
 }
 
 
-int memory_monitor(char *termttyname)
+int_fast8_t memory_monitor(const char *termttyname)
 {
     if(data.Debug>0)
         printf("starting memory_monitor on \"%s\"\n", termttyname);
@@ -3079,20 +3082,21 @@ int memory_monitor(char *termttyname)
 
 
 
-int list_image_ID_ofp(FILE *fo)
+int_fast8_t list_image_ID_ofp(FILE *fo)
 {
     long i,j;
     long long tmp_long;
     char type[STYPESIZE];
     int atype;
     int n;
-    long long sizeb, sizeKb, sizeMb, sizeGb;
+    unsigned long long sizeb, sizeKb, sizeMb, sizeGb;
     char str[500];
     struct timespec timenow;
     double timediff;
+	struct mallinfo minfo;
 
     sizeb = compute_image_memory();
-
+	minfo = mallinfo();
 
     clock_gettime(CLOCK_REALTIME, &timenow);
 	fprintf(fo, "time:  %ld.%09ld\n", timenow.tv_sec % 60, timenow.tv_nsec);
@@ -3188,14 +3192,18 @@ int list_image_ID_ofp(FILE *fo)
         fprintf(fo, " %ld Kb",(long) (sizeKb));
     if(sizeb>0)
         fprintf(fo, " %ld",(long) (sizeb));
-    fprintf(fo, "\n\n");
+    fprintf(fo, "\n");
 
     fflush(fo);
+
+
 
     return(0);
 }
 
-int list_image_ID_ofp_simple(FILE *fo)
+
+
+int_fast8_t list_image_ID_ofp_simple(FILE *fo)
 {
     long i,j;
     long long tmp_long;
@@ -3220,9 +3228,10 @@ int list_image_ID_ofp_simple(FILE *fo)
 
 
 
-int list_image_ID()
+int_fast8_t list_image_ID()
 {
     list_image_ID_ofp(stdout);
+	malloc_stats();
     return 0;
 }
 
@@ -3237,7 +3246,7 @@ int list_image_ID()
    type
  */
 
-int list_image_ID_file(char *fname)
+int_fast8_t list_image_ID_file(const char *fname)
 {
     FILE *fp;
     long i,j;
@@ -3291,7 +3300,7 @@ int list_image_ID_file(char *fname)
 }
 
 
-int list_variable_ID()
+int_fast8_t list_variable_ID()
 {
     long i;
 
@@ -3303,7 +3312,7 @@ int list_variable_ID()
 }
 
 
-int list_variable_ID_file(char *fname)
+int_fast8_t list_variable_ID_file(const char *fname)
 {
     long i;
     FILE *fp;
@@ -3320,7 +3329,7 @@ int list_variable_ID_file(char *fname)
 
 
 
-long chname_image_ID(char *ID_name, char *new_name)
+long chname_image_ID(const char *ID_name, const char *new_name)
 {
     long ID;
 
@@ -3342,7 +3351,7 @@ long chname_image_ID(char *ID_name, char *new_name)
 
 
 
-int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int sharedmem)
+int_fast8_t mk_complex_from_reim(const char *re_name, const char *im_name, const char *out_name, int sharedmem)
 {
     long IDre,IDim,IDout;
     long *naxes = NULL;
@@ -3432,7 +3441,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int share
 
 
 
-int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int sharedmem)
+int_fast8_t mk_complex_from_amph(const char *am_name, const char *ph_name, const char *out_name, int sharedmem)
 {
     long IDam,IDph,IDout;
     long naxes[3];
@@ -3553,7 +3562,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int share
     return(0);
 }
 
-int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int sharedmem)
+int_fast8_t mk_reim_from_complex(const char *in_name, const char *re_name, const char *im_name, int sharedmem)
 {
     long IDre,IDim,IDin;
     long naxes[3];
@@ -3648,7 +3657,7 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int shared
 
 
 
-int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int sharedmem)
+int_fast8_t mk_amph_from_complex(const char *in_name, const char *am_name, const char *ph_name, int sharedmem)
 {
     long IDam,IDph,IDin;
     long naxes[3];
@@ -3746,7 +3755,7 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
 
 
 
-int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name, int sharedmem)
+int_fast8_t mk_reim_from_amph(const char *am_name, const char *ph_name, const char *re_out_name, const char *im_out_name, int sharedmem)
 {
     mk_complex_from_amph(am_name, ph_name, "Ctmp", 0);
     mk_reim_from_complex("Ctmp", re_out_name, im_out_name, sharedmem);
@@ -3755,7 +3764,7 @@ int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_
     return(0);
 }
 
-int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name, int sharedmem)
+int_fast8_t mk_amph_from_reim(const char *re_name, const char *im_name, const char *am_out_name, const char *ph_out_name, int sharedmem)
 {
     mk_complex_from_reim(re_name, im_name, "Ctmp", 0);
     mk_amph_from_complex("Ctmp",am_out_name, ph_out_name, sharedmem);
@@ -3764,7 +3773,7 @@ int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_
     return(0);
 }
 
-int clearall()
+int_fast8_t clearall()
 {
     long ID;
 
@@ -3784,7 +3793,7 @@ int clearall()
 
 
 //  check only is size > 0
-int check_2Dsize(char *ID_name, long xsize, long ysize)
+int_fast8_t check_2Dsize(const char *ID_name, long xsize, long ysize)
 {
     int value;
     long ID;
@@ -3804,7 +3813,7 @@ int check_2Dsize(char *ID_name, long xsize, long ysize)
     return(value);
 }
 
-int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize)
+int_fast8_t check_3Dsize(const char *ID_name, long xsize, long ysize, long zsize)
 {
     int value;
     long ID;
@@ -3839,7 +3848,7 @@ int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize)
     return(value);
 }
 
-int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
+int_fast8_t rotate_cube(const char *ID_name, const char *ID_out_name, int orientation)
 {
     /* 0 is from x axis */
     /* 1 is from y axis */
@@ -4027,7 +4036,7 @@ void *save_fits_function( void *ptr )
  *
  *
  */
-long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
+long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)
 {
     long ID;
     long IDshm;
@@ -4111,7 +4120,7 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 
 
 
-long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
+long COREMOD_MEMORY_check_2Dsize(const char *IDname, long xsize, long ysize)
 {
     int sizeOK = 1; // 1 if size matches
     long ID;
@@ -4139,7 +4148,7 @@ long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
 
 
 
-long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsize)
+long COREMOD_MEMORY_check_3Dsize(const char *IDname, long xsize, long ysize, long zsize)
 {
     int sizeOK = 1; // 1 if size matches
     long ID;
@@ -4170,7 +4179,7 @@ long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsiz
 }
 
 
-long COREMOD_MEMORY_image_set_status(char *IDname, int status)
+long COREMOD_MEMORY_image_set_status(const char *IDname, int status)
 {
     long ID;
 
@@ -4180,7 +4189,7 @@ long COREMOD_MEMORY_image_set_status(char *IDname, int status)
     return(0);
 }
 
-long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0)
+long COREMOD_MEMORY_image_set_cnt0(const char *IDname, int cnt0)
 {
     long ID;
 
@@ -4190,7 +4199,7 @@ long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0)
     return(0);
 }
 
-long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
+long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int cnt1)
 {
     long ID;
 
@@ -4203,7 +4212,7 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
 
 
 
-long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)
+long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)
 {
     long ID;
     char sname[200];
@@ -4264,7 +4273,7 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)
 
 
 // if index < 0, post all semaphores
-long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
+long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
 {
     long ID;
     long s;
@@ -4336,7 +4345,7 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 
 // if index < 0, post all semaphores
 
-long COREMOD_MEMORY_image_set_sempost_loop(char *IDname, long index, long dtus)
+long COREMOD_MEMORY_image_set_sempost_loop(const char *IDname, long index, long dtus)
 {
     long ID;
     long s;
@@ -4378,7 +4387,7 @@ long COREMOD_MEMORY_image_set_sempost_loop(char *IDname, long index, long dtus)
 
 
 
-long COREMOD_MEMORY_image_set_semwait(char *IDname, long index)
+long COREMOD_MEMORY_image_set_semwait(const char *IDname, long index)
 {
     long ID;
     int semval;
@@ -4497,7 +4506,7 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
 
 /// set semaphore value to 0
 // if index <0, flush all image semaphores
-long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
+long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)
 {
     long ID;
     int semval;
@@ -4566,7 +4575,7 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
 // compute difference between two 2D streams
 // triggers on stream0
 //
-long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig)
+long COREMOD_MEMORY_streamDiff(const char *IDstream0_name, const char *IDstream1_name, const char *IDstreammask_name, const char *IDstreamout_name, long semtrig)
 {
 	long ID0, ID1, IDout;
 	long xsize, ysize, xysize;
@@ -4640,7 +4649,7 @@ long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char 
 // compute difference between two halves of an image stream
 // triggers on instream
 //
-long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)
+long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDstreamout_name, long semtrig)
 {
 	long ID0, IDout;
 	long xsizein, ysizein, xysizein;
@@ -4718,7 +4727,7 @@ long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_nam
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
-long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
+long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)
 {
     long IDin;
     long IDout;
@@ -4855,7 +4864,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
-long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const char *IDoutname, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)
 {
 	long IDin;
     long IDout;
@@ -4982,7 +4991,7 @@ long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutna
 
 
 
-long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)
+long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus)
 {
 	long IDimc;
 	long IDin, IDout;
@@ -5097,7 +5106,7 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 //
 // save all current images/stream onto file
 //
-long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
+long COREMOD_MEMORY_SaveAll_snapshot(const char *dirname)
 {
 	long *IDarray;
 	long *IDarraycp;
@@ -5161,7 +5170,7 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 // save all current images/stream onto file
 // only saves 2D float streams into 3D cubes
 //
-long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)
+long COREMOD_MEMORY_SaveAll_sequ(const char *dirname, const char *IDtrig_name, long semtrig, long NBframes)
 {
 	long *IDarray;
 	long *IDarrayout;
@@ -5283,7 +5292,7 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
  */
 
 
-long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode, int RT_priority)
+long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr, int port, int mode, int RT_priority)
 {
     long ID;
     struct sockaddr_in sock_server;
@@ -5863,7 +5872,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 // sem1 gets updated for each slice
 // cnt1 contains the slice index that was just written
 //
-long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)
+long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, long xsizeim, long ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)
 {
     long IDout;
     long IDin;
@@ -6123,7 +6132,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
 
 /// creates logshimconf shared memory and loads it
-LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
+LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(const char *logshimname)
 {
     int SM_fd;
     size_t sharedsize = 0; // shared memory size in bytes
@@ -6175,7 +6184,7 @@ LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
 
 
 // IDname is name of image logged
-int COREMOD_MEMORY_logshim_printstatus(char *IDname)
+int_fast8_t COREMOD_MEMORY_logshim_printstatus(const char *IDname)
 {
     LOGSHIM_CONF* map;
     char SM_fname[200];
@@ -6236,7 +6245,7 @@ int COREMOD_MEMORY_logshim_printstatus(char *IDname)
 
 // set the on field in logshim
 // IDname is name of image logged
-int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)
+int_fast8_t COREMOD_MEMORY_logshim_set_on(const char *IDname, int setv)
 {
     LOGSHIM_CONF* map;
     char SM_fname[200];
@@ -6280,7 +6289,7 @@ int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)
 
 // set the on field in logshim
 // IDname is name of image logged
-int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)
+int_fast8_t COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv)
 {
     LOGSHIM_CONF* map;
     char SM_fname[200];
@@ -6332,7 +6341,7 @@ int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)
  * uses data cube buffer to store frames
  * if an image name logdata exists (should ideally be in shared mem), then this will be included in the timing txt file
  */
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, char *IDlogdata_name)
+long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, const char *logdir, const char *IDlogdata_name)
 {
     long ID;
     long xsize, ysize;

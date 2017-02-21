@@ -1,4 +1,4 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -13,6 +13,8 @@
 #include <sched.h>
 #include <ncurses.h>
 #include <semaphore.h>
+
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -87,7 +89,7 @@ int SMturbfd;
 // 5: string or existing image
 
 
-int AOloopControl_DM_CombineChannels_cli()
+int_fast8_t AOloopControl_DM_CombineChannels_cli()
 {
     // 1  long DMindex
     // 2  long xsize
@@ -115,7 +117,7 @@ int AOloopControl_DM_CombineChannels_cli()
 
 
 
-int AOloopControl_DM_chan_setgain_cli()
+int_fast8_t AOloopControl_DM_chan_setgain_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
         AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
@@ -123,7 +125,7 @@ int AOloopControl_DM_chan_setgain_cli()
         return 1;
 }
 
-int AOloopControl_DM_setvoltON_cli()
+int_fast8_t AOloopControl_DM_setvoltON_cli()
 {
 	if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_setvoltON(data.cmdargtoken[1].val.numl);
@@ -131,7 +133,7 @@ int AOloopControl_DM_setvoltON_cli()
         return 1;
 }
 
-int AOloopControl_DM_setvoltOFF_cli()
+int_fast8_t AOloopControl_DM_setvoltOFF_cli()
 {
 	if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_setvoltOFF(data.cmdargtoken[1].val.numl);
@@ -140,7 +142,7 @@ int AOloopControl_DM_setvoltOFF_cli()
 }
 
 
-int AOloopControl_DM_setMAXVOLT_cli()
+int_fast8_t AOloopControl_DM_setMAXVOLT_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_setMAXVOLT(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -149,7 +151,7 @@ int AOloopControl_DM_setMAXVOLT_cli()
 }
 
 
-int AOloopControl_DM_setDClevel_cli()
+int_fast8_t AOloopControl_DM_setDClevel_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_setDClevel(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -160,7 +162,7 @@ int AOloopControl_DM_setDClevel_cli()
 // int AOloopControl_DM_chan_setMAXVOLT(long DMindex, float maxvolt);
 
 
-int AOloopControl_DM_dmdispcomboff_cli()
+int_fast8_t AOloopControl_DM_dmdispcomboff_cli()
 {
         if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_dmdispcomboff(data.cmdargtoken[1].val.numl);
@@ -169,7 +171,7 @@ int AOloopControl_DM_dmdispcomboff_cli()
 }
 
 
-int AOloopControl_DM_dmdispcombstatus_cli()
+int_fast8_t AOloopControl_DM_dmdispcombstatus_cli()
 {
     if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_dmdispcombstatus(data.cmdargtoken[1].val.numl);
@@ -177,7 +179,7 @@ int AOloopControl_DM_dmdispcombstatus_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmtrigoff_cli()
+int_fast8_t AOloopControl_DM_dmtrigoff_cli()
 {
     if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_dmtrigoff(data.cmdargtoken[1].val.numl);
@@ -186,7 +188,7 @@ int AOloopControl_DM_dmtrigoff_cli()
 }
 
 
-int AOloopControl_DM_dmturb_cli()
+int_fast8_t AOloopControl_DM_dmturb_cli()
 {
     if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 0, "NULL", 0);
@@ -194,7 +196,7 @@ int AOloopControl_DM_dmturb_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmturb2im_cli()
+int_fast8_t AOloopControl_DM_dmturb2im_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(3,2)+CLI_checkarg(3,2)==0)
         AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 1, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
@@ -202,7 +204,7 @@ int AOloopControl_DM_dmturb2im_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmturboff_cli()
+int_fast8_t AOloopControl_DM_dmturboff_cli()
 {
     if(CLI_checkarg(1,2)==0)
         AOloopControl_DM_dmturboff(data.cmdargtoken[1].val.numl);
@@ -211,7 +213,7 @@ int AOloopControl_DM_dmturboff_cli()
 }
 
 
-int AOloopControl_DM_dmturb_wspeed_cli()
+int_fast8_t AOloopControl_DM_dmturb_wspeed_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_dmturb_wspeed(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -219,7 +221,7 @@ int AOloopControl_DM_dmturb_wspeed_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmturb_ampl_cli()
+int_fast8_t AOloopControl_DM_dmturb_ampl_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_dmturb_ampl(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -227,7 +229,7 @@ int AOloopControl_DM_dmturb_ampl_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmturb_LOcoeff_cli()
+int_fast8_t AOloopControl_DM_dmturb_LOcoeff_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -235,7 +237,7 @@ int AOloopControl_DM_dmturb_LOcoeff_cli()
         return 1;
 }
 
-int AOloopControl_DM_dmturb_tint_cli()
+int_fast8_t AOloopControl_DM_dmturb_tint_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
         AOloopControl_DM_dmturb_tint(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
@@ -260,7 +262,7 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].info,"create and combine DM channels");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <xsize> <ysize> <NBchannel> <AveMode (1=if average level removed)> <dm2dm mode> <DMmodes> <outdm stream> <wfsref mode> <WFS resp mat> <wfsref stream> <voltmode (1=dmvolt computed)> <dmvoltname> <DClevel> <maxvolt [V]>");
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, const char *dm2dm_DMmodes, const char *dm2dm_outdisp, int wfsrefmode, const char *wfsref_WFSRespMat, const char *wfsref_out, int voltmode, const char *IDvolt_name, float DClevel, float maxvolt)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcontroldmchgain");
@@ -344,7 +346,7 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long NBsamples)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturb2im");
@@ -353,7 +355,7 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence to image");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-09) <imoutname> <NBsamples>");
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb2im 00 wftout 100000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long NBsamples)");
     data.NBcmd++;
 
 
@@ -666,7 +668,7 @@ int AOloopControl_DM_unloadconf()
 //
 // maxvolt: maximum volt for DM volt
 // 
-int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt)
+int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, const char *dm2dm_DMmodes, const char *dm2dm_outdisp, int wfsrefmode, const char *wfsref_WFSRespMat, const char *wfsref_out, int voltmode, const char *IDvolt_name, float DClevel, float maxvolt)
 {
     long naxis = 2;
     long *size;
@@ -1437,7 +1439,7 @@ int AOloopControl_DM_dmturb_printstatus(long DMindex)
 // innerscale and outerscale in pixel
 // von Karman spectrum
 //
-int make_master_turbulence_screen_local(char *ID_name1, char *ID_name2, long size, float outerscale, float innerscale)
+int make_master_turbulence_screen_local(const char *ID_name1, const char *ID_name2, long size, float outerscale, float innerscale)
 {
     long ID,ii,jj;
     float value,C1,C2;
@@ -1572,7 +1574,7 @@ int make_master_turbulence_screen_local(char *ID_name1, char *ID_name2, long siz
 // mode = 1 : write to file, so that it can be later sent to DM
 
 
-int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)
+int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long NBsamples)
 {
 	float DMsizeM = 10.0; // DM size in meter
     long size_sx; // screen size

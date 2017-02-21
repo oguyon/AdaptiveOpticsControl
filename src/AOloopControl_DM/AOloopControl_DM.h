@@ -95,7 +95,7 @@ int AOloopControl_DM_loadconf();
 
 int AOloopControl_DM_unloadconf();
 
-int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt);
+int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, const char *dm2dm_DMmodes, const char *dm2dm_outdisp, int wfsrefmode, const char *wfsref_WFSRespMat, const char *wfsref_out, int voltmode, const char *IDvolt_name, float DClevel, float maxvolt);
 
 
 int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain);
@@ -130,7 +130,7 @@ int AOloopControl_DM_dmturb_tint(long DMindex, long tint);
 
 int AOloopControl_DM_dmturb_printstatus(long DMindex);
 
-int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples);
+int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long NBsamples);
 
 
 #endif

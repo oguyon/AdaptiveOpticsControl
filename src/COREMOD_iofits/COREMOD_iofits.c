@@ -1,3 +1,5 @@
+
+#include <stdint.h>
 #include <fitsio.h> /* required by every program that uses CFITSIO  */
 #include <string.h>
 #include <stdio.h>
@@ -10,24 +12,14 @@
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 
+
 #define SBUFFERSIZE 1000
 
 extern DATA data;
 
-char errormessage_iofits[SBUFFERSIZE];
+static char errormessage_iofits[SBUFFERSIZE];
 
 
-
-
-// forward declarations
-long load_fits(char *file_name, char ID_name[400], int errcode);
-int save_fl_fits(char *ID_name, char *file_name);
-int save_db_fits(char *ID_name, char *file_name);
-int save_sh_fits(char *ID_name, char *file_name);
-int save_fits(char *ID_name, char *file_name);
-int save_fits_atomic(char *ID_name, char *file_name);
-int break_cube(char *ID_name);
-int images_to_cube(char *img_name, long nbframes, char *cube_name);
 
 
 // CLI commands
@@ -40,14 +32,15 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name);
 // 5: string 
 //
 
-int load_fits_cli()
+int_fast8_t load_fits_cli()
 {
   load_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string, 1);
 
   return 0;
 }
 
-int save_fl_fits_cli()
+
+int_fast8_t save_fl_fits_cli()
 {
   char fname[200];
   
@@ -64,7 +57,8 @@ int save_fl_fits_cli()
 }
 
 
-int save_db_fits_cli()
+
+int_fast8_t save_db_fits_cli()
 {
   char fname[200];
   
@@ -81,7 +75,7 @@ int save_db_fits_cli()
   return 0;
 }
 
-int save_sh_fits_cli()
+int_fast8_t save_sh_fits_cli()
 {
   char fname[200];
   
@@ -99,7 +93,7 @@ int save_sh_fits_cli()
 }
 
 
-int save_fits_cli()
+int_fast8_t save_fits_cli()
 {
   char fname[200];
   
@@ -119,14 +113,15 @@ int save_fits_cli()
 
 
 
-int break_cube_cli()
+int_fast8_t break_cube_cli()
 {
   break_cube( data.cmdargtoken[1].val.string);
 
   return 0;
 }
 
-int images_to_cube_cli()
+
+int_fast8_t images_to_cube_cli()
 {
   /*  if(data.cmdargtoken[1].type != 4)
     {
@@ -239,7 +234,7 @@ int check_FITSIO_status(const char *cfile, const char *cfunc, long cline, int pr
 }
 
 
-int file_exists(char *file_name)
+int file_exists(const char *file_name)
 {
     FILE *fp;
     int exists = 1;
@@ -256,7 +251,7 @@ int file_exists(char *file_name)
 }
 
 
-int is_fits_file(char *file_name)
+int is_fits_file(const char *file_name)
 {
     int value=0;
     fitsfile *fptr;
@@ -281,7 +276,9 @@ int is_fits_file(char *file_name)
 }
 
 
-int read_keyword(char* file_name, char* KEYWORD, char* content)
+
+
+int read_keyword(const char* file_name, const char* KEYWORD, char* content)
 {
     fitsfile *fptr;         /* FITS file pointer, defined in fitsio.h */
     char str1[SBUFFERSIZE];
@@ -303,7 +300,7 @@ int read_keyword(char* file_name, char* KEYWORD, char* content)
         }
         else
         {
-            n = snprintf(content,SBUFFERSIZE,"%s\n",str1);
+            n = snprintf(content, SBUFFERSIZE, "%s\n", str1);
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
         }
@@ -324,7 +321,7 @@ int read_keyword(char* file_name, char* KEYWORD, char* content)
 
 
 
-int read_keyword_alone(char* file_name, char* KEYWORD)
+int read_keyword_alone(const char* file_name, const char* KEYWORD)
 {
   char *content = NULL;
   
@@ -392,7 +389,7 @@ int data_type_code(int bitpix)
 /// if errcode = 0, do not show error messages
 /// errcode = 1: print error, continue
 /// errcode = 2: exit program at error
-long load_fits(char *file_name, char ID_name[400], int errcode)
+long load_fits(const char *file_name, const char *ID_name, int errcode)
 {
     fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
     int nulval, anynul,bitpix;
@@ -770,7 +767,7 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
 
 /* saves an image in a double format */
 
-int save_db_fits(char *ID_name, char *file_name)
+int save_db_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
     long  fpixel = 1, naxis, nelements;
@@ -918,7 +915,7 @@ int save_db_fits(char *ID_name, char *file_name)
 
 /* saves an image in a float format */
 
-int save_fl_fits(char *ID_name, char *file_name)
+int save_fl_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
     long  fpixel = 1, naxis, nelements;
@@ -1076,7 +1073,7 @@ int save_fl_fits(char *ID_name, char *file_name)
 
 /* saves an image in a short int format */
 
-int save_sh_fits(char *ID_name, char *file_name)
+int save_sh_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
     long  fpixel = 1, naxis, nelements;
@@ -1230,7 +1227,7 @@ int save_sh_fits(char *ID_name, char *file_name)
 
 /* saves an image in a unsigned short int format */
 
-int save_ush_fits(char *ID_name, char *file_name)
+int save_ush_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
     long  fpixel = 1, naxis, nelements;
@@ -1393,7 +1390,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 
 
 
-/*int save_fits(char *ID_name, char *file_name)
+/*int save_fits(const char *ID_name, const char *file_name)
 {
     long ID;
     int atype;
@@ -1420,7 +1417,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 }*/
 
 
-int save_fits(char *ID_name, char *file_name)
+int save_fits(const char *ID_name, const char *file_name)
 {
     char savename[1000];
     if (file_name[0] == '!')
@@ -1432,7 +1429,7 @@ int save_fits(char *ID_name, char *file_name)
 }
 
 
-int save_fits_atomic(char *ID_name, char *file_name)
+int save_fits_atomic(const char *ID_name, const char *file_name)
 {
     long ID;
     int atype;
@@ -1471,7 +1468,7 @@ int save_fits_atomic(char *ID_name, char *file_name)
 
 
 
-int saveall_fits(char *savedirname)
+int saveall_fits(const char *savedirname)
 {
     long i;
     char fname[200];
@@ -1508,7 +1505,7 @@ int saveall_fits(char *savedirname)
 /* =============================================================================================== */
 
 
-int break_cube(char *ID_name)
+int break_cube(const char *ID_name)
 {
     long ID,ID1;
     long naxes[3];
@@ -1546,7 +1543,7 @@ int break_cube(char *ID_name)
 
 
 
-int images_to_cube(char *img_name, long nbframes, char *cube_name)
+int images_to_cube(const char *img_name, long nbframes, const char *cube_name)
 {
     long ID,ID1;
     long frame;

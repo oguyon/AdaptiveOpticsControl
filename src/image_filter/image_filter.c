@@ -1,6 +1,9 @@
-#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
+
+#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -32,7 +35,7 @@ extern DATA data;
 
 
 
-int gauss_filter_cli()
+int_fast8_t gauss_filter_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0)
     {
@@ -45,9 +48,9 @@ int gauss_filter_cli()
 
 
 
-//long fconvolve(char *ID_in, char *ID_ke, char *ID_out);
+//long fconvolve(const char *ID_in, const char *ID_ke, const char *ID_out);
 
-int fconvolve_cli()
+int_fast8_t fconvolve_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
     {
@@ -73,7 +76,7 @@ int init_image_filter()
   strcpy(data.cmd[data.NBcmd].info,"gaussian 2D filtering");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sigma> <filter box size>");
   strcpy(data.cmd[data.NBcmd].example,"gaussfilt imin imout 2.3 5");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long gauss_filter(const char *ID_name, const char *out_name, float sigma, int filter_size)");
   data.NBcmd++;
   
  
@@ -83,7 +86,7 @@ int init_image_filter()
   strcpy(data.cmd[data.NBcmd].info,"Fourier-based convolution");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <kernel> <output image>");
   strcpy(data.cmd[data.NBcmd].example,"fconv imin kernim imout");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long fconvolve(char *ID_in, char *ID_ke, char *ID_out)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long fconvolve(cconst har *ID_in, const char *ID_ke, const char *ID_out)");
   data.NBcmd++;
   
    
@@ -97,7 +100,7 @@ int init_image_filter()
 
 
 
-int median_filter(char *ID_name, char *out_name, int filter_size)
+int median_filter(const char *ID_name, const char *out_name, int filter_size)
 {
     long ID,ID_out;
     float *array;
@@ -141,7 +144,7 @@ int median_filter(char *ID_name, char *out_name, int filter_size)
 
 
 
-long FILTER_percentile_interpol_fast(char *ID_name, char *IDout_name, double perc, long boxrad)
+long FILTER_percentile_interpol_fast(const char *ID_name, const char *IDout_name, double perc, long boxrad)
 {
     long ID, ID1, IDout;
     long IDpermask;
@@ -280,7 +283,7 @@ long FILTER_percentile_interpol_fast(char *ID_name, char *IDout_name, double per
 // this algorithm tests values and build the final map from these tests
 // works well for smooth images, with perc between 0.1 and 0.9
 // 
-long FILTER_percentile_interpol(char *ID_name, char *IDout_name, double perc, double sigma)
+long FILTER_percentile_interpol(const char *ID_name, const char *IDout_name, double perc, double sigma)
 {
   long ID, IDout, IDtmp, ID2;
   long NBstep = 10;
@@ -407,7 +410,7 @@ long FILTER_percentile_interpol(char *ID_name, char *IDout_name, double perc, do
 }
 
 
-long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
+long gauss_filter(const char *ID_name, const char *out_name, float sigma, int filter_size)
 {
     int ID,ID_out,ID_tmp;
     float *array;
@@ -556,7 +559,7 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 }
 
 
-int gauss_3Dfilter(char *ID_name, char *out_name, float sigma, int filter_size)
+int gauss_3Dfilter(const char *ID_name, const char *out_name, float sigma, int filter_size)
 {
   int ID,ID_out,ID_tmp,ID_tmp1;
   float *array;
@@ -622,7 +625,7 @@ int gauss_3Dfilter(char *ID_name, char *out_name, float sigma, int filter_size)
   return(0);
 }
 
-int f_filter(char *ID_name, char *ID_out, float f1, float f2)
+int f_filter(const char *ID_name, const char *ID_out, float f1, float f2)
 {
   printf("%s %s %f %f\n",ID_name,ID_out,f1,f2);
   /*  char lstring[1000];
@@ -667,7 +670,7 @@ int f_filter(char *ID_name, char *ID_out, float f1, float f2)
 }
 
 
-long fconvolve(char *name_in, char *name_ke, char *name_out)
+long fconvolve(const char *name_in, const char *name_ke, const char *name_out)
 {
     long ID_in,ID_ke;
     long naxes[2];
@@ -711,7 +714,7 @@ long fconvolve(char *name_in, char *name_ke, char *name_out)
 
 
 // to avoid edge effects
-long fconvolve_padd(char *name_in, char *name_ke, long paddsize, char *name_out)
+long fconvolve_padd(const char *name_in, const char *name_ke, long paddsize, const char *name_out)
 {
     long ID_in,ID_ke,ID1,ID2,ID3,IDout;
     long naxes[2];
@@ -776,7 +779,7 @@ long fconvolve_padd(char *name_in, char *name_ke, long paddsize, char *name_out)
 
 
 
-int fconvolve_1(char *name_in, char *kefft, char *name_out)
+int fconvolve_1(const char *name_in, const char *kefft, const char *name_out)
 {
     /* FFT of kernel has already been done */
     long ID_in;
@@ -805,7 +808,7 @@ int fconvolve_1(char *name_in, char *kefft, char *name_out)
 
 // if blocksize = 512, for images > 512x512, break image in 512x512 overlapping blocks
 // kernel image must be blocksize
-int fconvolveblock(char *name_in, char *name_ke, char *name_out, long blocksize)
+int fconvolveblock(const char *name_in, const char *name_ke, const char *name_out, long blocksize)
 {
   long IDin,IDout,IDtmp,IDtmpout,IDcnt;
   long xsize,ysize;
@@ -872,7 +875,7 @@ int fconvolveblock(char *name_in, char *name_ke, char *name_out, long blocksize)
 }
 
 
-int film_scanner_vsripes_remove(char *IDname, char *IDout, long l1, long l2)
+int film_scanner_vsripes_remove(const char *IDname, const char *IDout, long l1, long l2)
 {
   long ID;
   long naxes[2];
@@ -903,7 +906,9 @@ int film_scanner_vsripes_remove(char *IDname, char *IDout, long l1, long l2)
   return(0);
 }
 
-int filter_fit1D(char *fname, long NBpts)
+
+
+int filter_fit1D(const char *fname, long NBpts)
 {
   FILE *fp;
   float *xarray;
@@ -1009,8 +1014,10 @@ int filter_fit1D(char *fname, long NBpts)
   return(0);
 }
 
+
+
 // fits a 2D image as a sum of cosines and sines
-int filter_fit2Dcossin(char *IDname, float radius)
+int filter_fit2Dcossin(const char *IDname, float radius)
 {
   long ID,IDres,IDfit;
   long size;
@@ -1220,7 +1227,7 @@ int filter_fit2Dcossin(char *IDname, float radius)
   return(0);
 }
 
-int filter_fit2DcosKernel(char *IDname, float radius)
+int filter_fit2DcosKernel(const char *IDname, float radius)
 {
   long ID,ID1,ID2,ID3;
   long size;
@@ -1424,7 +1431,7 @@ int filter_fit2DcosKernel(char *IDname, float radius)
   return(0);
 }
 
-long filter_CubePercentile(char *IDcin_name, float perc, char *IDout_name)
+long filter_CubePercentile(const char *IDcin_name, float perc, const char *IDout_name)
 {
   long IDcin;
   long IDout;
@@ -1453,7 +1460,7 @@ long filter_CubePercentile(char *IDcin_name, float perc, char *IDout_name)
   return(IDout);
 }
 
-long filter_CubePercentileLimit(char *IDcin_name, float perc, float limit, char *IDout_name)
+long filter_CubePercentileLimit(const char *IDcin_name, float perc, float limit, const char *IDout_name)
 {
   long IDcin;
   long IDout;

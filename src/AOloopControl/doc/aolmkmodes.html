@@ -102,8 +102,16 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">echo</span> <span class="st">&quot;   dmmask.fits&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$(</span><span class="kw">tput</span> bold<span class="ot">)</span><span class="st">NOTES:</span><span class="ot">$(</span><span class="kw">tput</span> sgr0<span class="ot">)</span><span class="st">&quot;</span>
-<span class="kw">echo</span> <span class="st">&quot;  USES (OPTIONAL) : ./conf/TPind.fits&quot;</span>
-<span class="kw">echo</span> <span class="st">&quot;                  Modes to be excluded&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  USES (OPTIONAL) : ./conf/ExcludedModes.fits  Modes to be excluded&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;       (OPTIONAL) : ./conf/extrablockM.fits    extra block of modes&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  READS: &quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmslaved.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_zrepM.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmmaskRM.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_wfsmask.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LOrespM.fits&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LODMmodes.fits&quot;</span>echo <span class="st">&quot;&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
 <span class="kw">}</span>
@@ -111,7 +119,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 <span class="fu">printHELP1 ()</span>
 <span class="kw">{</span>
-    <span class="kw">printf</span> <span class="st">&quot;%20s       CREATE MODES FOR AO LOOP\n&quot;</span> <span class="st">&quot;</span><span class="ot">$0</span><span class="st">&quot;</span> 
+    <span class="kw">printf</span> <span class="st">&quot;%25s       Create modes for AO loop\n&quot;</span> <span class="st">&quot;</span><span class="ot">$0</span><span class="st">&quot;</span> 
 <span class="kw">}</span>
 
 
@@ -174,54 +182,6 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-
-
-
-<span class="ot">EXPECTED_ARGS=</span>4
-
-<span class="kw">if [</span> <span class="ot">$#</span> <span class="ot">-ne</span> <span class="ot">$EXPECTED_ARGS</span><span class="kw"> ]</span>
-<span class="kw">then</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;------ CREATE MODES FOR AO LOOP ----&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;Usage: </span><span class="ot">$0</span><span class="st"> &lt;maxCPA&gt; &lt;Block&gt; &lt;SVDlim&gt; &lt;skip DMmodes&gt;&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;maxCPA&gt;       : maximum spatial frequency in cycles per aperture&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;Block&gt;        : if -1, perform full comp. Otherwise, update block number only&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;SVDlim&gt;       : SVD limit, relative to strongest mode&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT &lt;skip DMmodes&gt; : 1 if re-using previous DM modes, 0 otherwise&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;EXAMPLE: </span><span class="ot">$0</span><span class="st"> 2.0 -1 0.03&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot; read from filesystem:&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmslaved.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_zrepM.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_dmmaskRM.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_wfsmask.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LOrespM.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  INPUT: ./conf/aol#_LODMmodes.fits&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodesall.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodesWFSall.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/cmat.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/fmodes_xx.fits.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/respM_xx.fits.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrM_xx.fits.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrMc_xx.fits.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: ./mkmodestmp/contrMcact_xx.fits.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  OUTPUT: dmmask.fits&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">echo</span> <span class="st">&quot;NOTES :&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;  USES (OPTIONAL) : ./conf/TPind.fits&quot;</span>
-  <span class="kw">echo</span> <span class="st">&quot;                  Modes to be excluded&quot;</span>
-  <span class="kw">echo</span>
-  <span class="kw">exit</span>
-<span class="kw">fi</span>
-
-
-
-
-
 <span class="ot">loopnb=$(</span><span class="kw">cat</span> LOOPNUMBER<span class="ot">)</span>
 
 <span class="ot">pname0=$0</span>
@@ -248,26 +208,26 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 <span class="ot">$execnamestring</span> <span class="kw">-n</span> <span class="ot">$pname</span> &lt;&lt; EOF
 aol<span class="kw">nb</span> <span class="ot">$loopnb</span>
+loadfits &quot;./conf/extra<span class="kw">blockM.fits</span><span class="st">&quot; extrablockM</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_dmslaved.fits<span class="st">&quot; dmslaved</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_zrespM.fits<span class="st">&quot; zrespM</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_dmmaskRM.fits<span class="st">&quot; dmmaskRM</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_wfsmask.fits<span class="st">&quot; wfsmask</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_LOrespM.fits<span class="st">&quot; RMMresp</span>
+<span class="st">loadfits &quot;</span>./conf/aol<span class="ot">${loopnb}</span>_LODMmodes.fits<span class="st">&quot; RMMmodes</span>
+<span class="st">loadfits &quot;</span>./conf/ExcludedModes.fits<span class="st">&quot; emodes</span>
+<span class="st">readshmim aol</span><span class="ot">${loopnb}</span><span class="st">_dmC</span>
+<span class="st">imstats aol</span><span class="ot">${loopnb}</span><span class="st">_dmC</span>
+<span class="st">cx=0.5*imsize0-0.5</span>
+<span class="st">cy=0.5*imsize1-0.5</span>
+<span class="st">od=0.42*imsize0</span>
+<span class="st">id=0.13*imsize0</span>
+<span class="st">aolmkmodes fmodes imsize0 imsize1 </span><span class="ot">$1</span><span class="st"> 0.8 cx cy od id 0 </span><span class="ot">$2</span><span class="st"> </span><span class="ot">$3</span>
+<span class="st">exit</span>
+<span class="st">EOF</span>
 
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_dmslaved.fits&quot; dmslaved
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_zrespM.fits&quot; zrespM
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_dmmaskRM.fits&quot; dmmaskRM
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_wfsmask.fits&quot; wfsmask
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_LOrespM.fits&quot; RMMresp
-loadfits &quot;./conf/aol<span class="ot">${loopnb}</span>_LODMmodes.fits&quot; RMMmodes
-loadfits &quot;./conf/TPind.fits&quot; emodes
-readshmim aol<span class="ot">${loopnb}</span>_dmC
-imstats aol<span class="ot">${loopnb}</span>_dmC
-cx=0.5*imsize0-0.5
-cy=0.5*imsize1-0.5
-od=0.42*imsize0
-id=0.13*imsize0
-aolmkmodes fmodes imsize0 imsize1 <span class="ot">$1</span> 0.8 cx cy od id 0 <span class="ot">$2</span> <span class="ot">$3</span>
-exit
-EOF
-
-#rm <span class="ot">$startupfile</span>
-#rm <span class="ot">$fifoname</span></code></pre></div>
+<span class="st">#rm </span><span class="ot">$startupfile</span>
+<span class="st">#rm </span><span class="ot">$fifoname</span></code></pre></div>
 </div>
 <div id="algorithm" class="section level2">
 <h2><span class="header-section-number">1.2</span> Algorithm</h2>

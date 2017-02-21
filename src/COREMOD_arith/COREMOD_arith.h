@@ -6,33 +6,33 @@ int init_COREMOD_arith();
 
 
 
-long arith_set_pixel(char *ID_name, double value, long x, long y);
-long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y);
+long arith_set_pixel(const char *ID_name, double value, long x, long y);
+long arith_set_pixel_1Drange(const char *ID_name, double value, long x, long y);
 
-long arith_set_row(char *ID_name, double value, long y);
+long arith_set_row(const char *ID_name, double value, long y);
 
-long arith_set_col(char *ID_name, double value, long x);
+long arith_set_col(const char *ID_name, double value, long x);
 
-long arith_image_zero(char *ID_name);
+long arith_image_zero(const char *ID_name);
 
-int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long cropdim);
+int arith_image_crop(const char *ID_name, const char *ID_out, long *start, long *end, long cropdim);
 
-int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
+int arith_image_extract2D(const char *in_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
 
-int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart);
+int arith_image_extract3D(const char *in_name, const char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart);
 
-long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name);
+long arith_image_merge3D(const char *ID_name1, const char *ID_name2, const char *IDout_name);
 
-double arith_image_total(char *ID_name);
-double arith_image_mean(char *ID_name);
-double arith_image_min(char *ID_name);
-double arith_image_max(char *ID_name);
+double arith_image_total(const char *ID_name);
+double arith_image_mean(const char *ID_name);
+double arith_image_min(const char *ID_name);
+double arith_image_max(const char *ID_name);
 
-double arith_image_percentile(char *ID_name, double fraction);
-double arith_image_median(char *ID_name);
+double arith_image_percentile(const char *ID_name, double fraction);
+double arith_image_median(const char *ID_name);
 
-long arith_image_dx(char *ID_name, char *IDout_name);
-long arith_image_dy(char *ID_name, char *IDout_name);
+long arith_image_dx(const char *ID_name, const char *IDout_name);
+long arith_image_dy(const char *ID_name, const char *IDout_name);
 
 
 
@@ -59,22 +59,22 @@ int arith_image_sinh_byID(long ID, long IDout);
 int arith_image_tan_byID(long ID, long IDout);
 int arith_image_tanh_byID(long ID, long IDout);
 
-int arith_image_acos(char *ID_name, char *ID_out);
-int arith_image_asin(char *ID_name, char *ID_out);
-int arith_image_atan(char *ID_name, char *ID_out);
-int arith_image_ceil(char *ID_name, char *ID_out);
-int arith_image_cos(char *ID_name, char *ID_out);
-int arith_image_cosh(char *ID_name, char *ID_out);
-int arith_image_exp(char *ID_name, char *ID_out);
-int arith_image_fabs(char *ID_name, char *ID_out);
-int arith_image_floor(char *ID_name, char *ID_out);
-int arith_image_ln(char *ID_name, char *ID_out);
-int arith_image_log(char *ID_name, char *ID_out);
-int arith_image_sqrt(char *ID_name, char *ID_out);
-int arith_image_sin(char *ID_name, char *ID_out);
-int arith_image_sinh(char *ID_name, char *ID_out);
-int arith_image_tan(char *ID_name, char *ID_out);
-int arith_image_tanh(char *ID_name, char *ID_out);
+int arith_image_acos(const char *ID_name, const char *ID_out);
+int arith_image_asin(const char *ID_name, const char *ID_out);
+int arith_image_atan(const char *ID_name, const char *ID_out);
+int arith_image_ceil(const char *ID_name, const char *ID_out);
+int arith_image_cos(const char *ID_name, const char *ID_out);
+int arith_image_cosh(const char *ID_name, const char *ID_out);
+int arith_image_exp(const char *ID_name, const char *ID_out);
+int arith_image_fabs(const char *ID_name, const char *ID_out);
+int arith_image_floor(const char *ID_name, const char *ID_out);
+int arith_image_ln(const char *ID_name, const char *ID_out);
+int arith_image_log(const char *ID_name, const char *ID_out);
+int arith_image_sqrt(const char *ID_name, const char *ID_out);
+int arith_image_sin(const char *ID_name, const char *ID_out);
+int arith_image_sinh(const char *ID_name, const char *ID_out);
+int arith_image_tan(const char *ID_name, const char *ID_out);
+int arith_image_tanh(const char *ID_name, const char *ID_out);
 
 
 
@@ -98,22 +98,22 @@ int arith_image_sinh_inplace_byID(long ID);
 int arith_image_tan_inplace_byID(long ID);
 int arith_image_tanh_inplace_byID(long ID);
 
-int arith_image_acos_inplace(char *ID_name);
-int arith_image_asin_inplace(char *ID_name);
-int arith_image_atan_inplace(char *ID_name);
-int arith_image_ceil_inplace(char *ID_name);
-int arith_image_cos_inplace(char *ID_name);
-int arith_image_cosh_inplace(char *ID_name);
-int arith_image_exp_inplace(char *ID_name);
-int arith_image_fabs_inplace(char *ID_name);
-int arith_image_floor_inplace(char *ID_name);
-int arith_image_ln_inplace(char *ID_name);
-int arith_image_log_inplace(char *ID_name);
-int arith_image_sqrt_inplace(char *ID_name);
-int arith_image_sin_inplace(char *ID_name);
-int arith_image_sinh_inplace(char *ID_name);
-int arith_image_tan_inplace(char *ID_name);
-int arith_image_tanh_inplace(char *ID_name);
+int arith_image_acos_inplace(const char *ID_name);
+int arith_image_asin_inplace(const char *ID_name);
+int arith_image_atan_inplace(const char *ID_name);
+int arith_image_ceil_inplace(const char *ID_name);
+int arith_image_cos_inplace(const char *ID_name);
+int arith_image_cosh_inplace(const char *ID_name);
+int arith_image_exp_inplace(const char *ID_name);
+int arith_image_fabs_inplace(const char *ID_name);
+int arith_image_floor_inplace(const char *ID_name);
+int arith_image_ln_inplace(const char *ID_name);
+int arith_image_log_inplace(const char *ID_name);
+int arith_image_sqrt_inplace(const char *ID_name);
+int arith_image_sin_inplace(const char *ID_name);
+int arith_image_sinh_inplace(const char *ID_name);
+int arith_image_tan_inplace(const char *ID_name);
+int arith_image_tanh_inplace(const char *ID_name);
 
 
 
@@ -121,9 +121,9 @@ int arith_image_tanh_inplace(char *ID_name);
 /* Functions for bison / flex    */ 
 double Ppositive(double a);
 double Ptrunc(double a, double b, double c);
-int arith_image_function_im_im__d_d(char *ID_name, char *ID_out, double (*pt2function)(double));
-int arith_image_function_imd_im__dd_d(char *ID_name, double v0, char *ID_out, double (*pt2function)(double, double));
-int arith_image_function_imdd_im__ddd_d(char *ID_name, double v0, double v1, char *ID_out, double (*pt2function)(double, double, double));
+int arith_image_function_im_im__d_d(const char *ID_name, const char *ID_out, double (*pt2function)(double));
+int arith_image_function_imd_im__dd_d(const char *ID_name, double v0, const char *ID_out, double (*pt2function)(double, double));
+int arith_image_function_imdd_im__ddd_d(const char *ID_name, double v0, double v1, const char *ID_out, double (*pt2function)(double, double, double));
 
 
 /* ------------------------------------------------------------------------- */
@@ -132,7 +132,7 @@ int arith_image_function_imdd_im__ddd_d(char *ID_name, double v0, double v1, cha
 
 
 int arith_image_fmod_byID(long ID1, long ID2, long IDout);
-int arith_image_pow_byID(long ID1, long ID2, char *IDout);
+int arith_image_pow_byID(long ID1, long ID2, const char *IDout);
 int arith_image_add_byID(long ID1, long ID2, long IDout);
 int arith_image_sub_byID(long ID1, long ID2, long IDout);
 int arith_image_mult_byID(long ID1, long ID2, long IDout);
@@ -140,14 +140,14 @@ int arith_image_div_byID(long ID1, long ID2, long IDout);
 int arith_image_minv_byID(long ID1, long ID2, long IDout);
 int arith_image_maxv_byID(long ID1, long ID2, long IDout);
 
-int arith_image_fmod(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_pow(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_add(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_sub(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_mult(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_div(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_minv(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_maxv(char *ID1_name, char *ID2_name, char *ID_out);
+int arith_image_fmod(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_pow(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_add(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_sub(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_mult(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_div(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_minv(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_maxv(const char *ID1_name, const char *ID2_name, const char *ID_out);
 
 
 
@@ -161,14 +161,14 @@ int arith_image_div_inplace_byID(long ID1,  long ID2);
 int arith_image_minv_inplace_byID(long ID1, long ID2);
 int arith_image_maxv_inplace_byID(long ID1, long ID2);
 
-int arith_image_fmod_inplace(char *ID1_name, char *ID2_name);  // ID1 is output
-int arith_image_pow_inplace(char *ID1_name, char *ID2_name);
-int arith_image_add_inplace(char *ID1_name, char *ID2_name);
-int arith_image_sub_inplace(char *ID1_name, char *ID2_name);
-int arith_image_mult_inplace(char *ID1_name, char *ID2_name);
-int arith_image_div_inplace(char *ID1_name, char *ID2_name);
-int arith_image_minv_inplace(char *ID1_name, char *ID2_name);
-int arith_image_maxv_inplace(char *ID1_name, char *ID2_name);
+int arith_image_fmod_inplace(const char *ID1_name, const char *ID2_name);  // ID1 is output
+int arith_image_pow_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_add_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_sub_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_mult_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_div_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_minv_inplace(const char *ID1_name, const char *ID2_name);
+int arith_image_maxv_inplace(const char *ID1_name, const char *ID2_name);
 
 
 
@@ -186,10 +186,10 @@ int arith_image_Csub_byID(long ID1, long ID2, long IDout);
 int arith_image_Cmult_byID(long ID1, long ID2, long IDout);
 int arith_image_Cdiv_byID(long ID1, long ID2, long IDout);
 
-int arith_image_Cadd(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_Csub(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_Cmult(char *ID1_name, char *ID2_name, char *ID_out);
-int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out);
+int arith_image_Cadd(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_Csub(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_Cmult(const char *ID1_name, const char *ID2_name, const char *ID_out);
+int arith_image_Cdiv(const char *ID1_name, const char *ID2_name, const char *ID_out);
 
 
 
@@ -209,15 +209,15 @@ int arith_image_cstpow_byID(long ID, double f1, long IDout);
 int arith_image_cstmaxv_byID(long ID, double f1, long IDout);
 int arith_image_cstminv_byID(long ID, double f1, long IDout);
 
-int arith_image_cstfmod(char *ID_name, double f1, char *ID_out);
-int arith_image_cstadd(char *ID_name, double f1, char *ID_out);
-int arith_image_cstsub(char *ID_name, double f1, char *ID_out);
-int arith_image_cstsubm(char *ID_name, double f1, char *ID_out);
-int arith_image_cstmult(char *ID_name, double f1, char *ID_out);
-int arith_image_cstdiv(char *ID_name, double f1, char *ID_out);
-int arith_image_cstpow(char *ID_name, double f1, char *ID_out);
-int arith_image_cstmaxv(char *ID_name, double f1, char *ID_out);
-int arith_image_cstminv(char *ID_name, double f1, char *ID_out);
+int arith_image_cstfmod(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstadd(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstsub(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstsubm(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstmult(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstdiv(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstpow(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstmaxv(const char *ID_name, double f1, const char *ID_out);
+int arith_image_cstminv(const char *ID_name, double f1, const char *ID_out);
 
 
 
@@ -230,14 +230,14 @@ int arith_image_cstpow_inplace_byID(long ID, double f1);
 int arith_image_cstmaxv_inplace_byID(long ID, double f1);
 int arith_image_cstminv_inplace_byID(long ID, double f1);
 
-int arith_image_cstfmod_inplace(char *ID_name, double f1);
-int arith_image_cstadd_inplace(char *ID_name, double f1);
-int arith_image_cstsub_inplace(char *ID_name, double f1);
-int arith_image_cstmult_inplace(char *ID_name, double f1);
-int arith_image_cstdiv_inplace(char *ID_name, double f1);
-int arith_image_cstpow_inplace(char *ID_name, double f1);
-int arith_image_cstmaxv_inplace(char *ID_name, double f1);
-int arith_image_cstminv_inplace(char *ID_name, double f1);
+int arith_image_cstfmod_inplace(const char *ID_name, double f1);
+int arith_image_cstadd_inplace(const char *ID_name, double f1);
+int arith_image_cstsub_inplace(const char *ID_name, double f1);
+int arith_image_cstmult_inplace(const char *ID_name, double f1);
+int arith_image_cstdiv_inplace(const char *ID_name, double f1);
+int arith_image_cstpow_inplace(const char *ID_name, double f1);
+int arith_image_cstmaxv_inplace(const char *ID_name, double f1);
+int arith_image_cstminv_inplace(const char *ID_name, double f1);
 
 
 /* ------------------------------------------------------------------------- */
@@ -247,15 +247,15 @@ int arith_image_cstminv_inplace(char *ID_name, double f1);
 int arith_image_trunc_byID(long ID, double f1, double f2, long IDout);
 int arith_image_trunc_inplace_byID(long IDname, double f1, double f2);
 
-int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out);
-int arith_image_trunc_inplace(char *ID_name, double f1, double f2);
+int arith_image_trunc(const char *ID_name, double f1, double f2, const char *ID_out);
+int arith_image_trunc_inplace(const char *ID_name, double f1, double f2);
 
-long arith_make_slopexy(char *ID_name, long l1,long l2, double sx, double sy);
+long arith_make_slopexy(const char *ID_name, long l1,long l2, double sx, double sy);
 
 
 
-//int arith_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);
+//int arith_image_translate(const char *ID_name, const char *ID_out, double xtransl, double ytransl);
 
-int execute_arith(char *cmd);
+int execute_arith(const char *cmd);
 
 #endif

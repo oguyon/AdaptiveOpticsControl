@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 
+#include <stdint.h>
 #include <string.h>
 #include <CLIcore.h>
 #include <malloc.h>
@@ -85,7 +86,7 @@ extern int yylex_destroy (void );
 
 
 /*-----------------------------------------
-*       Globals
+*       Globals exported to all modules
 */
 
 pid_t CLIPID;
@@ -143,7 +144,7 @@ void main_free();
 int CLImatchMode = 0;
 static char** CLI_completion(const char*, int ,int);
 char* CLI_generator(const char*,int);
-char * dupstr (char*);
+char *dupstr (char*);
 void *xmalloc (int);
  
 
@@ -155,11 +156,12 @@ int command_line( int argc, char **argv);
 
 
 /// CLI commands
-int exitCLI();
-int help();
-int list_commands();
-int list_commands_module(char *modulename);
-int help_command(char *cmdkey);
+static int_fast8_t exitCLI();
+static int_fast8_t help();
+
+static int_fast8_t list_commands();
+static int_fast8_t list_commands_module(char *modulename);
+static int_fast8_t help_command(char *cmdkey);
 
 
 
@@ -212,7 +214,7 @@ void sig_handler(int signo)
 
 /// CLI functions
 
-int exitCLI()
+int_fast8_t exitCLI()
 {
     char command[500];
     int r;
@@ -242,12 +244,15 @@ int exitCLI()
     return 0;
 }
 
-int printInfo()
+
+
+static int_fast8_t printInfo()
 {
     float f1;
     printf("\n");
     printf("  PID = %d\n", CLIPID);
-    
+
+
     printf("--------------- GENERAL ----------------------\n");
     printf("%s VERSION   %s\n",  PACKAGE_NAME, PACKAGE_VERSION );
     printf("%s BUILT   %s %s\n", __FILE__,__DATE__,__TIME__);
@@ -257,6 +262,18 @@ int printInfo()
         printf("Default precision upon startup : float\n");
     if(data.precision==1)
         printf("Default precision upon startup : double\n");
+	printf("sizeof(short int)     = %3ld bit\n", sizeof(short int)*8);
+	printf("sizeof(int)           = %3ld bit\n", sizeof(int)*8);
+	printf("sizeof(long)          = %3ld bit\n", sizeof(long)*8);
+	printf("sizeof(long long)     = %3ld bit\n", sizeof(long long)*8);
+	printf("sizeof(int_fast8_t)   = %3ld bit\n", sizeof(int_fast8_t)*8);
+	printf("sizeof(int_fast16_t)  = %3ld bit\n", sizeof(int_fast16_t)*8);
+	printf("sizeof(int_fast32_t)  = %3ld bit\n", sizeof(int_fast32_t)*8);
+	printf("sizeof(int_fast64_t)  = %3ld bit\n", sizeof(int_fast64_t)*8);
+	printf("sizeof(uint_fast8_t)  = %3ld bit\n", sizeof(uint_fast8_t)*8);
+	printf("sizeof(uint_fast16_t) = %3ld bit\n", sizeof(uint_fast16_t)*8);
+	printf("sizeof(uint_fast32_t) = %3ld bit\n", sizeof(uint_fast32_t)*8);
+	printf("sizeof(uint_fast64_t) = %3ld bit\n", sizeof(uint_fast64_t)*8);
     printf("\n");
     printf("--------------- LIBRARIES --------------------\n");
     printf("READLINE : version %x\n",RL_READLINE_VERSION);
@@ -265,15 +282,23 @@ int printInfo()
 # endif
     printf("CFITSIO  : version %f\n", fits_get_version(&f1));
     printf("\n");
+    
     printf("--------------- DIRECTORIES ------------------\n");
     printf("CONFIGDIR = %s\n", CONFIGDIR);
     printf("SOURCEDIR = %s\n", SOURCEDIR);
+    printf("\n");
+    
+	printf("--------------- MALLOC INFO ------------------\n");
+	malloc_stats();
 
+    printf("\n");
+    
     return(0);
 }
 
 
-int help()
+
+static int_fast8_t help()
 {
   char command[200];
 
@@ -286,7 +311,9 @@ int help()
   return 0;
 }
 
-int helpreadline()
+
+
+static int_fast8_t helpreadline()
 {
   char command[200];
   int r;
@@ -301,7 +328,8 @@ int helpreadline()
   return 0;
 }
 
-int help_cmd()
+
+static int_fast8_t help_cmd()
 {
 
   if((data.cmdargtoken[1].type == 3)||(data.cmdargtoken[1].type == 4)||(data.cmdargtoken[1].type == 5))
@@ -314,7 +342,7 @@ int help_cmd()
 
 
 
-int help_module()
+static int_fast8_t help_module()
 {
     long i;
 
@@ -331,24 +359,26 @@ int help_module()
 
 
 
-int set_default_precision_single()
+int_fast8_t set_default_precision_single()
 {
   data.precision  = 0;
+  
   return 0;
 }
 
 
 
 
-int set_default_precision_double()
+int_fast8_t set_default_precision_double()
 {
   data.precision  = 1;
+
   return 0;
 }
 
 
 
-int cfits_usleep_cli()
+int_fast8_t cfits_usleep_cli()
 {
   if(data.cmdargtoken[1].type == 2)
     {
@@ -363,7 +393,7 @@ int cfits_usleep_cli()
 
 
 
-int CLI_execute_line()
+static int_fast8_t CLI_execute_line()
 {
     long i, j;
     char *cmdargstring;
@@ -535,7 +565,7 @@ void rl_cb(char* linein)
 
 
 
-int RegisterCLIcommand(char *CLIkey, char *CLImodule, int (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall)
+uint_fast16_t RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t (*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall)
 {
 
 //	printf("Registering command    %20s   [%5ld]\n", CLIkey, data.NBcmd);
@@ -564,7 +594,7 @@ int RegisterCLIcommand(char *CLIkey, char *CLImodule, int (*CLIfptr)(), char *CL
  */
 
 
-int main(int argc, char *argv[])
+int_fast8_t main(int argc, char *argv[])
 {
     FILE *fp;
     long i, j;
@@ -1553,7 +1583,7 @@ int command_line( int argc, char **argv)
 
 
 
-int list_commands()
+static int_fast8_t list_commands()
 {
   long i;
   char cmdinfoshort[38];
@@ -1568,7 +1598,7 @@ int list_commands()
   return 0;
 }
 
-int list_commands_module(char *modulename)
+static int_fast8_t list_commands_module(char *modulename)
 {
   long i;
   int mOK = 0;
@@ -1622,7 +1652,7 @@ int list_commands_module(char *modulename)
  */
 
 
-int help_command(char *cmdkey)
+static int_fast8_t help_command(char *cmdkey)
 {
   long i;
   int cOK = 0;

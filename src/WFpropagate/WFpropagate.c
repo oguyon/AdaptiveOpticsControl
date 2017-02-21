@@ -1,10 +1,12 @@
-#include <fitsio.h> 
+#include <stdint.h> 
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include <fitsio.h> 
 
 #include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -24,7 +26,7 @@ extern DATA data;
 
 
 
-int Fresnel_propagate_wavefront_cli()
+int_fast8_t Fresnel_propagate_wavefront_cli()
 {
 
   if(CLI_checkarg(1, 4)+CLI_checkarg(2, 3)+CLI_checkarg(3, 1)+CLI_checkarg(4, 1)+CLI_checkarg(5, 1)==0)
@@ -38,7 +40,7 @@ int Fresnel_propagate_wavefront_cli()
 
 
 
-int init_WFpropagate()
+int_fast8_t init_WFpropagate()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "light propagation");
@@ -50,7 +52,7 @@ int init_WFpropagate()
   strcpy(data.cmd[data.NBcmd].info,"Fresnel propagate wavefront");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <pupil scale m/s> <prop dist> <lambda>");
   strcpy(data.cmd[data.NBcmd].example,"fresnelpw in out 0.01 1000 0.0000005");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double z, double lambda)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int Fresnel_propagate_wavefront(const char *in, const char *out, double PUPIL_SCALE, double z, double lambda)");
   data.NBcmd++;
  
  // add atexit functions here
@@ -65,7 +67,7 @@ int init_WFpropagate()
 
 
 
-int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double z, double lambda)
+int Fresnel_propagate_wavefront(const char *in, const char *out, double PUPIL_SCALE, double z, double lambda)
 {
     /* all units are in m */
     double coeff;
@@ -163,7 +165,7 @@ int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double 
 
 
 /* takes better care of aliasing problems */
-int Init_Fresnel_propagate_wavefront(char *Cim, long size, double PUPIL_SCALE, double z, double lambda, double FPMASKRAD, int Precision)
+int Init_Fresnel_propagate_wavefront(const char *Cim, long size, double PUPIL_SCALE, double z, double lambda, double FPMASKRAD, int Precision)
 {
     /* all units are in m */
     double coeff;
@@ -268,7 +270,7 @@ int Init_Fresnel_propagate_wavefront(char *Cim, long size, double PUPIL_SCALE, d
 
 
 
-int Fresnel_propagate_wavefront1(char *in, char *out, char *Cin)
+int Fresnel_propagate_wavefront1(const char *in, const char *out, const char *Cin)
 {
     /* all units are in m */
     long ii;
@@ -334,7 +336,7 @@ int Fresnel_propagate_wavefront1(char *in, char *out, char *Cin)
 
 
 
-long Fresnel_propagate_cube(char *IDcin_name, char *IDout_name_amp, char *IDout_name_pha, double PUPIL_SCALE, double zstart, double zend, long NBzpts, double lambda)
+long Fresnel_propagate_cube(const char *IDcin_name, const char *IDout_name_amp, const char *IDout_name_pha, double PUPIL_SCALE, double zstart, double zend, long NBzpts, double lambda)
 {
     long IDouta, IDoutp;
     long IDcin;

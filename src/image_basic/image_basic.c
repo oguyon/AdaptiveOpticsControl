@@ -1,4 +1,4 @@
-#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
@@ -6,6 +6,8 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sched.h>
+
+#include <fitsio.h>  /* required by every program that uses CFITSIO  */
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -54,7 +56,7 @@ char errmsg[SBUFFERSIZE];
 
 
 
-int image_basic_expand_cli()
+int_fast8_t image_basic_expand_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
     {
@@ -65,7 +67,7 @@ int image_basic_expand_cli()
     return 1;
 }
 
-int image_basic_expand3D_cli()
+int_fast8_t image_basic_expand3D_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
     {
@@ -77,7 +79,7 @@ int image_basic_expand3D_cli()
 }
 
 
-int image_basic_resize_cli()
+int_fast8_t image_basic_resize_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
     {
@@ -89,7 +91,7 @@ int image_basic_resize_cli()
 }
 
 
-int image_basic_rotate_cli()
+int_fast8_t image_basic_rotate_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1) == 0)
     {
@@ -101,7 +103,7 @@ int image_basic_rotate_cli()
 }
 
 
-int image_basic_3Dto2D_cli() // collapse first 2 axis into one
+int_fast8_t image_basic_3Dto2D_cli() // collapse first 2 axis into one
 {
 	if(CLI_checkarg(1,4) == 0)
     {
@@ -112,7 +114,7 @@ int image_basic_3Dto2D_cli() // collapse first 2 axis into one
     return 1;
 }
 
-int image_basic_SwapAxis2D_cli() // swap axis of a 2D image
+int_fast8_t image_basic_SwapAxis2D_cli() // swap axis of a 2D image
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,3) == 0)
     {
@@ -123,7 +125,7 @@ int image_basic_SwapAxis2D_cli() // swap axis of a 2D image
     return 1;
 }
 
-int image_basic_add_cli()
+int_fast8_t image_basic_add_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
     {  
@@ -135,7 +137,7 @@ int image_basic_add_cli()
 }
 
 
-int image_basic_add3D_cli()
+int_fast8_t image_basic_add3D_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2) == 0)
     {  
@@ -147,7 +149,7 @@ int image_basic_add3D_cli()
 }
 
 
-int image_basic_contract_cli()
+int_fast8_t image_basic_contract_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
     {
@@ -159,7 +161,7 @@ int image_basic_contract_cli()
 }
 
 
-int image_basic_contract3D_cli()
+int_fast8_t image_basic_contract3D_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
     {
@@ -172,7 +174,7 @@ int image_basic_contract3D_cli()
 
 
 
-int IMAGE_BASIC_get_assym_component_cli()
+int_fast8_t IMAGE_BASIC_get_assym_component_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1) == 0)
         {
@@ -183,7 +185,7 @@ int IMAGE_BASIC_get_assym_component_cli()
         return 1;
 }
 
-int IMAGE_BASIC_get_sym_component_cli()
+int_fast8_t IMAGE_BASIC_get_sym_component_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1) == 0)
         {
@@ -195,7 +197,7 @@ int IMAGE_BASIC_get_sym_component_cli()
 }
 
 
-int image_basic_load_fitsimages_cube_cli()
+int_fast8_t image_basic_load_fitsimages_cube_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,3) == 0)
     {
@@ -207,7 +209,7 @@ int image_basic_load_fitsimages_cube_cli()
 }
 
 
-int image_basic_cubecollapse_cli()
+int_fast8_t image_basic_cubecollapse_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3) == 0)
     {
@@ -221,7 +223,7 @@ int image_basic_cubecollapse_cli()
 
 
 
-int image_basic_streamaverage_cli()
+int_fast8_t image_basic_streamaverage_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2) == 0)
     {
@@ -233,7 +235,7 @@ int image_basic_streamaverage_cli()
 }
 
 
-int image_basic_streamfeed_cli()
+int_fast8_t image_basic_streamfeed_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1) == 0)
     {
@@ -244,7 +246,7 @@ int image_basic_streamfeed_cli()
         return 1;
 }
 
-int IMAGE_BASIC_streamrecord_cli()
+int_fast8_t IMAGE_BASIC_streamrecord_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3) == 0)
     {
@@ -264,7 +266,7 @@ int IMAGE_BASIC_streamrecord_cli()
 
 
 
-int init_image_basic()
+int_fast8_t init_image_basic()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "basic image routines");
@@ -277,7 +279,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"expand 2D image");
     strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <x factor> <y factor>");
     strcpy(data.cmd[data.NBcmd].example,"imexpand im1 im2 2 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_expand(char *ID_name, char *ID_name_out, int n1, int n2)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_expand(const char *ID_name, const char *ID_name_out, int n1, int n2)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"imexpand3D");
@@ -286,7 +288,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"expand 3D image");
     strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <x factor> <y factor> <z factor>");
     strcpy(data.cmd[data.NBcmd].example,"imexpand3D im1 im2 2 2 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_expand3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_expand3D(const char *ID_name, const char *ID_name_out, int n1, int n2, int n3)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"resizeim");
@@ -295,7 +297,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"resize 2D image");
     strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
     strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(const char *imname_in, const char *imname_out, long xsizeout, long ysizeout)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"rotateim");
@@ -304,7 +306,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"rotate 2D image");
     strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <angle>");
     strcpy(data.cmd[data.NBcmd].example,"rotateim imin imout 230");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_rotate(char *ID_name, char *ID_out_name, float angle)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_rotate(const char *ID_name, const char *ID_out_name, float angle)");
     data.NBcmd++;
     
 
@@ -314,7 +316,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"collapse first 2 axis of 3D image (in place)");
     strcpy(data.cmd[data.NBcmd].syntax,"<image name>");
     strcpy(data.cmd[data.NBcmd].example,"im3Dto2D im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_3Dto2D(char *IDname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_3Dto2D(const char *IDname)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"imswapaxis2D");
@@ -323,7 +325,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"Swap axis of a 2D image");
     strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image>");
     strcpy(data.cmd[data.NBcmd].example,"imswapaxis2D im1 im2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_SwapAxis2D(const char *IDin_name, const char *IDout_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"addim");
@@ -332,7 +334,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"add two 2D images of different size");
     strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
     strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(const char *ID_name1, const char *ID_name2, const char *ID_name_out, long off1, long off2)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"addim3D");
@@ -341,7 +343,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"add two 3D images of different size");
     strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety> <offsetz>");
     strcpy(data.cmd[data.NBcmd].example,"addim3D im1 im2 outim 23 201 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2, long off3)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name_out, long off1, long off2, long off3)");
     data.NBcmd++;
 
 
@@ -351,7 +353,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"image binning (3D)");
     strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <binx> <biny> <binz>");
     strcpy(data.cmd[data.NBcmd].example,"imcontracteD im1 outim 4 4 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int n2, int n3)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imcontract");
@@ -360,7 +362,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"image binning");
     strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <binx> <biny>");
     strcpy(data.cmd[data.NBcmd].example,"imcontract im1 outim 4 4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(const char *ID_name, const char *ID_name_out, int n1, int n2)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"imgetcircassym");
@@ -369,7 +371,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"extract non-circular symmetric part of image");
     strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <xcenter> <ycenter>");
     strcpy(data.cmd[data.NBcmd].example,"imcgetcircassym imin imout 256.0 230.5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options)");    
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_assym_component(const char *ID_name, const char *ID_out_name, float xcenter, float ycenter, const char *options)");    
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imgetcircsym");
@@ -378,7 +380,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"extract circular symmetric part of image");
     strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <xcenter> <ycenter>");
     strcpy(data.cmd[data.NBcmd].example,"imcgetcircsym imin imout 256.0 230.5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter)");    
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_sym_component(const char *ID_name, const char *ID_out_name, float xcenter, float ycenter)");    
     data.NBcmd++;
 
     
@@ -388,7 +390,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"load multiple images into a single cube");
     strcpy(data.cmd[data.NBcmd].syntax,"loadfitsimgcube <string pattern> <outputcube>");
     strcpy(data.cmd[data.NBcmd].example,"loadfitsimgcube im out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long load_fitsimages_cube(char *strfilter, char *ID_out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long load_fitsimages_cube(const char *strfilter, const char *ID_out_name)");
     data.NBcmd++;
     
     
@@ -398,7 +400,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"collapse a cube along z");
     strcpy(data.cmd[data.NBcmd].syntax,"cubecollapse <inim> <outim>");
     strcpy(data.cmd[data.NBcmd].example,"cubecollapse im1 outim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long cube_collapse(char *ID_in_name, char *ID_out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long cube_collapse(const char *ID_in_name, const char *ID_out_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"imgstreamave");
@@ -407,7 +409,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"average stream of images");
     strcpy(data.cmd[data.NBcmd].syntax,"imgstreamave <imin> <NBcoadd [long]> <imout> <mode>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imgstreamfeed");
@@ -416,7 +418,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"feed stream of images");
     strcpy(data.cmd[data.NBcmd].syntax,"<input image/cube> <stream> <fequ [Hz]>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamfeed im imstream 100");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float frequ)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imgstreamrec");
@@ -425,7 +427,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].info,"record stream of images");
     strcpy(data.cmd[data.NBcmd].syntax,"<stream> <# frames> <output>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamrec imstream 100 imrec");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamrecord(const char *streamname, long NBframes, const char *IDname)");
     data.NBcmd++;
 
 
@@ -445,7 +447,7 @@ int init_image_basic()
 
 
 
-int basic_naninf2zero(char *ID_name) /* set all nan and inf pixel values to zero */
+int basic_naninf2zero(const char *ID_name) /* set all nan and inf pixel values to zero */
 {
   int ID;
   long ii,jj;
@@ -471,7 +473,7 @@ int basic_naninf2zero(char *ID_name) /* set all nan and inf pixel values to zero
   return(0);
 }
 
-int basic_mincontract(char *ID_name, long axis, char *out_name)
+int basic_mincontract(const char *ID_name, long axis, const char *out_name)
 {
   
   
@@ -481,7 +483,7 @@ int basic_mincontract(char *ID_name, long axis, char *out_name)
 
 
 
-int basic_lmin_im(char *ID_name, char *out_name)
+int basic_lmin_im(const char *ID_name, const char *out_name)
 {
     int IDin,IDout;
     long ii,jj;
@@ -513,7 +515,7 @@ int basic_lmin_im(char *ID_name, char *out_name)
 
 
 
-int basic_lmax_im(char *ID_name, char *out_name)
+int basic_lmax_im(const char *ID_name, const char *out_name)
 {
     int IDin,IDout;
     long ii,jj;
@@ -543,7 +545,7 @@ int basic_lmax_im(char *ID_name, char *out_name)
 }
 
 
-long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)
+long basic_add(const char *ID_name1, const char *ID_name2, const char *ID_name_out, long off1, long off2)
 {
     int ID1, ID2; /* ID for the 2 images added */
     int ID_out; /* ID for the output image */
@@ -646,7 +648,7 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
 
 
 
-long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2, long off3)
+long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name_out, long off1, long off2, long off3)
 {
     int ID1, ID2; /* ID for the 2 images added */
     int ID_out; /* ID for the output image */
@@ -773,7 +775,7 @@ long basic_add3D(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, l
 
 
 
-long basic_diff(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2) {
+long basic_diff(const char *ID_name1, const char *ID_name2, const char *ID_name_out, long off1, long off2) {
     int ID1, ID2; /* ID for the 2 images added */
     int ID_out; /* ID for the output image */
     long ii,jj;
@@ -819,7 +821,7 @@ long basic_diff(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lo
     return(ID_out);
 }
 
-int basic_add_cst(char *ID_name, float f1, int sign) /* add a constant */
+int basic_add_cst(const char *ID_name, float f1, int sign) /* add a constant */
 {
     int ID;
     long ii,jj;
@@ -839,7 +841,7 @@ int basic_add_cst(char *ID_name, float f1, int sign) /* add a constant */
 
 
 /* extracts a n1xn2 subwindow of an image at offset n3,n4 */
-long basic_extract(char *ID_in_name, char *ID_out_name, long n1, long n2, long n3, long n4)
+long basic_extract(const char *ID_in_name, const char *ID_out_name, long n1, long n2, long n3, long n4)
 {
     long ID_in;
     long ID_out;
@@ -868,7 +870,7 @@ long basic_extract(char *ID_in_name, char *ID_out_name, long n1, long n2, long n
 
 
 
-int basic_trunc_circ(char *ID_name, float f1)
+int basic_trunc_circ(const char *ID_name, float f1)
 {
     int ID;
     long ii,jj;
@@ -887,7 +889,7 @@ int basic_trunc_circ(char *ID_name, float f1)
 
 
 /* expand image by factor n1 along x axis and n2 along y axis */
-long basic_expand(char *ID_name, char *ID_name_out, int n1, int n2)
+long basic_expand(const char *ID_name, const char *ID_name_out, int n1, int n2)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -915,7 +917,7 @@ long basic_expand(char *ID_name, char *ID_name_out, int n1, int n2)
 
 
 /* expand image by factor n1 along x axis and n2 along y axis */
-long basic_expand3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
+long basic_expand3D(const char *ID_name, const char *ID_name_out, int n1, int n2, int n3)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -955,7 +957,7 @@ long basic_expand3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
 
 
 
-long basic_zoom2(char *ID_name, char *ID_name_out)
+long basic_zoom2(const char *ID_name, const char *ID_name_out)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -991,7 +993,7 @@ long basic_zoom2(char *ID_name, char *ID_name_out)
 
 
 
-long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)
+long basic_contract(const char *ID_name, const char *ID_name_out, int n1, int n2)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -1021,7 +1023,7 @@ long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)
 
 
 
-long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
+long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int n2, int n3)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -1104,7 +1106,7 @@ long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
 }
 
 
-long basic_average_column(char *ID_name, char *IDout_name)
+long basic_average_column(const char *ID_name, const char *IDout_name)
 {
     long IDout = -1;
 
@@ -1115,7 +1117,7 @@ long basic_average_column(char *ID_name, char *IDout_name)
 
 
 
-long basic_padd(char *ID_name, char *ID_name_out, int n1, int n2)
+long basic_padd(const char *ID_name, const char *ID_name_out, int n1, int n2)
 {
     long ID;
     long ID_out; /* ID for the output image */
@@ -1141,7 +1143,7 @@ long basic_padd(char *ID_name, char *ID_name_out, int n1, int n2)
 
 
 /* flip an image relative to the horizontal axis */
-long basic_fliph(char *ID_name)
+long basic_fliph(const char *ID_name)
 {
     long ID;
     long ii,jj;
@@ -1171,7 +1173,7 @@ long basic_fliph(char *ID_name)
 
 
 /* flip an image relative to the vertical axis */
-long basic_flipv(char *ID_name)
+long basic_flipv(const char *ID_name)
 {
     long ID;
     long ii,jj;
@@ -1200,7 +1202,7 @@ long basic_flipv(char *ID_name)
 
 
 /* flip an image horizontally and vertically */
-long basic_fliphv(char *ID_name)
+long basic_fliphv(const char *ID_name)
 {
     long ID;
     long ii,jj;
@@ -1228,7 +1230,7 @@ long basic_fliphv(char *ID_name)
 
 
 /* median of the images specified in options, output is ID_name */
-int basic_median(char *ID_name, char *options)
+int basic_median(const char *ID_name, const char *options)
 {
     unsigned int Nb_files;
     int ID;
@@ -1322,7 +1324,7 @@ int basic_median(char *ID_name, char *options)
 }
 
 
-long basic_renorm_max(char *ID_name)
+long basic_renorm_max(const char *ID_name)
 {
     long ID;
     long ii,jj;
@@ -1351,7 +1353,7 @@ long basic_renorm_max(char *ID_name)
 
 
 
-long basic_rotate(char *ID_name, char *IDout_name, float angle)
+long basic_rotate(const char *ID_name, const char *IDout_name, float angle)
 {
     int ID, IDout;
     long ii,jj,iis,jjs;
@@ -1376,7 +1378,7 @@ long basic_rotate(char *ID_name, char *IDout_name, float angle)
 }
 
 
-int basic_rotate90(char *ID_name, char *ID_out_name)
+int basic_rotate90(const char *ID_name, const char *ID_out_name)
 {
   int ID,ID_out;
   long ii,jj,iis,jjs;
@@ -1400,7 +1402,7 @@ int basic_rotate90(char *ID_name, char *ID_out_name)
   return(0);
 }
 
-int basic_rotate_int(char *ID_name, char *ID_out_name, long nbstep)
+int basic_rotate_int(const char *ID_name, const char *ID_out_name, long nbstep)
 {
   float angle;
   int i;
@@ -1430,7 +1432,7 @@ int basic_rotate_int(char *ID_name, char *ID_out_name, long nbstep)
   return(0);
 }
 
-int basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl)
+int basic_translate(const char *ID_name, const char *ID_out, float xtransl, float ytransl)
 {
     int ID;
     long naxes[2];
@@ -1525,7 +1527,7 @@ int basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl)
 
 
 
-float basic_correlation(char *ID_name1, char *ID_name2)
+float basic_correlation(const char *ID_name1, const char *ID_name2)
 {
     float correl;
     int ID1,ID2;
@@ -1558,7 +1560,7 @@ float basic_correlation(char *ID_name1, char *ID_name2)
 
 
 
-long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options)
+long IMAGE_BASIC_get_assym_component(const char *ID_name, const char *ID_out_name, float xcenter, float ycenter, const char *options)
 {
     float step = 1.0;
     int ID;
@@ -1686,7 +1688,7 @@ long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xce
 
 
 
-long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter)
+long IMAGE_BASIC_get_sym_component(const char *ID_name, const char *ID_out_name, float xcenter, float ycenter)
 {
     float step = 1.0;
     int ID;
@@ -1798,7 +1800,7 @@ long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcent
 
 
 /* rotation that keeps photometry - angle is in radians */
-int basic_rotate2(char *ID_name_in, char *ID_name_out, float angle)
+int basic_rotate2(const char *ID_name_in, const char *ID_name_out, float angle)
 {
   int ID_in;
   int ID_out,ID_wout;
@@ -2039,7 +2041,7 @@ int basic_rotate2(char *ID_name_in, char *ID_name_out, float angle)
 }
 
 /* this routine uses the Owen algorith - the image has to be square and power of 2 on the side */
-int basic_rotate3(char *ID_name_in, char *ID_name_out, float angle)
+int basic_rotate3(const char *ID_name_in, const char *ID_name_out, float angle)
 {
   long Np, Npp;
   float delta;
@@ -2130,7 +2132,7 @@ int basic_rotate3(char *ID_name_in, char *ID_name_out, float angle)
   return(0);
 }
 
-int basic_stretch(char *name_in, char *name_out, float coeff, long Xcenter, long Ycenter)
+int basic_stretch(const char *name_in, const char *name_out, float coeff, long Xcenter, long Ycenter)
 {
   
   long ii,jj;
@@ -2158,7 +2160,7 @@ int basic_stretch(char *name_in, char *name_out, float coeff, long Xcenter, long
   return(0);
 }
 
-int basic_stretch_range(char *name_in, char *name_out, float coeff1, float coeff2, long Xcenter, long Ycenter, long NBstep, float ApoCoeff)
+int basic_stretch_range(const char *name_in, const char *name_out, float coeff1, float coeff2, long Xcenter, long Ycenter, long NBstep, float ApoCoeff)
 {
   // ApoCoeff should be between 0 and 1
   long ii,jj;
@@ -2226,7 +2228,7 @@ int basic_stretch_range(char *name_in, char *name_out, float coeff1, float coeff
 }
 
 
-int basic_stretchc(char *name_in, char *name_out, float coeff)
+int basic_stretchc(const char *name_in, const char *name_out, float coeff)
 {
   
   long ii,jj;
@@ -2257,7 +2259,7 @@ int basic_stretchc(char *name_in, char *name_out, float coeff)
   return(0);
 }
 
-int gauss_histo_image(char *ID_name, char *ID_out_name, float sigma, float center)
+int gauss_histo_image(const char *ID_name, const char *ID_out_name, float sigma, float center)
 {
   long ID,ID_out;
   long ii,jj;
@@ -2385,7 +2387,7 @@ int gauss_histo_image(char *ID_name, char *ID_out_name, float sigma, float cente
 // load all images matching strfilter + .fits
 // return number of images loaded
 // image name in buffer is same as file name without extension
-long load_fitsimages(char *strfilter)
+long load_fitsimages(const char *strfilter)
 {
   long cnt = 0;
   char command[SBUFFERSIZE];
@@ -2443,7 +2445,7 @@ long load_fitsimages(char *strfilter)
 // load all images matching strfilter + .fits into a data cube
 // return number of images loaded
 // image name in buffer is same as file name without extension
-long load_fitsimages_cube(char *strfilter, char *ID_out_name)
+long load_fitsimages_cube(const char *strfilter, const char *ID_out_name)
 {
     long cnt = 0;
     char command[SBUFFERSIZE];
@@ -2551,7 +2553,7 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
 
 // recenter cube frames such that the photocenter is on the central pixel
 // images are recentered by integer number of pixels
-long basic_cube_center(char *ID_in_name, char *ID_out_name)
+long basic_cube_center(const char *ID_in_name, const char *ID_out_name)
 {
     long IDin,IDout;
     long xsize,ysize,ksize;
@@ -2636,7 +2638,7 @@ long basic_cube_center(char *ID_in_name, char *ID_out_name)
 // excludes point which are more than alpha x sigma
 // writes an rms value frame as rmsim
 //
-long cube_average(char *ID_in_name, char *ID_out_name, float alpha)
+long cube_average(const char *ID_in_name, const char *ID_out_name, float alpha)
 {
     long IDin,IDout,IDrms;
     long xsize,ysize,ksize;
@@ -2709,7 +2711,7 @@ long cube_average(char *ID_in_name, char *ID_out_name, float alpha)
 
 
 
-long cube_collapse(char *ID_in_name, char *ID_out_name)
+long cube_collapse(const char *ID_in_name, const char *ID_out_name)
 {
     long IDin, IDout;
     long xsize, ysize, ksize;
@@ -2738,7 +2740,7 @@ long cube_collapse(char *ID_in_name, char *ID_out_name)
 
 // coadd all images matching strfilter + .fits
 // return number of images added
-long basic_addimagesfiles(char *strfilter, char *outname)
+long basic_addimagesfiles(const char *strfilter, const char *outname)
 {
     long cnt = 0;
     char command[SBUFFERSIZE];
@@ -2808,7 +2810,7 @@ long basic_addimagesfiles(char *strfilter, char *outname)
 
 // coadd all images matching strfilter + .fits
 // return number of images added
-long basic_aveimagesfiles(char *strfilter, char *outname)
+long basic_aveimagesfiles(const char *strfilter, const char *outname)
 {
   long cnt;
   
@@ -2822,7 +2824,7 @@ long basic_aveimagesfiles(char *strfilter, char *outname)
 
 // add all images starting with prefix
 // return number of images added
-long basic_addimages(char *prefix, char *ID_out)
+long basic_addimages(const char *prefix, const char *ID_out)
 {
     long i;
     int init = 0; // becomes 1 when first image encountered
@@ -2852,7 +2854,7 @@ long basic_addimages(char *prefix, char *ID_out)
 
 
 // paste all images starting with prefix
-long basic_pasteimages(char *prefix, long NBcol, char *IDout_name)
+long basic_pasteimages(const char *prefix, long NBcol, const char *IDout_name)
 {
     long i;
     long cnt = 0;
@@ -2933,7 +2935,7 @@ long basic_pasteimages(char *prefix, long NBcol, char *IDout_name)
 
 // average all images starting with prefix
 // return number of images added
-long basic_averageimages(char *prefix, char *ID_out)
+long basic_averageimages(const char *prefix, const char *ID_out)
 {
   long cnt;
 
@@ -2953,7 +2955,7 @@ long basic_averageimages(char *prefix, char *ID_out)
  * ---------------------------------------------------------------------- */
 
 
-long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)
+long basic_resizeim(const char *imname_in, const char *imname_out, long xsizeout, long ysizeout)
 {
     long ID, IDout;
     long naxis = 2;
@@ -3043,7 +3045,7 @@ long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysize
  * ---------------------------------------------------------------------- */
 
 
-long image_basic_3Dto2D(char *IDname)
+long image_basic_3Dto2D(const char *IDname)
 {
 	long ID;
 	
@@ -3066,7 +3068,7 @@ long image_basic_3Dto2D(char *IDname)
 
 
 
-long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name)
+long image_basic_SwapAxis2D(const char *IDin_name, const char *IDout_name)
 {
 	long IDin;
 	long IDout = -1;
@@ -3107,7 +3109,7 @@ long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name)
  * 
  * ---------------------------------------------------------------------- */
 
-long basic_tableto2Dim(char *fname, float xmin, float xmax, float ymin, float ymax, long xsize, long ysize, char *ID_name, float convsize)
+long basic_tableto2Dim(const char *fname, float xmin, float xmax, float ymin, float ymax, long xsize, long ysize, const char *ID_name, float convsize)
 {
   FILE *fp;
   long ID;
@@ -3519,7 +3521,7 @@ long basic_tableto2Dim(char *fname, float xmin, float xmax, float ymin, float ym
   return(ID);
 }
 
-long basic_2Dextrapolate_nearestpixel(char *IDin_name, char *IDmask_name, char *IDout_name)
+long basic_2Dextrapolate_nearestpixel(const char *IDin_name, const char *IDmask_name, const char *IDout_name)
 {
   long IDin, IDmask, IDout;
   long ii,jj,ii1,jj1,k;
@@ -3628,7 +3630,7 @@ long basic_2Dextrapolate_nearestpixel(char *IDin_name, char *IDmask_name, char *
 
 // measure offset between 2 images
 
-double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
+double basic_measure_transl( const char *ID_name1, const char *ID_name2, long tmax)
 {
   long ID1, ID2, ID;
   long IDout, IDcnt;
@@ -3918,7 +3920,7 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
  *   NOTE: averaging will stop when receiving signal SIGUSR1
  *
  * */
-long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)
+long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode)
 {
     long ID;
     long cnt = 0;
@@ -4149,7 +4151,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
 // feed image to data stream
 // only works on slice #1
-long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
+long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float frequ)
 {
     long ID, IDs;
     long xsize, ysize, xysize, zsize;
@@ -4159,8 +4161,8 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     struct sched_param schedpar;
     int r;
     int semval;
-    char *ptr0;  
-    char *ptr1;
+    const char *ptr0;  
+    const char *ptr1;
     int loopOK;
     long ii;
    
@@ -4270,7 +4272,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
 
 // works only for floats
 //
-long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)
+long IMAGE_BASIC_streamrecord(const char *streamname, long NBframes, const char *IDname)
 {
     long ID;
     long IDstream;

@@ -1,4 +1,6 @@
-#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+#define _GNU_SOURCE
+
+#include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
@@ -11,8 +13,6 @@
 #include <sys/types.h>
 #include <sys/stat.h> //for the mkdir options
 #include <sys/mman.h>
-
-
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -34,7 +34,6 @@ int clock_gettime(int clk_id, struct timespec *t){
 #endif
 
 
-
 #include <fcntl.h> 
 #include <termios.h>
 #include <sys/types.h> //pid
@@ -42,6 +41,9 @@ int clock_gettime(int clk_id, struct timespec *t){
 
 #include <ncurses.h>
 
+
+
+#include <fitsio.h>  /* required by every program that uses CFITSIO  */
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -52,18 +54,20 @@ int clock_gettime(int clk_id, struct timespec *t){
 
 #include "info/info.h"
 
+
 #define SWAP(a,b) temp=(a);(a)=(b);(b)=temp;
+
+
 
 extern DATA data;
 
-int wcol, wrow; // window size
+static int wcol, wrow; // window size
 
-long long cntlast;
-struct timespec tlast;
+static long long cntlast;
+static struct timespec tlast;
 
 
-int info_image_monitor(char *ID_name, double frequ);
-int info_image_stats(char *ID_name, char *options);
+static int info_image_monitor(const char *ID_name, double frequ);
 
 
 
@@ -76,7 +80,7 @@ int info_image_stats(char *ID_name, char *options);
 // 4: existing image
 //
 
-int info_profile_cli()
+int_fast8_t info_profile_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0)
     {
@@ -88,7 +92,7 @@ int info_profile_cli()
 }
 
 
-int info_image_monitor_cli()
+int_fast8_t info_image_monitor_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,1)==0)
     {
@@ -99,7 +103,7 @@ int info_image_monitor_cli()
     return 1;
 }
 
-int info_image_stats_cli()
+int_fast8_t info_image_stats_cli()
 {
   if(CLI_checkarg(1,4)==0)
     {
@@ -111,7 +115,7 @@ int info_image_stats_cli()
 }
 
 
-int info_cubestats_cli()
+int_fast8_t info_cubestats_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
     {
@@ -124,7 +128,7 @@ int info_cubestats_cli()
 
 
 
-int info_image_statsf_cli()
+int_fast8_t info_image_statsf_cli()
 {
   if(CLI_checkarg(1,4)==0)
     {
@@ -150,11 +154,11 @@ int init_info()
 /*                                                                                                 */
 /* =============================================================================================== */
 
-	RegisterCLIcommand("imstats", __FILE__, info_image_stats_cli, "image stats", "<image>", "imgstats im1", "int info_image_stats(char *ID_name, \"\")");
+	RegisterCLIcommand("imstats", __FILE__, info_image_stats_cli, "image stats", "<image>", "imgstats im1", "int info_image_stats(const char *ID_name, \"\")");
 	
-	RegisterCLIcommand("cubestats", __FILE__,  info_cubestats_cli, "image cube stats", "<3Dimage> <mask> <output file>", "cubestats imc immask imc_stats.txt", "long info_cubestats(char *ID_name, char *IDmask_name, char *outfname)");
+	RegisterCLIcommand("cubestats", __FILE__,  info_cubestats_cli, "image cube stats", "<3Dimage> <mask> <output file>", "cubestats imc immask imc_stats.txt", "long info_cubestats(const char *ID_name, const char *IDmask_name, const char *outfname)");
 
-	RegisterCLIcommand("imstatsf", __FILE__,  info_image_statsf_cli, "image stats with file output", "<image>", "imgstatsf im1","int info_image_stats(char *ID_name, \"fileout\")");
+	RegisterCLIcommand("imstatsf", __FILE__,  info_image_statsf_cli, "image stats with file output", "<image>", "imgstatsf im1","int info_image_stats(const char *ID_name, \"fileout\")");
 
 /* =============================================================================================== */
 /*                                                                                                 */
@@ -162,7 +166,7 @@ int init_info()
 /*                                                                                                 */
 /* =============================================================================================== */
 
-	RegisterCLIcommand("imgmon", __FILE__,  info_image_monitor_cli, "image monitor", "<image> <frequ>", "imgmon im1 30", "int info_image_monitor(char *ID_name, double frequ)");
+	RegisterCLIcommand("imgmon", __FILE__,  info_image_monitor_cli, "image monitor", "<image> <frequ>", "imgmon im1 30", "int info_image_monitor(const char *ID_name, double frequ)");
 
 
 /* =============================================================================================== */
@@ -171,7 +175,7 @@ int init_info()
 /*                                                                                                 */
 /* =============================================================================================== */
 
-	RegisterCLIcommand("profile", __FILE__, info_profile_cli, "radial profile", "<image> <output file> <xcenter> <ycenter> <step> <Nbstep>", "profile psf psf.prof 256 256 1.0 100", "int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)");
+	RegisterCLIcommand("profile", __FILE__, info_profile_cli, "radial profile", "<image> <output file> <xcenter> <ycenter> <step> <Nbstep>", "profile psf psf.prof 256 256 1.0 100", "int profile(const char *ID_name, const char *outfile, double xcenter, double ycenter, double step, long nb_step)");
 
 
     return 0;
@@ -223,7 +227,7 @@ int kbdhit(void)
 }
 
 
-int print_header(char *str, char c)
+int print_header(const char *str, char c)
 {
     long n;
     long i;
@@ -566,7 +570,7 @@ int info_pixelstats_smallImage(long ID, long NBpix)
 
 
 
-int info_image_monitor(char *ID_name, double frequ)
+int info_image_monitor(const char *ID_name, double frequ)
 {
     long ID;
     long mode = 0; // 0 for large image, 1 for small image
@@ -625,7 +629,7 @@ int info_image_monitor(char *ID_name, double frequ)
 
 
 
-long brighter(char *ID_name, double value) /* number of pixels brighter than value */
+long brighter(const char *ID_name, double value) /* number of pixels brighter than value */
 {
     int ID;
     long ii,jj;
@@ -651,7 +655,7 @@ long brighter(char *ID_name, double value) /* number of pixels brighter than val
 }
 
 
-int img_nbpix_flux(char *ID_name)
+int img_nbpix_flux(const char *ID_name)
 {
   int ID;
   long ii,jj;
@@ -682,7 +686,7 @@ int img_nbpix_flux(char *ID_name)
   return(0);
 }
 
-float img_percentile_float(char *ID_name, float p)
+float img_percentile_float(const char *ID_name, float p)
 {
     int ID;
     long ii;
@@ -717,7 +721,7 @@ float img_percentile_float(char *ID_name, float p)
 }
 
 
-double img_percentile_double(char *ID_name, double p)
+double img_percentile_double(const char *ID_name, double p)
 {
     int ID;
     long ii;
@@ -750,7 +754,7 @@ double img_percentile_double(char *ID_name, double p)
 }
 
 
-double img_percentile(char *ID_name, double p)
+double img_percentile(const char *ID_name, double p)
 {
     long ID;
     int atype;
@@ -769,7 +773,7 @@ double img_percentile(char *ID_name, double p)
 
 
 
-int img_histoc_float(char *ID_name, char *fname)
+int img_histoc_float(const char *ID_name, const char *fname)
 {
   FILE *fp;
   int ID;
@@ -810,7 +814,7 @@ int img_histoc_float(char *ID_name, char *fname)
   return(0);
 }
 
-int img_histoc_double(char *ID_name, char *fname)
+int img_histoc_double(const char *ID_name, const char *fname)
 {
   FILE *fp;
   int ID;
@@ -852,7 +856,7 @@ int img_histoc_double(char *ID_name, char *fname)
 }
 
 
-int make_histogram(char *ID_name, char *ID_out_name, double min, double max, long nbsteps)
+int make_histogram(const char *ID_name, const char *ID_out_name, double min, double max, long nbsteps)
 {
     int ID,ID_out;
     long ii,jj;
@@ -876,7 +880,7 @@ int make_histogram(char *ID_name, char *ID_out_name, double min, double max, lon
 }
 
 
-double ssquare(char *ID_name)
+double ssquare(const char *ID_name)
 {
     int ID;
     long ii,jj;
@@ -895,7 +899,7 @@ double ssquare(char *ID_name)
     return(ssquare);
 }
 
-double rms_dev(char *ID_name)
+double rms_dev(const char *ID_name)
 {
     int ID;
     long ii,jj;
@@ -922,7 +926,7 @@ double rms_dev(char *ID_name)
 
 
 // option "fileout" : output to file imstat.info.txt
-int info_image_stats(char *ID_name, char *options)
+int info_image_stats(const char *ID_name, const char *options)
 {
     int ID;
     long ii,jj,j;
@@ -1162,7 +1166,7 @@ int info_image_stats(char *ID_name, char *options)
 //		average
 //		tot power
 //		RMS
-long info_cubestats(char *ID_name, char *IDmask_name, char *outfname)
+long info_cubestats(const char *ID_name, const char *IDmask_name, const char *outfname)
 {
 	long ID, IDm;
 	long ii, jj, kk;
@@ -1263,7 +1267,7 @@ long info_cubestats(char *ID_name, char *IDmask_name, char *outfname)
 
 
 
-double img_min(char *ID_name)
+double img_min(const char *ID_name)
 {
   int ID;
   long ii;
@@ -1279,7 +1283,7 @@ double img_min(char *ID_name)
    return(min);
 }
 
-double img_max(char *ID_name)
+double img_max(const char *ID_name)
 {
   int ID;
   long ii;
@@ -1299,7 +1303,7 @@ double img_max(char *ID_name)
 
 
 
-int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)
+int profile(const char *ID_name, const char *outfile, double xcenter, double ycenter, double step, long nb_step)
 {
   int ID;
   long ii,jj;
@@ -1395,7 +1399,7 @@ int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double
 
 
 
-int profile2im(char *profile_name, long nbpoints, long size, double xcenter, double ycenter, double radius, char *out)
+int profile2im(const char *profile_name, long nbpoints, long size, double xcenter, double ycenter, double radius, const char *out)
 {
   FILE *fp;
   long ID;
@@ -1446,7 +1450,7 @@ int profile2im(char *profile_name, long nbpoints, long size, double xcenter, dou
   return(0);
 }
 
-int printpix(char *ID_name, char *filename)
+int printpix(const char *ID_name, const char *filename)
 {
   int ID;
   long ii,jj,kk;
@@ -1513,7 +1517,7 @@ int printpix(char *ID_name, char *filename)
   return(0);
 }
 
-double background_photon_noise(char *ID_name)
+double background_photon_noise(const char *ID_name)
 {
   int ID;
   long ii,jj;
@@ -1571,7 +1575,7 @@ double background_photon_noise(char *ID_name)
   return(value);
 }
 
-int test_structure_function(char *ID_name, long NBpoints, char *ID_out)
+int test_structure_function(const char *ID_name, long NBpoints, const char *ID_out)
 {
   int ID,ID1,ID2;
   long ii1,ii2,jj1,jj2,i,ii,jj;
@@ -1613,7 +1617,7 @@ int test_structure_function(char *ID_name, long NBpoints, char *ID_out)
 
 
 
-int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
+int full_structure_function(const char *ID_name, long NBpoints, const char *ID_out)
 {
   int ID,ID1,ID2;
   long ii1,ii2,jj1,jj2;
@@ -1661,7 +1665,7 @@ int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
 
 
 
-int fft_structure_function(char *ID_in, char *ID_out)
+int fft_structure_function(const char *ID_in, const char *ID_out)
 {
 	long ID;
 	double value;
