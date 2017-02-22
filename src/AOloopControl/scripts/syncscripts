@@ -4,7 +4,7 @@
 NBARGS=0
 
 
-srcdir="$HOME/src/Cfits/src/AOloopControl/scripts"
+srcdir="$PWD"
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
