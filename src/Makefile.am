@@ -32,6 +32,18 @@ SUBDIRS += AOloopControl_DM
 AdaptiveOpticsControl_LDADD += AOloopControl_DM/libaoloopcontroldm.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
 
+SUBDIRS += AtmosphericTurbulence
+AdaptiveOpticsControl_LDADD += AtmosphericTurbulence/libatmosphericturbulence.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
+
+SUBDIRS += AtmosphereModel
+AdaptiveOpticsControl_LDADD += AtmosphereModel/libatmospheremodel.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
+
+SUBDIRS += psf
+AdaptiveOpticsControl_LDADD += psf/libpsf.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/psf
+
 SUBDIRS += ZernikePolyn
 AdaptiveOpticsControl_LDADD += ZernikePolyn/libzernikepolyn.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/ZernikePolyn

@@ -4,6 +4,9 @@
 #include "AOloopControl/AOloopControl.h"
 #include "linARfilterPred/linARfilterPred.h"
 #include "AOloopControl_DM/AOloopControl_DM.h"
+#include "AtmosphericTurbulence/AtmosphericTurbulence.h"
+#include "AtmosphereModel/AtmosphereModel.h"
+#include "psf/psf.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 #include "WFpropagate/WFpropagate.h"
 #include "image_basic/image_basic.h"
@@ -29,6 +32,9 @@ int init_modules()
   init_AOloopControl();
   init_linARfilterPred();
   init_AOloopControl_DM();
+  init_AtmosphericTurbulence();
+  init_AtmosphereModel();
+  init_psf();
   init_ZernikePolyn();
   init_WFpropagate();
   init_image_basic();
