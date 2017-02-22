@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Feb 14, 2017
+% Feb 21, 2017
 
 # Overview
 
@@ -8,21 +8,35 @@
 
 AO loop control package
 
-## Install
+## Installing the AdaptiveOpticsControl package
 
 Source code is available on the [AdaptiveOpticsControl git hub repository](https://github.com/oguyon/AdaptiveOpticsControl).
 
-Download the latest tar ball (.tar.gz file), uncompress, untar and execute in the source directory (for example ./AdaptiveOpticsControl-1.6.00/):
+Download the latest tar ball (.tar.gz file), uncompress, untar and execute in the source directory (`./AdaptiveOpticsControl-<version>/`)
 
 	./configure
+	
+Include recommended high performance compile flags for faster execution speed:
+
+	./configure CFLAGS='-Ofast -march=native'
+
+If you have installed CUDA and MAGMA libraries:
+
+	./configure CFLAGS='-Ofast -march=native' --enable-cuda --enable-magma
+
+The executable is built with:
+
 	make
 	make install
 	
-The executable will be built as `./AdaptiveOpticsControl-1.6.00/bin/AdaptiveOpticsControl`
+The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 
 
 
 ## Usage
+
+
+
 
 Scripts to run the software are located within the source code directory:
 
