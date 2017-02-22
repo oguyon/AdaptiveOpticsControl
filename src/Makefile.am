@@ -40,6 +40,10 @@ SUBDIRS += AtmosphereModel
 AdaptiveOpticsControl_LDADD += AtmosphereModel/libatmospheremodel.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
 
+SUBDIRS += OptSystProp
+AdaptiveOpticsControl_LDADD += OptSystProp/liboptsystprop.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
+
 SUBDIRS += psf
 AdaptiveOpticsControl_LDADD += psf/libpsf.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/psf

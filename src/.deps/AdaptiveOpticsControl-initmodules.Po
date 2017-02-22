@@ -52,13 +52,14 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  AOloopControl/AOloopControl.h linARfilterPred/linARfilterPred.h \
  AOloopControl_DM/AOloopControl_DM.h \
  AtmosphericTurbulence/AtmosphericTurbulence.h \
- AtmosphereModel/AtmosphereModel.h psf/psf.h ZernikePolyn/ZernikePolyn.h \
- WFpropagate/WFpropagate.h image_basic/image_basic.h \
- image_filter/image_filter.h kdtree/kdtree.h image_gen/image_gen.h \
- linopt_imtools/linopt_imtools.h statistic/statistic.h fft/fft.h \
- info/info.h COREMOD_arith/COREMOD_arith.h \
- COREMOD_iofits/COREMOD_iofits.h COREMOD_memory/COREMOD_memory.h \
- COREMOD_tools/COREMOD_tools.h 00CORE/00CORE.h
+ AtmosphereModel/AtmosphereModel.h OptSystProp/OptSystProp.h psf/psf.h \
+ ZernikePolyn/ZernikePolyn.h WFpropagate/WFpropagate.h \
+ image_basic/image_basic.h image_filter/image_filter.h kdtree/kdtree.h \
+ image_gen/image_gen.h linopt_imtools/linopt_imtools.h \
+ statistic/statistic.h fft/fft.h info/info.h \
+ COREMOD_arith/COREMOD_arith.h COREMOD_iofits/COREMOD_iofits.h \
+ COREMOD_memory/COREMOD_memory.h COREMOD_tools/COREMOD_tools.h \
+ 00CORE/00CORE.h
 
 /usr/include/stdc-predef.h:
 
@@ -211,6 +212,8 @@ AOloopControl_DM/AOloopControl_DM.h:
 AtmosphericTurbulence/AtmosphericTurbulence.h:
 
 AtmosphereModel/AtmosphereModel.h:
+
+OptSystProp/OptSystProp.h:
 
 psf/psf.h:
 
