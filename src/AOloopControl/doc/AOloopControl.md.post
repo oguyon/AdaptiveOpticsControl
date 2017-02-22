@@ -8,6 +8,18 @@
 
 AO loop control package
 
+## Install
+
+Source code is available on the [AdaptiveOpticsControl git hub repository](https://github.com/oguyon/AdaptiveOpticsControl).
+
+Download the latest tar ball (.tar.gz file), uncompress, untar and execute in the source directory (for example ./AdaptiveOpticsControl-1.6.00/):
+
+	./configure
+	make
+	make install
+	
+The executable will be built as `./AdaptiveOpticsControl-1.6.00/bin/AdaptiveOpticsControl`
+
 
 
 ## Usage
@@ -22,9 +34,9 @@ The scripts can be linked to your working directory by executing the following c
 
 Then, execute in your work directory:
 
-	./syncscripts
+	./syncscripts -s <SRCdir>
 	
-This will install all required scripts in workdirectory and install any packages required.
+where <SRCdir> is the source directory for scripts. This will install all required scripts in workdirectory and install any packages required.
 
 The main script is
 

@@ -4,6 +4,8 @@
 NBARGS=0
 
 
+srcdir="$HOME/src/Cfits/src/AOloopControl/scripts"
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 echo "pname = $pname"
@@ -23,20 +25,19 @@ echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-hc]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
-echo "     $(tput bold)-c$(tput sgr0)          clear all files in directory (USE WITH CARE)"
+echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-s$(tput sgr0) <SRCdir>     source directory for scripts"
+echo "     $(tput bold)-c$(tput sgr0)              clear all files in directory (USE WITH CARE)"
 echo ""
 echo "------------------------------------------------------------------------"
 }
 	
-	
+
+
+
 
 # ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
 
 while getopts :hc FLAG; do
   case $FLAG in
@@ -44,6 +45,9 @@ while getopts :hc FLAG; do
       printHELP
       exit
       ;;
+    s) # source directory
+    srcdir="$OPTARG"
+    ;;
     c) # clear
     echo "Clearing all directory and files"
     ls | grep -v syncscripts | xargs rm -rf
@@ -84,7 +88,7 @@ echo ""
 
 for file in ${filelist[*]}
 do
-	srcfile="$HOME/src/Cfits/src/AOloopControl/scripts/$file"
+	srcfile="$srcdir/$file"
 	echo "syncing file $srcfile -> $file"
 	ln -fs $srcfile $file	
 done
@@ -92,7 +96,7 @@ done
 for dir in ${dirlist[*]}
 do
 	mkdir -p $dir
-	srcdir="$HOME/src/Cfits/src/AOloopControl/scripts/$dir"
+	srcdir="$srcdir/$dir"
 	for entry in "$srcdir"/*
 	do
 	filename="${entry##*/}"	

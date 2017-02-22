@@ -1796,7 +1796,7 @@ tmuxname="aol${LOOPNUMBER}PFb0watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 0" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0wON=" ON"
@@ -1826,7 +1826,7 @@ tmuxname="aol${LOOPNUMBER}PFb1watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb1wON=" ON"
@@ -1855,7 +1855,7 @@ tmuxname="aol${LOOPNUMBER}PFb2watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb2wON=" ON"
@@ -1882,7 +1882,7 @@ tmuxname="aol${LOOPNUMBER}PFb3watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb3wON=" ON"
@@ -1918,7 +1918,7 @@ tmuxname="aol${LOOPNUMBER}PFb0comp"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb0" C-m
 tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb0 ${PFb0order} ${PFb0lag} 0.0001 0.0 aol${LOOPNUMBER}_outPFb0 1 ${PFb0dgain}" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
@@ -1947,7 +1947,7 @@ tmuxname="aol${LOOPNUMBER}PFb1comp"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb1" C-m
 tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb1 ${PFb1order} ${PFb1lag} 0.0001 0.0 aol${LOOPNUMBER}_outPFb1 1 ${PFb1dgain}" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
@@ -1975,7 +1975,7 @@ tmuxname="aol${LOOPNUMBER}PFb2comp"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb2" C-m
 tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb2 ${PFb2order} ${PFb2lag} 0.0001 0.0 aol${LOOPNUMBER}_outPFb2 1 ${PFb2dgain}" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
@@ -2002,7 +2002,7 @@ tmuxname="aol${LOOPNUMBER}PFb3comp"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb3" C-m
 tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb3 ${PFb3order} ${PFb3lag} 0.0001 0.0 aol${LOOPNUMBER}_outPFb3 1 ${PFb3dgain}" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
@@ -2069,7 +2069,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 ./predFiltApplyRT -s -n 1000  accposPF accposP
 
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 
 #tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
@@ -2133,7 +2133,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 ./predFiltApplyRT -s -n 1000  accposPF accposP
 
-tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "AOloopControl" C-m
 
 #tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m

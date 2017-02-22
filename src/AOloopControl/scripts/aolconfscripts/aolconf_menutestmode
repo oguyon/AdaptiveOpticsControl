@@ -75,13 +75,13 @@ cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
 echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
 
 # turn off DM voltage 
-Cfits << EOF
+AOloopControl << EOF
 aoldmvoltOFF 0
 exit
 EOF
 
 # set dark to zero
-Cfits << EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER_wfsdark
 imzero aol${LOOPNUMBER_wfsdark
 exit
@@ -105,7 +105,7 @@ rm aollindm2wfsim.runproc
 cp ./conf/conf_wfsimhardware_name.txt ./conf/conf_wfsim_name.txt
 
 # turn on DM voltage
-Cfits << EOF
+AOloopControl << EOF
 aoldmvoltON 0
 exit
 EOF
@@ -704,7 +704,7 @@ echo "SON" > ./status/testdm${DMindex}turbstatus.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "Cfits" C-m
+tmux send-keys -t $tmuxname "AOloopControl" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t $tmuxname "loadfits \"wfturbC.fits\" wfc" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp10" C-m
@@ -937,7 +937,7 @@ aoconflog "testModeAve = $testModeAve"
 
 
 	resan)
-Cfits << EOF
+AOloopControl << EOF
 readshmim dm00disp00
 readshmim aol${LOOPNUMBER}_dmC
 resmap=aol${LOOPNUMBER}_dmC-dm00disp00
@@ -993,7 +993,7 @@ tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 sleep 0.5
-Cfits << EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_dmRM
 imzero aol${LOOPNUMBER}_dmRM
 exit

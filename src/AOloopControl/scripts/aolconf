@@ -18,6 +18,8 @@ LOOPNUMBER="7"
 fi
 
 
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 #echo "pname = $pname"
@@ -54,7 +56,8 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary"
 echo "   -H  <string>         (H)elp category"
-echo "                 cf     configuration files"     
+echo "                 cf     configuration files"   
+echo "   -e <exec>            executable"  
 echo "   -L <long>            (L)oop number"
 echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
 echo "   -C                   run (C)PU config"
@@ -92,7 +95,7 @@ LOADMEM=1
 LOOPNAME_file="LOOPNAME"
 LOOPNUMBER_file="LOOPNUMBER"
 CPUconfRT="1"
-
+execname="AOloopControl"
 
 ### Start getopts code ###
 while getopts :hH:L:N:Ccn FLAG; do
@@ -121,6 +124,10 @@ while getopts :hH:L:N:Ccn FLAG; do
     C) # configure CPU
     echo "Configure CPU"
     CPUconfRT=1
+    ;;
+    e) # set executable
+    execname=$OPTARG
+    ln -s $execname ./AOloopControl
     ;;
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -215,7 +222,7 @@ aoconflog " STARTING NEW aolconf SESSION"
 
 
 # ====================== USER EDITS THIS SECTION =======================
-execname="Cfits"  
+
 
 # default parameters
 CPUconfRT=0 # no CPU real-time configuration

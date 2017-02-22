@@ -28,7 +28,7 @@ function WFSresidualOffsetLoop_init
 {
 	echo "WFSresidualOffsetLoop_init  loop ${LOOPNUMBER}"
 	sleep 2
-Cfits << EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_wfszpo6
 imzero aol${LOOPNUMBER}_wfszpo6
 readshmim aol${LOOPNUMBER}_wfsres_ave
@@ -1808,7 +1808,7 @@ tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
-tmux send-keys -t $tmuxname "Cfits -p ${tmuxname}" C-m
+tmux send-keys -t $tmuxname "AOloopControl -p ${tmuxname}" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
@@ -2039,7 +2039,7 @@ menucontrolloop_default="Nloopon"
 
  
   	 Z)
-Cfits <<EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_DMmode_cmd
 imzero aol${LOOPNUMBER}_DMmode_cmd
 readshmim aol${LOOPNUMBER}_dmC
@@ -2122,7 +2122,7 @@ menucontrolloop_default="wresolinit"
 ;;
 
 wzpoinit)
-Cfits << EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_wfszpo0
 imzero aol${LOOPNUMBER}_wfszpo0
 readshmim aol${LOOPNUMBER}_wfszpo1
@@ -2198,7 +2198,7 @@ menucontrolloop_default="wzpoinit"
 
 
 	limreset)
-Cfits << EOF
+AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_DMmode_LIMIT
 im=1.0+0*aol${LOOPNUMBER}_DMmode_LIMIT
 cpsh im aol${LOOPNUMBER}_DMmode_LIMIT
