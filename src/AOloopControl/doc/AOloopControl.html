@@ -54,24 +54,26 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#overview"><span class="toc-section-number">1</span> Overview</a><ul>
+<li><a href="#initial-setup"><span class="toc-section-number">1</span> Initial Setup</a><ul>
 <li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
-<li><a href="#installing-the-adaptiveopticscontrol-package"><span class="toc-section-number">1.2</span> Installing the AdaptiveOpticsControl package</a></li>
-<li><a href="#creating-working-directory"><span class="toc-section-number">1.3</span> Creating Working Directory</a></li>
-<li><a href="#supporting-scripts-aolconfscripts-directory"><span class="toc-section-number">1.4</span> Supporting scripts, aolconfscripts directory</a></li>
-<li><a href="#supporting-scripts-auxscripts-directory"><span class="toc-section-number">1.5</span> Supporting scripts, auxscripts directory</a></li>
-<li><a href="#hardware-simulation-scripts"><span class="toc-section-number">1.6</span> Hardware simulation scripts</a></li>
+<li><a href="#pre-requisites"><span class="toc-section-number">1.2</span> Pre-requisites</a></li>
+<li><a href="#installing-the-adaptiveopticscontrol-package"><span class="toc-section-number">1.3</span> Installing the AdaptiveOpticsControl package</a></li>
+<li><a href="#setting-up-the-work-directory"><span class="toc-section-number">1.4</span> Setting up the work directory</a></li>
+<li><a href="#supporting-scripts-aolconfscripts-directory"><span class="toc-section-number">1.5</span> Supporting scripts, aolconfscripts directory</a></li>
+<li><a href="#supporting-scripts-.auxscripts-directory"><span class="toc-section-number">1.6</span> Supporting scripts (./auxscripts directory)</a></li>
+<li><a href="#hardware-simulation-scripts"><span class="toc-section-number">1.7</span> Hardware simulation scripts</a></li>
 </ul></li>
 <li><a href="#hardware-simulation"><span class="toc-section-number">2</span> Hardware Simulation</a><ul>
-<li><a href="#overview-1"><span class="toc-section-number">2.1</span> Overview</a></li>
-<li><a href="#physical-hardware-simulation"><span class="toc-section-number">2.2</span> Physical hardware simulation</a><ul>
-<li><a href="#quick-start"><span class="toc-section-number">2.2.1</span> Quick start</a></li>
-<li><a href="#processes-and-scripts-main-wf-control-loop"><span class="toc-section-number">2.2.2</span> Processes and scripts: main WF control loop</a></li>
-<li><a href="#ao-loop-control"><span class="toc-section-number">2.2.3</span> AO loop control</a></li>
-<li><a href="#processes-and-scripts-system-ouput"><span class="toc-section-number">2.2.4</span> Processes and scripts: system ouput</a></li>
+<li><a href="#overview"><span class="toc-section-number">2.1</span> Overview</a></li>
+<li><a href="#method-1-provide-an-external-simulation-that-adheres-to-aoloopcontrol-inputoutput-conventions"><span class="toc-section-number">2.2</span> METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</a></li>
+<li><a href="#method-2-physical-hardware-simulation"><span class="toc-section-number">2.3</span> METHOD 2: Physical hardware simulation</a><ul>
+<li><a href="#quick-start"><span class="toc-section-number">2.3.1</span> Quick start</a></li>
+<li><a href="#processes-and-scripts-main-wf-control-loop"><span class="toc-section-number">2.3.2</span> Processes and scripts: main WF control loop</a></li>
+<li><a href="#ao-loop-control"><span class="toc-section-number">2.3.3</span> AO loop control</a></li>
+<li><a href="#processes-and-scripts-system-ouput"><span class="toc-section-number">2.3.4</span> Processes and scripts: system ouput</a></li>
 </ul></li>
-<li><a href="#linear-hardware-simulation"><span class="toc-section-number">2.3</span> Linear Hardware Simulation</a><ul>
-<li><a href="#overview-2"><span class="toc-section-number">2.3.1</span> Overview</a></li>
+<li><a href="#method-3-linear-hardware-simulation"><span class="toc-section-number">2.4</span> METHOD 3: Linear Hardware Simulation</a><ul>
+<li><a href="#overview-1"><span class="toc-section-number">2.4.1</span> Overview</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#aoloopcontrol-setup"><span class="toc-section-number">3</span> AOloopControl setup</a><ul>
@@ -94,7 +96,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li><a href="#offsetting"><span class="toc-section-number">4</span> Offsetting</a><ul>
-<li><a href="#overview-3"><span class="toc-section-number">4.1</span> Overview</a></li>
+<li><a href="#overview-2"><span class="toc-section-number">4.1</span> Overview</a></li>
 <li><a href="#dm-offsets"><span class="toc-section-number">4.2</span> DM offsets</a><ul>
 <li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">4.2.1</span> Zonal CPU-based zero point offset</a></li>
 <li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">4.2.2</span> GPU-based zero point offset</a></li>
@@ -106,7 +108,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#running-the-loop"><span class="toc-section-number">5.2</span> Running the loop</a></li>
 </ul></li>
 <li><a href="#predictive-control-experimental"><span class="toc-section-number">6</span> Predictive control (experimental)</a><ul>
-<li><a href="#overview-4"><span class="toc-section-number">6.1</span> Overview</a></li>
+<li><a href="#overview-3"><span class="toc-section-number">6.1</span> Overview</a></li>
 <li><a href="#scripts"><span class="toc-section-number">6.2</span> Scripts</a></li>
 </ul></li>
 <li><a href="#reference"><span class="toc-section-number">7</span> REFERENCE</a><ul>
@@ -114,14 +116,32 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul>
 </div>
-<div id="overview" class="section level1">
-<h1><span class="header-section-number">1</span> Overview</h1>
+<div id="initial-setup" class="section level1">
+<h1><span class="header-section-number">1</span> Initial Setup</h1>
 <div id="scope" class="section level2">
 <h2><span class="header-section-number">1.1</span> Scope</h2>
 <p>AO loop control package</p>
 </div>
+<div id="pre-requisites" class="section level2">
+<h2><span class="header-section-number">1.2</span> Pre-requisites</h2>
+<p>Libraries required :</p>
+<ul>
+<li>gcc</li>
+<li>openMP</li>
+<li>fitsio</li>
+<li>fftw (single and double precision)</li>
+<li>gsl</li>
+<li>readline</li>
+</ul>
+<p>Recommended:</p>
+<ul>
+<li>CUDA</li>
+<li>Magma</li>
+<li>shared memory image viewer (<code>shmimview</code> or similar)</li>
+</ul>
+</div>
 <div id="installing-the-adaptiveopticscontrol-package" class="section level2">
-<h2><span class="header-section-number">1.2</span> Installing the AdaptiveOpticsControl package</h2>
+<h2><span class="header-section-number">1.3</span> Installing the AdaptiveOpticsControl package</h2>
 <p>Source code is available on the <a href="https://github.com/oguyon/AdaptiveOpticsControl">AdaptiveOpticsControl git hub repository</a>.</p>
 <p>Download the latest tar ball (.tar.gz file), uncompress, untar and execute in the source directory (<code>./AdaptiveOpticsControl-&lt;version&gt;/</code>)</p>
 <pre><code>./configure</code></pre>
@@ -134,25 +154,86 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 make install</code></pre>
 <p>The executable is <code>./AdaptiveOpticsControl-&lt;version&gt;/bin/AdaptiveOpticsControl</code></p>
 </div>
-<div id="creating-working-directory" class="section level2">
-<h2><span class="header-section-number">1.3</span> Creating Working Directory</h2>
-<p>The Working Directory (WD) is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:</p>
+<div id="setting-up-the-work-directory" class="section level2">
+<h2><span class="header-section-number">1.4</span> Setting up the work directory</h2>
+<p>The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:</p>
 <pre><code>mkdir /&lt;workdirectory&gt;
 cd scripts
 ./syncscripts -e /&lt;workdirectory&gt;
 cd /&lt;workdirectory&gt;</code></pre>
-<p>Scripts to run the software are located within the source code directory:</p>
-<pre><code>./src/AOloopControl/scripts/</code></pre>
-<p>The scripts can be linked to your working directory by executing the following command from <code>src/AOloopControl/scripts/</code>:</p>
-<pre><code>ln -s $PWD/syncscripts /myworkdirectory/syncscripts</code></pre>
-<p>Then, execute in your work directory:</p>
-<pre><code>./syncscripts -s &lt;SRCdir&gt;</code></pre>
-<p>where <SRCdir> is the source directory for scripts. This will install all required scripts in workdirectory and install any packages required.</p>
-<p>The main script is</p>
-<pre><code>./aolconf</code></pre>
+<p>Symbolic links to the source scripts and executable are now installed in the work directory :</p>
+<pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
+total 28
+drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aocustomscripts
+drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aohardsim
+lrwxrwxrwx 1 olivier olivier   57 Feb 21 18:14 aolconf -&gt; /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
+drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aolconfscripts
+lrwxrwxrwx 1 olivier olivier   70 Feb 21 19:08 AOloopControl -&gt; /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
+drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
+drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
+lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -&gt; /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts</code></pre>
+<p>If new scripts are added in the source directory, running <code>./syncscripts</code> will add them to the work directory.</p>
+<p>The main executable is <code>./AOloopControl</code>, which provides a command line interface (CLI) to all compiled code. Type <code>AOloopControl -h</code> for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (<code>m? &lt;module.c&gt;</code>) and help for each function (<code>cmd? &lt;functionname&gt;</code>).</p>
+<pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
+type &quot;help&quot; for instructions
+Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
+RAND: 929827602064218
+315 commands loaded
+./AOloopControl &gt; m?
+    0      COREMOD_memory.c    memory management for images and variables
+    1       COREMOD_arith.c    image arithmetic operations
+    2      COREMOD_iofits.c    FITS format input/output
+    3       COREMOD_tools.c    image information and statistics
+    4                 fft.c    FFTW wrapper
+    5                info.c    image information and statistics
+    6           statistic.c    statistics functions and tools
+    7      linopt_imtools.c    image linear decomposition and optimization tools
+    8           image_gen.c    creating images (shapes, useful functions and patterns)
+    9        image_filter.c    image filtering
+   10         image_basic.c    basic image routines
+   11         WFpropagate.c    light propagation
+   12        ZernikePolyn.c    create and fit Zernike polynomials
+   13        coronagraphs.c    coronagraph routines
+   14         OptSystProp.c    Optical propagation through system
+   15        PIAACMCsimul.c    PIAACMC system simulation
+   16        image_format.c    conversion between image format, I/O
+   17          img_reduce.c    image analysis for astronomy: basic routines
+   18    AOloopControl_DM.c    AO loop Control DM operation
+   19           AOsystSim.c    conversion between image format, I/O
+   20       AOloopControl.c    AO loop control
+   21     FPAOloopControl.c    FP AO loop control
+   22                 psf.c    memory management for images and variables
+   23     AtmosphereModel.c    Atmosphere Model
+   24  AtmosphericTurbulence.c    Atmospheric Turbulence
+   25            cudacomp.c    CUDA wrapper for AO loop
+   26      SCExAO_control.c    SCExAO control
+   27           TransitLC.c    exoplanet transit light curve analysis
+   28     linARfilterPred.c    linear auto-regressive predictive filters
+./AOloopControl &gt; m? AOloopControl_DM.c
+---- MODULE AOloopControl_DM.c: LIST OF COMMANDS ---------
+   aolcontrolDMcomb AOloopControl_DM.c   create and combine DM channels           aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0
+   aolcontroldmchgain AOloopControl_DM.c   set gain for DM displacement channel     aoloopcontroldmchgain 0 3 0.2 
+   aoldmvoltON      AOloopControl_DM.c   turn on DM voltage                       aoldmvoltON 0                 
+   aoldmvoltOFF     AOloopControl_DM.c   turn off DM voltage                      aoldmvoltOFF 0                
+   aolsetdmvoltmax  AOloopControl_DM.c   set maximum DM voltage                   aolsetdmvoltmax 120.0         
+   aolsetdmDC       AOloopControl_DM.c   set DM DC level [um]                     aolsetdmDC 0.5                
+   aoloopcontroldmcomboff AOloopControl_DM.c   turn off DM combine                      aoloopcontroldmcomboff 0      
+   aoloopcontroldmcombmon AOloopControl_DM.c   monitor DM comb program                  aoloopcontroldmcombmon 0      
+   aoloopcontroldmtrigoff AOloopControl_DM.c   turn off DM trigger                      aoloopcontroldmtrigoff 0      
+   aoloopcontroldmturb AOloopControl_DM.c   DM turbulence                            aoloopcontroldmturb 0         
+   aoloopcontroldmturb2im AOloopControl_DM.c   DM turbulence to image                   aoloopcontroldmturb2im 00 wftout 100000
+   aoloopcontroldmturboff AOloopControl_DM.c   turn off DM turbulence                   aoloopcontroldmturboff 0      
+   aoloopcontroldmturws AOloopControl_DM.c   set turbulence wind speed                aoloopcontroldmturws 0 5.2    
+   aoloopcontroldmturampl AOloopControl_DM.c   set turbulence amplitude                 aoloopcontroldmturampl 0 0.1  
+   aoloopcontroldmturlo AOloopControl_DM.c   set turbulence low order coefficient     aoloopcontroldmturlo 0 0.2    
+   aoloopcontroldmturtint AOloopControl_DM.c   set turbulence interval time             aoloopcontroldmturtint 0 200  
+./AOloopControl &gt; exit
+Closing PID 24326 (prompt process)</code></pre>
+<p>The top level script is <code>aolconf</code>. Run it with <code>-h</code> option for a quick help</p>
+<pre><code>./aolconf -h</code></pre>
 </div>
 <div id="supporting-scripts-aolconfscripts-directory" class="section level2">
-<h2><span class="header-section-number">1.4</span> Supporting scripts, aolconfscripts directory</h2>
+<h2><span class="header-section-number">1.5</span> Supporting scripts, aolconfscripts directory</h2>
 <p>Scripts in the <code>aolconfscripts</code> directory are part of the high-level ASCII control GUI</p>
 <table>
 <colgroup>
@@ -225,79 +306,277 @@ cd /&lt;workdirectory&gt;</code></pre>
 </tbody>
 </table>
 </div>
-<div id="supporting-scripts-auxscripts-directory" class="section level2">
-<h2><span class="header-section-number">1.5</span> Supporting scripts, auxscripts directory</h2>
+<div id="supporting-scripts-.auxscripts-directory" class="section level2">
+<h2><span class="header-section-number">1.6</span> Supporting scripts (./auxscripts directory)</h2>
 <p>Scripts in the <code>auxscripts</code> directory are called by aolconf to perform various tasks. To list all commands, type in the <code>auxscripts</code> directory :</p>
 <pre><code>./listcommands</code></pre>
-<p>The available commands are listed in the table below.</p>
-<blockquote>
-<pre><code>              ./mkHpoke       Compute real-time WFS residual image
-     ./aolMeasureTiming       Measure loop timing
-    ./aolCleanLOrespmat       Measure zonal resp matrix
-./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
-               ./aolmon       Display AO loop stats
-            ./acquRespM       Acquire response matrix
-               ./aolctr       AO control process
-          ./listrunproc       List running AOloop processes
-       ./MeasDMmodesRec       Measure AO loop DM modes recovery
-         ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
-             ./aolRM2CM       Align Pyramid camera
-     ./aolCleanZrespmat       Cleans zonal resp matrix
-     ./mkDMslaveActprox       Create DM slaved actuators map
-               ./xptest       Compute cross-product of a data cube
-      ./aolInspectDMmap       Inspect DM map
-    ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
-    ./aolCleanZrespmat2       Cleans zonal resp matrix
-         ./mkDMslaveAct       Create DM slaved actuators map
-      ./aolReadConfFile       AOloop load file to stream
-            ./aolLinSim       AO Linear Simulator
-         ./aolApplyARPF       Apply AR linear predictive filter
-              ./aolARPF       AO find optimal AR linear predictive filter
-        ./aolSetmcLimit       Compute real-time WFS residual image
-     ./aolautotunegains       Automatic gain tuning
-           ./aolmkMasks       Create AO wfs and DM masks
-          ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
-  ./aolMeasureLOrespmat       Acquire modal response matrix
-           ./waitonfile       Wait for file to appear
-      ./predFiltApplyRT       Apply predictive filter to stream
-       ./aoloffloadloop       DM offload loop
-          ./aolmkWFSres       Compute real-time WFS residual image
- ./aolWFSresoffloadloop       Compute real-time WFS residual image
-       ./aollindm2wfsim       Convert DM stream to WFS image stream
-    ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
-     ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -&gt; DM MAP
-           ./aolmkmodes       Create modes for AO loop
-  ./aolMeasureZrespmat2       Acquire zonal response matrix
- ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
-          ./aolzploopon       WFS zero point offset loop 
-       ./aollinsimDelay       Introduce DM delay
-            ./shmimzero       Set shared memory image stream to zero
-          ./aolmkmodes2       Create modes for AO loop
-           ./alignPyrTT       Align Pyramid TT
-      ./aolgetshmimsize       Get shared memory image size
-   ./aolMeasureZrespmat       Acquire zonal response matrix
-              ./xp2test       Compute cross-product of two data cubes
-         ./waitforfilek       Wait for file to appear and then remove it
-      ./aolmkLO_DMmodes       Create LO DM modes for AO loop
-          ./aolscangain       AO scan gain for optimal value
-           ./aol_dmCave       dmC temporal averaging
-            ./alignPcam       Align Pyramid camera
- ./aolMeasureLOrespmat2       Acquire modal response matrix
-       ./MeasureLatency       Measure AO system response latency
-     ./aolARPFautoApply       Apply real-time AR linear predictive filter
-    ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -&gt; DM MAP
-      ./modesextractwfs       Extract mode values from WFS images
-             ./Fits2shm       Copy FITS files to shared memor
-        ./aolblockstats       Extract mode values from WFS images, sort per block
-               ./aolrun       Run AO control loop
-        ./aolMergeRMmat       Merge HO and LO resp matrices
-./selectLatestTelemetry       Compute real-time WFS residual image
-     ./MeasLoopModeResp       Measure AO loop temporal response</code></pre>
-</blockquote>
+<p>The available commands are listed in the table below. Running the command with the <code>-h</code> option prints a short help.</p>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Script</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">./mkHpoke</td>
+<td align="left">Compute real-time WFS residual image</td>
+</tr>
+<tr class="even">
+<td align="left">./aolMeasureTiming</td>
+<td align="left">Measure loop timing</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolCleanLOrespmat</td>
+<td align="left">Measure zonal resp matrix</td>
+</tr>
+<tr class="even">
+<td align="left">./aolRMmeas_sensitivity</td>
+<td align="left">Measure photon sensitivity of zonal response matrix</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolmon</td>
+<td align="left">Display AO loop stats</td>
+</tr>
+<tr class="even">
+<td align="left">./acquRespM</td>
+<td align="left">Acquire response matrix</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolctr</td>
+<td align="left">AO control process</td>
+</tr>
+<tr class="even">
+<td align="left">./listrunproc</td>
+<td align="left">List running AOloop processes</td>
+</tr>
+<tr class="odd">
+<td align="left">./MeasDMmodesRec</td>
+<td align="left">Measure AO loop DM modes recovery</td>
+</tr>
+<tr class="even">
+<td align="left">./aolARPFblock</td>
+<td align="left">AO find optimal AR linear predictive filter (single block)</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolRM2CM</td>
+<td align="left">Align Pyramid camera</td>
+</tr>
+<tr class="even">
+<td align="left">./aolCleanZrespmat</td>
+<td align="left">Cleans zonal resp matrix</td>
+</tr>
+<tr class="odd">
+<td align="left">./mkDMslaveActprox</td>
+<td align="left">Create DM slaved actuators map</td>
+</tr>
+<tr class="even">
+<td align="left">./xptest</td>
+<td align="left">Compute cross-product of a data cube</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolInspectDMmap</td>
+<td align="left">Inspect DM map</td>
+</tr>
+<tr class="even">
+<td align="left">./aolARPFautoUpdate</td>
+<td align="left">Automatic update of AR linear predictive filter</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolCleanZrespmat2</td>
+<td align="left">Cleans zonal resp matrix</td>
+</tr>
+<tr class="even">
+<td align="left">./mkDMslaveAct</td>
+<td align="left">Create DM slaved actuators map</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolReadConfFile</td>
+<td align="left">AOloop load file to stream</td>
+</tr>
+<tr class="even">
+<td align="left">./aolLinSim</td>
+<td align="left">AO Linear Simulator</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolApplyARPF</td>
+<td align="left">Apply AR linear predictive filter</td>
+</tr>
+<tr class="even">
+<td align="left">./aolARPF</td>
+<td align="left">AO find optimal AR linear predictive filter</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolSetmcLimit</td>
+<td align="left">Compute real-time WFS residual image</td>
+</tr>
+<tr class="even">
+<td align="left">./aolautotunegains</td>
+<td align="left">Automatic gain tuning</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolmkMasks</td>
+<td align="left">Create AO wfs and DM masks</td>
+</tr>
+<tr class="even">
+<td align="left">./aolmkmodesM</td>
+<td align="left">CREATE CM MODES FOR AO LOOP, MODAL DM</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolMeasureLOrespmat</td>
+<td align="left">Acquire modal response matrix</td>
+</tr>
+<tr class="even">
+<td align="left">./waitonfile</td>
+<td align="left">Wait for file to appear</td>
+</tr>
+<tr class="odd">
+<td align="left">./predFiltApplyRT</td>
+<td align="left">Apply predictive filter to stream</td>
+</tr>
+<tr class="even">
+<td align="left">./aoloffloadloop</td>
+<td align="left">DM offload loop</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolmkWFSres</td>
+<td align="left">Compute real-time WFS residual image</td>
+</tr>
+<tr class="even">
+<td align="left">./aolWFSresoffloadloop</td>
+<td align="left">Compute real-time WFS residual image</td>
+</tr>
+<tr class="odd">
+<td align="left">./aollindm2wfsim</td>
+<td align="left">Convert DM stream to WFS image stream</td>
+</tr>
+<tr class="even">
+<td align="left">./aolApplyARPFblock</td>
+<td align="left">Apply AR linear predictive filter (single block)</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolmcoeffs2dmmap</td>
+<td align="left">GPU-based MODE COEFFS -&gt; DM MAP</td>
+</tr>
+<tr class="even">
+<td align="left">./aolmkmodes</td>
+<td align="left">Create modes for AO loop</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolMeasureZrespmat2</td>
+<td align="left">Acquire zonal response matrix</td>
+</tr>
+<tr class="even">
+<td align="left">./processTelemetryPSDs</td>
+<td align="left">Process telemetry: create open and closed loop PSDs</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolzploopon</td>
+<td align="left">WFS zero point offset loop</td>
+</tr>
+<tr class="even">
+<td align="left">./aollinsimDelay</td>
+<td align="left">Introduce DM delay</td>
+</tr>
+<tr class="odd">
+<td align="left">./shmimzero</td>
+<td align="left">Set shared memory image stream to zero</td>
+</tr>
+<tr class="even">
+<td align="left">./aolmkmodes2</td>
+<td align="left">Create modes for AO loop</td>
+</tr>
+<tr class="odd">
+<td align="left">./alignPyrTT</td>
+<td align="left">Align Pyramid TT</td>
+</tr>
+<tr class="even">
+<td align="left">./aolgetshmimsize</td>
+<td align="left">Get shared memory image size</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolMeasureZrespmat</td>
+<td align="left">Acquire zonal response matrix</td>
+</tr>
+<tr class="even">
+<td align="left">./xp2test</td>
+<td align="left">Compute cross-product of two data cubes</td>
+</tr>
+<tr class="odd">
+<td align="left">./waitforfilek</td>
+<td align="left">Wait for file to appear and then remove it</td>
+</tr>
+<tr class="even">
+<td align="left">./aolmkLO_DMmodes</td>
+<td align="left">Create LO DM modes for AO loop</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolscangain</td>
+<td align="left">AO scan gain for optimal value</td>
+</tr>
+<tr class="even">
+<td align="left">./aol_dmCave</td>
+<td align="left">dmC temporal averaging</td>
+</tr>
+<tr class="odd">
+<td align="left">./alignPcam</td>
+<td align="left">Align Pyramid camera</td>
+</tr>
+<tr class="even">
+<td align="left">./aolMeasureLOrespmat2</td>
+<td align="left">Acquire modal response matrix</td>
+</tr>
+<tr class="odd">
+<td align="left">./MeasureLatency</td>
+<td align="left">Measure AO system response latency</td>
+</tr>
+<tr class="even">
+<td align="left">./aolARPFautoApply</td>
+<td align="left">Apply real-time AR linear predictive filter</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolPFcoeffs2dmmap</td>
+<td align="left">GPU-based predictive filter coeffs -&gt; DM MAP</td>
+</tr>
+<tr class="even">
+<td align="left">./modesextractwfs</td>
+<td align="left">Extract mode values from WFS images</td>
+</tr>
+<tr class="odd">
+<td align="left">./Fits2shm</td>
+<td align="left">Copy FITS files to shared memor</td>
+</tr>
+<tr class="even">
+<td align="left">./aolblockstats</td>
+<td align="left">Extract mode values from WFS images, sort per block</td>
+</tr>
+<tr class="odd">
+<td align="left">./aolrun</td>
+<td align="left">Run AO control loop</td>
+</tr>
+<tr class="even">
+<td align="left">./aolMergeRMmat</td>
+<td align="left">Merge HO and LO resp matrices</td>
+</tr>
+<tr class="odd">
+<td align="left">./selectLatestTelemetry</td>
+<td align="left">Compute real-time WFS residual image</td>
+</tr>
+<tr class="even">
+<td align="left">./MeasLoopModeResp</td>
+<td align="left">Measure AO loop temporal response</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="hardware-simulation-scripts" class="section level2">
-<h2><span class="header-section-number">1.6</span> Hardware simulation scripts</h2>
-<p>Scripts in the <code>aohardsim</code> directory are called to simulate hardware for testing / simulations</p>
+<h2><span class="header-section-number">1.7</span> Hardware simulation scripts</h2>
+<p>Scripts in the <code>aohardsim</code> directory are called to simulate hardware for testing / simulations.</p>
 <table>
 <colgroup>
 <col width="34%" />
@@ -332,20 +611,24 @@ cd /&lt;workdirectory&gt;</code></pre>
 </div>
 <div id="hardware-simulation" class="section level1">
 <h1><span class="header-section-number">2</span> Hardware Simulation</h1>
-<div id="overview-1" class="section level2">
+<div id="overview" class="section level2">
 <h2><span class="header-section-number">2.1</span> Overview</h2>
 <p>There are 3 ways for users to simulate hardware</p>
 <ul>
-<li><p>Provide an external simulation that adheres to AOloopControl input/output conventions</p></li>
-<li><p>Use the physical hardware simulation provided by the package</p></li>
-<li><p>Use the linear hardware simulation: this option is fastest, but only captures linear relationships between DM actuators and WFS signals</p></li>
+<li><p>METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</p></li>
+<li><p>METHOD 2: Use the physical hardware simulation provided by the package</p></li>
+<li><p>METHOD 3: Use the linear hardware simulation: this option is fastest, but only captures linear relationships between DM actuators and WFS signals</p></li>
 </ul>
 </div>
-<div id="physical-hardware-simulation" class="section level2">
-<h2><span class="header-section-number">2.2</span> Physical hardware simulation</h2>
+<div id="method-1-provide-an-external-simulation-that-adheres-to-aoloopcontrol-inputoutput-conventions" class="section level2">
+<h2><span class="header-section-number">2.2</span> METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</h2>
+<p>The user needs to run a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.</p>
+</div>
+<div id="method-2-physical-hardware-simulation" class="section level2">
+<h2><span class="header-section-number">2.3</span> METHOD 2: Physical hardware simulation</h2>
 <p>The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.</p>
 <div id="quick-start" class="section level3">
-<h3><span class="header-section-number">2.2.1</span> Quick start</h3>
+<h3><span class="header-section-number">2.3.1</span> Quick start</h3>
 <p>You can launch the simulator quickly with the following steps:</p>
 <ul>
 <li><p>go into directory <code>aohardsim</code></p></li>
@@ -355,10 +638,10 @@ cd /&lt;workdirectory&gt;</code></pre>
 </ul>
 </div>
 <div id="processes-and-scripts-main-wf-control-loop" class="section level3">
-<h3><span class="header-section-number">2.2.2</span> Processes and scripts: main WF control loop</h3>
+<h3><span class="header-section-number">2.3.2</span> Processes and scripts: main WF control loop</h3>
 <div id="process-aosimmkwf" class="section level4">
-<h4><span class="header-section-number">2.2.2.1</span> Process <code>aosimmkWF</code></h4>
-<p><code>aosimmkWF</code> reads precomputed wavefronts and formats them for the simulations (pixel scale, temporal sampling).</p>
+<h4><span class="header-section-number">2.3.2.1</span> Process <code>aosimmkWF</code></h4>
+<p><code>aosimmkWF</code> reads precomputed wavefronts and formats them for the simulation parameters (pixel scale, temporal sampling).</p>
 <p>Parameters for <code>aosimmkWF</code> are stored in configuration file:</p>
 <p>File <code>aosimmkWF.conf.default</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
@@ -455,7 +738,7 @@ OUT1STREAMNAMEAMP     wf1amp          # output WF stream name (AMP)
 </code></pre></td></tr></table></div>
 </div>
 <div id="process-aosimdmrun" class="section level4">
-<h4><span class="header-section-number">2.2.2.2</span> Process <code>aosimDMrun</code></h4>
+<h4><span class="header-section-number">2.3.2.2</span> Process <code>aosimDMrun</code></h4>
 <p>File <code>aosimDMrun.conf.default</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -509,7 +792,7 @@ DMLAGSTART               0.0003            # time lag start
 DMTIMECST                0.0001            # DM time constant</code></pre></td></tr></table></div>
 </div>
 <div id="process-aosimpyrwfs" class="section level4">
-<h4><span class="header-section-number">2.2.2.3</span> Process <code>aosimPyrWFS</code></h4>
+<h4><span class="header-section-number">2.3.2.3</span> Process <code>aosimPyrWFS</code></h4>
 <p>File <code>aosimPyrWFS.conf.default</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -572,10 +855,10 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 </div>
 <div id="ao-loop-control" class="section level3">
-<h3><span class="header-section-number">2.2.3</span> AO loop control</h3>
+<h3><span class="header-section-number">2.3.3</span> AO loop control</h3>
 <p>The <code>aolconf</code> script is used to configure and launch the AO control loop. It can be configured with input/output from real hardware or a simulation of real hardware.</p>
 <div id="shared-memory-streams" class="section level4">
-<h4><span class="header-section-number">2.2.3.1</span> Shared memory streams</h4>
+<h4><span class="header-section-number">2.3.3.1</span> Shared memory streams</h4>
 <table>
 <colgroup>
 <col width="34%" />
@@ -616,7 +899,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </table>
 </div>
 <div id="hardware-simulation-architecture" class="section level4">
-<h4><span class="header-section-number">2.2.3.2</span> Hardware simulation architecture</h4>
+<h4><span class="header-section-number">2.3.3.2</span> Hardware simulation architecture</h4>
 <div class="figure">
 <img src="./figures/aosimlink.jpg" title="aosim data flow" alt="data flow" />
 <p class="caption">data flow</p>
@@ -637,7 +920,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <p>The main hardware loop is between <code>aosimmkWF</code> and <code>aosimWFS</code>: computation of a wavefront by <code>aosimmkWF</code> is <em>triggered</em> by completion of a WFS instantaneous image computation by <code>aosimWFS</code>. The configuration files are configured for this link.</p>
 </div>
 <div id="dm-temporal-response" class="section level4">
-<h4><span class="header-section-number">2.2.3.3</span> DM temporal response</h4>
+<h4><span class="header-section-number">2.3.3.3</span> DM temporal response</h4>
 <p>The DM temporal response is assumed to be such that the distance between the current position <span class="math inline">\(p\)</span> and desired displacement <span class="math inline">\(c\)</span> values is multiplided by coefficient <span class="math inline">\(a&lt;1\)</span> at each time step <span class="math inline">\(dt\)</span>. The corresponding step response is :</p>
 <p><span class="math inline">\(c - p((k+1) dt) = (c - p(k dt)) a\)</span></p>
 <p><span class="math inline">\(c - p(k dt) = (c-p0) a^k\)</span></p>
@@ -650,16 +933,16 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 </div>
 <div id="processes-and-scripts-system-ouput" class="section level3">
-<h3><span class="header-section-number">2.2.4</span> Processes and scripts: system ouput</h3>
+<h3><span class="header-section-number">2.3.4</span> Processes and scripts: system ouput</h3>
 <p>The output (corrected) wavefront is processed to compute ouput focal plane images, and optionally LOWFS image.</p>
 <div id="process-aosimcorolowfs" class="section level4">
-<h4><span class="header-section-number">2.2.4.1</span> Process <code>aosimcoroLOWFS</code></h4>
+<h4><span class="header-section-number">2.3.4.1</span> Process <code>aosimcoroLOWFS</code></h4>
 <p>Computes coronagraphic image output and LOWFS image</p>
 <p>File <code>aosimcoroLOWFS.conf.default</code>:</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre></pre></td><td class="sourceCode"><pre><code class="sourceCode"></code></pre></td></tr></table></div>
 </div>
 <div id="ouput-simulation-architecture" class="section level4">
-<h4><span class="header-section-number">2.2.4.2</span> Ouput simulation architecture</h4>
+<h4><span class="header-section-number">2.3.4.2</span> Ouput simulation architecture</h4>
 <div class="figure">
 <img src="./figures/aosimlink_coroLOWFS.jpg" title="coroLOWFS data flow" alt="coroLOWFS data flow" />
 <p class="caption">coroLOWFS data flow</p>
@@ -667,10 +950,10 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 </div>
 </div>
-<div id="linear-hardware-simulation" class="section level2">
-<h2><span class="header-section-number">2.3</span> Linear Hardware Simulation</h2>
-<div id="overview-2" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Overview</h3>
+<div id="method-3-linear-hardware-simulation" class="section level2">
+<h2><span class="header-section-number">2.4</span> METHOD 3: Linear Hardware Simulation</h2>
+<div id="overview-1" class="section level3">
+<h3><span class="header-section-number">2.4.1</span> Overview</h3>
 <p>The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS).</p>
 </div>
 </div>
@@ -1767,7 +2050,7 @@ EOF</code></pre></td></tr></table></div>
 </div>
 <div id="offsetting" class="section level1">
 <h1><span class="header-section-number">4</span> Offsetting</h1>
-<div id="overview-3" class="section level2">
+<div id="overview-2" class="section level2">
 <h2><span class="header-section-number">4.1</span> Overview</h2>
 <p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP7</code>.</p>
 <div class="figure">
@@ -1830,7 +2113,7 @@ EOF</code></pre></td></tr></table></div>
 </div>
 <div id="predictive-control-experimental" class="section level1">
 <h1><span class="header-section-number">6</span> Predictive control (experimental)</h1>
-<div id="overview-4" class="section level2">
+<div id="overview-3" class="section level2">
 <h2><span class="header-section-number">6.1</span> Overview</h2>
 <p>Predictive control is implemented in two processes:</p>
 <ul>

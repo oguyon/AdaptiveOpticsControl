@@ -1,5 +1,7 @@
 #!/bin/bash
 
+execname="./AOloopControl"
+
 # number of arguments to script
 NBARGS=0
 
@@ -82,7 +84,7 @@ NBchannel=12
 WFsize=128
 
 
-Cfits -n simDMstart << EOF
+$execname -n simDMstart << EOF
 creaimshm wf1opd $WFsize $WFsize
 aolcontrolDMcomb $DMindex $DMsize $DMsize $NBchannel 2 0 dmmodes out${DMindex}disp 0 wfsrefrm wfsrefout 0 dmvolt 0.0 150.0
 exit

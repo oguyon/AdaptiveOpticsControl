@@ -1,4 +1,4 @@
 #!/bin/bash
 
-find . -maxdepth 1 ! -name "listcommands" -executable -type f -exec sh -c 'echo ">\t$( $1 --help1 )"' _ {} \;   
+find . -maxdepth 1 ! -name "listcommands" -executable -type f -exec sh -c 'echo "$( $1 --help1 )"; echo' _ {} \;   
 

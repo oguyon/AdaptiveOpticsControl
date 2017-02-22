@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+execname="./AOloopControl"
+
 # number of arguments to script
 NBARGS=0
 
@@ -63,7 +66,7 @@ fi
 function initMasks {
 mkdir -p conf
 
-Cfits << EOF
+$execname << EOF
 cx=0.5*$1
 cy=0.5*$1
 mkdisk fa $1 $1 cx cy cx
@@ -95,7 +98,7 @@ EOF
 
 
 function CreateDefaultConfiguration {
-Cfits << EOF
+$execname << EOF
 AOsimcoroLOWFS $CONFFILE
 exit
 EOF
@@ -194,7 +197,7 @@ fi
 
 
 
-Cfits -n $pname << EOF
+$execname -n $pname << EOF
 # load files
 loadfits "$COROFPMAMP" corofpmamp
 loadfits "$COROFPMPHA" corofpmpha

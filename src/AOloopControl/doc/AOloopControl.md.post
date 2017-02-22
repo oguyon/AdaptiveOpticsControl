@@ -2,11 +2,42 @@
 % Olivier Guyon
 % Feb 21, 2017
 
-# Overview
+
+
+
+
+
+
+
+
+
+
+# Initial Setup
 
 ## Scope
 
 AO loop control package
+
+## Pre-requisites
+
+
+Libraries required :
+
+- gcc
+- openMP
+- fitsio
+- fftw (single and double precision)
+- gsl
+- readline
+
+
+Recommended:
+
+- CUDA
+- Magma
+- shared memory image viewer (`shmimview` or similar)
+
+
 
 ## Installing the AdaptiveOpticsControl package
 
@@ -33,36 +64,99 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 
 
 
-## Creating Working Directory
+## Setting up the work directory
 
 
-The Working Directory (WD) is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:
+The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:
 
 	mkdir /<workdirectory>
 	cd scripts
 	./syncscripts -e /<workdirectory>
 	cd /<workdirectory>
 
+Symbolic links to the source scripts and executable are now installed in the work directory :
+
+	olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
+	total 28
+	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aocustomscripts
+	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aohardsim
+	lrwxrwxrwx 1 olivier olivier   57 Feb 21 18:14 aolconf -> /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
+	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aolconfscripts
+	lrwxrwxrwx 1 olivier olivier   70 Feb 21 19:08 AOloopControl -> /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
+	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
+	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
+	lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
+
+If new scripts are added in the source directory, running `./syncscripts` will add them to the work directory.
+
+
+The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`).
+
+~~~
+olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
+type "help" for instructions
+Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
+RAND: 929827602064218
+315 commands loaded
+./AOloopControl > m?
+    0      COREMOD_memory.c    memory management for images and variables
+    1       COREMOD_arith.c    image arithmetic operations
+    2      COREMOD_iofits.c    FITS format input/output
+    3       COREMOD_tools.c    image information and statistics
+    4                 fft.c    FFTW wrapper
+    5                info.c    image information and statistics
+    6           statistic.c    statistics functions and tools
+    7      linopt_imtools.c    image linear decomposition and optimization tools
+    8           image_gen.c    creating images (shapes, useful functions and patterns)
+    9        image_filter.c    image filtering
+   10         image_basic.c    basic image routines
+   11         WFpropagate.c    light propagation
+   12        ZernikePolyn.c    create and fit Zernike polynomials
+   13        coronagraphs.c    coronagraph routines
+   14         OptSystProp.c    Optical propagation through system
+   15        PIAACMCsimul.c    PIAACMC system simulation
+   16        image_format.c    conversion between image format, I/O
+   17          img_reduce.c    image analysis for astronomy: basic routines
+   18    AOloopControl_DM.c    AO loop Control DM operation
+   19           AOsystSim.c    conversion between image format, I/O
+   20       AOloopControl.c    AO loop control
+   21     FPAOloopControl.c    FP AO loop control
+   22                 psf.c    memory management for images and variables
+   23     AtmosphereModel.c    Atmosphere Model
+   24  AtmosphericTurbulence.c    Atmospheric Turbulence
+   25            cudacomp.c    CUDA wrapper for AO loop
+   26      SCExAO_control.c    SCExAO control
+   27           TransitLC.c    exoplanet transit light curve analysis
+   28     linARfilterPred.c    linear auto-regressive predictive filters
+./AOloopControl > m? AOloopControl_DM.c
+---- MODULE AOloopControl_DM.c: LIST OF COMMANDS ---------
+   aolcontrolDMcomb AOloopControl_DM.c   create and combine DM channels           aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0
+   aolcontroldmchgain AOloopControl_DM.c   set gain for DM displacement channel     aoloopcontroldmchgain 0 3 0.2 
+   aoldmvoltON      AOloopControl_DM.c   turn on DM voltage                       aoldmvoltON 0                 
+   aoldmvoltOFF     AOloopControl_DM.c   turn off DM voltage                      aoldmvoltOFF 0                
+   aolsetdmvoltmax  AOloopControl_DM.c   set maximum DM voltage                   aolsetdmvoltmax 120.0         
+   aolsetdmDC       AOloopControl_DM.c   set DM DC level [um]                     aolsetdmDC 0.5                
+   aoloopcontroldmcomboff AOloopControl_DM.c   turn off DM combine                      aoloopcontroldmcomboff 0      
+   aoloopcontroldmcombmon AOloopControl_DM.c   monitor DM comb program                  aoloopcontroldmcombmon 0      
+   aoloopcontroldmtrigoff AOloopControl_DM.c   turn off DM trigger                      aoloopcontroldmtrigoff 0      
+   aoloopcontroldmturb AOloopControl_DM.c   DM turbulence                            aoloopcontroldmturb 0         
+   aoloopcontroldmturb2im AOloopControl_DM.c   DM turbulence to image                   aoloopcontroldmturb2im 00 wftout 100000
+   aoloopcontroldmturboff AOloopControl_DM.c   turn off DM turbulence                   aoloopcontroldmturboff 0      
+   aoloopcontroldmturws AOloopControl_DM.c   set turbulence wind speed                aoloopcontroldmturws 0 5.2    
+   aoloopcontroldmturampl AOloopControl_DM.c   set turbulence amplitude                 aoloopcontroldmturampl 0 0.1  
+   aoloopcontroldmturlo AOloopControl_DM.c   set turbulence low order coefficient     aoloopcontroldmturlo 0 0.2    
+   aoloopcontroldmturtint AOloopControl_DM.c   set turbulence interval time             aoloopcontroldmturtint 0 200  
+./AOloopControl > exit
+Closing PID 24326 (prompt process)
+~~~
 
 
 
-Scripts to run the software are located within the source code directory:
+The top level script is `aolconf`. Run it with `-h` option for a quick help
 
-	./src/AOloopControl/scripts/
+	./aolconf -h
 
-The scripts can be linked to your working directory by executing the following command from `src/AOloopControl/scripts/`:
 
-	ln -s $PWD/syncscripts /myworkdirectory/syncscripts
-
-Then, execute in your work directory:
-
-	./syncscripts -s <SRCdir>
-	
-where <SRCdir> is the source directory for scripts. This will install all required scripts in workdirectory and install any packages required.
-
-The main script is
-
-	./aolconf
 
 
 
@@ -103,85 +197,148 @@ Script                         Description
 ------------------------------ -----------------------------------------------------------
 
 
-## Supporting scripts, auxscripts directory
+## Supporting scripts (./auxscripts directory)
 
 Scripts in the `auxscripts` directory are called by aolconf to perform various tasks. To list all commands, type in the `auxscripts` directory :
 
 	./listcommands
 	
 
-The available commands are listed in the table below.
+The available commands are listed in the table below. Running the command with the `-h` option prints a short help.
 
->	                ./mkHpoke       Compute real-time WFS residual image
->	       ./aolMeasureTiming       Measure loop timing
->	      ./aolCleanLOrespmat       Measure zonal resp matrix
->	  ./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
->	                 ./aolmon       Display AO loop stats
->	              ./acquRespM       Acquire response matrix
->	                 ./aolctr       AO control process
->	            ./listrunproc       List running AOloop processes
->	         ./MeasDMmodesRec       Measure AO loop DM modes recovery
->	           ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
->	               ./aolRM2CM       Align Pyramid camera
->	       ./aolCleanZrespmat       Cleans zonal resp matrix
->	       ./mkDMslaveActprox       Create DM slaved actuators map
->	                 ./xptest       Compute cross-product of a data cube
->	        ./aolInspectDMmap       Inspect DM map
->	      ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
->	      ./aolCleanZrespmat2       Cleans zonal resp matrix
->	           ./mkDMslaveAct       Create DM slaved actuators map
->	        ./aolReadConfFile       AOloop load file to stream
->	              ./aolLinSim       AO Linear Simulator
->	           ./aolApplyARPF       Apply AR linear predictive filter
->	                ./aolARPF       AO find optimal AR linear predictive filter
->	          ./aolSetmcLimit       Compute real-time WFS residual image
->	       ./aolautotunegains       Automatic gain tuning
->	             ./aolmkMasks       Create AO wfs and DM masks
->	            ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
->	    ./aolMeasureLOrespmat       Acquire modal response matrix
->	             ./waitonfile       Wait for file to appear
->	        ./predFiltApplyRT       Apply predictive filter to stream
->	         ./aoloffloadloop       DM offload loop
->	            ./aolmkWFSres       Compute real-time WFS residual image
->	   ./aolWFSresoffloadloop       Compute real-time WFS residual image
->	         ./aollindm2wfsim       Convert DM stream to WFS image stream
->	      ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
->	       ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -> DM MAP
->	             ./aolmkmodes       Create modes for AO loop
->	    ./aolMeasureZrespmat2       Acquire zonal response matrix
->	   ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
->	            ./aolzploopon       WFS zero point offset loop 
->	         ./aollinsimDelay       Introduce DM delay
->	              ./shmimzero       Set shared memory image stream to zero
->	            ./aolmkmodes2       Create modes for AO loop
->	             ./alignPyrTT       Align Pyramid TT
->	        ./aolgetshmimsize       Get shared memory image size
->	     ./aolMeasureZrespmat       Acquire zonal response matrix
->	                ./xp2test       Compute cross-product of two data cubes
->	           ./waitforfilek       Wait for file to appear and then remove it
->	        ./aolmkLO_DMmodes       Create LO DM modes for AO loop
->	            ./aolscangain       AO scan gain for optimal value
->	             ./aol_dmCave       dmC temporal averaging
->	              ./alignPcam       Align Pyramid camera
->	   ./aolMeasureLOrespmat2       Acquire modal response matrix
->	         ./MeasureLatency       Measure AO system response latency
->	       ./aolARPFautoApply       Apply real-time AR linear predictive filter
->	      ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -> DM MAP
->	        ./modesextractwfs       Extract mode values from WFS images
->	               ./Fits2shm       Copy FITS files to shared memor
->	          ./aolblockstats       Extract mode values from WFS images, sort per block
->	                 ./aolrun       Run AO control loop
->	          ./aolMergeRMmat       Merge HO and LO resp matrices
->	  ./selectLatestTelemetry       Compute real-time WFS residual image
->	       ./MeasLoopModeResp       Measure AO loop temporal response
+------------------------------ -----------------------------------------------------------
+Script                         Description
+------------------------------ -----------------------------------------------------------
+                ./mkHpoke       Compute real-time WFS residual image
 
+       ./aolMeasureTiming       Measure loop timing
 
+      ./aolCleanLOrespmat       Measure zonal resp matrix
+
+  ./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
+
+                 ./aolmon       Display AO loop stats
+
+              ./acquRespM       Acquire response matrix
+
+                 ./aolctr       AO control process
+
+            ./listrunproc       List running AOloop processes
+
+         ./MeasDMmodesRec       Measure AO loop DM modes recovery
+
+           ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
+
+               ./aolRM2CM       Align Pyramid camera
+
+       ./aolCleanZrespmat       Cleans zonal resp matrix
+
+       ./mkDMslaveActprox       Create DM slaved actuators map
+
+                 ./xptest       Compute cross-product of a data cube
+
+        ./aolInspectDMmap       Inspect DM map
+
+      ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
+
+      ./aolCleanZrespmat2       Cleans zonal resp matrix
+
+           ./mkDMslaveAct       Create DM slaved actuators map
+
+        ./aolReadConfFile       AOloop load file to stream
+
+              ./aolLinSim       AO Linear Simulator
+
+           ./aolApplyARPF       Apply AR linear predictive filter
+
+                ./aolARPF       AO find optimal AR linear predictive filter
+
+          ./aolSetmcLimit       Compute real-time WFS residual image
+
+       ./aolautotunegains       Automatic gain tuning
+
+             ./aolmkMasks       Create AO wfs and DM masks
+
+            ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
+
+    ./aolMeasureLOrespmat       Acquire modal response matrix
+
+             ./waitonfile       Wait for file to appear
+
+        ./predFiltApplyRT       Apply predictive filter to stream
+
+         ./aoloffloadloop       DM offload loop
+
+            ./aolmkWFSres       Compute real-time WFS residual image
+
+   ./aolWFSresoffloadloop       Compute real-time WFS residual image
+
+         ./aollindm2wfsim       Convert DM stream to WFS image stream
+
+      ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
+
+       ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -> DM MAP
+
+             ./aolmkmodes       Create modes for AO loop
+
+    ./aolMeasureZrespmat2       Acquire zonal response matrix
+
+   ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
+
+            ./aolzploopon       WFS zero point offset loop 
+
+         ./aollinsimDelay       Introduce DM delay
+
+              ./shmimzero       Set shared memory image stream to zero
+
+            ./aolmkmodes2       Create modes for AO loop
+
+             ./alignPyrTT       Align Pyramid TT
+
+        ./aolgetshmimsize       Get shared memory image size
+
+     ./aolMeasureZrespmat       Acquire zonal response matrix
+
+                ./xp2test       Compute cross-product of two data cubes
+
+           ./waitforfilek       Wait for file to appear and then remove it
+
+        ./aolmkLO_DMmodes       Create LO DM modes for AO loop
+
+            ./aolscangain       AO scan gain for optimal value
+
+             ./aol_dmCave       dmC temporal averaging
+
+              ./alignPcam       Align Pyramid camera
+
+   ./aolMeasureLOrespmat2       Acquire modal response matrix
+
+         ./MeasureLatency       Measure AO system response latency
+
+       ./aolARPFautoApply       Apply real-time AR linear predictive filter
+
+      ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -> DM MAP
+
+        ./modesextractwfs       Extract mode values from WFS images
+
+               ./Fits2shm       Copy FITS files to shared memor
+
+          ./aolblockstats       Extract mode values from WFS images, sort per block
+
+                 ./aolrun       Run AO control loop
+
+          ./aolMergeRMmat       Merge HO and LO resp matrices
+
+  ./selectLatestTelemetry       Compute real-time WFS residual image
+
+       ./MeasLoopModeResp       Measure AO loop temporal response
+------------------------------ -----------------------------------------------------------
 
 
 
 ## Hardware simulation scripts
 
-Scripts in the `aohardsim` directory are called to simulate hardware for testing / simulations
+Scripts in the `aohardsim` directory are called to simulate hardware for testing / simulations.
 
 
 ------------------------------ -----------------------------------------------------------
@@ -214,16 +371,22 @@ Script                         Description
 
 There are 3 ways for users to simulate hardware
 
-- Provide an external simulation that adheres to AOloopControl input/output conventions
+- METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions
 
-- Use the physical hardware simulation provided by the package
+- METHOD 2: Use the physical hardware simulation provided by the package
 
-- Use the linear hardware simulation: this option is fastest, but only captures linear relationships between DM actuators and WFS signals
-
-
+- METHOD 3: Use the linear hardware simulation: this option is fastest, but only captures linear relationships between DM actuators and WFS signals
 
 
-## Physical hardware simulation
+
+## METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions
+
+The user needs to run a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.
+
+
+
+
+## METHOD 2: Physical hardware simulation
 
 The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.
 
@@ -247,7 +410,7 @@ You can launch the simulator quickly with the following steps:
 #### Process `aosimmkWF`
 
 
-`aosimmkWF` reads precomputed wavefronts and formats them for the simulations (pixel scale, temporal sampling).
+`aosimmkWF` reads precomputed wavefronts and formats them for the simulation parameters (pixel scale, temporal sampling).
 
 Parameters for `aosimmkWF` are stored in configuration file:
 
@@ -486,7 +649,7 @@ File `aosimcoroLOWFS.conf.default`:
 
 
 
-## Linear Hardware Simulation
+## METHOD 3: Linear Hardware Simulation
 
 ### Overview
 
