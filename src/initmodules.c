@@ -7,6 +7,7 @@
 #include "AtmosphericTurbulence/AtmosphericTurbulence.h"
 #include "AtmosphereModel/AtmosphereModel.h"
 #include "OptSystProp/OptSystProp.h"
+#include "OpticsMaterials/OpticsMaterials.h"
 #include "psf/psf.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 #include "WFpropagate/WFpropagate.h"
@@ -36,6 +37,7 @@ int init_modules()
   init_AtmosphericTurbulence();
   init_AtmosphereModel();
   init_OptSystProp();
+  init_OpticsMaterials();
   init_psf();
   init_ZernikePolyn();
   init_WFpropagate();

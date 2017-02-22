@@ -44,6 +44,10 @@ SUBDIRS += OptSystProp
 AdaptiveOpticsControl_LDADD += OptSystProp/liboptsystprop.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
 
+SUBDIRS += OpticsMaterials
+AdaptiveOpticsControl_LDADD += OpticsMaterials/libopticsmaterials.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials
+
 SUBDIRS += psf
 AdaptiveOpticsControl_LDADD += psf/libpsf.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/psf
