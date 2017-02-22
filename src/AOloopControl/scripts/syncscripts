@@ -107,16 +107,22 @@ do
 	ln -fs $srcfile $file	
 done
 
+
+
 for dir in ${dirlist[*]}
 do
 	mkdir -p $dir
-	srcdir="$srcdir/$dir"
-	for entry in "$srcdir"/*
+	srcdir1="$srcdir/$dir"
+	echo ""
+	echo "syncing directory $srcdir1"
+
+	for entry in $srcdir1/*
 	do
 	filename="${entry##*/}"	
-	echo "syncing directory $srcdir file $filename"
+	echo "   syncing directory $srcdir1 file $filename"
 	ln -fs $entry ./$dir/$filename
 	done
+
 done
 
 

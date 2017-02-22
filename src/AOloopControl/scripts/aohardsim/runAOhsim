@@ -5,6 +5,7 @@
 # number of arguments to script
 NBARGS=0
 
+srcdir="aohardsim"
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
@@ -109,11 +110,11 @@ fi
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
-checkFile aosimDMrun
-checkFile aosimDMstart
-checkFile aosimmkWF
-checkFile aosimcoroLOWFS
-checkFile aosimPyrWFS
+checkFile $srcdir/aosimDMrun
+checkFile $srcdir/aosimDMstart
+checkFile $srcdir/aosimmkWF
+checkFile $srcdir/aosimcoroLOWFS
+checkFile $srcdir/aosimPyrWFS
 
 checkDir atmwf
 checkFile "atmwf/WFsim.conf"
@@ -167,27 +168,27 @@ fi
 tmuxname="aosimDMcomb"
 echo "Executing aosimDMstart in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aosimDMstart" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimDMstart" C-M
 
 tmuxname="aosimDMrun"
 echo "Executing aosimDMrun in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aosimDMrun" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimDMrun" C-M
 
 tmuxname="aosimmkWF"
 echo "Executing aosimmkWF in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aosimmkWF" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimmkWF" C-M
 
 tmuxname="aosimPyrWFS"
 echo "Executing aosimPyrWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aosimPyrWFS" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimPyrWFS" C-M
 
 tmuxname="aosimcoroLOWFS"
 echo "Executing aosimcoroLOWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aosimcoroLOWFS" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimcoroLOWFS" C-M
 
 
 echo ""
