@@ -6,6 +6,11 @@ NBARGS=0
 
 srcdir="$PWD"
 
+if [ -f .scripts_src_dir.conf ]; then
+srcdir=$( cat .scripts_src_dir.conf )
+fi
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 echo "pname = $pname"
@@ -22,10 +27,11 @@ echo "$(tput bold) $pname : SYNC AOloopControl scripts $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-hc]"
+echo "     $0 [-hcs]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-e$(tput sgr0) <DESTdir>    export syncscript to directory"
 echo "     $(tput bold)-s$(tput sgr0) <SRCdir>     source directory for scripts"
 echo "     $(tput bold)-c$(tput sgr0)              clear all files in directory (USE WITH CARE)"
 echo ""
@@ -39,7 +45,7 @@ echo "------------------------------------------------------------------------"
 # ================= OPTIONS =============================
 
 
-while getopts :hc FLAG; do
+while getopts :hcs:e: FLAG; do
   case $FLAG in
     h)  #show help
       printHELP
@@ -51,6 +57,11 @@ while getopts :hc FLAG; do
     c) # clear
     echo "Clearing all directory and files"
     ls | grep -v syncscripts | xargs rm -rf
+    ;;
+    e) # export script to directory
+    echo "$PWD" > $OPTARG/.scripts_src_dir.conf
+    ln -s $PWD/syncscripts $OPTARG/syncscripts
+    exit
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."

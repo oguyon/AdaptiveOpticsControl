@@ -33,7 +33,15 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 
 
 
-## Usage
+## Creating Working Directory
+
+
+The Working Directory (WD) is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:
+
+	mkdir /<workdirectory>
+	cd scripts
+	./syncscripts -e /<workdirectory>
+	cd /<workdirectory>
 
 
 

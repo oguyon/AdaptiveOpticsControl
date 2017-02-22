@@ -57,7 +57,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview"><span class="toc-section-number">1</span> Overview</a><ul>
 <li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
 <li><a href="#installing-the-adaptiveopticscontrol-package"><span class="toc-section-number">1.2</span> Installing the AdaptiveOpticsControl package</a></li>
-<li><a href="#usage"><span class="toc-section-number">1.3</span> Usage</a></li>
+<li><a href="#creating-working-directory"><span class="toc-section-number">1.3</span> Creating Working Directory</a></li>
 <li><a href="#supporting-scripts-aolconfscripts-directory"><span class="toc-section-number">1.4</span> Supporting scripts, aolconfscripts directory</a></li>
 <li><a href="#supporting-scripts-auxscripts-directory"><span class="toc-section-number">1.5</span> Supporting scripts, auxscripts directory</a></li>
 <li><a href="#hardware-simulation-scripts"><span class="toc-section-number">1.6</span> Hardware simulation scripts</a></li>
@@ -134,8 +134,13 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 make install</code></pre>
 <p>The executable is <code>./AdaptiveOpticsControl-&lt;version&gt;/bin/AdaptiveOpticsControl</code></p>
 </div>
-<div id="usage" class="section level2">
-<h2><span class="header-section-number">1.3</span> Usage</h2>
+<div id="creating-working-directory" class="section level2">
+<h2><span class="header-section-number">1.3</span> Creating Working Directory</h2>
+<p>The Working Directory (WD) is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:</p>
+<pre><code>mkdir /&lt;workdirectory&gt;
+cd scripts
+./syncscripts -e /&lt;workdirectory&gt;
+cd /&lt;workdirectory&gt;</code></pre>
 <p>Scripts to run the software are located within the source code directory:</p>
 <pre><code>./src/AOloopControl/scripts/</code></pre>
 <p>The scripts can be linked to your working directory by executing the following command from <code>src/AOloopControl/scripts/</code>:</p>
