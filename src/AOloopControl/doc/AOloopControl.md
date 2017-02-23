@@ -71,7 +71,7 @@ Conventions:
 - `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
 - `<workdir>` is the work directory where the program and scripts will be executed
 
-The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
+The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
 
 	mkdir /<workdir>
 	cd <srcdir>/src/AOloopControl/scripts
@@ -346,7 +346,7 @@ Script                         Description
 
 ## Overview
 
-There are 3 ways for users to simulate hardware
+There are 3 methods for users to simulate hardware
 
 - METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions
 
@@ -358,7 +358,7 @@ There are 3 ways for users to simulate hardware
 
 ## METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions
 
-The user needs to run a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.
+The user runs a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.
 
 
 
@@ -369,17 +369,22 @@ The AOsim simulation architecture relies on individual processes that simulate s
 
 ### Quick start
 
-You can launch the simulator quickly with the following steps:
+Launch the simulator with the following steps:
 
-- Create a series of atmospheric wavefronts:
+- Create a series of atmospheric wavefronts (do this only once, this step can take several hrs):
 	
-	./aohardsim/aosimmkwf
+		./aohardsim/aosimmkwf
 
-	Stop the process when a few files have been created. The WF will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs.
+	Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file 4:
+	
+		Layer  6/ 7, Frame   47/ 100, File      0/100000000  [TIME =     0.0470 s]
 
-	Alternatively, you can create a symbolic link `atmwf` to atmospheric wavefront simulation directory. For example:
+	Type `CTRL-C` to stop the process.
+	
+	
+	Alternatively, you can create a symbolic link `atmwf` to an existing atmospheric wavefront simulation directory. For example:
 
-	`ln -s /data/AtmWF/wdir00/ atmwf`
+		ln -s /data/AtmWF/wdir00/ atmwf
 
 - execute master script './runAOhsim'
 

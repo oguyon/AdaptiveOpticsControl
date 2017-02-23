@@ -4386,7 +4386,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
 
         if((CONF_MAKE_SWAVEFRONT==1)&&(CONF_SWF_WRITE2DISK==1)) // WRITE SCIENCE LAMBDA
         {
-            printf("WRITING SCIENCE WAVEFRONT ...");
+            printf("WRITING WAVEFRONT FILE ...");
             fflush(stdout);
             sprintf(fname1,"!%s%08ld.%09ld.pha.fits", CONF_SWF_FILE_PREFIX, tspan, (long) (1.0e12*SLAMBDA+0.5));
             sprintf(fname2,"!%s%08ld.%09ld.amp.fits", CONF_SWF_FILE_PREFIX, tspan, (long) (1.0e12*SLAMBDA+0.5));

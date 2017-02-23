@@ -159,9 +159,9 @@ make install</code></pre>
 <p>Conventions:</p>
 <ul>
 <li><code>&lt;srcdir&gt;</code> is the source code directory, usually <code>.../AdaptiveOpticsControl-&lt;version&gt;</code></li>
-<li><code>&lt;workdir&gt;</code> is the working directory where the program and scripts will be executed</li>
+<li><code>&lt;workdir&gt;</code> is the work directory where the program and scripts will be executed</li>
 </ul>
-<p>The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:</p>
+<p>The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:</p>
 <pre><code>mkdir /&lt;workdir&gt;
 cd &lt;srcdir&gt;/src/AOloopControl/scripts
 ./syncscripts -e /&lt;workdir&gt;
@@ -178,62 +178,35 @@ drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
 drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
 lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -&gt; /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts</code></pre>
 <p>If new scripts are added in the source directory, running <code>./syncscripts</code> will add them to the work directory.</p>
-<p>The main executable is <code>./AOloopControl</code>, which provides a command line interface (CLI) to all compiled code. Type <code>AOloopControl -h</code> for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (<code>m? &lt;module.c&gt;</code>) and help for each function (<code>cmd? &lt;functionname&gt;</code>).</p>
+<p>The main executable is <code>./AOloopControl</code>, which provides a command line interface (CLI) to all compiled code. Type <code>AOloopControl -h</code> for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (<code>m? &lt;module.c&gt;</code>) and help for each function (<code>cmd? &lt;functionname&gt;</code>). Type <code>help</code> within the CLI for additional directions.</p>
 <pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
 type &quot;help&quot; for instructions
 Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
-RAND: 929827602064218
-315 commands loaded
+LOADED: 21 modules, 269 commands
 ./AOloopControl &gt; m?
-    0      COREMOD_memory.c    memory management for images and variables
-    1       COREMOD_arith.c    image arithmetic operations
-    2      COREMOD_iofits.c    FITS format input/output
-    3       COREMOD_tools.c    image information and statistics
-    4                 fft.c    FFTW wrapper
-    5                info.c    image information and statistics
-    6           statistic.c    statistics functions and tools
-    7      linopt_imtools.c    image linear decomposition and optimization tools
-    8           image_gen.c    creating images (shapes, useful functions and patterns)
-    9        image_filter.c    image filtering
+    0            cudacomp.c    CUDA wrapper for AO loop
+    1  AtmosphericTurbulence.c    Atmospheric Turbulence
+    2     AtmosphereModel.c    Atmosphere Model
+    3                 psf.c    memory management for images and variables
+    4       AOloopControl.c    AO loop control
+    5           AOsystSim.c    conversion between image format, I/O
+    6    AOloopControl_DM.c    AO loop Control DM operation
+    7         OptSystProp.c    Optical propagation through system
+    8        ZernikePolyn.c    create and fit Zernike polynomials
+    9         WFpropagate.c    light propagation
    10         image_basic.c    basic image routines
-   11         WFpropagate.c    light propagation
-   12        ZernikePolyn.c    create and fit Zernike polynomials
-   13        coronagraphs.c    coronagraph routines
-   14         OptSystProp.c    Optical propagation through system
-   15        PIAACMCsimul.c    PIAACMC system simulation
-   16        image_format.c    conversion between image format, I/O
-   17          img_reduce.c    image analysis for astronomy: basic routines
-   18    AOloopControl_DM.c    AO loop Control DM operation
-   19           AOsystSim.c    conversion between image format, I/O
-   20       AOloopControl.c    AO loop control
-   21     FPAOloopControl.c    FP AO loop control
-   22                 psf.c    memory management for images and variables
-   23     AtmosphereModel.c    Atmosphere Model
-   24  AtmosphericTurbulence.c    Atmospheric Turbulence
-   25            cudacomp.c    CUDA wrapper for AO loop
-   26      SCExAO_control.c    SCExAO control
-   27           TransitLC.c    exoplanet transit light curve analysis
-   28     linARfilterPred.c    linear auto-regressive predictive filters
-./AOloopControl &gt; m? AOloopControl_DM.c
----- MODULE AOloopControl_DM.c: LIST OF COMMANDS ---------
-   aolcontrolDMcomb AOloopControl_DM.c   create and combine DM channels           aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0
-   aolcontroldmchgain AOloopControl_DM.c   set gain for DM displacement channel     aoloopcontroldmchgain 0 3 0.2 
-   aoldmvoltON      AOloopControl_DM.c   turn on DM voltage                       aoldmvoltON 0                 
-   aoldmvoltOFF     AOloopControl_DM.c   turn off DM voltage                      aoldmvoltOFF 0                
-   aolsetdmvoltmax  AOloopControl_DM.c   set maximum DM voltage                   aolsetdmvoltmax 120.0         
-   aolsetdmDC       AOloopControl_DM.c   set DM DC level [um]                     aolsetdmDC 0.5                
-   aoloopcontroldmcomboff AOloopControl_DM.c   turn off DM combine                      aoloopcontroldmcomboff 0      
-   aoloopcontroldmcombmon AOloopControl_DM.c   monitor DM comb program                  aoloopcontroldmcombmon 0      
-   aoloopcontroldmtrigoff AOloopControl_DM.c   turn off DM trigger                      aoloopcontroldmtrigoff 0      
-   aoloopcontroldmturb AOloopControl_DM.c   DM turbulence                            aoloopcontroldmturb 0         
-   aoloopcontroldmturb2im AOloopControl_DM.c   DM turbulence to image                   aoloopcontroldmturb2im 00 wftout 100000
-   aoloopcontroldmturboff AOloopControl_DM.c   turn off DM turbulence                   aoloopcontroldmturboff 0      
-   aoloopcontroldmturws AOloopControl_DM.c   set turbulence wind speed                aoloopcontroldmturws 0 5.2    
-   aoloopcontroldmturampl AOloopControl_DM.c   set turbulence amplitude                 aoloopcontroldmturampl 0 0.1  
-   aoloopcontroldmturlo AOloopControl_DM.c   set turbulence low order coefficient     aoloopcontroldmturlo 0 0.2    
-   aoloopcontroldmturtint AOloopControl_DM.c   set turbulence interval time             aoloopcontroldmturtint 0 200  
+   11        image_filter.c    image filtering
+   12           image_gen.c    creating images (shapes, useful functions and patterns)
+   13      linopt_imtools.c    image linear decomposition and optimization tools
+   14           statistic.c    statistics functions and tools
+   15                 fft.c    FFTW wrapper
+   16                info.c    image information and statistics
+   17       COREMOD_arith.c    image arithmetic operations
+   18      COREMOD_iofits.c    FITS format input/output
+   19      COREMOD_memory.c    memory management for images and variables
+   20       COREMOD_tools.c    image information and statistics
 ./AOloopControl &gt; exit
-Closing PID 24326 (prompt process)</code></pre>
+Closing PID 5291 (prompt process)</code></pre>
 <p>The top level script is <code>aolconf</code>. Run it with <code>-h</code> option for a quick help</p>
 <pre><code>./aolconf -h</code></pre>
 </div>
@@ -618,7 +591,7 @@ Closing PID 24326 (prompt process)</code></pre>
 <h1><span class="header-section-number">2</span> Hardware Simulation</h1>
 <div id="overview" class="section level2">
 <h2><span class="header-section-number">2.1</span> Overview</h2>
-<p>There are 3 ways for users to simulate hardware</p>
+<p>There are 3 methods for users to simulate hardware</p>
 <ul>
 <li><p>METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</p></li>
 <li><p>METHOD 2: Use the physical hardware simulation provided by the package</p></li>
@@ -627,20 +600,22 @@ Closing PID 24326 (prompt process)</code></pre>
 </div>
 <div id="method-1-provide-an-external-simulation-that-adheres-to-aoloopcontrol-inputoutput-conventions" class="section level2">
 <h2><span class="header-section-number">2.2</span> METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</h2>
-<p>The user needs to run a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.</p>
+<p>The user runs a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.</p>
 </div>
 <div id="method-2-physical-hardware-simulation" class="section level2">
 <h2><span class="header-section-number">2.3</span> METHOD 2: Physical hardware simulation</h2>
 <p>The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.</p>
 <div id="quick-start" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Quick start</h3>
-<p>You can launch the simulator quickly with the following steps:</p>
+<p>Launch the simulator with the following steps:</p>
 <ul>
-<li><p>Create a series of atmospheric wavefronts:</p>
-<p>./aohardsim/aosimmkwf</p>
-<p>Stop the process when a few files have been created. The WF will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs.</p>
-<p>Alternatively, you can create a symbolic link <code>atmwf</code> to atmospheric wavefront simulation directory. For example:</p>
-<p><code>ln -s /data/AtmWF/wdir00/ atmwf</code></p></li>
+<li><p>Create a series of atmospheric wavefronts (do this only once, this step can take several hrs):</p>
+<pre><code>./aohardsim/aosimmkwf</code></pre>
+<p>Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file 4:</p>
+<pre><code>Layer  6/ 7, Frame   47/ 100, File      0/100000000  [TIME =     0.0470 s]</code></pre>
+<p>Type <code>CTRL-C</code> to stop the process.</p>
+<p>Alternatively, you can create a symbolic link <code>atmwf</code> to an existing atmospheric wavefront simulation directory. For example:</p>
+<pre><code>ln -s /data/AtmWF/wdir00/ atmwf</code></pre></li>
 <li><p>execute master script './runAOhsim'</p></li>
 </ul>
 </div>
