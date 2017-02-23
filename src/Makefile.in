@@ -112,13 +112,12 @@ am_AdaptiveOpticsControl_OBJECTS =  \
 	AdaptiveOpticsControl-calc_flex.$(OBJEXT)
 AdaptiveOpticsControl_OBJECTS = $(am_AdaptiveOpticsControl_OBJECTS)
 AdaptiveOpticsControl_DEPENDENCIES = cudacomp/libcudacomp.la \
-	AOloopControl/libaoloopcontrol.la \
-	linARfilterPred/liblinarfilterpred.la \
-	AOloopControl_DM/libaoloopcontroldm.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
-	AtmosphereModel/libatmospheremodel.la \
+	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
+	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
+	AOloopControl_DM/libaoloopcontroldm.la \
 	OptSystProp/liboptsystprop.la \
-	OpticsMaterials/libopticsmaterials.la psf/libpsf.la \
+	OpticsMaterials/libopticsmaterials.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \
 	kdtree/libkdtree.la image_gen/libimagegen.la \
@@ -383,14 +382,15 @@ AdaptiveOpticsControl_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-DSOURCEDIR=\"@abs_top_srcdir@/src\" \
 	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp \
 	-I@abs_top_srcdir@/src/cudacomp \
-	-I@abs_top_srcdir@/src/AOloopControl \
-	-I@abs_top_srcdir@/src/linARfilterPred \
-	-I@abs_top_srcdir@/src/AOloopControl_DM \
 	-I@abs_top_srcdir@/src/AtmosphericTurbulence \
 	-I@abs_top_srcdir@/src/AtmosphereModel \
+	-I@abs_top_srcdir@/src/psf \
+	-I@abs_top_srcdir@/src/AOloopControl \
+	-I@abs_top_srcdir@/src/AOsystSim \
+	-I@abs_top_srcdir@/src/AOloopControl_DM \
 	-I@abs_top_srcdir@/src/OptSystProp \
 	-I@abs_top_srcdir@/src/OpticsMaterials \
-	-I@abs_top_srcdir@/src/psf -I@abs_top_srcdir@/src/ZernikePolyn \
+	-I@abs_top_srcdir@/src/ZernikePolyn \
 	-I@abs_top_srcdir@/src/WFpropagate \
 	-I@abs_top_srcdir@/src/image_basic \
 	-I@abs_top_srcdir@/src/image_filter \
@@ -408,20 +408,19 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = cudacomp AOloopControl linARfilterPred AOloopControl_DM \
-	AtmosphericTurbulence AtmosphereModel OptSystProp \
-	OpticsMaterials psf ZernikePolyn WFpropagate image_basic \
+SUBDIRS = cudacomp AtmosphericTurbulence AtmosphereModel psf \
+	AOloopControl AOsystSim AOloopControl_DM OptSystProp \
+	OpticsMaterials ZernikePolyn WFpropagate image_basic \
 	image_filter kdtree image_gen linopt_imtools statistic fft \
 	info COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
 	00CORE
 AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
-	AOloopControl/libaoloopcontrol.la \
-	linARfilterPred/liblinarfilterpred.la \
-	AOloopControl_DM/libaoloopcontroldm.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
-	AtmosphereModel/libatmospheremodel.la \
+	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
+	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
+	AOloopControl_DM/libaoloopcontroldm.la \
 	OptSystProp/liboptsystprop.la \
-	OpticsMaterials/libopticsmaterials.la psf/libpsf.la \
+	OpticsMaterials/libopticsmaterials.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \
 	kdtree/libkdtree.la image_gen/libimagegen.la \

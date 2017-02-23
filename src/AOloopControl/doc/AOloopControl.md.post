@@ -394,10 +394,11 @@ The AOsim simulation architecture relies on individual processes that simulate s
 
 You can launch the simulator quickly with the following steps:
 
+- Create a series of atmospheric wavefronts:
+	
+	./aohardsim/aosimmkwf
 
-- go into directory `aohardsim`
-
-- create symbolic link `atmwf` to atmospheric wavefront simulation directory. For example:
+	Alternatively, you can create a symbolic link `atmwf` to atmospheric wavefront simulation directory. For example:
 
 	`ln -s /data/AtmWF/wdir00/ atmwf`
 

@@ -20,18 +20,6 @@ SUBDIRS += cudacomp
 AdaptiveOpticsControl_LDADD += cudacomp/libcudacomp.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/cudacomp
 
-SUBDIRS += AOloopControl
-AdaptiveOpticsControl_LDADD += AOloopControl/libaoloopcontrol.la
-AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
-
-SUBDIRS += linARfilterPred
-AdaptiveOpticsControl_LDADD += linARfilterPred/liblinarfilterpred.la
-AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/linARfilterPred
-
-SUBDIRS += AOloopControl_DM
-AdaptiveOpticsControl_LDADD += AOloopControl_DM/libaoloopcontroldm.la
-AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
-
 SUBDIRS += AtmosphericTurbulence
 AdaptiveOpticsControl_LDADD += AtmosphericTurbulence/libatmosphericturbulence.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
@@ -40,6 +28,22 @@ SUBDIRS += AtmosphereModel
 AdaptiveOpticsControl_LDADD += AtmosphereModel/libatmospheremodel.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
 
+SUBDIRS += psf
+AdaptiveOpticsControl_LDADD += psf/libpsf.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/psf
+
+SUBDIRS += AOloopControl
+AdaptiveOpticsControl_LDADD += AOloopControl/libaoloopcontrol.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
+
+SUBDIRS += AOsystSim
+AdaptiveOpticsControl_LDADD += AOsystSim/libaosystsim.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
+
+SUBDIRS += AOloopControl_DM
+AdaptiveOpticsControl_LDADD += AOloopControl_DM/libaoloopcontroldm.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
+
 SUBDIRS += OptSystProp
 AdaptiveOpticsControl_LDADD += OptSystProp/liboptsystprop.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
@@ -47,10 +51,6 @@ AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
 SUBDIRS += OpticsMaterials
 AdaptiveOpticsControl_LDADD += OpticsMaterials/libopticsmaterials.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials
-
-SUBDIRS += psf
-AdaptiveOpticsControl_LDADD += psf/libpsf.la
-AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/psf
 
 SUBDIRS += ZernikePolyn
 AdaptiveOpticsControl_LDADD += ZernikePolyn/libzernikepolyn.la
