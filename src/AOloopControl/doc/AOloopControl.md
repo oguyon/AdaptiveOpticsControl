@@ -367,7 +367,7 @@ The user runs a loop that updates the wavefront sensor image when the DM input c
 
 The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.
 
-### Quick start
+### Running Method 2
 
 Launch the simulator with the following steps:
 
@@ -392,8 +392,15 @@ Launch the simulator with the following steps:
 - To stop the physical simulator: `./aohardsim/runAOhsim -k`
 
 
+Important notes:
 
-### Processes and scripts: main WF control loop
+- Parameters for the simulation can be changed by editing the `.conf` files in the `aohardsim` directory
+
+- You may need to kill and relaunch the main script twice after changing parameters
+
+
+
+### Processes and scripts details
 
 #### Process `aosimmkWF`
 

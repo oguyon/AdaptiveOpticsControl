@@ -19,7 +19,7 @@ OUT0STREAMNAMEAMP    wf0amp            # output WF stream name (AMP)
 # ============== PROCESS TRIGGER ==================================
 TRIGGERMODE           2                # 0: file, 1: semaphore from stream, 2: time interval
 TRIGGERFILE           wfup.txt         # update file name (TRIGGERMODE=0,1
-TRIGGERDT             0.005            # update interval (TRIGGERMODE=0,2)
+TRIGGERDT             0.01             # update interval (TRIGGERMODE=0,2)
 TRIGGER0STREAM        WFSinst          # trigger stream
 TRIGGER0SEM           5                # trigger semaphore in TRIGGERSTREAM
 TRIGGER1STREAM        dm05dispmap      # trigger stream
