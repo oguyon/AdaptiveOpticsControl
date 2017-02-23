@@ -381,7 +381,7 @@ Launch the simulator with the following steps:
 		Layer  0/ 7, Frame   99/ 100, File      1/100000000  [TIME =     0.1990 s]  WRITING SCIENCE WAVEFRONT ... - 
 		Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]  
 
-	Type `CTRL-C` to stop the process.
+	Type `CTRL-C` to stop the process. Note that you can relaunch the script later to build additional wavefront files.
 	
 	By default, the wavefront files are stored in the work directory. You may choose to move them to another location (useful if you have multiple work directories sharing the same wavefront files). You can then create a symbolic link `atmwf` to an existing atmospheric wavefront simulation directory. For example:
 
@@ -542,7 +542,7 @@ File `aosimcoroLOWFS.conf.default`:
 
 ### Overview
 
-The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS).
+The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS) but does not capture non-linear effects.
 
 
 

@@ -615,7 +615,7 @@ Closing PID 5291 (prompt process)</code></pre>
 <pre><code>Layer  0/ 7, Frame   99/ 100, File      0/100000000  [TIME =     0.0990 s]  WRITING SCIENCE WAVEFRONT ... - 
 Layer  0/ 7, Frame   99/ 100, File      1/100000000  [TIME =     0.1990 s]  WRITING SCIENCE WAVEFRONT ... - 
 Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]  </code></pre>
-<p>Type <code>CTRL-C</code> to stop the process.</p>
+<p>Type <code>CTRL-C</code> to stop the process. Note that you can relaunch the script later to build additional wavefront files.</p>
 <p>By default, the wavefront files are stored in the work directory. You may choose to move them to another location (useful if you have multiple work directories sharing the same wavefront files). You can then create a symbolic link <code>atmwf</code> to an existing atmospheric wavefront simulation directory. For example:</p>
 <pre><code>ln -s /data/AtmWF/wdir00/ atmwf</code></pre></li>
 <li><p>Execute master script <code>./aohardsim/runAOhsim</code></p></li>
@@ -685,13 +685,13 @@ WFDIR            ./atmwf          # atmospheric wavefronts directory
 LAMBDANM         1650             # wavelength [nm]
 
 # ============== OUTPUT TYPE (OPD unit = um) ====================
-OUT0FITSFILE         0                # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP
-OUT0FITSFILENAMEOPD  wf0opd.fits      # FITS file name output (OPD)
-OUT0FITSFILENAMEAMP  wf0amp.fits      # FITS file name output (AMP)
-OUTPHYSTIME          aosim_phystime   # physical time [s]
-OUT0STREAM           2                # 1 if shared memory stream OPD only, 2 if OPD+AMP 
-OUT0STREAMNAMEOPD    wf0opd           # output WF stream name (OPD)
-OUT0STREAMNAMEAMP    wf0amp           # output WF stream name (AMP)
+OUT0FITSFILE         0                 # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP
+OUT0FITSFILENAMEOPD  wf0opd.fits       # FITS file name output (OPD)
+OUT0FITSFILENAMEAMP  wf0amp.fits       # FITS file name output (AMP)
+OUTPHYSTIME          aosim_phystime    # physical time [s]
+OUT0STREAM           2                 # 1 if shared memory stream OPD only, 2 if OPD+AMP 
+OUT0STREAMNAMEOPD    wf0opd            # output WF stream name (OPD)
+OUT0STREAMNAMEAMP    wf0amp            # output WF stream name (AMP)
 
 # ============== PROCESS TRIGGER ==================================
 TRIGGERMODE           2                # 0: file, 1: semaphore from stream, 2: time interval
@@ -704,7 +704,7 @@ TRIGGER1SEM           5                # trigger semaphore in TRIGGERSTREAM
 
 # ============== PARAMETERS ======================================
 DT                    0.001            # time interval between computed wavefronts
-OPDMFACT              0.01             # OPD multiplicative factor
+OPDMFACT              1.0              # OPD multiplicative factor
 AMPMFACT              1.0              # AMP multiplicative factor
 ARRAYSIZE             128              # output size [pix]
 PIXSCALEMODE          2                # 0: adopt input WF pixel scale, 1: custom pixel scale, 2: bin
@@ -713,13 +713,13 @@ PIXBINFACTOR          4                # bin factor
 PUPDIAMM              8                # Pupil diameter [m]
 
 # ============== POST-PROCESSING =============================
-DM0MODE               1               # 0 if no DM0, 1 if OPD DMn
-DM0NAME               dm05dispmap     # DM displacement map stream
-OUT1FITSFILENAMEOPD  wf1opd.fits       # FITS file name output (OPD)
-OUT1FITSFILENAMEAMP  wf1amp.fits       # FITS file name output (AMP)
-OUT1STREAM           1                # 1 if shared memory stream OPD only, 2 if OPD+AMP 
-OUT1STREAMNAMEOPD     wf1opd          # output WF stream name (OPD)
-OUT1STREAMNAMEAMP     wf1amp          # output WF stream name (AMP)
+DM0MODE               1                # 0 if no DM0, 1 if OPD DMn
+DM0NAME               dm05dispmap      # DM displacement map stream
+OUT1FITSFILENAMEOPD   wf1opd.fits      # FITS file name output (OPD)
+OUT1FITSFILENAMEAMP   wf1amp.fits      # FITS file name output (AMP)
+OUT1STREAM            1                # 1 if shared memory stream OPD only, 2 if OPD+AMP 
+OUT1STREAMNAMEOPD     wf1opd           # output WF stream name (OPD)
+OUT1STREAMNAMEAMP     wf1amp           # output WF stream name (AMP)
 </code></pre></td></tr></table></div>
 </div>
 <div id="process-aosimdmrun" class="section level4">
@@ -862,7 +862,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </tr>
 <tr class="even">
 <td align="left"><strong>wf1opd</strong></td>
-<td align="left">Wavefront OPD after correction ( = wf0opd - 2 x dm05dispmap )</td>
+<td align="left">Wavefront OPD after correction [um] ( = wf0opd - 2 x dm05dispmap )</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>dm05disp</strong></td>
@@ -924,7 +924,76 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <h4><span class="header-section-number">2.3.4.1</span> Process <code>aosimcoroLOWFS</code></h4>
 <p>Computes coronagraphic image output and LOWFS image</p>
 <p>File <code>aosimcoroLOWFS.conf.default</code>:</p>
-<div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre></pre></td><td class="sourceCode"><pre><code class="sourceCode"></code></pre></td></tr></table></div>
+<div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre></td><td class="sourceCode"><pre><code class="sourceCode">
+# ============== AOsim: coro LOWFS process =============================
+# LOWFS process is triggered by WF OPD
+
+# ============== INPUT &amp; TRIGGER (OPD unit = um) ===============
+INMODE                   0                 # 0:stream, 1:file system (FITS)
+INAMPSTREAMNAME          wf1amp            # input AMP stream
+INOPDSTREAMNAME          wf1opd            # input OPD stream
+INAMPFITSFILENAME        wf1amp.fits       # input FITS file name
+INOPDFITSFILENAME        wf1opd.fits       # input FITS file name
+INTRIGSTREAMNAME         wf1opd            # input trigger stream
+INTRIGSEMCHAN            4                 # input semaphore channel (using OPD input)
+INTRIGGERFILE            inwf.txt          # input trigger file
+INPHYSTIME               aosim_phystime    # physical time
+
+# ============== OUTPUT TYPE ===================================
+OUTMODE                  0                       # 0: stream, 1: file system
+OUTLOWFSARRAYSIZE        16                      # output LOWFS array size, pix
+OUTLOWFSSTREAMNAME       aosim_imcamLOWFS        # output WF stream name 
+OUTLOWFSFITSFILENAME     aosim_imcamLOWFS.fits   # FITS file name output [um]
+OUTTRIGGERFILE           outLOWFS.txt            # output trigger file
+
+# ============== GEOMETRY, OPTICAL DESIGN =============================
+LAMBDAum                 1.65              # wavelength [um]
+ARRAYSIZE                256               # array size, pix, used for internal computations
+COROFPMAMP               corofpmamp        # coronagraph focal plane mask amplitude
+COROFPMPHA               corofpmpha        # coronagraph focal plane mask amplitude
+LYOTSTOPREFLAMP          lyotstopreflamp   # LYOT stop reflectivity map (amp)
+LYOTSTOPREFLPHA          lyotstopreflpha   # LYOT stop reflectivity map (pha)
+LYOTSTOPTRANSMAMP        lyotstoptransmamp # LYOT stop transmission map (amp)
+LYOTSTOPTRANSMPHA        lyotstoptransmpha # LYOT stop transmission map (pha)
+
+# ============== LOWFS =============================
+LOWFSOPDMAP              lowfsopdmap       # LOWFS defocus map [um]
+LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</code></pre></td></tr></table></div>
 </div>
 <div id="ouput-simulation-architecture" class="section level4">
 <h4><span class="header-section-number">2.3.4.2</span> Ouput simulation architecture</h4>

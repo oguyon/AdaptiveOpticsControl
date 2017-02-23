@@ -20,8 +20,8 @@ OUTTRIGGERFILE           outpyr.txt        # output trigger file
 # ============== FREQUENCY, GEOMETRY =============================
 ARRAYSIZE                256               # array size for computations
 PYRMODMODE               1                 # 0: no modulation, 1: modulation
-PYRMODAMP                0.0               # Modulation radius [l/D]
-PYRMODNBPT               1                 # number of pyramid modulation points
+PYRMODAMP                4.0               # Modulation radius [l/D]
+PYRMODNBPT               8                 # number of pyramid modulation points
 PYRAPERTURE              50.0              # spatial filter aperture [l/D]
 PUPPIXDIAM               100.0             # pupil diameter [pix] - used to compute l/D scale
 PYRPUPSEP                1.2               # separation between pupil imagees (relative to pup diam)
