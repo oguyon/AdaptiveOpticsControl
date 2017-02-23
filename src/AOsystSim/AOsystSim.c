@@ -1348,7 +1348,9 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 	long IDdm0opd;
 	long IDphystime;
 
-
+	int fOK;
+	
+	
 
     printf("AOsystSim mkWFS...\n");
 
