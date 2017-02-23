@@ -1587,6 +1587,9 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
         if(frame_n > (NBframes-1))
         {
             k++;
+            if(k==kmax)
+				k = 0;
+            
             k1++;
             frame_n -= NBframes;
             frame_f -= wfin_TIME_SPAN;
