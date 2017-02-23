@@ -94,64 +94,37 @@ Symbolic links to the source scripts and executable are now installed in the wor
 If new scripts are added in the source directory, running `./syncscripts` will add them to the work directory.
 
 
-The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`).
+The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions.
 
 ~~~
 olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
 type "help" for instructions
 Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
-RAND: 929827602064218
-315 commands loaded
+LOADED: 21 modules, 269 commands
 ./AOloopControl > m?
-    0      COREMOD_memory.c    memory management for images and variables
-    1       COREMOD_arith.c    image arithmetic operations
-    2      COREMOD_iofits.c    FITS format input/output
-    3       COREMOD_tools.c    image information and statistics
-    4                 fft.c    FFTW wrapper
-    5                info.c    image information and statistics
-    6           statistic.c    statistics functions and tools
-    7      linopt_imtools.c    image linear decomposition and optimization tools
-    8           image_gen.c    creating images (shapes, useful functions and patterns)
-    9        image_filter.c    image filtering
+    0            cudacomp.c    CUDA wrapper for AO loop
+    1  AtmosphericTurbulence.c    Atmospheric Turbulence
+    2     AtmosphereModel.c    Atmosphere Model
+    3                 psf.c    memory management for images and variables
+    4       AOloopControl.c    AO loop control
+    5           AOsystSim.c    conversion between image format, I/O
+    6    AOloopControl_DM.c    AO loop Control DM operation
+    7         OptSystProp.c    Optical propagation through system
+    8        ZernikePolyn.c    create and fit Zernike polynomials
+    9         WFpropagate.c    light propagation
    10         image_basic.c    basic image routines
-   11         WFpropagate.c    light propagation
-   12        ZernikePolyn.c    create and fit Zernike polynomials
-   13        coronagraphs.c    coronagraph routines
-   14         OptSystProp.c    Optical propagation through system
-   15        PIAACMCsimul.c    PIAACMC system simulation
-   16        image_format.c    conversion between image format, I/O
-   17          img_reduce.c    image analysis for astronomy: basic routines
-   18    AOloopControl_DM.c    AO loop Control DM operation
-   19           AOsystSim.c    conversion between image format, I/O
-   20       AOloopControl.c    AO loop control
-   21     FPAOloopControl.c    FP AO loop control
-   22                 psf.c    memory management for images and variables
-   23     AtmosphereModel.c    Atmosphere Model
-   24  AtmosphericTurbulence.c    Atmospheric Turbulence
-   25            cudacomp.c    CUDA wrapper for AO loop
-   26      SCExAO_control.c    SCExAO control
-   27           TransitLC.c    exoplanet transit light curve analysis
-   28     linARfilterPred.c    linear auto-regressive predictive filters
-./AOloopControl > m? AOloopControl_DM.c
----- MODULE AOloopControl_DM.c: LIST OF COMMANDS ---------
-   aolcontrolDMcomb AOloopControl_DM.c   create and combine DM channels           aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0
-   aolcontroldmchgain AOloopControl_DM.c   set gain for DM displacement channel     aoloopcontroldmchgain 0 3 0.2 
-   aoldmvoltON      AOloopControl_DM.c   turn on DM voltage                       aoldmvoltON 0                 
-   aoldmvoltOFF     AOloopControl_DM.c   turn off DM voltage                      aoldmvoltOFF 0                
-   aolsetdmvoltmax  AOloopControl_DM.c   set maximum DM voltage                   aolsetdmvoltmax 120.0         
-   aolsetdmDC       AOloopControl_DM.c   set DM DC level [um]                     aolsetdmDC 0.5                
-   aoloopcontroldmcomboff AOloopControl_DM.c   turn off DM combine                      aoloopcontroldmcomboff 0      
-   aoloopcontroldmcombmon AOloopControl_DM.c   monitor DM comb program                  aoloopcontroldmcombmon 0      
-   aoloopcontroldmtrigoff AOloopControl_DM.c   turn off DM trigger                      aoloopcontroldmtrigoff 0      
-   aoloopcontroldmturb AOloopControl_DM.c   DM turbulence                            aoloopcontroldmturb 0         
-   aoloopcontroldmturb2im AOloopControl_DM.c   DM turbulence to image                   aoloopcontroldmturb2im 00 wftout 100000
-   aoloopcontroldmturboff AOloopControl_DM.c   turn off DM turbulence                   aoloopcontroldmturboff 0      
-   aoloopcontroldmturws AOloopControl_DM.c   set turbulence wind speed                aoloopcontroldmturws 0 5.2    
-   aoloopcontroldmturampl AOloopControl_DM.c   set turbulence amplitude                 aoloopcontroldmturampl 0 0.1  
-   aoloopcontroldmturlo AOloopControl_DM.c   set turbulence low order coefficient     aoloopcontroldmturlo 0 0.2    
-   aoloopcontroldmturtint AOloopControl_DM.c   set turbulence interval time             aoloopcontroldmturtint 0 200  
+   11        image_filter.c    image filtering
+   12           image_gen.c    creating images (shapes, useful functions and patterns)
+   13      linopt_imtools.c    image linear decomposition and optimization tools
+   14           statistic.c    statistics functions and tools
+   15                 fft.c    FFTW wrapper
+   16                info.c    image information and statistics
+   17       COREMOD_arith.c    image arithmetic operations
+   18      COREMOD_iofits.c    FITS format input/output
+   19      COREMOD_memory.c    memory management for images and variables
+   20       COREMOD_tools.c    image information and statistics
 ./AOloopControl > exit
-Closing PID 24326 (prompt process)
+Closing PID 5291 (prompt process)
 ~~~
 
 
