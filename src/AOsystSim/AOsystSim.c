@@ -1349,6 +1349,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 	long IDphystime;
 
 	int fOK;
+	long knext;
 	
 	
 
@@ -1612,18 +1613,22 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
             IDwf0amp = image_ID(wfimname_amp);
             
 
-        sprintf(wfimname_pha, "wf%08ld_pha", k+1);
-        sprintf(wfimname_amp, "wf%08ld_amp", k+1);
+		knext = k+1;
+		if(k==kmax)
+			knext = 0;
+
+        sprintf(wfimname_pha, "wf%08ld_pha", knext);
+        sprintf(wfimname_amp, "wf%08ld_amp", knext);
         if(image_ID(wfimname_pha)==-1)
         {
-            sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, k+1, (long) (1.0e12*LAMBDA+0.5));
+            sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, knext, (long) (1.0e12*LAMBDA+0.5));
             printf("Loading WF file name : %s\n", wf_fname);
-            sprintf(wfimname_pha, "wf%08ld_pha", k+1);
+            sprintf(wfimname_pha, "wf%08ld_pha", knext);
             IDwf1 = load_fits(wf_fname, wfimname_pha, 1);
 
-            sprintf(wf_fname,"%s/%s%08ld.%09ld.amp.fits", WFDIR, wfin_PREFIX, k+1, (long) (1.0e12*LAMBDA+0.5));
+            sprintf(wf_fname,"%s/%s%08ld.%09ld.amp.fits", WFDIR, wfin_PREFIX, knext, (long) (1.0e12*LAMBDA+0.5));
             printf("Loading WF file name : %s\n", wf_fname);
-            sprintf(wfimname_amp, "wf%08ld_amp", k+1);
+            sprintf(wfimname_amp, "wf%08ld_amp", knext);
             IDwf1amp = load_fits(wf_fname, wfimname_amp, 1);
             if(IDwf1amp==-1)
                 AMPfile = 0;
