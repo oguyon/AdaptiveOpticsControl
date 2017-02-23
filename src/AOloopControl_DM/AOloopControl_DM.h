@@ -1,5 +1,5 @@
-#ifndef _AOSYSTSIM_H
-#define _AOSYSTSIM_H
+#ifndef _AOLOOPCONTROL_DM_H
+#define _AOLOOPCONTROL_DM_H
 
 
 
