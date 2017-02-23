@@ -66,13 +66,17 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 
 ## Setting up the work directory
 
+Conventions:
+
+- `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
+- `<workdir>` is the working directory where the program and scripts will be executed
 
 The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:
 
-	mkdir /<workdirectory>
-	cd scripts
-	./syncscripts -e /<workdirectory>
-	cd /<workdirectory>
+	mkdir /<workdir>
+	cd <srcdir>/src/AOloopControl/scripts
+	./syncscripts -e /<workdir>
+	cd /<workdir>
 
 Symbolic links to the source scripts and executable are now installed in the work directory :
 
@@ -397,6 +401,8 @@ You can launch the simulator quickly with the following steps:
 - Create a series of atmospheric wavefronts:
 	
 	./aohardsim/aosimmkwf
+
+	Stop the process when a few files have been created. The WF will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs.
 
 	Alternatively, you can create a symbolic link `atmwf` to atmospheric wavefront simulation directory. For example:
 

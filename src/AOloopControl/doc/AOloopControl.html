@@ -156,11 +156,16 @@ make install</code></pre>
 </div>
 <div id="setting-up-the-work-directory" class="section level2">
 <h2><span class="header-section-number">1.4</span> Setting up the work directory</h2>
+<p>Conventions:</p>
+<ul>
+<li><code>&lt;srcdir&gt;</code> is the source code directory, usually <code>.../AdaptiveOpticsControl-&lt;version&gt;</code></li>
+<li><code>&lt;workdir&gt;</code> is the working directory where the program and scripts will be executed</li>
+</ul>
 <p>The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:</p>
-<pre><code>mkdir /&lt;workdirectory&gt;
-cd scripts
-./syncscripts -e /&lt;workdirectory&gt;
-cd /&lt;workdirectory&gt;</code></pre>
+<pre><code>mkdir /&lt;workdir&gt;
+cd &lt;srcdir&gt;/src/AOloopControl/scripts
+./syncscripts -e /&lt;workdir&gt;
+cd /&lt;workdir&gt;</code></pre>
 <p>Symbolic links to the source scripts and executable are now installed in the work directory :</p>
 <pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
 total 28
@@ -633,6 +638,7 @@ Closing PID 24326 (prompt process)</code></pre>
 <ul>
 <li><p>Create a series of atmospheric wavefronts:</p>
 <p>./aohardsim/aosimmkwf</p>
+<p>Stop the process when a few files have been created. The WF will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs.</p>
 <p>Alternatively, you can create a symbolic link <code>atmwf</code> to atmospheric wavefront simulation directory. For example:</p>
 <p><code>ln -s /data/AtmWF/wdir00/ atmwf</code></p></li>
 <li><p>execute master script './runAOhsim'</p></li>

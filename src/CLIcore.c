@@ -1141,7 +1141,7 @@ void main_init()
 
 	gettimeofday(&t1, NULL);
 	srand(t1.tv_usec * t1.tv_sec);
-	printf("RAND: %ld\n", t1.tv_usec * t1.tv_sec);
+//	printf("RAND: %ld\n", t1.tv_usec * t1.tv_sec);
 //  srand(time(NULL));
 
 
@@ -1255,7 +1255,7 @@ void main_init()
 
   init_modules();
 
-  printf("%ld commands loaded\n", data.NBcmd);
+  printf("LOADED: %ld modules, %ld commands\n", data.NBmodule, data.NBcmd);
   
 }
 

@@ -66,13 +66,17 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 
 ## Setting up the work directory
 
+Conventions:
 
-The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts into it by executing from the source directory the 'syncscript -e' command:
+- `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
+- `<workdir>` is the work directory where the program and scripts will be executed
 
-	mkdir /<workdirectory>
-	cd scripts
-	./syncscripts -e /<workdirectory>
-	cd /<workdirectory>
+The work directory is where all scripts and high level commands should be run from. You will first need to create the working directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
+
+	mkdir /<workdir>
+	cd <srcdir>/src/AOloopControl/scripts
+	./syncscripts -e /<workdir>
+	cd /<workdir>
 
 Symbolic links to the source scripts and executable are now installed in the work directory :
 
