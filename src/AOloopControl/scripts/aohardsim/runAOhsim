@@ -166,6 +166,8 @@ fi
 
 
 ln -s $PWD/AOloopControl $PWD/$srcdir/AOloopControl
+ln -s $PWD/atmwf $PWD/$srcdir/atmwf
+
 
 tmuxname="aosimDMcomb"
 echo "Executing aosimDMstart in tmux session $tmuxname"

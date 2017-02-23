@@ -1532,6 +1532,21 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     kmax = 3;
     AMPfile = 1;
 
+
+	// compute kmax
+	fOK = 1;
+	kmax = 0;
+	while(fOK == 1)
+	{
+		sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, kmax, (long) (1.0e12*LAMBDA+0.5));
+		fOK = file_exists(wf_fname);
+		kmax++;
+	}	
+
+	printf("kmax = %ld\n", kmax);
+	exit(0);
+
+
     IDampmask = make_disk("pupmask", ARRAYSIZE, ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*PUPDIAM/pupscale);
     for(ii=0; ii<ARRAYSIZE*ARRAYSIZE; ii++)
         data.image[IDamp0].array.F[ii] = data.image[IDampmask].array.F[ii];
