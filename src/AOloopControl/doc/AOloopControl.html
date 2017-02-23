@@ -611,12 +611,15 @@ Closing PID 5291 (prompt process)</code></pre>
 <ul>
 <li><p>Create a series of atmospheric wavefronts (do this only once, this step can take several hrs):</p>
 <pre><code>./aohardsim/aosimmkwf</code></pre>
-<p>Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file 4:</p>
-<pre><code>Layer  6/ 7, Frame   47/ 100, File      0/100000000  [TIME =     0.0470 s]</code></pre>
+<p>Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file #2:</p>
+<pre><code>Layer  0/ 7, Frame   99/ 100, File      0/100000000  [TIME =     0.0990 s]  WRITING SCIENCE WAVEFRONT ... - 
+Layer  0/ 7, Frame   99/ 100, File      1/100000000  [TIME =     0.1990 s]  WRITING SCIENCE WAVEFRONT ... - 
+Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]  </code></pre>
 <p>Type <code>CTRL-C</code> to stop the process.</p>
-<p>Alternatively, you can create a symbolic link <code>atmwf</code> to an existing atmospheric wavefront simulation directory. For example:</p>
+<p>By default, the wavefront files are stored in the work directory. You may choose to move them to another location (useful if you have multiple work directories sharing the same wavefront files). You can then create a symbolic link <code>atmwf</code> to an existing atmospheric wavefront simulation directory. For example:</p>
 <pre><code>ln -s /data/AtmWF/wdir00/ atmwf</code></pre></li>
-<li><p>execute master script './runAOhsim'</p></li>
+<li><p>Execute master script <code>./aohardsim/runAOhsim</code></p></li>
+<li><p>To stop the physical simulator: <code>./aohardsim/runAOhsim -k</code></p></li>
 </ul>
 </div>
 <div id="processes-and-scripts-main-wf-control-loop" class="section level3">
@@ -855,11 +858,11 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <tbody>
 <tr class="odd">
 <td align="left"><strong>wf0opd</strong></td>
-<td align="left">Wavefront OPD prior to wavefront correction</td>
+<td align="left">Wavefront OPD prior to wavefront correction [um]</td>
 </tr>
 <tr class="even">
 <td align="left"><strong>wf1opd</strong></td>
-<td align="left">Wavefront OPD after correction (=wf0opd-2xdm05dispmap)</td>
+<td align="left">Wavefront OPD after correction ( = wf0opd - 2 x dm05dispmap )</td>
 </tr>
 <tr class="odd">
 <td align="left"><strong>dm05disp</strong></td>

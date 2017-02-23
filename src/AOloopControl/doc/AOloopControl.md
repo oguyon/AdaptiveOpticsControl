@@ -375,18 +375,21 @@ Launch the simulator with the following steps:
 	
 		./aohardsim/aosimmkwf
 
-	Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file 4:
+	Stop the process when a few wavefront files have been created (approximately 10 minimum). The AO code will loop through the list of files created, so a long list is preferable to reduce the frequency at which the end-of-sequence discontinuity occurs. The current wavefront file index is displayed as the process runs; in this example, the process is working on file #2:
 	
-		Layer  6/ 7, Frame   47/ 100, File      0/100000000  [TIME =     0.0470 s]
+		Layer  0/ 7, Frame   99/ 100, File      0/100000000  [TIME =     0.0990 s]  WRITING SCIENCE WAVEFRONT ... - 
+		Layer  0/ 7, Frame   99/ 100, File      1/100000000  [TIME =     0.1990 s]  WRITING SCIENCE WAVEFRONT ... - 
+		Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]  
 
 	Type `CTRL-C` to stop the process.
 	
-	
-	Alternatively, you can create a symbolic link `atmwf` to an existing atmospheric wavefront simulation directory. For example:
+	By default, the wavefront files are stored in the work directory. You may choose to move them to another location (useful if you have multiple work directories sharing the same wavefront files). You can then create a symbolic link `atmwf` to an existing atmospheric wavefront simulation directory. For example:
 
 		ln -s /data/AtmWF/wdir00/ atmwf
 
-- execute master script './runAOhsim'
+- Execute master script `./aohardsim/runAOhsim`
+
+- To stop the physical simulator: `./aohardsim/runAOhsim -k`
 
 
 
@@ -440,9 +443,9 @@ The ``aolconf`` script is used to configure and launch the AO control loop. It c
 ------------------------------ -----------------------------------------------------------
 Script                         Description
 ------------------------------ -----------------------------------------------------------
-**wf0opd**                     Wavefront OPD prior to wavefront correction 
+**wf0opd**                     Wavefront OPD prior to wavefront correction [um]
 
-**wf1opd**                     Wavefront OPD after correction (=wf0opd-2xdm05dispmap)
+**wf1opd**                     Wavefront OPD after correction [um] ( = wf0opd - 2 x dm05dispmap )
 
 **dm05disp**                   DM actuators positions
 
