@@ -1544,7 +1544,8 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 		fOK = file_exists(wf_fname);
 		kmax++;
 	}	
-
+	kmax -= 2;
+	
 	printf("kmax = %ld\n", kmax);
 	exit(0);
 
