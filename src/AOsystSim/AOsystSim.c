@@ -1547,7 +1547,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 	kmax -= 2;
 	
 	printf("kmax = %ld\n", kmax);
-	exit(0);
+	//exit(0);
 
 
     IDampmask = make_disk("pupmask", ARRAYSIZE, ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*PUPDIAM/pupscale);
