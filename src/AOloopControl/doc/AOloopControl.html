@@ -67,8 +67,8 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview"><span class="toc-section-number">2.1</span> Overview</a></li>
 <li><a href="#method-1-provide-an-external-simulation-that-adheres-to-aoloopcontrol-inputoutput-conventions"><span class="toc-section-number">2.2</span> METHOD 1: Provide an external simulation that adheres to AOloopControl input/output conventions</a></li>
 <li><a href="#method-2-physical-hardware-simulation"><span class="toc-section-number">2.3</span> METHOD 2: Physical hardware simulation</a><ul>
-<li><a href="#quick-start"><span class="toc-section-number">2.3.1</span> Quick start</a></li>
-<li><a href="#processes-and-scripts-main-wf-control-loop"><span class="toc-section-number">2.3.2</span> Processes and scripts: main WF control loop</a></li>
+<li><a href="#running-method-2"><span class="toc-section-number">2.3.1</span> Running Method 2</a></li>
+<li><a href="#processes-and-scripts-details"><span class="toc-section-number">2.3.2</span> Processes and scripts details</a></li>
 <li><a href="#ao-loop-control"><span class="toc-section-number">2.3.3</span> AO loop control</a></li>
 <li><a href="#processes-and-scripts-system-ouput"><span class="toc-section-number">2.3.4</span> Processes and scripts: system ouput</a></li>
 </ul></li>
@@ -605,8 +605,8 @@ Closing PID 5291 (prompt process)</code></pre>
 <div id="method-2-physical-hardware-simulation" class="section level2">
 <h2><span class="header-section-number">2.3</span> METHOD 2: Physical hardware simulation</h2>
 <p>The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.</p>
-<div id="quick-start" class="section level3">
-<h3><span class="header-section-number">2.3.1</span> Quick start</h3>
+<div id="running-method-2" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Running Method 2</h3>
 <p>Launch the simulator with the following steps:</p>
 <ul>
 <li><p>Create a series of atmospheric wavefronts (do this only once, this step can take several hrs):</p>
@@ -621,9 +621,14 @@ Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]  </co
 <li><p>Execute master script <code>./aohardsim/runAOhsim</code></p></li>
 <li><p>To stop the physical simulator: <code>./aohardsim/runAOhsim -k</code></p></li>
 </ul>
+<p>Important notes:</p>
+<ul>
+<li><p>Parameters for the simulation can be changed by editing the <code>.conf</code> files in the <code>aohardsim</code> directory</p></li>
+<li><p>You may need to kill and relaunch the main script twice after changing parameters</p></li>
+</ul>
 </div>
-<div id="processes-and-scripts-main-wf-control-loop" class="section level3">
-<h3><span class="header-section-number">2.3.2</span> Processes and scripts: main WF control loop</h3>
+<div id="processes-and-scripts-details" class="section level3">
+<h3><span class="header-section-number">2.3.2</span> Processes and scripts details</h3>
 <div id="process-aosimmkwf" class="section level4">
 <h4><span class="header-section-number">2.3.2.1</span> Process <code>aosimmkWF</code></h4>
 <p><code>aosimmkWF</code> reads precomputed wavefronts and formats them for the simulation parameters (pixel scale, temporal sampling).</p>
@@ -696,14 +701,14 @@ OUT0STREAMNAMEAMP    wf0amp            # output WF stream name (AMP)
 # ============== PROCESS TRIGGER ==================================
 TRIGGERMODE           2                # 0: file, 1: semaphore from stream, 2: time interval
 TRIGGERFILE           wfup.txt         # update file name (TRIGGERMODE=0,1
-TRIGGERDT             0.05             # update interval (TRIGGERMODE=0,2)
+TRIGGERDT             0.01             # update interval (TRIGGERMODE=0,2)
 TRIGGER0STREAM        WFSinst          # trigger stream
 TRIGGER0SEM           5                # trigger semaphore in TRIGGERSTREAM
 TRIGGER1STREAM        dm05dispmap      # trigger stream
 TRIGGER1SEM           5                # trigger semaphore in TRIGGERSTREAM
 
 # ============== PARAMETERS ======================================
-DT                    0.001            # time interval between computed wavefronts
+DT                    0.0000625        # time interval between computed wavefronts
 OPDMFACT              1.0              # OPD multiplicative factor
 AMPMFACT              1.0              # AMP multiplicative factor
 ARRAYSIZE             128              # output size [pix]
@@ -830,8 +835,8 @@ OUTTRIGGERFILE           outpyr.txt        # output trigger file
 # ============== FREQUENCY, GEOMETRY =============================
 ARRAYSIZE                256               # array size for computations
 PYRMODMODE               1                 # 0: no modulation, 1: modulation
-PYRMODAMP                0.0               # Modulation radius [l/D]
-PYRMODNBPT               1                 # number of pyramid modulation points
+PYRMODAMP                4.0               # Modulation radius [l/D]
+PYRMODNBPT               8                 # number of pyramid modulation points
 PYRAPERTURE              50.0              # spatial filter aperture [l/D]
 PUPPIXDIAM               100.0             # pupil diameter [pix] - used to compute l/D scale
 PYRPUPSEP                1.2               # separation between pupil imagees (relative to pup diam)
@@ -1008,7 +1013,7 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <h2><span class="header-section-number">2.4</span> METHOD 3: Linear Hardware Simulation</h2>
 <div id="overview-1" class="section level3">
 <h3><span class="header-section-number">2.4.1</span> Overview</h3>
-<p>The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS).</p>
+<p>The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS) but does not capture non-linear effects.</p>
 </div>
 </div>
 </div>

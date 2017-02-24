@@ -125,7 +125,7 @@ pname0=$0
 pname="aol${loopnb}zrespM"
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolnb $loopnb
 loadfits "./conf/RMpokeCube.fits" RMpokeC
 loadfits "./conf/RMHmat.fits" Hmat
@@ -135,11 +135,8 @@ loadfits wfsref00.fits wfsref00
 aolproczrm zrespmat0 wfsref00 zrespmat wfsmap dmmap
 
 savefits zrespmat "!zrespM.fits"
-savefits wfsref00 "!wfsref00.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
-#savefits wfsmask "!wfsmask.fits"
-#savefits dmmask "!dmmaskRM.fits"
 listim
 exit
 EOF

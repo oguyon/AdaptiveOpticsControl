@@ -109,12 +109,12 @@ fi
 
 
 # ======================= FILE NAMES ===========================================
-AOloopAlign_file="aocustomscripts/AOloopAlign_${LOOPNAME}.bash" 
-takedark_file="aocustomscripts/takedark_${LOOPNAME}"
+aoAlign_file="aocscripts/aoAlign_${LOOPNAME}.bash" 
+takedark_file="aocscripts/takedark_${LOOPNAME}"
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
-checkFile $AOloopAlign_file
+checkFile $aoAlign_file
 checkFile $takedark_file
 
 
@@ -138,11 +138,11 @@ echo $LOOPNAME > LOOPNAME
 echo $LOOPNUMBER > LOOPNUMBER
 
 
-rm aocustomscripts/AOloopAlign.bash &> /dev/null
-ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash 
+rm aocscripts/aoAlign.bash &> /dev/null
+ln -s $PWD/$aoAlign_file aocscripts/aoAlign.bash 
 
-rm aocustomscripts/takedark &> /dev/null
-ln -s $PWD/$takedark_file aocustomscripts/takedark 
+rm aocscripts/takedark &> /dev/null
+ln -s $PWD/$takedark_file aocscripts/takedark 
 
 
 

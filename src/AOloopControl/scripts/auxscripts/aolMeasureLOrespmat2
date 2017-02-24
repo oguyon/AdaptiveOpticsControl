@@ -149,6 +149,6 @@ savefits LOwfsref "!LOwfsref0.fits"
 listim
 exit
 EOF
-mv respM_LOmodes.fits LODMmodes.fits
+cp respM_LOmodes.fits LODMmodes.fits
 
 

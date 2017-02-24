@@ -165,11 +165,9 @@ fi
 stageddir="conf_zrm_staged"
 
 
-Cfits << EOF
+./AOloopControl << EOF
 aolnb $loopnb
-loadfits "./${stageddir}/zrespmat.fits" zrespm
-#loadfits "./${stageddir}/wfsmap.fits" wfsmap
-#loadfits "./${stageddir}/dmmap.fits" dmmap
+loadfits "./${stageddir}/zrespM.fits" zrespm
 aolRMmkmasks zrespm wfsmap dmmap ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1} ${WFSmaskRMp0} ${WFSmaskRMc0} ${WFSmaskRMp1} ${WFSmaskRMc1}
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmaskRM.fits"
@@ -182,7 +180,7 @@ EOF
 exit
 
 if [ -f "./zrespmtmp/wfsimRMS.fits" ]; then
-Cfits << EOF
+./AOloopControl << EOF
 loadfits wfsmask.fits wfsmask0
 imref=0*wfsmask0+1
 loadfits "./zrespmtmp/wfsimRMS.fits" wfsimrms

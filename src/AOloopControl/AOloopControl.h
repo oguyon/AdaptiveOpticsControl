@@ -292,7 +292,7 @@ static void *compute_function_imtotal( void *ptr );
 
 static void *compute_function_dark_subtract( void *ptr );
 
-
+long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
 
 
 

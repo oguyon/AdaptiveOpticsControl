@@ -37,37 +37,76 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s $tmuxname
 
-# ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref00.fits
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+# ACQUIRE HIGH ORDER WFS RESPONSE: 
+#
+# OUTPUT: 
+# 	zrespmat0.fits
+#	wfsref00.fits
+#
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
+tmux send-keys -t $tmuxname "./logext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
 
 tmux send-keys -t $tmuxname "date" C-m
 
 
+
+
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
+	echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
+    echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
+tmux send-keys -t $tmuxname "./dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
 
 
 
-# PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref00.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
+# PROCESS HIGH ORDER WFS RESPONSE: 
+#
+# INPUT:
+#    zrespmat0.fits
+#     wfsref00.fits 
+# OUTPUT:
+#     ./conf_zrm_staged/zrespM.fits
+#     ./conf_zrm_staged/wfsmap.fits
+#     ./conf_zrm_staged/dmmap.fits
+#
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
+stageddir="conf_zrm_staged"
+mkdir -p $stageddir
+tmux send-keys -t ${tmuxname} "cp zrespM.fits $stageddir" C-m
+tmux send-keys -t ${tmuxname} "cp wfsmap.fits $stageddir" C-m
+tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
 
-# MAKE MASKS : zrespmat.fits, wfsmap.fits, dmmap.fits -> wfsmask.fits, dmmaskRM.fits
+
+# MAKE MASKS  
+# 
+# INPUT:
+#     ./conf_zrm_staged/zrespM.fits
+# OUTPUT:
+#     wfsmask.fits
+#     dmmaskRM.fits
+#
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 
+
 # MAKE SLAVED ACTUATOR MAP: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
+# 
+# INPUT:
+#	dmmaskRM.fits
+# OUTPUT:
+#	dmslaved.fits
+#	dmmask.fits
+#
 tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
 # UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask -> wfsref0
-tmux send-keys -t ${tmuxname} "AOloopControl" C-m
+tmux send-keys -t ${tmuxname} "$execname" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
 tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
@@ -88,25 +127,35 @@ done
 
 
 
-# MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits -> respM_LOmodes.fits
+# MAKE LOW ORDER MODES 
+#
+# INPUT:
+#	dmslaved.fits
+#	dmmask.fits
+#
+# OUTPUT:
+#	respM_LOmodes.fits
+#
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
-# ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
+# ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
+
+
+tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 # COPY TO ARCHIVE
@@ -1362,7 +1411,7 @@ exec 3>&1;
 loopfrequ=$(dialog --inputbox "Loop Frequency [Hz]" 0 0 "$loopfrequ" 2>&1 1>&3);
 exec 3>&-;
 echo "$loopfrequ" > ./conf/conf_loopfrequ.txt
-AOloopControl << EOF
+$execname << EOF
 aolsetloopfrequ 1000
 exit
 EOF
@@ -1378,7 +1427,7 @@ echo "$hardwlatency $loopfrequ" > tmpfile.txt
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
 echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
-AOloopControl << EOF
+$execname << EOF
 aolsethlat ${hardwlatency_frame}
 exit
 EOF
@@ -1394,7 +1443,7 @@ echo "$complatency $loopfrequ" > tmpfile.txt
 complatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
 echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
-AOloopControl << EOF
+$execname << EOF
 aolsetclat ${complatency_frame}
 exit
 EOF
@@ -1410,7 +1459,7 @@ echo "$wfsmextrlatency $loopfrequ" > tmpfile.txt
 wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
 echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
-AOloopControl << EOF
+$execname << EOF
 aolsetwlat ${wfsmextrlatency_frame}
 exit
 EOF
@@ -1667,7 +1716,7 @@ aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-tmux send-keys -t adark "./aocustomscripts/takedark_${LOOPNAME} 10000" C-m
+tmux send-keys -t adark "./aocscripts/takedark_${LOOPNAME} 10000" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
@@ -2107,7 +2156,7 @@ nblatm=$(dialog --inputbox "Latency measurement # frames :" 0 0 "$nblatm" 2>&1 1
 exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system hardware latency"
-./auxscripts/MeasureLatency "$nblatm"
+./auxscripts/MeasureLatency "$rmamplum" "$nblatm"
 hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
 loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
 echo "$hardwlatency $loopfrequ" > tmpfile.txt
@@ -2121,7 +2170,7 @@ rm tmpfile.txt
 echo "$hardwlatency1" > ./conf/conf_hardwlatency1.txt
 echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
 
-AOloopControl << EOF
+$execname << EOF
 aolsethlat ${hardwlatency_frame}
 exit
 EOF

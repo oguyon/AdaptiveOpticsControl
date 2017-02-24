@@ -933,6 +933,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         exit(EXIT_FAILURE);
     }
     
+    
+    
+    list_image_ID();
+    
+    
     while(dmdispcombconf[DMindex].ON == 1)
     {
         dmdispcombconf[DMindex].status = 2;
@@ -1060,7 +1065,10 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
             dmdispcombconf[DMindex].status = 7;
 
-            AOloopControl_DM_disp2V(DMindex);
+			
+
+			if(dmdispcombconf[DMindex].voltmode==1)
+				AOloopControl_DM_disp2V(DMindex);
 			
 
             dmdispcombconf[DMindex].status = 8;

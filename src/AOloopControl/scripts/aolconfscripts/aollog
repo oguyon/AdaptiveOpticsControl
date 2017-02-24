@@ -1,0 +1,105 @@
+#!/bin/bash
+logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
+logdir="./logdir/$(date -u +'%Y%m%d')/logging"
+
+
+# number of arguments to script
+NBARGS=2
+
+
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) WRITE TO COMMAND LOG FILE $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo " Suitable for slow ( < 200 Hz ) loggging"
+echo ""
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 <logname> <entry>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <logname>     log name"
+echo "     <entry>       log entry"
+echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "     $1  comments \"this will be logged\""
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       Write to command log file\n" "$0" 
+}
+
+
+
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+
+### End getopts code ###
+
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+mkdir -p $logdir
+printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
+

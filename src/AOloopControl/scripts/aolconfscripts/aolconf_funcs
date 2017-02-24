@@ -47,6 +47,7 @@ line=$1
 
 
 function getshmimsize {
+echo "$execname" > execname.txt
 $execname << EOF
 readshmimsize $1 _size.txt
 quit

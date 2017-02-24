@@ -3,7 +3,7 @@
 
 
 # number of arguments to script
-NBARGS=1
+NBARGS=2
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
@@ -19,12 +19,13 @@ echo "------------------------------------------------------------------------"
 echo "  Measures latency excluding WFS reconstruction time"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <NBiter>"
+echo "     $0 [-h] <ampl> <NBiter>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "     <ampl>       Poke amplitude [um]"
 echo "     <NBiter>     Number of iterations"
 echo ""
 echo ""
@@ -100,10 +101,10 @@ fi
 loopnb=$(cat LOOPNUMBER)
 
 
-Cfits -n aol${loopnb}latency << EOF
+./AOloopControl -n aol${loopnb}latency << EOF
 readshmim aol${loopnb}_wfsim
 readshmim aol${loopnb}_dmC
-aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim 0.02 $1
+aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim $1 $2
 savefits _testwfsc "!./timingstats/test_latencyC.fits"
 exit
 EOF

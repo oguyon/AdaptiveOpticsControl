@@ -391,6 +391,15 @@ int_fast8_t AOloopControl_frameDelay_cli()
 }
 
 
+int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
+{
+	 if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)    {
+        AOloopControl_mkSimpleZpokeM(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+        return 0;    }    else        return 1;
+}
+
+
+
 
 
 /* =============================================================================================== */
@@ -991,32 +1000,55 @@ int_fast8_t init_AOloopControl()
 
 
 /* =============================================================================================== */
+/* =============================================================================================== */
 /*                                                                                                 */
-/*  1. INITIALIZATION                                                                               */
+/* 1. INITIALIZATION                                                                               */
 /*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
     RegisterCLIcommand("aolloadconf",__FILE__, AOloopControl_loadconfigure_cli, "load AO loop configuration", "<loop #>", "AOlooploadconf 1", "int AOloopControl_loadconfigure(long loopnb, 1, 10)");
 
 
+
+
+/* =============================================================================================== */
 /* =============================================================================================== */
 /*                                                                                                 */
-/*  2. LOW LEVEL UTILITIES & TOOLS                                                                  */
+/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
 /*                                                                                                 */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("aolcrossp", __FILE__, AOloopControl_CrossProduct_cli, "compute cross product between two cubes. Apply mask if image xpmask exists", "<cube1> <cube2> <output image>", "aolcrossp imc0 imc1 crosspout", "AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
+/* =============================================================================================== */
+/* 		2.1. LOAD DATA STREAMS                                                                     */
+/* =============================================================================================== */
+
+
+/* =============================================================================================== */
+/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/* =============================================================================================== */
 
     RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
 
 
-
 /* =============================================================================================== */
-/*                                                                                                 */
-/*  3. WFS INPUT                                                                                   */
-/*                                                                                                 */
+/* 		2.3. MISC COMPUTATION ROUTINES                                                             */
 /* =============================================================================================== */
 
+    RegisterCLIcommand("aolcrossp", __FILE__, AOloopControl_CrossProduct_cli, "compute cross product between two cubes. Apply mask if image xpmask exists", "<cube1> <cube2> <output image>", "aolcrossp imc0 imc1 crosspout", "AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
+
+   RegisterCLIcommand("aolmksimplezpM", __FILE__, AOloopControl_mkSimpleZpokeM_cli, "make simple poke sequence", "<dmsizex> <dmsizey> <output image>", "aolmksimplezpM 50 50 pokeM", "long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)");
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. WFS INPUT                                                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
     RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
 
@@ -3017,6 +3049,24 @@ static void *compute_function_dark_subtract( void *ptr )
 }
 
 
+// create simple poke matrix
+long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
+{
+	long IDout;
+	uint_fast16_t dmxysize;
+	uint_fast16_t ii, jj, kk;
+	
+	
+	dmxysize = dmxsize * dmysize;
+	
+	IDout = create_3Dimage_ID(IDout_name, dmxsize, dmysize, dmxysize);
+	
+	for(kk=0;kk<dmxysize; kk++)
+		data.image[IDout].array.F[kk*dmxysize + kk] = 1.0;
+		
+	return(IDout);
+}
+
 
 
 
@@ -3628,7 +3678,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     fflush(stdout);
 	
 
-	imcntmax = (1+delayfr+(NBave+NBexcl)*NBpoke)*NBiter;
+	imcntmax = (4+delayfr+(NBave+NBexcl)*NBpoke)*NBiter + 4;
 	array_iter = (long*) malloc(sizeof(long)*imcntmax);
 	array_poke = (int*) malloc(sizeof(int)*imcntmax);
 	array_accum = (int*) malloc(sizeof(int)*imcntmax);
@@ -3660,7 +3710,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         
         usleep(delayRM1us);    
         data.image[aoconfID_dmRM].md[0].write = 1;
+        printf("A->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
+        fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+        printf("--\n");
+		fflush(stdout);
 		data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3699,7 +3753,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         // POKE            
 						usleep(delayRM1us);    
                         data.image[aoconfID_dmRM].md[0].write = 1;
+                        printf("B->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
+                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+                   		printf("--\n");
+						fflush(stdout);
                         data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3744,7 +3802,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
             
                         usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
+                        printf("C->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
+                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+						printf("--\n");
+						fflush(stdout);
 						data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3765,7 +3827,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
            
         usleep(delayRM1us);
         data.image[aoconfID_dmRM].md[0].write = 1;
+        printf("zero    %6ld / %6ld\n", imcnt, imcntmax);
+		fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        printf("--\n");
+		fflush(stdout);
         data.image[aoconfID_dmRM].md[0].cnt1 = 0;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3775,36 +3841,75 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		iter++;
  
     } // end of iteration loop 
-
+    printf("end of loop\n");
+    fflush(stdout);
+        
     free(arrayf);
+    
+  	printf("free\n");
+    fflush(stdout);
+    
     free(sizearray);
 
-	
+	printf("norm\n");
+    fflush(stdout);
+    
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
 
-
+	printf("write\n");
+    fflush(stdout);
+    
 	// print poke log
 	fp = fopen("RMpokelog.txt", "w");
 	for(imcnt=0;imcnt<imcntmax;imcnt++)
-		fprintf(fp, "%6ld %3ld    %1d %1d     %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_iter[imcnt], array_poke[imcnt], array_accum[imcnt], array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
+		{
+			printf("imcnt = %ld \n", imcnt);
+			fflush(stdout);
+			
+			fprintf(fp, "%6ld %3ld    %1d %1d     %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_iter[imcnt], array_poke[imcnt], array_accum[imcnt], array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
+		}
 	fclose(fp);
 
-
+	printf("free 1\n");
+    fflush(stdout);    
 	free(array_iter);
+	
+	
+	printf("free 2\n");
+    fflush(stdout);
 	free(array_accum);
-	free(array_poke);
-	free(array_kk);
+	
+	printf("free 3\n");
+    fflush(stdout);
+   	free(array_poke);
+	
+	printf("free 4\n");
+    fflush(stdout);
+    free(array_kk);
+	
+	printf("free 5\n");
+    fflush(stdout);    
 	free(array_kk1);
+	
+	printf("free 6\n");
+    fflush(stdout);    
 	free(array_PokeIndex);
+
+	printf("free 7\n");
+    fflush(stdout);    
 	free(array_PokeIndex1);
 
+	printf("free done\n");
+    fflush(stdout);
+    
     return(IDoutC);
 }
 
 
 
+    
 //
 // Measure the WFS linear response to a set of DM patterns 
 //
@@ -3821,6 +3926,9 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	long IDwfsref;
 	
 	
+	
+	
+	
 	IDpokeC = image_ID(IDpokeC_name);
 	dmxsize = data.image[IDpokeC].md[0].size[0];
 	dmysize = data.image[IDpokeC].md[0].size[1];
@@ -3828,6 +3936,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	NBpoke = data.image[IDpokeC].md[0].size[2];
 	
 	NBpoke2 = 2*NBpoke + 4; // add zero frame before and after
+	
 	
 	IDpokeC2 = create_3Dimage_ID("dmpokeC2", dmxsize, dmysize, NBpoke2);
 	
@@ -3850,6 +3959,9 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	save_fits("dmpokeC2", "test_dmpokeC2.fits");
 		
 	AOloopControl_Measure_WFSrespC(loop, delayfr, delayRM1us, NBave, NBexcl, "dmpokeC2", "wfsresp2", normalize, AOinitMode, NBcycle);
+	
+	printf("STEP done\n");
+	fflush(stdout);
 	
 	save_fits("wfsresp2", "!test_wfsresp2.fits");
 	
@@ -13202,7 +13314,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     struct timespec *tarray;
     double tdouble, tlastdouble;
     double tstartdouble;
-    double dtmax = 1.0;
+    double dtmax = 1.0;  // Max running time per iteration
     double dt, dt1;
     double *dtarray;
     double a, b;
@@ -13212,10 +13324,10 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     float x, y;
 
     long IDwfsc;
-    long wfs_NBframesmax = 40;
+    long wfs_NBframesmax = 20;
     long wfsframe;
     long NBwfsframe;
-    long twaitus = 30000; // 30 ms
+    long twaitus = 30000; // initial wait [us]
     double dtoffset0 = 0.002; // 2 ms
     long wfsframeoffset = 10;
 
@@ -13276,6 +13388,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
             data.image[IDdm1].array.F[jj*dmxsize+ii] = OPDamp*(sin(8.0*x)+sin(8.0*y));
         }
 
+	//system("mkdir -p tmp");
 	//save_fits("_testdm0", "!tmp/_testdm0.fits");
 	//save_fits("_testdm1", "!tmp/_testdm1.fits");
 
@@ -13302,7 +13415,13 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     wfscntend = data.image[IDwfs].md[0].cnt0;
 	wfsdt = (tdouble_end - tdouble_start)/(wfscntend-wfscntstart);
 
-
+	printf("wfs dt = %f sec\n", wfsdt);
+	
+	
+	// update times
+	dtmax = wfsdt*wfs_NBframesmax*1.2 + 0.5;
+	twaitus = 1000000.0*wfsdt;
+	dtoffset0 = 1.5*wfsdt;
 
 
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
@@ -13319,9 +13438,9 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 	clock_gettime(CLOCK_REALTIME, &tnow);
 	tdouble_start = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
 	wfscntstart = data.image[IDwfs].md[0].cnt0;
+    wfsframeoffset = (long) (0.3*wfs_NBframesmax);
     
-    
-    list_image_ID();
+
     
     for(iter=0; iter<NBiter; iter++)
     {
@@ -13329,15 +13448,15 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         fflush(stdout);
 
 
-
+		printf("write to %s\n", dmname);
+		fflush(stdout);
         copy_image_ID("_testdm0", dmname, 1);
         dmstate = 0;
 
         // waiting time
-        usleep(twaitus);
-        
-      
-        
+        usleep(twaitus);  	
+        	
+        	
         // and waiting frames
         wfscnt0 = data.image[IDwfs].md[0].cnt0;
         for(wfsframe=0; wfsframe<wfs_NBframesmax; wfsframe++)

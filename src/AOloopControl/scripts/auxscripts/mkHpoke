@@ -100,7 +100,7 @@ echo "DM size = $dmxsize $dmysize"
 
 
 if [ ! -f "./conf/HRM_DMmask.fits" ]; then
-Cfits << EOF
+./AOloopControl << EOF
 #readshmim aol${loopnb}_dmC
 #imstats aol${loopnb}_dmC
 cx=0.5*${dmxsize}-0.5
@@ -114,7 +114,7 @@ EOF
 fi
 
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "./conf/HRM_DMmask.fits" DMmask
 aolmkH DMmask outim
 savefits outim "!Hpoke.fits"

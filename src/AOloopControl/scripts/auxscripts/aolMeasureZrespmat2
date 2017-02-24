@@ -136,13 +136,29 @@ normalize_flag="$5"
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$(cat LOOPNUMBER )
+dmindex=$(cat conf/conf_DMindex.txt)
 
 pname0=$0
 pname="aol${loopnb}zrespM"
 
 
-Cfits -n $pname << EOF
+if [ ! -f ./conf/RMpokeCubeZ.fits ]; then
+dmxsize=$( cat ./conf/conf_dm${dmindex}xsize.txt )
+dmysize=$( cat ./conf/conf_dm${dmindex}ysize.txt )
+./AOloopControl << EOF
+aolmksimplezpM ${dmxsize} ${dmysize} pokeM
+savefits pokeM "./conf/RMpokeCubeZ.fits"
+exit
+EOF
+fi
+
+if [ ! -f ./conf/RMpokeCube.fits ]; then
+cp ./conf/RMpokeCubeZ.fits ./conf/RMpokeCube.fits
+fi
+
+
+./AOloopControl -n $pname << EOF
 aolnb $loopnb
 csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube

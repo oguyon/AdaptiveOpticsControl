@@ -738,7 +738,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
-. ./aocustomscripts/AOloopAlign_${LOOPNAME}.bash
+. ./aocscripts/aoAlign_${LOOPNAME}.bash
 state="menutop"
 fi
 
@@ -747,7 +747,7 @@ fi
 
 if [ $state = "menuhardwarecontrol" ]; then
 stateok=1
-. ./aocustomscripts/AOloopHardwareControl_${LOOPNAME}.bash
+. ./aocscripts/aoHardCtrl_${LOOPNAME}.bash
 state="menutop"
 fi
 

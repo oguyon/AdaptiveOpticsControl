@@ -1041,8 +1041,8 @@ aoconflogext "Set py pickoff = $pypickoff"
 
 	tz)
 aoconflogext "TT align zero"
-./aocustomscripts/SCExAO_analogoutput C -5.0
-./aocustomscripts/SCExAO_analogoutput D -5.0
+./aocscripts/SCExAO_analogoutput C -5.0
+./aocscripts/SCExAO_analogoutput D -5.0
 #analog_output.py voltage C -5.0
 #analog_output.py voltage D -5.0
 menualign_default="tz"
@@ -1051,8 +1051,8 @@ state="menualign"
 
 
 	ttr)
-./aocustomscripts/SCExAO_analogoutput D $TTposXref
-./aocustomscripts/SCExAO_analogoutput C $TTposYref
+./aocscripts/SCExAO_analogoutput D $TTposXref
+./aocscripts/SCExAO_analogoutput C $TTposYref
 menualign_default="ttr"
 state="menualign"
 ;;
@@ -1089,7 +1089,7 @@ state="menualign"
         txm)
 TTposX=$( cat status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX-$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput D $TTposXn
+./aocscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
 menualign_default="txm"
 state="menualign"
@@ -1097,7 +1097,7 @@ state="menualign"
         txp)
 TTposX=$( cat status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX+$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput D $TTposXn
+./aocscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
 menualign_default="txp"
 state="menualign"
@@ -1105,7 +1105,7 @@ state="menualign"
         tym)
 TTposY=$( cat status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY-$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput C $TTposYn
+./aocscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
 menualign_default="tym"
 state="menualign"
@@ -1113,7 +1113,7 @@ state="menualign"
         typ)
 TTposY=$( cat status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY+$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput C $TTposYn
+./aocscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
 menualign_default="typ"
 state="menualign"
@@ -1240,7 +1240,7 @@ rm stop_PyAlignCam.txt
 rm pause_PyAlignCam.txt
 tmux kill-session -t alignPcam
 tmux new-session -d -s alignPcam
-tmux send-keys -t alignPcam "./aocustomscripts/alignPcam_${LOOPNAME}" C-m
+tmux send-keys -t alignPcam "./aocscripts/alignPcam_${LOOPNAME}" C-m
 echo " ON" > ./status/status_alignPcam.txt
 menualign_default="pk"
 state="menualign"

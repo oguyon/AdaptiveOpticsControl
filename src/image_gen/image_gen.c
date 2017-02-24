@@ -137,67 +137,34 @@ int_fast8_t make_line_cli()
     return 1;
 }
 
-int_fast8_t make_lincoordinate_cli()
-{
-  
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
-    {
+int_fast8_t make_lincoordinate_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)    {
 		make_lincoordinate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf);
-       return 0;
-    }
-  else
-    return 1;
-}
+       return 0;    }  else    return 1;}
 
 
-int_fast8_t make_2Dgridpix_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)
-    {
+int_fast8_t make_2Dgridpix_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)    {
       make_2Dgridpix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-
-int_fast8_t make_rnd_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
+int_fast8_t make_rnd_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)    {
 		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, ""); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-
-int_fast8_t make_rndgauss_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
+int_fast8_t make_rndgauss_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)    {
 		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, "gauss"); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-int_fast8_t image_gen_im2coord_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
-    {
+int_fast8_t image_gen_im2coord_cli(){
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)    {
 		image_gen_im2coord(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;}  else    return 1;}
 
 
 //long make_rnd(const char *ID_name, long l1, long l2, const char *options)
