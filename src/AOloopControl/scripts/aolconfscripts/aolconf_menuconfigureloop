@@ -169,6 +169,7 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07\" &"
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07-0\" &" C-m
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
 	tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07a\" &" C-m
