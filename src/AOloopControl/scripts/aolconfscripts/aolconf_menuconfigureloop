@@ -45,7 +45,7 @@ tmux new-session -d -s $tmuxname
 #
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP00\" &" C-m
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "./logext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+#tmux send-keys -t $tmuxname "./logext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
 
 tmux send-keys -t $tmuxname "date" C-m
 
@@ -62,7 +62,7 @@ else
 fi
 
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "./dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+#tmux send-keys -t $tmuxname "./dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
 
 
 
@@ -167,7 +167,7 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 #
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07-\" &" C-m
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+#tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07-0\" &" C-m
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
@@ -184,7 +184,7 @@ fi
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP07c\" &" C-m
 
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+#tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 
 
@@ -214,7 +214,7 @@ done
 
 
 tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
-tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+#tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
 
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP10\" &" C-m
