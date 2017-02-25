@@ -7,7 +7,8 @@
 #include <math.h>
 #include <assert.h>
 
-
+#include <time.h>
+#include <sys/time.h>
 
 
 
@@ -28,8 +29,6 @@ int clock_gettime(int clk_id, struct timespec *t){
     t->tv_nsec = nseconds;
     return 0;
 }
-#else
-#include <time.h>
 #endif
 
 

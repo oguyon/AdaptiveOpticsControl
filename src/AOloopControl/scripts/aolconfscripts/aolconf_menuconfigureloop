@@ -105,7 +105,15 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
-# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask -> wfsref0
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask 
+# 
+# INPUT
+#	wfsref00.fits
+#	wfsmask.fits
+#
+# OUTPUT
+#	wfsref0.fits
+#
 tmux send-keys -t ${tmuxname} "$execname" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
@@ -140,9 +148,15 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
 
-# ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
-
-
+# ACQUIRE LOW ORDER RESPONSE
+#
+# INPUT:
+#	respM_LOmodes.fits
+#
+# OUTPUT:
+#	LOzrespmat0.fits
+#	LOwfsref0.fits
+#
 tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
@@ -158,6 +172,9 @@ fi
 tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
+
+
+
 # COPY TO ARCHIVE
 for imname in $RMMODALCALIBlist
 do
@@ -166,11 +183,6 @@ do
 done
 
 
-
-# =============================================================================================================
-#       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
-#             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
-# =============================================================================================================
 
 
 
@@ -188,6 +200,13 @@ done
 
 tmux send-keys -t ${tmuxname} "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
 tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+
+
+# =============================================================================================================
+#       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
+#             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
+# =============================================================================================================
+
 
 
 }
