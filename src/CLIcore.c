@@ -1154,7 +1154,7 @@ void main_init()
   strcpy(data.cmd[data.NBcmd].info,"exit program (same as quit command)");
   strcpy(data.cmd[data.NBcmd].syntax,"no argument");
   strcpy(data.cmd[data.NBcmd].example,"exit");
-  strcpy(data.cmd[data.NBcmd].Ccall,"exit(0)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"exitCLT");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"quit");
@@ -1163,8 +1163,18 @@ void main_init()
   strcpy(data.cmd[data.NBcmd].info,"quit program (same as exit command)");
   strcpy(data.cmd[data.NBcmd].syntax,"no argument");
   strcpy(data.cmd[data.NBcmd].example,"quit");
-  strcpy(data.cmd[data.NBcmd].Ccall,"exit(0)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"exitCLI");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"exitCLI");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = exitCLI;
+  strcpy(data.cmd[data.NBcmd].info,"quit program (same as exit command)");
+  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+  strcpy(data.cmd[data.NBcmd].example,"quit");
+  strcpy(data.cmd[data.NBcmd].Ccall,"exitCLI");
+  data.NBcmd++;
+
 
 
 
