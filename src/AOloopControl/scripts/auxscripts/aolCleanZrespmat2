@@ -138,7 +138,7 @@ savefits zrespmat "!zrespM.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
 listim
-exit
+exitCLI
 EOF
 
 

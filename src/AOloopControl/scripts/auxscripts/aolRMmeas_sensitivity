@@ -104,12 +104,12 @@ fi
 loopnb=$(cat LOOPNUMBER)
 
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_dmmaskRM
 readshmim aol${loopnb}_wfsref0
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_wfsmask
 aolzrmsens aol${loopnb}_DMmodes aol${loopnb}_dmmaskRM aol${loopnb}_wfsref0 aol${loopnb}_respM aol${loopnb}_wfsmask $1 $2 wfs_sensitivity.txt
-exit
+exitCLI
 EOF

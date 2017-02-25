@@ -150,11 +150,11 @@ else
 nbGPU="0"
 fi
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim aol${loopnb}_modeval_ol
 readshmim ${PFmatname}
 linARApplyRT aol${loopnb}_modeval_ol ${offset} ${semtrig} ${PFmatname} ${PForder} ${outPFmodevalname} ${nbGPU} ${loopnb}
-exit
+exitCLI
 EOF
 
 

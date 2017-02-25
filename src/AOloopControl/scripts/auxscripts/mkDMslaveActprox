@@ -103,21 +103,21 @@ fi
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "$1" DMmaskRM
 aolmkslact DMmaskRM $2 DMslavedact
 savefits DMslavedact "!dmslaved.fits"
-exit
+exitCLI
 EOF
 
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "$1" dmmRM
 loadfits dmslaved.fits dmsl
 imtrunc dmsl 0.0 1.0 dmsl1
 dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
 savefits dmm "!dmmask.fits"
-exit
+exitCLI
 EOF
 
 

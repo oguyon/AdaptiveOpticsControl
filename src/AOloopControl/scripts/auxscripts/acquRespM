@@ -127,11 +127,11 @@ NBmat=10000
 loopnb=$(cat LOOPNUMBER)
 
 
-Cfits -n aolacqresp-$loopnb << EOF
+./AOloopControl -n aolacqresp-$loopnb << EOF
 aolnb $loopnb
 readshmim aol${loopnb}_wfsdark
 aolacqresp $NBave $ampl $NBloops $fdelay $NBmat
-exit
+exitCLI
 EOF
 
 cp ./tmp/respm.fits $2

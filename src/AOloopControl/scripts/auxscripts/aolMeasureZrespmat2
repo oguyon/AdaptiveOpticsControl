@@ -149,7 +149,7 @@ dmysize=$( cat ./conf/conf_dm${dmindex}ysize.txt )
 ./AOloopControl << EOF
 aolmksimplezpM ${dmxsize} ${dmysize} pokeM
 savefits pokeM "./conf/RMpokeCubeZ.fits"
-exit
+exitCLI
 EOF
 fi
 
@@ -167,7 +167,7 @@ listim
 savefits wfsresp "!zrespmat0.fits"
 savefits wfsref "!wfsref00.fits"
 listim
-exit
+exitCLI
 EOF
 
 

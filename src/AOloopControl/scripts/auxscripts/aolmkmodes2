@@ -129,7 +129,7 @@ fifoname="clififo$pid"
 
 
 
-execnamestring="Cfits -s $startupfile -f $fifoname"
+execnamestring="./AOloopControl -s $startupfile -f $fifoname"
 
 if [ "$4" -eq "1" ]; then
 echo "loadfits \"./mkmodestmp/fmodes2ball.fits\" fmodes2ball" >> $startupfile
@@ -162,7 +162,7 @@ cy=0.5*imsize1-0.5
 od=0.42*imsize0
 id=0.13*imsize0
 aolmkmodes fmodes imsize0 imsize1 $1 0.8 cx cy od id 0 $2 $3
-exit
+exitCLI
 EOF
 
 #rm $startupfile

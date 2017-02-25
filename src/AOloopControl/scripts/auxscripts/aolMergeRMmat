@@ -104,7 +104,7 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
-Cfits -n aol${loopnb}-$0 << EOF
+./AOloopControl -n aol${loopnb}-$0 << EOF
 loadfits "$1" m_in0
 loadfits "$2" m_out0
 loadfits "$3" m_in1
@@ -122,6 +122,6 @@ savefits pokeC "!pokeC.fits"
 savefits respC "!respC.fits"
 lincRMiter inC inmask outC RMmat $7
 savefits testout "!testout.fits"
-exit
+exitCLI
 EOF
 

@@ -96,8 +96,8 @@ fi
 loopnb=$(cat LOOPNUMBER)
 pname="aol${loopnb}-$0"
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_dmC
 aveACshmim aol${loopnb}_dmC $1 aol${loopnb}_dmC_ave aol${loopnb}_dmC_AC aol${loopnb}_dmC_rms
-exit
+exitCLI
 EOF

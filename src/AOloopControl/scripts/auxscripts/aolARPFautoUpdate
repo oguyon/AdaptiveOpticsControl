@@ -169,12 +169,12 @@ fi
 printf "NEW 3D predictive kernel :  "
 ls -l $PFkern
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "${PFkern}" PFkern
 readshmim $PFmat
 linARPFMupdate PFkern ${PFmat} ${updatecoeff1}
 savefits ${PFmat} "!./PredictiveControl/PFmat_test.fits"
-exit
+exitCLI
 EOF
 printf "NEW PF matrix           : "
 ls -l ./PredictiveControl/PFmat_test.fits

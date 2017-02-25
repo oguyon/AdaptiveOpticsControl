@@ -106,5 +106,5 @@ readshmim aol${loopnb}_wfsim
 readshmim aol${loopnb}_dmC
 aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim $1 $2
 savefits _testwfsc "!./timingstats/test_latencyC.fits"
-exit
+exitCLI
 EOF

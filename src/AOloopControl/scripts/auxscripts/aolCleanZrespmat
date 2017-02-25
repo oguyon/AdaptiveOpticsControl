@@ -179,7 +179,7 @@ pname0=$0
 pname="aol${loopnb}zrespM"
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolnb $loopnb
 loadfits "./conf/RMpokeCube.fits" RMpokeC
 loadfits "./conf/RMHmat.fits" Hmat
@@ -193,7 +193,7 @@ savefits dmmap "!dmmap.fits"
 #savefits wfsmask "!wfsmask.fits"
 #savefits dmmask "!dmmaskRM.fits"
 listim
-exit
+exitCLI
 EOF
 
 #stageddir="conf_zrm_staged"
@@ -205,13 +205,4 @@ EOF
 
 #./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 
-
-#Cfits << EOF
-#loadfits dmmaskRM.fits dmmRM
-#loadfits dmslaved.fits dmsl
-#imtrunc dmsl 0.0 1.0 dmsl1
-#dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
-#savefits dmm "!dmmask.fits"
-#exit
-#EOF
 

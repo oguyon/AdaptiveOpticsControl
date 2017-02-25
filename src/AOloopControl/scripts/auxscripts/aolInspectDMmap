@@ -140,7 +140,7 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 mkdir -p tmp
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "$1" dmmap
 readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_respM
@@ -158,6 +158,6 @@ dmres1=dmres*aol${loopnb}_dmmaskRM
 savefits dmres1 "!./tmp/dmmap_resModes.fits"
 imlinconstruct aol${loopnb}_respM lcoeffs outimWFS
 savefits outimWFS "!./tmp/dmmap_WFSresp.fits"
-exit
+exitCLI
 EOF
 

@@ -119,7 +119,7 @@ fmultstep="1.1"
 avetime="1.5" 
 tstepus="1000"
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_dmmask
 readshmim aol${loopnb}_dmRM
@@ -129,5 +129,5 @@ readshmim aol${loopnb}_meas_act
 aoltestmresp aol${loopnb}_DMmodes $1 $2 $fmin $fmax $fmultstep $avetime $tstepus aol${loopnb}_dmmask aol${loopnb}_dmRM aol${loopnb}_dmC out
 listim
 
-exit
+exitCLI
 EOF

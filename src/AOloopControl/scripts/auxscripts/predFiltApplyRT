@@ -166,7 +166,7 @@ checkFile /tmp/$2.im.shm
 
 # ============================= CHECK IF COMMAND EXISTS ==========================
 
-checkCommand "Cfits"
+checkCommand "./AOloopControl"
 
 
 
@@ -201,7 +201,7 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 if [ "$MASTEROUTPUT" = "0" ]; then
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim $1
 loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
@@ -209,12 +209,12 @@ readshmim $2
 listim
 linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
-exit
+exitCLI
 EOF
 
 else
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim $1
 loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
@@ -228,7 +228,7 @@ readshmim aol${loopnb}_modevalPF
 listim
 linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
-exit
+exitCLI
 EOF
 
 

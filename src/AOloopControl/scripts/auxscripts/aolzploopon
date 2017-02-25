@@ -103,10 +103,10 @@ loopnb=$(cat LOOPNUMBER)
 
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfsref0
 aolzpwfscloop aol${loopnb}_wfszp $NBWFSZPCHAN aol${loopnb}_wfsref0 aol${loopnb}_wfsref
-exit
+exitCLI
 EOF
 

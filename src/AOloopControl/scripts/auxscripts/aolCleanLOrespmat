@@ -94,7 +94,7 @@ pname0=$0
 pname="aol${loopnb}cLOrespM"
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolnb $loopnb
 loadfits "respM_LOmodes.fits" RMpokeC
 aolcleanzrm LOrespmat wfsref0 wfsmap dmmap $1 $2
@@ -105,5 +105,5 @@ savefits dmmap "!LOdmmap.fits"
 savefits wfsmask "!LOwfsmask.fits"
 savefits dmmask "!LOdmmask.fits"
 listim
-exit
+exitCLI
 EOF

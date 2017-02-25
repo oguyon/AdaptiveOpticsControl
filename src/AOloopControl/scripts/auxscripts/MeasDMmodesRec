@@ -120,7 +120,7 @@ ampl=$1
 tlagus=$2
 nbave=$3
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_dmmaskRM
 readshmim aol${loopnb}_dmRM
@@ -132,5 +132,5 @@ savefits outave "!test_DMmodesRec.fits"
 savefits outrms "!test_DMmodesRec_RMS.fits"
 savefits outmave "!test_DMmodesRec_m.fits"
 savefits outmrms "!test_DMmodesRec_m_RMS.fits"
-exit
+exitCLI
 EOF

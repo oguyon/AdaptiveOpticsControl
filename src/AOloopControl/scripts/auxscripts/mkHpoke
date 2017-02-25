@@ -109,7 +109,7 @@ rad=0.5*${dmxsize}+0.6
 mkdisk dmmask ${dmxsize} ${dmysize} cx cy rad
 savefits dmmask "!./conf/HRM_DMmask.fits"
 itot(dmmask)
-exit
+exitCLI
 EOF
 fi
 
@@ -118,5 +118,5 @@ fi
 loadfits "./conf/HRM_DMmask.fits" DMmask
 aolmkH DMmask outim
 savefits outim "!Hpoke.fits"
-exit
+exitCLI
 EOF

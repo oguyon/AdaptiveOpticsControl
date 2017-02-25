@@ -90,10 +90,10 @@ loopnb=$(cat LOOPNUMBER)
 pname="aol${loopnb}-blockstats"
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolblockstats ${loopnb} aol${loopnb}_blockstats
 listim
-exit
+exitCLI
 EOF
 
 shmim2fits aol${loopnb}_blockstats aol${loopnb}_blockstats.fits

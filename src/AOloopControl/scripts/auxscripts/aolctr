@@ -127,6 +127,6 @@ echo "pname  = $pname"
 sleep 1
 echo " "
 echo " "
-Cfits -n $pname --startup="aol${loopnb}startup.txt" -f ${pname}-fifo
+./AOloopControl -n $pname --startup="aol${loopnb}startup.txt" -f ${pname}-fifo
  
 

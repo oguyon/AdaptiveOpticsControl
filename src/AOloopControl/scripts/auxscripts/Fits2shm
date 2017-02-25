@@ -86,11 +86,11 @@ fi
 
 
 
-Cfits -n pname << EOF
+./AOloopControl -n pname << EOF
 loadfits "$1" im
 readshmim "$2"
 cpsh im "$2"
-exit
+exitCLI
 EOF
 
 

@@ -171,7 +171,7 @@ loadfits "./${stageddir}/zrespM.fits" zrespm
 aolRMmkmasks zrespm wfsmap dmmap ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1} ${WFSmaskRMp0} ${WFSmaskRMc0} ${WFSmaskRMp1} ${WFSmaskRMc1}
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmaskRM.fits"
-exit
+exitCLI
 EOF
 
 
@@ -195,7 +195,7 @@ imr2=imr1/lim
 imtrunc imr2 0.0 1.001 imr3
 imr4=floor(imr3)
 savefits imr4 "!wfsmask_SNRfilt.fits"  
-exit
+exitCLI
 EOF
 cp wfsmask_SNRfilt.fits wfsmask.fits
 fi

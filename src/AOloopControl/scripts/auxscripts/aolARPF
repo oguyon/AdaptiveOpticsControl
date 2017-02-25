@@ -148,11 +148,11 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
-Cfits -n aol${loopnb}scangain << EOF
+./AOloopControl -n aol${loopnb}scangain << EOF
 loadfits "$1" olwfsmeas
 mkARpfilt olwfsmeas $3 $2 0.0001 0.0 outPF 0 1.0
 savefits outPF "!./PredictiveControl/outPF.fits"
-exit
+exitCLI
 EOF
 
 #applyARpfilt outPF olwfsmeas $2 outrec

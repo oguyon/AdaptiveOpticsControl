@@ -86,10 +86,10 @@ loopnb=$(cat LOOPNUMBER)
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim aol${loopnb}_DMmode_LIMIT
 im2coord aol${loopnb}_DMmode_LIMIT 0 imx
 imout=$1+$2*exp(0-(imx/$3)^$4)
 cp imout aol${loopnb}_DMmode_LIMIT
-exit
+exitCLI
 EOF

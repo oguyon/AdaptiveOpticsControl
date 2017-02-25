@@ -161,7 +161,7 @@ loopnb=$(cat LOOPNUMBER)
 
 if [ "$FastMode" -eq "0" ]; then
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_mode_blknb
 loadfits "$1" olwfsmeas
 mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
@@ -177,19 +177,19 @@ imstats res
 imstats olwfsmeasblk
 im2ascii outf outf.$2.fits
 im2ascii outrec outrec.$2.fits
-exit
+exitCLI
 EOF
 
 else
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_mode_blknb
 loadfits "$1" olwfsmeas
 mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
 mkARpfilt olwfsmeasblk $4 $3 0.001 0.0 outPF 0 1.0
 savefits outPF "!./PredictiveControl/outPF.$2.fits"
-exit
+exitCLI
 EOF
 
 fi

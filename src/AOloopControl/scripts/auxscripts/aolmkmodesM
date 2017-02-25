@@ -124,7 +124,7 @@ Cmblock="-1"
 fi
 echo "Cmblock = $Cmblock"
 
-execnamestring="Cfits"
+execnamestring="./AOloopControl"
 
 
 
@@ -135,7 +135,7 @@ aolnb $loopnb
 loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
 loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
 aolmkmodesM zrespM ${NBmblock} ${Cmblock} $2
-exit
+exitCLI
 EOF
 
 cp ./mkmodestmp/fmodesall.fits ./conf/aol${loopnb}_DMmodes_zonal.fits

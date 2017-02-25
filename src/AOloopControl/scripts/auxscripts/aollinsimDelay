@@ -94,9 +94,9 @@ fi
 
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_dmdisp
 streamdelay aol${loopnb}_dmdisp aol${loopnb}_dmdispD $1 50
-exit
+exitCLI
 EOF
 

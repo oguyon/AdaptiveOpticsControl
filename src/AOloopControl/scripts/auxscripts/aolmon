@@ -105,5 +105,5 @@ fi
 SF="aolmonstartup"
 
 echo "aolmon $1 $2" > $SF
-echo "exit" >> $SF
-Cfits -n $pname -f ${pname}fifo -s $SF
+echo "exitCLI" >> $SF
+./AOloopControl -n $pname -f ${pname}fifo -s $SF

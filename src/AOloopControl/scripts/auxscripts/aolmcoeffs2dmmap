@@ -124,7 +124,7 @@ csetname="aol${loopnb}RT"
 
 if [ "$OUTMODE" = "0" ]; then
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove ${csetname}
 readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
@@ -135,12 +135,12 @@ readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
 aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
-exit
+exitCLI
 EOF
 
 else
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove ${csetname}
 readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
@@ -151,7 +151,7 @@ readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
 aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
-exit
+exitCLI
 EOF
 
 

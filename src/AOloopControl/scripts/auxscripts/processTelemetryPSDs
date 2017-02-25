@@ -106,7 +106,7 @@ loopnb=$(cat LOOPNUMBER)
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "./PredictiveControl/modeval_ol.fits" im
 im3Dto2D im
 imswapaxis2D im im1
@@ -116,12 +116,12 @@ imi=ima*ima
 savefits imi "!./PredictiveControl/psd_ol.fits"
 im2ascii imi "./PredictiveControl/psd_ol.txt"
 listim
-exit
+exitCLI
 EOF
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 loadfits "./PredictiveControl/modeval_cl.fits" im
 im3Dto2D im
 imswapaxis2D im im1
@@ -131,6 +131,6 @@ imi=ima*ima
 savefits imi "!./PredictiveControl/psd_cl.fits"
 im2ascii imi "./PredictiveControl/psd_cl.txt"
 listim
-exit
+exitCLI
 EOF
 

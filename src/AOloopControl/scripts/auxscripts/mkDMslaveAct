@@ -110,7 +110,7 @@ fi
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 
 loadfits "$1" dmmap
 dmmapc=dmmap-perc(dmmap,0.2)
@@ -180,6 +180,6 @@ mm11=floor(mm10)
 
 savefits mm11 "!dmslaved.fits"
 
-exit
+exitCLI
 EOF
 

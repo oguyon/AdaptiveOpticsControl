@@ -132,7 +132,7 @@ loopnb=$(cat LOOPNUMBER)
 pname0=$0
 pname="aol${loopnb}LOrespM"
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolnb $loopnb
 csetpmove ${CPUset}
 loadfits respM_LOmodes.fits RMpokeCube
@@ -140,7 +140,7 @@ aolmeaszrm $1 $2 ${delayRM1us} $3 $4 LOrespmat LOwfsref0 wfsmap dmmap 1 $5 ${AOi
 savefits wfsmask "!wfsmask_LO.fits"
 savefits dmmask "!dmmask_LO.fits"
 listim
-exit
+exitCLI
 EOF
 
 

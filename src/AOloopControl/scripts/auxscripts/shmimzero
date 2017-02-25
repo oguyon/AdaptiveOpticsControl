@@ -90,8 +90,8 @@ fi
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmim $1
 imzero $1
-exit
+exitCLI
 EOF

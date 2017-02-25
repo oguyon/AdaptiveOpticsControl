@@ -96,7 +96,7 @@ pname0=$0
 pname=${pname0#"./"}-$loopnb
 
 
-Cfits -n pname << EOF
+./AOloopControl -n pname << EOF
 aolstatusstats $UPDATECONF
-exit
+exitCLI
 EOF

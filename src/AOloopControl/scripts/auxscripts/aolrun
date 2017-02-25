@@ -88,7 +88,7 @@ fi
 
 
 
-execname="Cfits"
+execname="./AOloopControl"
 
 if [ ! -f "LOOPNUMBER" ]; then
 echo ""
@@ -109,6 +109,6 @@ $execname -n $pname << EOF
 csetpmove ${csetname}
 aolnb $loopnb
 aolrun
-exit
+exitCLI
 EOF
 

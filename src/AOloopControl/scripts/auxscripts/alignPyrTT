@@ -95,7 +95,7 @@ echo "readshmim aol${loopnb}_wfs" >> alignTTpyr-startup.txt
 echo "scexaopywfsttalign aol${loopnb}_wfs" >> alignTTpyr-startup.txt
 #echo "exit" >> ${pname}-fifo
 
-Cfits -n $pname --startup="alignTTpyr-startup.txt" -f ${pname}-fifo
+./AOloopControl -n $pname --startup="alignTTpyr-startup.txt" -f ${pname}-fifo
 
 
 

@@ -87,12 +87,12 @@ fi
 loopnb=$(cat LOOPNUMBER)
 GPUindex=$1
 
-Cfits -n aol${loopnb}latency << EOF
+./AOloopControl -n aol${loopnb}latency << EOF
 readshmim aol${loopnb}_wfsim
 readshmim aol${loopnb}_dmdisp
 readshmim aol${loopnb}_zrespM
 readshmim aol${loopnb}_wfsref
 listim
 cudacoeffo2map aol${loopnb}_zrespM aol${loopnb}_dmdisp ${GPUindex} aol${loopnb}_wfsim aol${loopnb}_wfsref
-exit
+exitCLI
 EOF

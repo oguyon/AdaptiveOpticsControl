@@ -85,7 +85,7 @@ pname0=$0
 pname=${pname0#"./"}-$loopnb
 
 
-Cfits -n pname << EOF
+./AOloopControl -n pname << EOF
 readshmim aol${loopnb}_wfs
 readshmim aol${loopnb}_wfsdark
 cp aol${loopnb}_wfsdark wfsdark
@@ -94,7 +94,7 @@ imref=aol${loopnb}_wfsref0
 scexaopywfscamalign aol${loopnb}_wfsim
 imdiff=imwfs-imref
 savefits imdiff "!./tmp/imdiff.fits"
-exit
+exitCLI
 EOF
 
 

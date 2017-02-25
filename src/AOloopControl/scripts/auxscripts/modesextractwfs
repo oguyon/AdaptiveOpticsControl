@@ -107,7 +107,7 @@ loopnb=$(cat LOOPNUMBER)
 
 if [ "$IMPORTmodeval" = "0" ]; then
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -117,7 +117,7 @@ readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 else
@@ -126,7 +126,7 @@ else
 #rm /tmp/aol${loopnb}_modeval.im.shm
 #ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -136,7 +136,7 @@ readshmim aol${loopnb}_modeval
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 fi

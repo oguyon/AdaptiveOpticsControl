@@ -92,9 +92,9 @@ fi
 
 
 
-Cfits << EOF
+./AOloopControl << EOF
 readshmimsize $1 _size.txt
-quit
+exitCLI
 EOF
 
 sizestring=$( cat _size.txt )

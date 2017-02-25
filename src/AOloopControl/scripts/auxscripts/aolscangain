@@ -99,14 +99,14 @@ fi
 loopnb=$(cat LOOPNUMBER)
 GPUindex=$1
 
-Cfits -n aol${loopnb}scangain << EOF
+./AOloopControl -n aol${loopnb}scangain << EOF
 readshmim aol${loopnb}_mode_blknb
 loadfits "$1" olwfsmeas
 mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
 savefits olwfsmeasblk "!olwfsmeasblk.fits"
 mscangain olwfsmeasblk $3 $4
 listim
-exit
+exitCLI
 EOF
 
 cp gainscan.txt gainscan.$2.txt

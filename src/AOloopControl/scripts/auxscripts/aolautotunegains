@@ -96,9 +96,9 @@ fi
 loopnb=$(cat LOOPNUMBER)
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 aolautotunegains $loopnb aol${loopnb}_autogain
-exit
+exitCLI
 EOF
 
 

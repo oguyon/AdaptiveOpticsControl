@@ -106,13 +106,13 @@ while true
 do
 
 echo "$cnt   WFS residual offset to WFS ref"
-Cfits -n $pname << EOF > /dev/null
+./AOloopControl -n $pname << EOF > /dev/null
 readshmim aol${loopnb}_wfsres_ave
 readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfszpo$3
 im=aol${loopnb}_wfszpo$3+$2*aol${loopnb}_wfsres_ave
 cpsh im aol${loopnb}_wfszpo$3	
-exit
+exitCLI
 EOF
 let cnt=cnt+1
 sleep $1

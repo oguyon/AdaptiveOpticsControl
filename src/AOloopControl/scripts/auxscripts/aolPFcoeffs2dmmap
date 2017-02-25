@@ -112,7 +112,7 @@ fi
 
 
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_modevalPF
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 
@@ -121,5 +121,5 @@ im=aol${loopnb}_dmC+0
 cpsh im aol${loopnb}_dmPFout
 
 aolmc2dmfilt aol${loopnb}_modevalPF DMmodes 2 ${OUTCNAME} $1 ${loopnb} 0
-exit
+exitCLI
 EOF
