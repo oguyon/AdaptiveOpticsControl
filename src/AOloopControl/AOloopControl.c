@@ -3127,7 +3127,8 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 				data.image[IDopd].array.F[jj1*xsize1+ii1] = coeff * data.image[IDdisp].array.F[jj0*xsize0+ii0];
 			}
 		
-		COREMOD_MEMORY_image_set_sempost_byID(IDdisp, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDopd, -1);
+		data.image[IDopd].md[0].cnt0++;
 		data.image[IDopd].md[0].write = 0;
 		printf(" Done\n");
 		fflush(stdout);
