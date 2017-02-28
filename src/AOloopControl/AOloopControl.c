@@ -3115,7 +3115,7 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 	{
 		sem_wait(data.image[IDdisp].semptr[semindex]);
 
-		printf("Updating OPD map ...");
+		printf("[%d] Updating OPD map ...", semindex);
 		fflush(stdout);
 		
 		data.image[IDopd].md[0].write = 1;
