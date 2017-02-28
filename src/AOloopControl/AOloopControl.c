@@ -401,7 +401,7 @@ int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
 
 int_fast8_t AOloopControl_dm2opdmaploop_cli()
 {
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)==0)    {
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)    {
         AOloopControl_dm2opdmaploop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
         return 0;    }    else        return 1;
 }
