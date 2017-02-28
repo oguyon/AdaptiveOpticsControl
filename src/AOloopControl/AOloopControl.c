@@ -3123,7 +3123,7 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 			for(jj0=0;jj0<ysize0;jj0++)
 			{
 				ii1 = ii0 + iioffset;
-				jj1 = jj1 + jjoffset;
+				jj1 = jj0 + jjoffset;
 				data.image[IDopd].array.F[jj1*xsize1+ii1] = coeff * data.image[IDdisp].array.F[jj0*xsize0+ii0];
 			}
 		
