@@ -79,8 +79,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#aoloopcontrol-setup"><span class="toc-section-number">3</span> AOloopControl setup</a><ul>
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">3.2</span> Setting up the hardware interfaces</a><ul>
-<li><a href="#manual-setup"><span class="toc-section-number">3.2.1</span> Manual setup</a></li>
-<li><a href="#setup-script"><span class="toc-section-number">3.2.2</span> Setup script</a></li>
+<li><a href="#top-level-script"><span class="toc-section-number">3.2.1</span> Top level script</a></li>
+<li><a href="#manual-setup-dm"><span class="toc-section-number">3.2.2</span> Manual setup: DM</a></li>
+<li><a href="#setup-script"><span class="toc-section-number">3.2.3</span> Setup script</a></li>
 </ul></li>
 <li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">3.3</span> Acquiring a zonal response matrix</a></li>
 <li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">3.4</span> Acquiring a modal response matrix (optional)</a></li>
@@ -1029,13 +1030,22 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </div>
 <div id="setting-up-the-hardware-interfaces" class="section level2">
 <h2><span class="header-section-number">3.2</span> Setting up the hardware interfaces</h2>
-<div id="manual-setup" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Manual setup</h3>
-<ul>
-<li>start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</li>
-</ul>
+<div id="top-level-script" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Top level script</h3>
+<p>Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</p>
 <pre><code>aolconf -L 3 -N testsim</code></pre>
 <p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
+</div>
+<div id="manual-setup-dm" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Manual setup: DM</h3>
+<p>There are three options for setting up the DM:</p>
+<ul>
+<li><p>Connect to an existing DM</p></li>
+<li><p>Create a zonal DM</p></li>
+<li><p>Create a modal DM, mapped to an existing zonal DM using another loop's control modes</p></li>
+</ul>
+<div id="connect-to-an-existing-dm" class="section level4">
+<h4><span class="header-section-number">3.2.2.1</span> Connect to an existing DM</h4>
 <ul>
 <li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
 <li><strong>autoconfigure DM streams</strong> There are two possible setup configurations:
@@ -1060,8 +1070,9 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <li><p><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</p></li>
 </ul>
 </div>
+</div>
 <div id="setup-script" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> Setup script</h3>
+<h3><span class="header-section-number">3.2.3</span> Setup script</h3>
 <p>An <code>aosetup</code> script may be used to perform all these operations. Inspect the content of directory <code>aosetup</code> to see such scripts. You may use or modify as needed. If you use a <code>aosetup</code> script, execute it from the working directory, and then start aolconf:</p>
 <pre><code>./aosetup/aosetup_&lt;myLoop&gt;
 ./aolconf</code></pre>
@@ -1630,7 +1641,7 @@ loopnb=$(cat LOOPNUMBER)
 
 if [ &quot;$IMPORTmodeval&quot; = &quot;0&quot; ]; then
 
-Cfits -n $pname &lt;&lt; EOF
+./AOloopControl -n $pname &lt;&lt; EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -1640,7 +1651,7 @@ readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 else
@@ -1649,7 +1660,7 @@ else
 #rm /tmp/aol${loopnb}_modeval.im.shm
 #ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 
-Cfits -n $pname &lt;&lt; EOF
+./AOloopControl -n $pname &lt;&lt; EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -1659,7 +1670,7 @@ readshmim aol${loopnb}_modeval
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 fi</code></pre></td></tr></table></div>
@@ -1881,10 +1892,10 @@ fi
 loopnb=$(cat LOOPNUMBER)
 pname=&quot;aol${loopnb}-$0&quot;
 
-Cfits -n $pname &lt;&lt; EOF
+./AOloopControl -n $pname &lt;&lt; EOF
 readshmim aol${loopnb}_dmC
 aveACshmim aol${loopnb}_dmC $1 aol${loopnb}_dmC_ave aol${loopnb}_dmC_AC aol${loopnb}_dmC_rms
-exit
+exitCLI
 EOF</code></pre></td></tr></table></div>
 </div>
 <div id="compute-and-average-wfsres" class="section level3">
@@ -2097,12 +2108,12 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
-Cfits -n aol${loopnb}latency &lt;&lt; EOF
+./AOloopControl -n aol${loopnb}latency &lt;&lt; EOF
 #readshmim aol${loopnb}_imWFS0
 #readshmim aol${loopnb}_wfsref
 #readshmim aol${loopnb}_imWFS0tot
 aolmkwfsres ${loopnb} $1
-exit
+exitCLI
 EOF</code></pre></td></tr></table></div>
 </div>
 </div>

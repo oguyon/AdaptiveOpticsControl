@@ -701,6 +701,10 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 
 
 
+
+
+
+
 # AOloopControl setup
 
 
@@ -718,9 +722,9 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 ## Setting up the hardware interfaces
 
 
-### Manual setup
+### Top level script
 
-- start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):
+Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):
 
 ~~~~~
 aolconf -L 3 -N testsim
@@ -729,7 +733,19 @@ aolconf -L 3 -N testsim
 The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
 
 
+### Manual setup: DM 
 
+There are three options for setting up the DM:
+
+- Connect to an existing DM
+
+- Create a zonal DM
+
+- Create a modal DM, mapped to an existing zonal DM using another loop's control modes
+
+
+
+#### Connect to an existing DM
 
 - **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
 
@@ -1070,7 +1086,7 @@ loopnb=$(cat LOOPNUMBER)
 
 if [ "$IMPORTmodeval" = "0" ]; then
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -1080,7 +1096,7 @@ readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 else
@@ -1089,7 +1105,7 @@ else
 #rm /tmp/aol${loopnb}_modeval.im.shm
 #ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
@@ -1099,7 +1115,7 @@ readshmim aol${loopnb}_modeval
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
 
-exit
+exitCLI
 EOF
 
 fi
@@ -1231,10 +1247,10 @@ fi
 loopnb=$(cat LOOPNUMBER)
 pname="aol${loopnb}-$0"
 
-Cfits -n $pname << EOF
+./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_dmC
 aveACshmim aol${loopnb}_dmC $1 aol${loopnb}_dmC_ave aol${loopnb}_dmC_AC aol${loopnb}_dmC_rms
-exit
+exitCLI
 EOF
 ~~~
 
@@ -1345,12 +1361,12 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
-Cfits -n aol${loopnb}latency << EOF
+./AOloopControl -n aol${loopnb}latency << EOF
 #readshmim aol${loopnb}_imWFS0
 #readshmim aol${loopnb}_wfsref
 #readshmim aol${loopnb}_imWFS0tot
 aolmkwfsres ${loopnb} $1
-exit
+exitCLI
 EOF
 ~~~
 

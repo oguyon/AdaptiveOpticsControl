@@ -195,7 +195,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<span class="ot">execnamestring=</span><span class="st">&quot;Cfits -s </span><span class="ot">$startupfile</span><span class="st"> -f </span><span class="ot">$fifoname</span><span class="st">&quot;</span>
+<span class="ot">execnamestring=</span><span class="st">&quot;./AOloopControl -s </span><span class="ot">$startupfile</span><span class="st"> -f </span><span class="ot">$fifoname</span><span class="st">&quot;</span>
 
 <span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$4</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
 <span class="kw">echo</span> <span class="st">&quot;loadfits </span><span class="dt">\&quot;</span><span class="st">./mkmodestmp/fmodes2ball.fits</span><span class="dt">\&quot;</span><span class="st"> fmodes2ball&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span>
@@ -223,7 +223,7 @@ loadfits &quot;./conf/extra<span class="kw">blockM.fits</span><span class="st">&
 <span class="st">od=0.42*imsize0</span>
 <span class="st">id=0.13*imsize0</span>
 <span class="st">aolmkmodes fmodes imsize0 imsize1 </span><span class="ot">$1</span><span class="st"> 0.8 cx cy od id 0 </span><span class="ot">$2</span><span class="st"> </span><span class="ot">$3</span>
-<span class="st">exit</span>
+<span class="st">exitCLI</span>
 <span class="st">EOF</span>
 
 <span class="st">#rm </span><span class="ot">$startupfile</span>

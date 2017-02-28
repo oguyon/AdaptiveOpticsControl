@@ -294,7 +294,7 @@ static void *compute_function_dark_subtract( void *ptr );
 
 long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
 
-
+long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex);
 
 
 /* =============================================================================================== */

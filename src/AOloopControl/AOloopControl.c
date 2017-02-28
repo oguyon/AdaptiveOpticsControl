@@ -399,6 +399,12 @@ int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
 }
 
 
+int_fast8_t AOloopControl_dm2opdmaploop_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)==0)    {
+        AOloopControl_dm2opdmaploop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;    }    else        return 1;
+}
 
 
 
@@ -1040,6 +1046,7 @@ int_fast8_t init_AOloopControl()
 
    RegisterCLIcommand("aolmksimplezpM", __FILE__, AOloopControl_mkSimpleZpokeM_cli, "make simple poke sequence", "<dmsizex> <dmsizey> <output image>", "aolmksimplezpM 50 50 pokeM", "long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)");
 
+   RegisterCLIcommand("aoldm2opdmaploop", __FILE__, AOloopControl_dm2opdmaploop_cli, "write DM disp stream [um] to OPD map stream [m], loop", "<DMdisp_name> <OPDmap_name> <sem index>", "aoldm2opdmaploop dm06disp opderr 3", "long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex);");
 
 
 /* =============================================================================================== */
@@ -3068,6 +3075,67 @@ long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
 }
 
 
+long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex)
+{
+	long IDdisp;
+	long IDopd;
+	
+	uint_fast16_t xsize0;
+	uint_fast16_t ysize0;
+	uint_fast16_t xsize1;
+	uint_fast16_t ysize1;
+	
+	uint_fast16_t ii0, jj0, ii1, jj1;
+	uint_fast16_t iioffset, jjoffset;
+	
+	int semval;
+	uint_fast16_t i;
+	
+	float coeff = 1.0e-6;
+	
+	
+	IDdisp = image_ID(DMdisp_name);
+	xsize0 = data.image[IDdisp].md[0].size[0];
+	ysize0 = data.image[IDdisp].md[0].size[1];
+	
+	IDopd = image_ID(OPDmap_name);
+	xsize1 = data.image[IDopd].md[0].size[0];
+	ysize1 = data.image[IDopd].md[0].size[1];	
+	
+	iioffset = xsize1-xsize0;
+	jjoffset = ysize1-ysize0;
+	
+	// set DMdisp semaphore to 0
+	sem_getvalue(data.image[IDdisp].semptr[semindex], &semval);
+	printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[IDdisp].md[0].name, semval);
+	for(i=0; i<semval; i++)
+		sem_trywait(data.image[IDdisp].semptr[semindex]);
+	
+	while(1)
+	{
+		sem_wait(data.image[IDdisp].semptr[semindex]);
+
+		printf("Updating OPD map ...");
+		fflush(stdout);
+		
+		data.image[IDopd].md[0].write = 1;
+		for(ii0=0;ii0<xsize0;ii0++)
+			for(jj0=0;jj0<ysize0;jj0++)
+			{
+				ii1 = ii0 + iioffset;
+				jj1 = jj1 + jjoffset;
+				data.image[IDopd].array.F[jj1*xsize1+ii1] = coeff * data.image[IDdisp].array.F[jj0*xsize0+ii0];
+			}
+		
+		COREMOD_MEMORY_image_set_sempost_byID(IDdisp, -1);
+		data.image[IDopd].md[0].write = 0;
+		printf(" Done\n");
+		fflush(stdout);
+		
+	}
+	
+	return(IDopd);
+}
 
 
 
