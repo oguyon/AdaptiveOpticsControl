@@ -78,42 +78,51 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#aoloopcontrol-setup"><span class="toc-section-number">3</span> AOloopControl setup</a><ul>
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
-<li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">3.2</span> Setting up the hardware interfaces</a><ul>
-<li><a href="#top-level-script"><span class="toc-section-number">3.2.1</span> Top level script</a></li>
-<li><a href="#manual-setup-dm"><span class="toc-section-number">3.2.2</span> Manual setup: DM</a></li>
-<li><a href="#setup-script"><span class="toc-section-number">3.2.3</span> Setup script</a></li>
 </ul></li>
-<li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">3.3</span> Acquiring a zonal response matrix</a></li>
-<li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">3.4</span> Acquiring a modal response matrix (optional)</a></li>
-<li><a href="#automatic-system-calibration-recommended"><span class="toc-section-number">3.5</span> Automatic system calibration (recommended)</a></li>
-<li><a href="#managing-configurations"><span class="toc-section-number">3.6</span> Managing configurations</a></li>
-<li><a href="#building-control-matrix"><span class="toc-section-number">3.7</span> Building control matrix</a></li>
-<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">3.8</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
-<li><a href="#auxilliary-processes"><span class="toc-section-number">3.9</span> Auxilliary processes</a><ul>
-<li><a href="#extract-wfs-modes"><span class="toc-section-number">3.9.1</span> Extract WFS modes</a></li>
-<li><a href="#extract-open-loop-modes"><span class="toc-section-number">3.9.2</span> Extract open loop modes</a></li>
-<li><a href="#running-average-of-dmc"><span class="toc-section-number">3.9.3</span> Running average of dmC</a></li>
-<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">3.9.4</span> Compute and average wfsres</a></li>
+<li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4</span> Setting up the hardware interfaces</a><ul>
+<li><a href="#top-level-script"><span class="toc-section-number">4.1</span> Top level script</a></li>
+<li><a href="#setting-the-dm-interface"><span class="toc-section-number">4.2</span> Setting the DM interface</a><ul>
+<li><a href="#mode-a-connecting-to-an-existing-dm"><span class="toc-section-number">4.2.1</span> Mode [A]: Connecting to an existing DM</a></li>
+<li><a href="#mode-b-creating-and-connecting-to-a-dm"><span class="toc-section-number">4.2.2</span> Mode [B]: Creating and Connecting to a DM</a></li>
+<li><a href="#mode-c-create-a-new-modal-dm-mapped-to-an-existing-dm-using-another-loops-control-modes"><span class="toc-section-number">4.2.3</span> Mode [C]: Create a new modal DM, mapped to an existing DM using another loop's control modes</a></li>
+<li><a href="#mode-d-create-a-new-modal-dm-mapped-to-an-existing-dm-channel-using-a-custom-set-of-modes"><span class="toc-section-number">4.2.4</span> Mode [D]: Create a new modal DM, mapped to an existing DM channel using a custom set of modes</a></li>
+<li><a href="#option-wfs-zero-point-offset"><span class="toc-section-number">4.2.5</span> Option: WFS Zero point offset</a></li>
+<li><a href="#notes"><span class="toc-section-number">4.2.6</span> Notes</a></li>
 </ul></li>
+<li><a href="#setting-the-camera-interface"><span class="toc-section-number">4.3</span> Setting the camera interface</a></li>
+<li><a href="#setup-script"><span class="toc-section-number">4.4</span> Setup script</a></li>
 </ul></li>
-<li><a href="#offsetting"><span class="toc-section-number">4</span> Offsetting</a><ul>
-<li><a href="#overview-2"><span class="toc-section-number">4.1</span> Overview</a></li>
-<li><a href="#dm-offsets"><span class="toc-section-number">4.2</span> DM offsets</a><ul>
-<li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">4.2.1</span> Zonal CPU-based zero point offset</a></li>
-<li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">4.2.2</span> GPU-based zero point offset</a></li>
+<li><a href="#calibration"><span class="toc-section-number">5</span> Calibration</a><ul>
+<li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">5.1</span> Acquiring a zonal response matrix</a></li>
+<li><a href="#acquiring-a-modal-response-matrix-optional-for-zonal-dm-only"><span class="toc-section-number">5.2</span> Acquiring a modal response matrix (optional, for ZONAL DM only)</a></li>
+<li><a href="#automatic-system-calibration-recommended"><span class="toc-section-number">5.3</span> Automatic system calibration (recommended)</a></li>
+<li><a href="#managing-configurations"><span class="toc-section-number">5.4</span> Managing configurations</a></li>
 </ul></li>
-<li><a href="#wfs-offsets"><span class="toc-section-number">4.3</span> WFS offsets</a></li>
+<li><a href="#building-control-matrix"><span class="toc-section-number">6</span> Building control matrix</a></li>
+<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">7</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
+<li><a href="#auxilliary-processes"><span class="toc-section-number">8</span> Auxilliary processes</a><ul>
+<li><a href="#extract-wfs-modes"><span class="toc-section-number">8.1</span> Extract WFS modes</a></li>
+<li><a href="#extract-open-loop-modes"><span class="toc-section-number">8.2</span> Extract open loop modes</a></li>
+<li><a href="#running-average-of-dmc"><span class="toc-section-number">8.3</span> Running average of dmC</a></li>
+<li><a href="#compute-and-average-wfsres"><span class="toc-section-number">8.4</span> Compute and average wfsres</a></li>
 </ul></li>
-<li><a href="#controlling-offsets-from-another-loop"><span class="toc-section-number">5</span> Controlling offsets from another loop</a><ul>
-<li><a href="#virtual-dm-dm-to-dm-link"><span class="toc-section-number">5.1</span> Virtual DM (dm-to-dm link)</a></li>
-<li><a href="#running-the-loop"><span class="toc-section-number">5.2</span> Running the loop</a></li>
+<li><a href="#offsetting"><span class="toc-section-number">9</span> Offsetting</a><ul>
+<li><a href="#overview-2"><span class="toc-section-number">9.1</span> Overview</a></li>
+<li><a href="#dm-offsets"><span class="toc-section-number">9.2</span> DM offsets</a><ul>
+<li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">9.2.1</span> Zonal CPU-based zero point offset</a></li>
+<li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">9.2.2</span> GPU-based zero point offset</a></li>
 </ul></li>
-<li><a href="#predictive-control-experimental"><span class="toc-section-number">6</span> Predictive control (experimental)</a><ul>
-<li><a href="#overview-3"><span class="toc-section-number">6.1</span> Overview</a></li>
-<li><a href="#scripts"><span class="toc-section-number">6.2</span> Scripts</a></li>
+<li><a href="#wfs-offsets"><span class="toc-section-number">9.3</span> WFS offsets</a></li>
 </ul></li>
-<li><a href="#reference"><span class="toc-section-number">7</span> REFERENCE</a><ul>
-<li><a href="#semaphores"><span class="toc-section-number">7.1</span> Semaphores</a></li>
+<li><a href="#controlling-offsets-from-another-loop"><span class="toc-section-number">10</span> Controlling offsets from another loop</a><ul>
+<li><a href="#running-the-loop"><span class="toc-section-number">10.1</span> Running the loop</a></li>
+</ul></li>
+<li><a href="#predictive-control-experimental"><span class="toc-section-number">11</span> Predictive control (experimental)</a><ul>
+<li><a href="#overview-3"><span class="toc-section-number">11.1</span> Overview</a></li>
+<li><a href="#scripts"><span class="toc-section-number">11.2</span> Scripts</a></li>
+</ul></li>
+<li><a href="#reference"><span class="toc-section-number">12</span> REFERENCE</a><ul>
+<li><a href="#semaphores"><span class="toc-section-number">12.1</span> Semaphores</a></li>
 </ul></li>
 </ul>
 </div>
@@ -1028,58 +1037,158 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <p class="caption">aolconf GUI screens</p>
 </div>
 </div>
-<div id="setting-up-the-hardware-interfaces" class="section level2">
-<h2><span class="header-section-number">3.2</span> Setting up the hardware interfaces</h2>
-<div id="top-level-script" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Top level script</h3>
+</div>
+<div id="setting-up-the-hardware-interfaces" class="section level1">
+<h1><span class="header-section-number">4</span> Setting up the hardware interfaces</h1>
+<div id="top-level-script" class="section level2">
+<h2><span class="header-section-number">4.1</span> Top level script</h2>
 <p>Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</p>
 <pre><code>aolconf -L 3 -N testsim</code></pre>
 <p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
 </div>
-<div id="manual-setup-dm" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> Manual setup: DM</h3>
-<p>There are three options for setting up the DM:</p>
+<div id="setting-the-dm-interface" class="section level2">
+<h2><span class="header-section-number">4.2</span> Setting the DM interface</h2>
+<p>There are four options for setting up the DM:</p>
 <ul>
-<li><p>Connect to an existing DM</p></li>
-<li><p>Create a zonal DM</p></li>
-<li><p>Create a modal DM, mapped to an existing zonal DM using another loop's control modes</p></li>
+<li><p>[A] Connect to an existing DM</p></li>
+<li><p>[B] Create a new DM and connect to it</p></li>
+<li><p>[C] Create a new modal DM, mapped to an existing DM using another loop's control modes</p></li>
+<li><p>[D] Create a new modal DM, mapped to an existing DM channel using a custom set of modes</p></li>
 </ul>
-<div id="connect-to-an-existing-dm" class="section level4">
-<h4><span class="header-section-number">3.2.2.1</span> Connect to an existing DM</h4>
+<p>Before choosing an option, select if the DM to be controlled is <code>MODAL</code> or <code>ZONAL</code>. A zonal DM is one where the DM pixel locations map to physical actuator locations on the DM, allowing spatial filtering when creating control modes. With a zonal DM, each pixel of the DM map corresponds to a wavefront control mode, and spatial filtering functions are turned off.</p>
+<p>Options [C] and [D] are <code>MODAL</code> options, as the DM does not represent physical spatial actuators. These options build a virtual DM which controls another DM.</p>
+<div id="mode-a-connecting-to-an-existing-dm" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Mode [A]: Connecting to an existing DM</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). You should see its x and y size in the two lines below. If not, the DM does not exist yet (see next section).</p></li>
+<li><strong>autoconfigure DM: main DM (nolink)</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
 <ul>
-<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
-<li><strong>autoconfigure DM streams</strong> There are two possible setup configurations:
-<ul>
-<li><strong>set physical DM</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
-<ul>
-<li>dm##disp03 is linked to aol#_dmC (loop dm control channel)</li>
 <li>dm##disp00 is linked to aol#_dmO (flat offset channel)</li>
+<li>dm##disp02 is linked to aol#_dmRM (response matrix actuation channel)</li>
+<li>dm##disp03 is linked to aol#_dmC (loop dm control channel)</li>
 <li>dm##disp04 is linked to aol#_dmZP0 (zero point offset 0 actuation channel)</li>
 <li>dm##disp05 is linked to aol#_dmZP1 (zero point offset 1 actuation channel)</li>
 <li>dm##disp06 is linked to aol#_dmZP2 (zero point offset 2 actuation channel)</li>
 <li>dm##disp07 is linked to aol#_dmZP3 (zero point offset 3 actuation channel)</li>
 <li>dm##disp08 is linked to aol#_dmZP4 (zero point offset 4 actuation channel)</li>
 <li>dm##disp is linked to aol#_dmdisp (total dm displacement channel)</li>
-<li>dm##disp02 is linked to aol#_dmRM (response matrix actuation channel)</li>
 </ul></li>
-<li><strong>set virtual DM</strong>, which is a link to another DM (<code>dmolink</code> in <code>Top Menu</code> screen)</li>
-</ul></li>
-<li><p><strong>OPTIONAL: set DM delay</strong> ('setDMdelayON' and 'setDMdelayval' in <code>Top Menu</code> screen)</p></li>
-<li><p><strong>(Re-)Start DM comb if needed</strong> ('stopDM' and 'initDM' commands in <code>Top Menu</code> screen)</p></li>
 <li><p><strong>load Memory</strong> (<code>M</code> in <code>Top Menu</code> screen). The dm performs the symbolic links to the DM channels.</p></li>
-<li><p><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</p></li>
+</ol>
+</div>
+<div id="mode-b-creating-and-connecting-to-a-dm" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Mode [B]: Creating and Connecting to a DM</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen).</p></li>
+<li><p><strong>Enter the desired DM size</strong> with the <code>dmxs</code> and <code>dmys</code> commands.</p></li>
+</ol>
+<ul>
+<li>OPTIONAL: <strong>set DM delay</strong> ('setDMdelayON' and 'setDMdelayval' in <code>Top Menu</code> screen)</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><p><strong>create the DM streams</strong> with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
+<li><strong>autoconfigure DM: main DM (nolink)</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
+<ul>
+<li>dm##disp00 is linked to aol#_dmO (flat offset channel)</li>
+<li>dm##disp02 is linked to aol#_dmRM (response matrix actuation channel)</li>
+<li>dm##disp03 is linked to aol#_dmC (loop dm control channel)</li>
+<li>dm##disp04 is linked to aol#_dmZP0 (zero point offset 0 actuation channel)</li>
+<li>dm##disp05 is linked to aol#_dmZP1 (zero point offset 1 actuation channel)</li>
+<li>dm##disp06 is linked to aol#_dmZP2 (zero point offset 2 actuation channel)</li>
+<li>dm##disp07 is linked to aol#_dmZP3 (zero point offset 3 actuation channel)</li>
+<li>dm##disp08 is linked to aol#_dmZP4 (zero point offset 4 actuation channel)</li>
+<li>dm##disp is linked to aol#_dmdisp (total dm displacement channel)</li>
+</ul></li>
+<li><p><strong>load Memory</strong> (<code>M</code> in <code>Top Menu</code> screen). The dm performs the symbolic links to the DM channels.</p></li>
+</ol>
+</div>
+<div id="mode-c-create-a-new-modal-dm-mapped-to-an-existing-dm-using-another-loops-control-modes" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> Mode [C]: Create a new modal DM, mapped to an existing DM using another loop's control modes</h3>
+<p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop.</p>
+<ol style="list-style-type: decimal">
+<li><p>Select <strong>MODAL</strong> DM (<code>DMmodeZ</code> in <code>Top Menu</code> screen)</p></li>
+<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). This is the DM index for loopB.</p></li>
+<li><p><strong>set DM x size</strong> to the number of modes of loop A to be addressed by loop B's virtual DM</p></li>
+<li><p><strong>set DM y size</strong> to 1</p></li>
+<li><strong>Auto-configure: DM output linked to other loop</strong> (<code>dmolink</code> in <code>Top Menu</code> screen).
+<ol style="list-style-type: decimal">
+<li>choose loop index from which modes will be extracted (loop A index)</li>
+<li>choose offset channel in output loop This will set up several key parameters and files:</li>
+</ol>
+<ul>
+<li><strong>DM-to-DM</strong> mode will be set to 1, and associated streams:
+<ul>
+<li><strong>dm2dmM</strong> : <strong>loopA</strong> modes controlled by <strong>loopB</strong></li>
+<li><strong>dm2dmO</strong> : symbolic link to <strong>loopA</strong> DM channel controlled by <strong>loopB</strong></li>
+</ul></li>
+<li><strong>CPU-based dmcomb output WFS ref</strong> will be set to 1, and associated streams:
+<ul>
+<li><strong>dmwrefRM</strong> : <strong>loopA</strong> WFS response to modes controlled by <strong>loopB</strong></li>
+<li><strong>dmwrefO</strong> : <strong>loopA</strong> WFS zero point offset</li>
+</ul></li>
+</ul></li>
+</ol>
+<ul>
+<li><strong>OPTIONAL: set DM delay</strong> ('setDMdelayON' and 'setDMdelayval' in <code>Top Menu</code> screen)</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li><p><strong>create the DM streams</strong> with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
+<li><p><strong>load Memory</strong> (<code>M</code> in <code>Top Menu</code> screen). The dm performs the symbolic links to the DM channels.</p></li>
+</ol>
+</div>
+<div id="mode-d-create-a-new-modal-dm-mapped-to-an-existing-dm-channel-using-a-custom-set-of-modes" class="section level3">
+<h3><span class="header-section-number">4.2.4</span> Mode [D]: Create a new modal DM, mapped to an existing DM channel using a custom set of modes</h3>
+<p>In this mode, the AO loop controls a virtual DM. The virtual actuators correspond to modes controlling another DM stream. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual (higher level) loop.</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose DM index number (<code>S</code>) for loop B</p></li>
+<li><p>Select number of loop A modes controlled by loop B. The number is entered as DM x size (<code>dmxs</code> in <code>Top menu</code>)</p></li>
+<li><p>Enter 1 for DM y size (<code>dmys</code> in <code>Top menu</code>)</p></li>
+<li>set <strong>DM-to-DM</strong> mode to 1, and associated streams:
+<ul>
+<li><strong>dm2dmM</strong> : loop A modes controlled by loop B</li>
+<li><strong>dm2dmO</strong> : symbolic link to loop A DM channel controlled by loop B</li>
+</ul></li>
+<li><p>set <strong>CPU-based dmcomb output WFS ref</strong> to 0 (see section below more enabling this option)</p></li>
+<li><p><strong>(Re)-create DM streams and run DMcomb process</strong> (<code>initDM</code>)</p></li>
+</ol>
+<p>Commands to the loop B DM should now propagate to modal commands to loop A.</p>
+</div>
+<div id="option-wfs-zero-point-offset" class="section level3">
+<h3><span class="header-section-number">4.2.5</span> Option: WFS Zero point offset</h3>
+<p>It is possible to add a zero point offset to mode D. Every write to the loop B's modal DM then generate both a write to loop A's DM (described above) and a write to the reference of a wavefront sensor (presumably loop A's wavefront sensor). This optional feature is refered to as a CPU-based WFS zero point offset.</p>
+<p>To enable this feature:</p>
+<ol style="list-style-type: decimal">
+<li>set <strong>CPU-based dmcomb output WFS ref</strong> to 1, and associated streams:
+<ul>
+<li><strong>dmwrefRM</strong> : <strong>loopA</strong> WFS response to modes controlled by <strong>loopB</strong></li>
+<li><strong>dmwrefO</strong> : <strong>loopA</strong> WFS zero point offset</li>
+</ul></li>
+</ol>
+</div>
+<div id="notes" class="section level3">
+<h3><span class="header-section-number">4.2.6</span> Notes</h3>
+<ul>
+<li><strong>(Re-)Start DM comb if needed</strong> ('stopDM' and 'initDM' commands in <code>Top Menu</code> screen)</li>
 </ul>
 </div>
 </div>
-<div id="setup-script" class="section level3">
-<h3><span class="header-section-number">3.2.3</span> Setup script</h3>
+<div id="setting-the-camera-interface" class="section level2">
+<h2><span class="header-section-number">4.3</span> Setting the camera interface</h2>
+<ul>
+<li><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</li>
+</ul>
+</div>
+<div id="setup-script" class="section level2">
+<h2><span class="header-section-number">4.4</span> Setup script</h2>
 <p>An <code>aosetup</code> script may be used to perform all these operations. Inspect the content of directory <code>aosetup</code> to see such scripts. You may use or modify as needed. If you use a <code>aosetup</code> script, execute it from the working directory, and then start aolconf:</p>
 <pre><code>./aosetup/aosetup_&lt;myLoop&gt;
 ./aolconf</code></pre>
 </div>
 </div>
+<div id="calibration" class="section level1">
+<h1><span class="header-section-number">5</span> Calibration</h1>
 <div id="acquiring-a-zonal-response-matrix" class="section level2">
-<h2><span class="header-section-number">3.3</span> Acquiring a zonal response matrix</h2>
+<h2><span class="header-section-number">5.1</span> Acquiring a zonal response matrix</h2>
 <ul>
 <li><p><strong>set response matrix parameters</strong> in <code>Loop Configure</code> screen: amplitude, time delay, frame averaging, excluded frames</p></li>
 <li><p><strong>set normalization and Hadmard modes</strong> in <code>Loop Configure</code> screen. Normalization should probably be set to 1.</p></li>
@@ -1149,8 +1258,8 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <li><p><strong>Load zrespm files into shared memory</strong> (<code>SMloadzrm</code> in <code>Loop Configure</code> screen)</p></li>
 </ul>
 </div>
-<div id="acquiring-a-modal-response-matrix-optional" class="section level2">
-<h2><span class="header-section-number">3.4</span> Acquiring a modal response matrix (optional)</h2>
+<div id="acquiring-a-modal-response-matrix-optional-for-zonal-dm-only" class="section level2">
+<h2><span class="header-section-number">5.2</span> Acquiring a modal response matrix (optional, for ZONAL DM only)</h2>
 <p>In addition to the zonal response matrix, a modal response matrix can be acquired to improve sensitivity to low-oder modes.</p>
 <p>To do so:</p>
 <ul>
@@ -1218,7 +1327,7 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </ul>
 </div>
 <div id="automatic-system-calibration-recommended" class="section level2">
-<h2><span class="header-section-number">3.5</span> Automatic system calibration (recommended)</h2>
+<h2><span class="header-section-number">5.3</span> Automatic system calibration (recommended)</h2>
 <p>The automatic system calibration performs all steps listed above under zonal and modal response matrix acquisition.</p>
 <p>The old calibrations are archived as follows:</p>
 <ul>
@@ -1229,12 +1338,13 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </ul>
 </div>
 <div id="managing-configurations" class="section level2">
-<h2><span class="header-section-number">3.6</span> Managing configurations</h2>
+<h2><span class="header-section-number">5.4</span> Managing configurations</h2>
 <p>At any given time, the current configuration (including control matrices if they have been computed) can be saved using the <code>SAVE CURRENT SYSTEM CALIBRATION</code> command. Saving a configuration will save all files in the conf directory into a user-specified directory.</p>
 <p>Previously saved configurations can be loaded with the <code>LOAD SAVED SYSTEM CALIBRATION</code> command. This will load saved files into the conf directory and load all files into shared memory.</p>
 </div>
-<div id="building-control-matrix" class="section level2">
-<h2><span class="header-section-number">3.7</span> Building control matrix</h2>
+</div>
+<div id="building-control-matrix" class="section level1">
+<h1><span class="header-section-number">6</span> Building control matrix</h1>
 <ul>
 <li><p><strong>set SVDlimit</strong> (<code>SVDla</code> in <code>Control Matrix</code> screen). Set value is 0.1 as a starting point for a stable loop.</p></li>
 <li><p><strong>perform full CM computation</strong> (<code>mkModes0</code> in <code>Control Matrix</code> screen). Enter first the number of CPA blocks you wish to use. Computation takes a few minutes, and takes place in tmux session <code>aol#mkmodes</code>.</p></li>
@@ -1313,8 +1423,8 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <li><strong>Load CM files into shared memory</strong> (<code>SMloadCM</code> in <code>Control Matrix</code> screen)</li>
 </ul>
 </div>
-<div id="running-the-loop-choosing-hardware-mode-cpugpu" class="section level2">
-<h2><span class="header-section-number">3.8</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
+<div id="running-the-loop-choosing-hardware-mode-cpugpu" class="section level1">
+<h1><span class="header-section-number">7</span> Running the loop: Choosing hardware mode (CPU/GPU)</h1>
 <p>There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:</p>
 <ul>
 <li><p><strong>GPU</strong> : 0 if matrix multiplication(s) done on CPU, &gt;0 for GPU use. This is the number GPUs to use for matrix mult.</p></li>
@@ -1384,11 +1494,11 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </tbody>
 </table>
 </div>
-<div id="auxilliary-processes" class="section level2">
-<h2><span class="header-section-number">3.9</span> Auxilliary processes</h2>
+<div id="auxilliary-processes" class="section level1">
+<h1><span class="header-section-number">8</span> Auxilliary processes</h1>
 <p>A number of auxilliary processes can be running in addition to the main loop operation.</p>
-<div id="extract-wfs-modes" class="section level3">
-<h3><span class="header-section-number">3.9.1</span> Extract WFS modes</h3>
+<div id="extract-wfs-modes" class="section level2">
+<h2><span class="header-section-number">8.1</span> Extract WFS modes</h2>
 <p>Launches script <code>./auxscripts/modesextractwfs</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1676,8 +1786,8 @@ EOF
 fi</code></pre></td></tr></table></div>
 <p>Converts WFS residuals into modes.</p>
 </div>
-<div id="extract-open-loop-modes" class="section level3">
-<h3><span class="header-section-number">3.9.2</span> Extract open loop modes</h3>
+<div id="extract-open-loop-modes" class="section level2">
+<h2><span class="header-section-number">8.2</span> Extract open loop modes</h2>
 <p>Launches script C function (CPU-based):</p>
 <pre><code>key       :    aolcompolm
 module    :    AOloopControl.c
@@ -1688,8 +1798,8 @@ C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)</code></pre>
 <p>This function is entirely modal, and assumes that the WFS modes (see section above) are computed. The key input to the function is <code>aolN_modeval</code>, the WFS residual mode values. The function uses this telemetry and knowledge of loop gain and mult factor to track open loop mode values.</p>
 <p>Optionally, it also includes <code>aolN_modeval_pC</code>, the predictive control mode values that are added to the correction in predictive mode.</p>
 </div>
-<div id="running-average-of-dmc" class="section level3">
-<h3><span class="header-section-number">3.9.3</span> Running average of dmC</h3>
+<div id="running-average-of-dmc" class="section level2">
+<h2><span class="header-section-number">8.3</span> Running average of dmC</h2>
 <p>Launches script <code>./auxscripts/aol_dmCave 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1898,8 +2008,8 @@ aveACshmim aol${loopnb}_dmC $1 aol${loopnb}_dmC_ave aol${loopnb}_dmC_AC aol${loo
 exitCLI
 EOF</code></pre></td></tr></table></div>
 </div>
-<div id="compute-and-average-wfsres" class="section level3">
-<h3><span class="header-section-number">3.9.4</span> Compute and average wfsres</h3>
+<div id="compute-and-average-wfsres" class="section level2">
+<h2><span class="header-section-number">8.4</span> Compute and average wfsres</h2>
 <p>Launches script <code>./auxscripts/aolmkWFSres 0.0005</code> :</p>
 <div class="sourceCode"><table class="sourceCode numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -2117,11 +2227,10 @@ exitCLI
 EOF</code></pre></td></tr></table></div>
 </div>
 </div>
-</div>
 <div id="offsetting" class="section level1">
-<h1><span class="header-section-number">4</span> Offsetting</h1>
+<h1><span class="header-section-number">9</span> Offsetting</h1>
 <div id="overview-2" class="section level2">
-<h2><span class="header-section-number">4.1</span> Overview</h2>
+<h2><span class="header-section-number">9.1</span> Overview</h2>
 <p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP7</code>.</p>
 <div class="figure">
 <img src="./figures/aoloopctr_offset.jpg" title="WFS zero point offsetting" alt="WFS zero point offsetting" />
@@ -2129,9 +2238,9 @@ EOF</code></pre></td></tr></table></div>
 </div>
 </div>
 <div id="dm-offsets" class="section level2">
-<h2><span class="header-section-number">4.2</span> DM offsets</h2>
+<h2><span class="header-section-number">9.2</span> DM offsets</h2>
 <div id="zonal-cpu-based-zero-point-offset" class="section level3">
-<h3><span class="header-section-number">4.2.1</span> Zonal CPU-based zero point offset</h3>
+<h3><span class="header-section-number">9.2.1</span> Zonal CPU-based zero point offset</h3>
 <p>CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-11) and apply them to the <code>aolN_wfsref</code> stream. To activate this features, the user needs to :</p>
 <ul>
 <li><strong>Toggle the zero point offset loop process ON</strong> (<code>LPzpo</code>) prior to starting the loop.</li>
@@ -2143,38 +2252,18 @@ EOF</code></pre></td></tr></table></div>
 <p>Every time one of the activated DM channel changes, the corresponding wfs <code>aolN_wfszpo#</code> zero point offset is CPU-computed.</p>
 </div>
 <div id="gpu-based-zero-point-offset" class="section level3">
-<h3><span class="header-section-number">4.2.2</span> GPU-based zero point offset</h3>
+<h3><span class="header-section-number">9.2.2</span> GPU-based zero point offset</h3>
 <p>A faster GPU-based zero point offset from DM to WFS is provided for each of the 8 offset channels. GPU-based and CPU-based offsetting for a single channel are mutually exclusive.</p>
 </div>
 </div>
 <div id="wfs-offsets" class="section level2">
-<h2><span class="header-section-number">4.3</span> WFS offsets</h2>
+<h2><span class="header-section-number">9.3</span> WFS offsets</h2>
 </div>
 </div>
 <div id="controlling-offsets-from-another-loop" class="section level1">
-<h1><span class="header-section-number">5</span> Controlling offsets from another loop</h1>
-<div id="virtual-dm-dm-to-dm-link" class="section level2">
-<h2><span class="header-section-number">5.1</span> Virtual DM (dm-to-dm link)</h2>
-<p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop.</p>
-<ul>
-<li><p>Create a separate working directory for <strong>loopB</strong>, allocate a separate loop number and loop name</p></li>
-<li><p>Choose DM index number (<code>S</code>)</p></li>
-<li><p>Select number of <strong>loopA</strong> modes controlled by <strong>loopB</strong>. The number is entered as DM x size (<code>dmxs</code> in <code>Top menu</code>)</p></li>
-<li><p>Enter 1 for DM y size (<code>dmys</code> in <code>Top menu</code>)</p></li>
-<li><strong>Link loop DM to external loop</strong> (<code>dmolink</code> in <code>Top menu</code>). Select the loop number to link to (<strong>loopA</strong>), and select an offset channel. This will set up several key files:
-<ul>
-<li><strong>dm2dmM</strong> : <strong>loopA</strong> modes controlled by <strong>loopB</strong></li>
-<li><strong>dm2dmO</strong> : symbolic link to <strong>loopA</strong> DM channel controlled by <strong>loopB</strong></li>
-<li><strong>dmwrefRM</strong> : <strong>loopA</strong> WFS response to modes controlled by <strong>loopB</strong></li>
-<li><strong>dmwrefO</strong> : <strong>loopA</strong> WFS zero point offset</li>
-</ul></li>
-<li><p><strong>Choose DM or WFS offset mode</strong>. For WFS offset mode (faster), toggle to 1 (<code>dmwref1</code>). Note that the DMcomb process will perform the offsetting</p></li>
-<li><p><strong>(Re)-create DM streams and run DMcomb process</strong> (<code>initDM</code>)</p></li>
-</ul>
-<p>Commands to the <strong>loopB</strong> DM should now propagate to modal commands to <strong>loopA</strong>..</p>
-</div>
+<h1><span class="header-section-number">10</span> Controlling offsets from another loop</h1>
 <div id="running-the-loop" class="section level2">
-<h2><span class="header-section-number">5.2</span> Running the loop</h2>
+<h2><span class="header-section-number">10.1</span> Running the loop</h2>
 <p>The next steps are similar to the ones previously described, with the following important differences:</p>
 <ul>
 <li>The control matrix should be computed in zonal mode (no modal CPA block decomposition)</li>
@@ -2182,9 +2271,9 @@ EOF</code></pre></td></tr></table></div>
 </div>
 </div>
 <div id="predictive-control-experimental" class="section level1">
-<h1><span class="header-section-number">6</span> Predictive control (experimental)</h1>
+<h1><span class="header-section-number">11</span> Predictive control (experimental)</h1>
 <div id="overview-3" class="section level2">
-<h2><span class="header-section-number">6.1</span> Overview</h2>
+<h2><span class="header-section-number">11.1</span> Overview</h2>
 <p>Predictive control is implemented in two processes:</p>
 <ul>
 <li><p>The optimal auto-regressive (AR) filter predicting the current state from previous states is computed. The AR filter is computed from open-loop estimates, so the processes computing open-loop telemetry need to be running.</p></li>
@@ -2193,7 +2282,7 @@ EOF</code></pre></td></tr></table></div>
 <p>The predictive filter is modal, and adopts the same modes as the main control loop.</p>
 </div>
 <div id="scripts" class="section level2">
-<h2><span class="header-section-number">6.2</span> Scripts</h2>
+<h2><span class="header-section-number">11.2</span> Scripts</h2>
 <table>
 <colgroup>
 <col width="33%" />
@@ -2219,9 +2308,9 @@ EOF</code></pre></td></tr></table></div>
 </div>
 </div>
 <div id="reference" class="section level1">
-<h1><span class="header-section-number">7</span> REFERENCE</h1>
+<h1><span class="header-section-number">12</span> REFERENCE</h1>
 <div id="semaphores" class="section level2">
-<h2><span class="header-section-number">7.1</span> Semaphores</h2>
+<h2><span class="header-section-number">12.1</span> Semaphores</h2>
 <table>
 <colgroup>
 <col width="20%" />

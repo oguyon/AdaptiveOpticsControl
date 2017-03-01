@@ -3102,8 +3102,8 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 	xsize1 = data.image[IDopd].md[0].size[0];
 	ysize1 = data.image[IDopd].md[0].size[1];	
 	
-	iioffset = xsize1-xsize0;
-	jjoffset = ysize1-ysize0;
+	iioffset = xsize1 - xsize0;
+	jjoffset = ysize1 - ysize0;
 	
 	// set DMdisp semaphore to 0
 	sem_getvalue(data.image[IDdisp].semptr[semindex], &semval);
@@ -3115,7 +3115,7 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 	{
 		sem_wait(data.image[IDdisp].semptr[semindex]);
 
-		printf("[%d] Updating OPD map ...", semindex);
+		printf("[%d] Updating OPD map [%ld %ld] ...", semindex, iioffset, jjoffset);
 		fflush(stdout);
 		
 		data.image[IDopd].md[0].write = 1;

@@ -683,30 +683,45 @@ int arith_image_crop(const char *ID_name, const char *ID_out, long *start, long 
 
 
 
+
+
 int arith_image_extract2D(const char *in_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
 {
     long *start = NULL;
     long *end = NULL;
-
-    start = (long*) malloc(sizeof(long)*2);
+	int naxis;
+	long ID;
+	uint_fast8_t k;
+	
+	ID = image_ID(in_name);
+	naxis = data.image[ID].md[0].naxis;
+	
+	
+    start = (long*) malloc(sizeof(long)*naxis);
     if(start==NULL)
     {
         printERROR(__FILE__,__func__,__LINE__,"malloc() error");
         exit(0);
     }
 
-    end = (long*) malloc(sizeof(long)*2);
+    end = (long*) malloc(sizeof(long)*naxis);
     if(end==NULL)
     {
         printERROR(__FILE__,__func__,__LINE__,"malloc() error");
         exit(0);
     }
 
+	for(k=0;k<naxis;k++)
+		{
+			start[k] = 0;
+			end[k] = data.image[ID].md[0].size[k];
+		}
+
     start[0]=xstart;
     start[1]=ystart;
     end[0]=xstart+size_x;
     end[1]=ystart+size_y;
-    arith_image_crop(in_name, out_name, start, end, 2);
+    arith_image_crop(in_name, out_name, start, end, naxis);
 
     free(start);
     free(end);
