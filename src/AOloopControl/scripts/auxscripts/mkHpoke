@@ -98,25 +98,46 @@ dmxsize=$(cat conf/conf_dm${DMindex}xsize.txt)
 dmysize=$(cat conf/conf_dm${DMindex}ysize.txt)
 echo "DM size = $dmxsize $dmysize"
 
+# DM mode
+# ZONAL : physical actuators on spatial coordinates
+# MODAL : each DM actuiator represents a single WF mode
+DMMODEfile="conf/conf_DMMODE.txt"
+if [ -f $DMMODEfile ]; then
+DMMODE=$( cat ${DMMODEfile} )
+else
+DMMODE="ZONAL"
+echo "$DMMODE" > $DMMODEfile
+fi
 
-if [ ! -f "./conf/HRM_DMmask.fits" ]; then
+
+echo "DM mode = $DMMODE"
+
+if [ ! -f "./conf/RM_DMmask.fits" ]; then
+
+if [ "$DMMODE" = "ZONAL" ]; then
 ./AOloopControl << EOF
-#readshmim aol${loopnb}_dmC
-#imstats aol${loopnb}_dmC
 cx=0.5*${dmxsize}-0.5
 cy=0.5*${dmysize}-0.5
 rad=0.5*${dmxsize}+0.6
 mkdisk dmmask ${dmxsize} ${dmysize} cx cy rad
-savefits dmmask "!./conf/HRM_DMmask.fits"
+savefits dmmask "!./conf/RM_DMmask.fits"
 itot(dmmask)
+exitCLI
+EOF
+else
+./AOloopControl << EOF
+creaim im ${dmxsize} ${dmysize}
+dmmask=im+1
+savefits dmmask "!./conf/RM_DMmask.fits"
 exitCLI
 EOF
 fi
 
+fi
 
 ./AOloopControl << EOF
-loadfits "./conf/HRM_DMmask.fits" DMmask
+loadfits "./conf/RM_DMmask.fits" DMmask
 aolmkH DMmask outim
-savefits outim "!Hpoke.fits"
+savefits outim "!./conf/Hpoke.fits"
 exitCLI
 EOF

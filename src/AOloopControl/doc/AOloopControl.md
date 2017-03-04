@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Feb 21, 2017
+% MAr 3, 2017
 
 
 
@@ -597,6 +597,13 @@ aolconf -L 3 -N testsim
 
 The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
 
+You can check the current loop number and name settings with:
+
+~~~~~
+aolconf -h
+~~~~~
+
+
 
 ## Setting the DM interface
 
@@ -726,7 +733,12 @@ To enable this feature, add between steps 4 and 5:
 
 ### Notes
 	
-- **(Re-)Start DM comb if needed** ('stopDM' and 'initDM' commands in `Top Menu` screen)
+You can (Re-)Start DM comb to re-initialize arrays and links ('stopDM' and 'initDM' commands in `Top Menu` screen). The `initDM` command will
+
+- (re-)create shared memory streams dm##disp00 to dm##disp11
+- start the dmcomb process, which adds the dm##disp## channels to create the overall dm##disp displacement
+- create poke mask and maps
+
 
 
 

@@ -367,6 +367,19 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
+/* =============================================================================================== */
+/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/* =============================================================================================== */
+
+
+int_fast8_t AOloopControl_stream3Dto2D_cli() {
+       if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
+        AOloopControl_stream3Dto2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+		return 0;	} else return 1;     
+}
+
+
 /* =============================================================================================== */
 /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
 /* =============================================================================================== */
@@ -1036,7 +1049,8 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 
     RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
-
+    
+    RegisterCLIcommand("aolstream3Dto2D", __FILE__, AOloopControl_stream3Dto2D_cli, "remaps 3D cube into 2D image", "<input 3D stream> <output 2D stream> <# cols> <sem trigger>" , "aolstream3Dto2D in3dim out2dim 4 1", "long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)");
 
 /* =============================================================================================== */
 /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
@@ -1086,7 +1100,7 @@ int_fast8_t init_AOloopControl()
 /*                                                                                                 */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes50(char *DMmask_name, char outname)");
+    RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes(char *DMmask_name, char outname)");
     
     RegisterCLIcommand("aolHaddec", __FILE__, AOloopControl_Hadamard_decodeRM_cli, "decode Hadamard matrix", "<input RM> <Hadamard matrix> <DMpix index frame> <output RM>", "aolHaddec imRMh Hmat pixiind imRM", "long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
 
@@ -2569,9 +2583,6 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 }
 
 
-
-
-
 long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
 {
     long ID;
@@ -2911,6 +2922,85 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 }
 
 
+long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)
+{
+	long IDin, IDout;
+	uint_fast16_t xsize0, ysize0, zsize0;
+	uint_fast32_t xysize0;
+	uint_fast16_t xsize1, ysize1;
+	uint_fast16_t ii0, jj0, kk0, ii1, jj1, kk;
+	uint_fast16_t Xindex, Yindex;
+	uint_fast16_t iioffset, jjoffset;
+	long long cnt;
+	long *sizearray;
+	int atype;
+	
+
+	IDin = image_ID(in_name);
+	xsize0 = data.image[IDin].md[0].size[0];
+	ysize0 = data.image[IDin].md[0].size[1];
+	zsize0 = data.image[IDin].md[0].size[2];	
+	xysize0 = xsize0*ysize0;
+	
+	xsize1 = xsize0*NBcols;
+	ysize1 = ysize0*(1 + (long) (1.0*zsize0/NBcols-0.00001));
+	
+	atype = FLOAT;
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = xsize1;
+	sizearray[1] = ysize1;
+    IDout = create_image_ID(out_name, 2, sizearray, atype, 1, 0);
+	free(sizearray);
+	
+	while(1 == 1)
+    {
+		if(data.image[IDin].sem==0)
+        {
+            while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[IDin].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[IDin].semptr[insem]);
+
+
+
+        data.image[IDout].md[0].write = 1;
+        
+        for(kk0=0;kk0<zsize0;kk0++)
+		{
+			kk = 0;
+			Xindex = 0;
+			Yindex = 0;
+			while(kk<kk0)
+			{
+				Xindex++;
+				if(Xindex==NBcols)
+				{
+					Xindex = 0;
+					Yindex++;
+				}
+				kk++;
+			}
+			iioffset = Xindex * xsize0;
+			jjoffset = Yindex * ysize0;
+
+			for(ii0=0;ii0<xsize0;ii0++)
+			for(jj0=0;jj0<ysize0;jj0++)
+			{
+				ii1 = ii0+iioffset;
+				jj1 = jj0+jjoffset;
+				data.image[IDout].array.F[jj1*xsize1+ii1] = data.image[IDin].array.F[kk0*xysize0+jj0*xsize0+ii0];
+			}
+		}
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);		
+		data.image[IDout].md[0].cnt0++;
+		data.image[IDout].md[0].write = 0;		
+	}	
+	
+		
+	return(IDout);
+}
 
 
 /* =============================================================================================== */
@@ -3779,11 +3869,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         
         usleep(delayRM1us);    
         data.image[aoconfID_dmRM].md[0].write = 1;
-        printf("A->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-        fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-        printf("--\n");
-		fflush(stdout);
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
 		data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3798,7 +3885,15 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		array_PokeIndex[imcnt] = PokeIndex;
 		array_PokeIndex1[imcnt] = PokeIndex1;
         imcnt ++;
+        
         Read_cam_frame(loop, 1, normalize, 0, 0);
+
+
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
+		data.image[aoconfID_dmRM].md[0].cnt0++;
+        
+
+        
                 
 		// read delayfr frames
         for(kk=0; kk<delayfr; kk++)               
@@ -3809,7 +3904,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 				array_PokeIndex[imcnt] = PokeIndex;
 				array_PokeIndex1[imcnt] = PokeIndex1;
 				imcnt ++;
+
 				Read_cam_frame(loop, 1, normalize, 0, 0);
+
 				kk1++;
                 if(kk1==NBave)
                     {
@@ -3822,11 +3919,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         // POKE            
 						usleep(delayRM1us);    
                         data.image[aoconfID_dmRM].md[0].write = 1;
-                        printf("B->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-                   		printf("--\n");
-						fflush(stdout);
+                        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
                         data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3851,8 +3945,10 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 				array_PokeIndex[imcnt] = PokeIndex;
 				array_PokeIndex1[imcnt] = PokeIndex1;
 				imcnt ++;
+
 				Read_cam_frame(loop, 1, normalize, 0, 0);
-				
+
+								
                 if(kk<NBave)
                 {
 				   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3871,11 +3967,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
             
                         usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
-                        printf("C->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-						printf("--\n");
-						fflush(stdout);
+                        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
 						data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3896,11 +3989,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
            
         usleep(delayRM1us);
         data.image[aoconfID_dmRM].md[0].write = 1;
-        printf("zero    %6ld / %6ld\n", imcnt, imcntmax);
-		fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        printf("--\n");
-		fflush(stdout);
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
         data.image[aoconfID_dmRM].md[0].cnt1 = 0;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3910,68 +4000,34 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		iter++;
  
     } // end of iteration loop 
-    printf("end of loop\n");
-    fflush(stdout);
-        
+
     free(arrayf);
-    
-  	printf("free\n");
-    fflush(stdout);
     
     free(sizearray);
 
-	printf("norm\n");
-    fflush(stdout);
+
     
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
 
-	printf("write\n");
-    fflush(stdout);
     
 	// print poke log
 	fp = fopen("RMpokelog.txt", "w");
 	for(imcnt=0;imcnt<imcntmax;imcnt++)
 		{
-			printf("imcnt = %ld \n", imcnt);
-			fflush(stdout);
-			
 			fprintf(fp, "%6ld %3ld    %1d %1d     %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_iter[imcnt], array_poke[imcnt], array_accum[imcnt], array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
 		}
 	fclose(fp);
 
-	printf("free 1\n");
-    fflush(stdout);    
+ 
 	free(array_iter);
-	
-	
-	printf("free 2\n");
-    fflush(stdout);
 	free(array_accum);
-	
-	printf("free 3\n");
-    fflush(stdout);
    	free(array_poke);
-	
-	printf("free 4\n");
-    fflush(stdout);
     free(array_kk);
-	
-	printf("free 5\n");
-    fflush(stdout);    
 	free(array_kk1);
-	
-	printf("free 6\n");
-    fflush(stdout);    
 	free(array_PokeIndex);
-
-	printf("free 7\n");
-    fflush(stdout);    
 	free(array_PokeIndex1);
-
-	printf("free done\n");
-    fflush(stdout);
     
     return(IDoutC);
 }
@@ -3993,9 +4049,6 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	long IDwfsresp2;
 	long poke, act, pix;
 	long IDwfsref;
-	
-	
-	
 	
 	
 	IDpokeC = image_ID(IDpokeC_name);
@@ -4026,6 +4079,9 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 		}
 	save_fits("dmpokeC2", "test_dmpokeC2.fits");
+	
+	printf("NBpoke = %ld\n", NBpoke);
+	fflush(stdout);
 		
 	AOloopControl_Measure_WFSrespC(loop, delayfr, delayRM1us, NBave, NBexcl, "dmpokeC2", "wfsresp2", normalize, AOinitMode, NBcycle);
 	
@@ -5181,16 +5237,18 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 
 // output:
 // Hadamard modes (outname)
-// Hadamard matrix ("H50mat.fits")
-// pixel indexes ("H50pixindex.fits", float, to be converted to long)
+// Hadamard matrix ("Hmat.fits")
+// pixel indexes ("Hpixindex.fits", float, to be converted to long)
 long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 {
     long IDout;
     long xsize, ysize, xysize;
 //    long IDdisk;
     long cnt;
+    
     long Hsize;
-    long Hnmax = 11;
+    int n2max;
+    
     long *indexarray;
     long index;
     long IDtest;
@@ -5206,7 +5264,6 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     xsize = data.image[IDmask].md[0].size[0];
     ysize = data.image[IDmask].md[0].size[1];
     xysize = xsize*ysize;
-    // IDdisk = make_disk("tmpdisk", xsize, ysize, 24.5, 24.5, 25.6);
 
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = xsize;
@@ -5220,8 +5277,16 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 			cnt++;
 	
 	Hsize = 1;
+	n2max = 0;
 	while(Hsize<cnt)
+	{
 		Hsize *= 2;
+		n2max++;
+	}
+	n2max++;
+
+    printf("Hsize n2max = %ld  %d\n", Hsize, n2max);
+    fflush(stdout);
 
     for(ii=0;ii<xysize;ii++)
         data.image[IDindex].array.F[ii] = -10.0;
@@ -5254,7 +5319,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     jj = 0;
     Hmat[jj*Hsize+ii] = 1;
     n2=1;
-    for(n=1;n<12;n++)
+    for(n=1;n<n2max;n++)
         {
             for(ii=0;ii<n2;ii++)
                 for(jj=0;jj<n2;jj++)
@@ -5266,6 +5331,8 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
             n2 *= 2;
         }    
     
+    printf("n2 = %ld\n", n2);
+    fflush(stdout);
     
     IDtest = create_2Dimage_ID("Htest", Hsize, Hsize);
     

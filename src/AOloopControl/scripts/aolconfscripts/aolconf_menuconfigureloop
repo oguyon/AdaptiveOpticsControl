@@ -39,6 +39,9 @@ tmux new-session -d -s $tmuxname
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
+# INPUT:
+# 	conf/RMpokeCube.fits
+#
 # OUTPUT: 
 # 	zrespmat0.fits
 #	wfsref00.fits
@@ -74,9 +77,9 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM 
 # OUTPUT:
 #     ./conf_zrm_staged/zrespM.fits
 #     ./conf_zrm_staged/wfsmap.fits
-#     ./conf_zrm_staged/dmmap.fits
+#     ./conf_zrm_staged/dmmap.fits   
 #
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP01\"" C-m
+tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP01\"" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 stageddir="conf_zrm_staged"
 mkdir -p $stageddir
@@ -139,7 +142,7 @@ done
 
 
 
-
+if [ "$DMMODE" = "ZONAL"]; then
 
 # MAKE LOW ORDER MODES 
 #
@@ -190,7 +193,7 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP LO RM 
 
 
 
-# COPY TO ARCHIVE
+# COPY LOW ORDER RESPONSE TO ARCHIVE
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP08\"" C-m
 for imname in $RMMODALCALIBlist
 do
@@ -198,6 +201,8 @@ do
 	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
 done
 
+
+fi
 
 
 
@@ -207,12 +212,19 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP09\"" C
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-for imname in $RMZONALCALIBlist $RMMODALCALIBlist
-do
-	tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
-	tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
-done
-
+if [ "$DMMODE" = "ZONAL"]; then
+	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
+	do
+		tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+	done
+else
+	for imname in $RMZONALCALIBlist
+	do
+		tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+	done
+fi
 
 tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\"" C-m
 #tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
@@ -985,7 +997,7 @@ fi
 
 # compute acquisition time
 RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
-#RMacqTimeM=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+
 
 
 
