@@ -1,0 +1,342 @@
+#!/bin/bash
+
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+function function_controlmatrix_readparams {
+
+
+SVDlimall=0.01
+if [ -f "./conf/conf_SVDlimall.txt" ]; then
+SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
+fi
+
+
+if [ "$DMMODE" = "MODAL" ]; then
+
+getshmimsize aol${LOOPNUMBER}_zrespM
+mNBmodes=$( cat conf/conf_imsize_aol${LOOPNUMBER}_zrespM.txt | awk '{printf("%03ld", $3)}' )
+NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+
+
+
+if [ "0" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block00end.txt"
+block00end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "001" > $file
+block00end="001"
+fi
+fi
+
+
+if [ "1" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block01end.txt"
+block01end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "001" > $file
+block01end="001"
+fi
+fi
+
+
+if [ "2" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block02end.txt"
+block02end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "02" > $file
+block02end="02"
+fi
+fi
+
+
+if [ "3" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block03end.txt"
+block03end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "03" > $file
+block03end="03"
+fi
+fi
+
+
+if [ "4" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block04end.txt"
+block04end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "04" > $file
+block04end="04"
+fi
+fi
+
+
+if [ "5" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block05end.txt"
+block05end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "05" > $file
+block05end="05"
+fi
+fi
+
+
+if [ "6" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block06end.txt"
+block06end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "06" > $file
+block06end="06"
+fi
+fi
+
+
+if [ "7" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block07end.txt"
+block07end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "07" > $file
+block07end="07"
+fi
+fi
+
+
+if [ "8" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block08end.txt"
+block08end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "08" > $file
+block08end="08"
+fi
+fi
+
+
+if [ "9" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block09end.txt" 'OPEN' 1
+block09end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "09" > $file
+block09end="09"
+fi
+fi
+
+
+if [ "10" -lt "$NBmodeblocks" ]; then
+file="./conf/conf_block10end.txt"
+block10end=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "10" > $file
+block10end="10"
+fi
+fi
+
+
+fi
+
+
+SVDNBmodesfile="SVDmodes.log"
+if [ -f ${SVDNBmodesfile} ]; then
+SVDNBmodesstr=$( cat ${SVDNBmodesfile} )
+SVDNBmodes=$( echo ${SVDNBmodesstr} | awk '{ printf("%03d", $1)}' )
+else
+SVDNBmodes="-"
+echo "$SVDNBmodes" > $SVDNBmodes
+fi
+
+
+
+
+if [ "$DMMODE" = "ZONAL" ]; then
+
+ CMMODEfile="conf/conf_CMMODE.txt"
+ if [ -f $CMMODEfile ]; then
+ CMMODE=$( cat ${CMMODEfile} )
+ else
+ CMMODE="MODAL"
+ echo "$CMMODE" > $CMMODEfile
+ fi
+ 
+ 
+ file="./conf/conf_extrablockMindex.txt"
+ if [ -f $file ]; then
+ extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
+ else
+ echo "4" > $file
+ extrablockIndex="4"
+ fi
+ 
+ 
+ mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
+ mkmodesdatestr=${mkmodesdatestr% *}
+ NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+ NBmodes=$( cat ./conf/conf_NBmodes.txt )
+
+ staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
+ staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
+ staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
+ staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
+
+fi
+
+
+
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
+done
+
+
+
+file="./conf/conf_cpamax.txt"
+cpamax=$( cat $file )
+if [ ! -f "$file" ]; then
+echo "00.2" > $file
+cpamax="10"
+fi
+
+
+}
+
+
+
+
+
+
+function function_computeModesCM 
+{
+tmuxnameMCM="aol${LOOPNUMBER}mkmodes"
+
+tmux new-session -s ${tmuxnameMCM} -d
+tmux send-keys -t ${tmuxnameMCM} "" C-c
+tmux send-keys -t ${tmuxnameMCM} "" C-m
+tmux send-keys -t ${tmuxnameMCM} "./auxscripts/waitonfile FUNCTION_computeModesCM.block" C-m
+
+logRunningProcessQ "aolmkmodes" "$tmuxnameMCM" "Compute control modes and control matrix (tmux session $tmuxname)"
+
+computeModesCMscriptfile="function_computeModesCM.script"
+rm $computeModesCMscriptfile
+touch $computeModesCMscriptfile
+
+echo "mkdir -p DMmodes" >> $computeModesCMscriptfile
+echo "mkdir -p respM" >> $computeModesCMscriptfile
+echo "mkdir -p contrM" >> $computeModesCMscriptfile
+echo "mkdir -p contrMc" >> $computeModesCMscriptfile
+echo "mkdir -p contrMcact" >> $computeModesCMscriptfile
+
+
+
+echo "echo \"./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}\" >> aolcmd.txt"  >> $computeModesCMscriptfile
+echo "./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}"  >> $computeModesCMscriptfile
+
+
+
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+echo "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits"  >> $computeModesCMscriptfile
+echo "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf_staged/conf_DMmodes_name.txt"  >> $computeModesCMscriptfile
+
+echo "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits"  >> $computeModesCMscriptfile
+echo "echo \"respM/respM_${datestr}.fits\" > ./conf_staged/conf_respM_name.txt"  >> $computeModesCMscriptfile
+
+echo "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits"  >> $computeModesCMscriptfile
+echo "echo \"contrM/contrM_${datestr}.fits\" > ./conf_staged/conf_contrM_name.txt"  >> $computeModesCMscriptfile
+
+
+for i in `seq 0 20`;
+do
+i2=$(printf "%02d" "$i")
+fname="mkmodestmp/fmodes_${i2}.fits"
+#if [ -e "$fname" ]; then
+echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf_staged/conf_DMmodes${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+
+echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf_staged/conf_respM${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+
+echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf_staged/conf_contrM${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+
+echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMc${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+
+echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMcact${i2}_00_name.txt; fi"  >> $computeModesCMscriptfile
+#fi
+done
+chmod +x $computeModesCMscriptfile
+tmux send-keys -t $tmuxnameMCM "./$computeModesCMscriptfile" C-m
+
+
+tmux send-keys -t $tmuxnameMCM "rm aolmkmodes.runproc" C-m
+
+
+tmux send-keys -t $tmuxnameMCM "./aolconfscripts/aollog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
+tmux send-keys -t $tmuxnameMCM "dologext $LOOPNAME CM computation DONE &" C-m
+}
+
+
+
+
+
+
+function function_SharedMemLoadCM {
+tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
+
+tmux new-session -s ${tmuxnameSMlCM} -d
+tmux send-keys -t ${tmuxnameSMlCM} "" C-c
+tmux send-keys -t ${tmuxnameSMlCM} " " C-m
+
+tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/waitonfile FUNCTION_SharedMemLoadCM.block" C-m
+logRunningProcessQ "SharedMemLoadCM" "${tmuxnameSMlCM}" "Load control matrix into shared memory" 
+tmux send-keys -t ${tmuxnameSMlCM} "aoconflogext \"LOAD CM to shared memory\"" C-m
+
+# zonal calib
+for imname in DMmodes respM contrM wfsref0
+do
+tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolReadConfFile ${imname}" C-m	
+tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+done
+
+
+NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+rm script_SharedMemLoadCM
+touch script_SharedMemLoadCM
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+
+for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2} ; do
+echo "./auxscripts/aolReadConfFile ${imname}" >> script_SharedMemLoadCM	
+echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedMemLoadCM
+done
+chmod +x script_SharedMemLoadCM
+tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
+tmux send-keys -t ${tmuxnameSMlCM} "rm SharedMemLoadCM.runproc" C-m	
+
+
+
+#ReadConfFile "DMmodes${i2}"
+#getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
+
+#ReadConfFile "respM${i2}"
+#getshmimsize aol${LOOPNUMBER}_respM${i2}
+
+#ReadConfFile "contrM${i2}"
+#getshmimsize aol${LOOPNUMBER}_contrM${i2}
+
+#ReadConfFile "contrMc${i2}"
+#getshmimsize aol${LOOPNUMBER}_contrMc${i2}
+
+#ReadConfFile "contrMcact${i2}_00"
+#getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
+
+done
+
+}
+

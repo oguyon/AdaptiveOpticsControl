@@ -27,6 +27,9 @@ For all configurations files (not including Hardware I/O links) :\n
   File is loaded in shared memory as /tmp/\Z4aol${LOOPNUMBER}_<name>\Zn.im.shm\n
 "
 
+
+function_controlmatrix_readparams
+
 confOK=1
 stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
@@ -34,166 +37,71 @@ menuitems+=( " " " " )
 
 
 
-
-SVDlimall=0.01
-if [ -f "./conf/conf_SVDlimall.txt" ]; then
-SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
-fi
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
+
+
+
 
 
 
 
 if [ "$DMMODE" = "MODAL" ]; then
 
-getshmimsize aol${LOOPNUMBER}_zrespM
-mNBmodes=$( cat conf/conf_imsize_aol${LOOPNUMBER}_zrespM.txt | awk '{printf("%03ld", $3)}' )
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
-
-
 if [ "0" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block00end.txt"
-block00end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "001" > $file
-block00end="001"
-fi
 menuitems+=( "bl00e" "            [ $block00end ]    block 00:  000 -> $block00end" )
 fi
 
 
 if [ "1" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block01end.txt"
-block01end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "001" > $file
-block01end="001"
-fi
 menuitems+=( "bl01e" "            [ $block01end ]    block 01:  $block00end -> $block01end" )
 fi
 
 
 if [ "2" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block02end.txt"
-block02end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "02" > $file
-block02end="02"
-fi
 menuitems+=( "bl02e" "            [ $block02end ]    block 02:  $block01end -> $block02end" )
 fi
 
 
 if [ "3" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block03end.txt"
-block03end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "03" > $file
-block03end="03"
-fi
 menuitems+=( "bl03e" "            [ $block03end ]    block 03:  $block02end -> $block03end" )
 fi
 
 
 if [ "4" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block04end.txt"
-block04end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "04" > $file
-block04end="04"
-fi
 menuitems+=( "bl04e" "            [ $block04end ]    block 04:  $block03end -> $block04end" )
 fi
 
 
 if [ "5" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block05end.txt"
-block05end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "05" > $file
-block05end="05"
-fi
 menuitems+=( "bl05e" "            [ $block05end ]    block 05:  $block04end -> $block05end" )
 fi
 
 
 if [ "6" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block06end.txt"
-block06end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "06" > $file
-block06end="06"
-fi
 menuitems+=( "bl06e" "            [ $block06end ]    block 06:  $block05end -> $block06end" )
 fi
 
 
 if [ "7" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block07end.txt"
-block07end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "07" > $file
-block07end="07"
-fi
 menuitems+=( "bl07e" "            [ $block07end ]    block 07:  $block06end -> $block07end" )
 fi
 
 
 if [ "8" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block08end.txt"
-block08end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "08" > $file
-block08end="08"
-fi
 menuitems+=( "bl08e" "            [ $block08end ]    block 08:  $block07end -> $block08end" )
 fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block09end.txt"
-block09end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "09" > $file
-block09end="09"
-fi
 menuitems+=( "bl09e" "            [ $block09end ]    block 09:  $block08end -> $block09end" )
 fi
 
 
 if [ "10" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block10end.txt"
-block10end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "10" > $file
-block10end="10"
-fi
 menuitems+=( "bl10e" "            [ $block10end ]    block 10:  $block09end -> $block10end" )
 fi
 
@@ -208,32 +116,7 @@ fi
 menuitems+=( "RM2CMm" "Compute Modes and Control matrix" )
 
 
-fi
-
-
-
-
-
-
-
-
-if [ "$DMMODE" = "ZONAL" ]; then
-
-
-CMMODEfile="conf/conf_CMMODE.txt"
-if [ -f $CMMODEfile ]; then
-CMMODE=$( cat ${CMMODEfile} )
-else
-CMMODE="MODAL"
-echo "$CMMODE" > $CMMODEfile
-fi
-
-if [ "$CMMODE" = "ZONAL" ]; then
-menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
-else
-menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
-fi
-
+fi  # end of:  if [ "$DMMODE" = "MODAL" ]; then
 
 
 
@@ -244,70 +127,68 @@ menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
-menuitems+=( "RM2CM" "Compute Control matrix" )
+
+
+menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]" )
 
 
 
 
-menuitems+=( " " " " )
-stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
-
-menuitems+=( " " " " )
 
 
-file="./conf/conf_extrablockMindex.txt"
-if [ -f $file ]; then
-extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
-else
-echo "4" > $file
-extrablockIndex="4"
-fi
-menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
+if [ "$DMMODE" = "ZONAL" ]; then
 
 
-if [ -f "./extrablockM.fits" ]; then
+ if [ "$CMMODE" = "ZONAL" ]; then
+ menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+ else
+ menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+ fi
+
+
+
+
+
+
+ menuitems+=( " " " " )
+ stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
+ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+
+ menuitems+=( " " " " )
+
+
+ menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
+
+
+ if [ -f "./extrablockM.fits" ]; then
 	if [ -f "./conf/extrablockM.fits" ]; then
 	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
 	else
 	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
 	fi
-else
-menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
-fi
+ else
+ menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
+ fi
 
 
 
 
-menuitems+=( " " " " )
+ menuitems+=( " " " " )
+ menuitems+=( "modeCPA" "[$cpamax] Select maximum CPA" )
+ menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
+ #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
-mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
-mkmodesdatestr=${mkmodesdatestr% *}
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/conf_NBmodes.txt )
+fi 
 
-staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
-staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
-staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
-staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
 
-menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
-#menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update (ALL) \Zn" )
 
-#if [ "$DMMODE" = "ZONAL" ]; then
-#fname="aolmkmodes.runproc"
-#else
-#fname="aolmkmodesM.runproc"
-#fi
-#if [ -f "$fname" ]; then
-#menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
-#else
+
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
-#fi
+
 
 
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
@@ -324,7 +205,6 @@ menuitems+=( "RM" "$menustring" )
 makemenuitemstringaolshm "contrM" "Modal Control Matrix"
 menuitems+=( "CM" "$menustring" )
 
-fi
 
 
 
@@ -344,7 +224,6 @@ for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
 menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
@@ -714,6 +593,7 @@ getshmimsize aol${LOOPNUMBER}_contrM
 CMMODE="ZONAL"
 echo "$CMMODE" > $CMMODEfile
 
+
 menucontrolmatrix_default="RM2CM"
 ;;
 
@@ -741,23 +621,27 @@ menucontrolmatrix_default="setexbi"
 ;;
 
 
+	modeCPA)
+menucontrolmatrix_default="modeCPA"
+state="menu_mkFModes"
+;;	
 
 	mkModes0)
 mkModesMODE=0; # full computation
-menucontrolmatrix_default="mkModes"
+menucontrolmatrix_default="mkModes0"
 aoconflogext "START control matrix computation mkModesMODE 0"
 CMMODE="MODAL"
 echo "$CMMODE" > $CMMODEfile
-state="menu_mkFModes"
+function_computeModesCM
 ;;
 
 	mkModes1)
 mkModesMODE=1; # re-use previous DM modes
-menucontrolmatrix_default="mkModes"
+menucontrolmatrix_default="mkModes1"
 aoconflogext "START control matrix computation mkModesMODE 1"
 CMMODE="MODAL"
 echo "$CMMODE" > $CMMODEfile
-state="menu_mkFModes"
+function_computeModesCM
 ;;
 
 
@@ -770,38 +654,7 @@ cp conf_staged/*.txt ./conf/
 
 
 SMloadCM)
-aoconflogext "LOAD CM to shared memory"
-ReadConfFile "DMmodes"
-getshmimsize aol${LOOPNUMBER}_DMmodes
-
-ReadConfFile "respM"
-getshmimsize aol${LOOPNUMBER}_respM
-
-ReadConfFile "contrM"
-getshmimsize aol${LOOPNUMBER}_contrM
-
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/conf_NBmodes.txt )
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
-
-ReadConfFile "DMmodes${i2}"
-getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
-
-ReadConfFile "respM${i2}"
-getshmimsize aol${LOOPNUMBER}_respM${i2}
-
-ReadConfFile "contrM${i2}"
-getshmimsize aol${LOOPNUMBER}_contrM${i2}
-
-ReadConfFile "contrMc${i2}"
-getshmimsize aol${LOOPNUMBER}_contrMc${i2}
-
-ReadConfFile "contrMcact${i2}_00"
-getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
-
-done
+function_SharedMemLoadCM
 menucontrolmatrix_default="SMloadCM"
 ;;
 

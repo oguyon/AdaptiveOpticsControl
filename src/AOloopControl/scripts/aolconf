@@ -57,16 +57,18 @@ echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [options]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "  Performs task and exit: "
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary"
 echo "   -H  <string>         (H)elp category"
-echo "                 cf     configuration files"   
-echo "   -e <exec>            executable"  
+echo "                 cf     list configuration files (incomplete)"    
 echo "   -l <exec>            log executable"  
+echo "   -C                   run (C)PU config: execute ./aocscripts/cpuconfig_${LOOPNAME}"
+echo "   -c                   (c)lear all settings"
+echo "  Runs top level script:"
 echo "   -L <long>            (L)oop number"
 echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
-echo "   -C                   run (C)PU config"
-echo "   -c                   (c)lear all settings"
+echo "   -e <exec>            specify executable name (default: $execname)"
 echo "   -n                   do (n)ot load configuration on startup"
 echo "------------------------------------------------------------------------"
 }
@@ -119,7 +121,7 @@ done
 LOADMEM=1
 LOOPNAME_file="LOOPNAME"
 LOOPNUMBER_file="LOOPNUMBER"
-CPUconfRT="1"
+CPUconfRT="1"  # use CPU sets
 
 execname="./AOloopControl"
 
@@ -151,7 +153,8 @@ while getopts :hH:L:N:Ccn FLAG; do
     ;;
     C) # configure CPU
     echo "Configure CPU"
-    CPUconfRT=1
+    ./aocscripts/cpuconfig_${LOOPNAME}
+    exit
     ;;
     e) # set executable
     execnameFile=$OPTARG
@@ -239,15 +242,12 @@ fi
 
 # internal log - logs EVERYTHING
 function aoconflog {
-echo "$@" >> aolconf.log
 ./aolconfscripts/aollog "$LOOPNAME" "$@"
 }
 
 # external log, use for less verbose log
 function aoconflogext {
-echo "$@" >> aolconf.log
-./aolconfscripts/aollog "$LOOPNAME" "$@"
-./aolconfscripts/aollogext "$LOOPNAME $@"
+./aolconfscripts/aollog -e "$LOOPNAME" "$@"
 }
 
 
@@ -263,7 +263,7 @@ aoconflog "STARTING NEW aolconf SESSION"
 
 
 # default parameters
-CPUconfRT=0 # no CPU real-time configuration
+CPUconfRT="1" # no CPU real-time configuration
 
 DMindex=0
 
@@ -380,8 +380,17 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_logfuncs
+
 . ./aolconfscripts/aolconf_DMfuncs
 
+. ./aolconfscripts/aolconf_configureloop_funcs
+function_configureloop_readparams
+
+. ./aolconfscripts/aolconf_controlmatrix_funcs
+function_controlmatrix_readparams
+
+. ./aolconfscripts/aolconf_controlloop_funcs
+function_controlloop_readparams
 
 
 

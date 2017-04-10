@@ -26,6 +26,25 @@ aoconflog "ERROR: $@"
 }
 
 
+# Queued process
+function logRunningProcessQ0
+{
+	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+	string=$( printf "%s   %20s   %20s   %s" "${datestr}" "$1" "$2" "$3" )
+	echo "$string" > $1.runprocQ
+}
+
+function logRunningProcessQ
+{
+	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+	string=$( printf "%s   %20s   %20s   %s" "${datestr}" "$1" "$2" "$3" )
+	echo "$string" > $1.runprocQ
+	tmux send-keys -t $2 "mv $1.runprocQ $1.runproc" C-m
+}
+
+
+
+
 function logRunningProcess 
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`

@@ -44,16 +44,19 @@ fi
 # ======================= LOGGING =================================
 LOOPNAME=$( cat LOOPNAME )
 echo "LOOPNAME = $LOOPNAME"
-# internal log - logs EVERYTHING
+#
+ internal log - logs EVERYTHING
 function aoconflog {
-echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
+#echo "$@" >> aolconf.log
+#dolog "$LOOPNAME" "$@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
 }
 
 # external log, less verbose
 function aoconflogext {
-echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
+#echo "$@" >> aolconf.log
+#dolog "$LOOPNAME" "$@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
 dologext "$LOOPNAME $@"
 }
 
@@ -118,22 +121,6 @@ pyfwlist+=( "6" "850nm 40nm" )
 
 
 
-# Set FW <wheelNB>
-function SetFW {
-file="./status/status_fw.txt"
-currentfw=$(echo "$(cat $file)")
-if [ ! "${currentfw}" == "$1" ]
-then
-echo "MOVING TO FW $1"# &> ${outmesg}
-pywfs wheel $1 # &> ${outmesg}
-else
-echo "WHEEL ALREADY IN POSITION"# > ${outmesg}
-fi
-sleep 0.1
-currentfw=$1
-echo "${currentfw}" > $file
-sleep 0.1
-}
 
 
 
@@ -156,7 +143,7 @@ mkdir -p status
 statfile="./status/status_alignTT.txt"
 TTloopstat=$(cat $statfile)
 if [[ -f "$statfile" && ( "$TTloopstat" = " ON" || "$TTloopstat" = "OFF" || "$TTloopstat" = "PAU" ) ]]; then
-echo "OK"
+echo "OK" &> mesg.log
 else
 echo "OFF" > $statfile
 TTloopstat="OFF"
@@ -165,14 +152,14 @@ fi
 statfile="./status/status_alignPcam.txt"
 Pcamloopstat=$(cat $statfile)
 if [[ -f "$statfile" && ( "$Pcamloopstat" = " ON" || "$Pcamloopstat" = "OFF" || "$Pcamloopstat" = "PAU" ) ]]; then
-echo "OK"
+echo "OK" &> mesg.log
 else
 echo "OFF" > $statfile
 Pcamloopstat="OFF"
 fi
 
 
-PyrFilter=$(cat ./status/status_fw.txt)
+PyrFilter=$(cat ./conf/conf_pywfs_filter.txt)
 
 if [ "$TTloopstat" = " ON" ]; then
 TTloopstat_C="\Zr\Z2 ON\Zn"
@@ -674,12 +661,6 @@ menuitems+=( "fla" "Apply flatten DM solution" )
 menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
-stringcenter "FILTERS"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
-
-menuitems+=( "fw" "Set PY Filter Wheel" )
-menuitems+=( "" "" )
-
 
 
 
@@ -708,57 +689,64 @@ menualign_default="$choiceval"
 	pyfr05)
 pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 	pyfr10)
 pyfreq="1000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 	pyfr15)
 pyfreq="1500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 	pyfr20)
 pyfreq="2000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 	pyfr25)
 pyfreq="2500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 	
 	pyfr30)
 pyfreq="3000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 	pyfr35)
 pyfreq="3500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-recomputeLatency ${pyfreq}
-aoconflogext "Set pyfreq = $pyfreq Hz"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "freq" "${pyfreq}" &
+recomputeLatency ${pyfreq} &> mesg.log &
+aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
 
@@ -767,141 +755,161 @@ aoconflogext "Set pyfreq = $pyfreq Hz"
 	pymoda005)
 pymodampl="0.05"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas05" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda010)
 pymodampl="0.10"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas10" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda015)
 pymodampl="0.15"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas15" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda020)
 pymodampl="0.20"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas20" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda025)
 pymodampl="0.25"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas25" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda030)
 pymodampl="0.30"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas30" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda035)
 pymodampl="0.35"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas35" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda040)
 pymodampl="0.40"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas40" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda045)
 pymodampl="0.45"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas45" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda050)
 pymodampl="0.50"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas50" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda055)
 pymodampl="0.55"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas55" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda060)
 pymodampl="0.60"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas60" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda065)
 pymodampl="0.65"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas65" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda070)
 pymodampl="0.70"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas70" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda075)
 pymodampl="0.75"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas75" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda080)
 pymodampl="0.80"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas80" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda085)
 pymodampl="0.85"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas85" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda090)
 pymodampl="0.90"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas90" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda095)
 pymodampl="0.95"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas95" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 	pymoda100)
 pymodampl="1.00"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
-pywfs_mod_setup ${pyfreq} ${pymodampl}
-aoconflogext "Set py modulation amplitude = $pymodampl"
+pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
+./statusext "rad" "$pmodradmas00" &
+aoconflogext "Set py modulation amplitude = $pymodampl" &> mesg.log &
 ;;
 
 
@@ -910,43 +918,43 @@ aoconflogext "Set py modulation amplitude = $pymodampl"
 	pyfilt1)
 pyfilter="1"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 	pyfilt2)
 pyfilter="2"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 	pyfilt3)
 pyfilter="3"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 	pyfilt4)
 pyfilter="4"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 	pyfilt5)
 pyfilter="5"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 	pyfilt6)
 pyfilter="6"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter}
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &> mesg.log
+aoconflogext "Set py filter = $pyfilter" &> mesg.log &
 ;;
 
 
@@ -1051,6 +1059,7 @@ state="menualign"
 
 
 	ttr)
+aoconflog "TT move to reference  ${TTposXref} ${TTposYref}"
 ./aocscripts/SCExAO_analogoutput D $TTposXref
 ./aocscripts/SCExAO_analogoutput C $TTposYref
 menualign_default="ttr"
@@ -1121,10 +1130,10 @@ state="menualign"
 
 
 	ts)
-aoconflogext "TT align loop start"
-rm stop_PyAlignTT.txt
-rm pause_PyAlignTT.txt
-tmux kill-session -t alignPyrTT
+aoconflogext "TT align loop start" &> mesg.log &
+rm stop_PyAlignTT.txt &> mesg.log 
+rm pause_PyAlignTT.txt &> mesg.log 
+tmux kill-session -t alignPyrTT &> mesg.log 
 tmux new-session -d -s alignPyrTT
 tmux send-keys -t alignPyrTT "$execname -n alignPyrTT" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsdark" C-m
@@ -1132,6 +1141,7 @@ tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim $TTposX $TTposY" C-m
 echo " ON" > ./status/status_alignTT.txt
+./statusext "cenloop" "'CLOSED' 3" &
 menualign_default="tk"
 state="menualign"
 ;; 
@@ -1144,6 +1154,7 @@ then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignTT.txt
+./statusext "cenloop" "'CLOSED' 3" &
 menualign_default="tp"
 state="menualign"
 ;; 
@@ -1159,6 +1170,7 @@ state="menualign"
 touch pause_PyAlignTT.txt
 aoconflogext "TT align loop pause"
 echo "PAU" > ./status/status_alignTT.txt
+./statusext "cenloop" "'OPEN' 1" &
 menualign_default="tr"
 state="menualign"
 ;;  
@@ -1166,6 +1178,7 @@ state="menualign"
 touch stop_PyAlignTT.txt
 tmux kill-session -t alignPyrTT
 echo "OFF" > ./status/status_alignTT.txt
+./statusext "cenloop" "'OPEN' 1" &
 aoconflogext "TT align loop off"
 menualign_default="ts"
 state="menualign"
@@ -1235,13 +1248,14 @@ menualign_default="pyp"
 state="menualign"
 ;;
 	ps)
-aoconflogext "Pupil align loop start"
-rm stop_PyAlignCam.txt
-rm pause_PyAlignCam.txt
-tmux kill-session -t alignPcam
+aoconflogext "Pupil align loop start" &> mesg.log &
+rm stop_PyAlignCam.txt &> mesg.log 
+rm pause_PyAlignCam.txt &> mesg.log 
+tmux kill-session -t alignPcam &> mesg.log 
 tmux new-session -d -s alignPcam
 tmux send-keys -t alignPcam "./aocscripts/alignPcam_${LOOPNAME}" C-m
 echo " ON" > ./status/status_alignPcam.txt
+./statusext "puploop" "'CLOSED' 3" &
 menualign_default="pk"
 state="menualign"
 ;; 
@@ -1253,6 +1267,7 @@ then
 dialog --title "Message" --msgbox "Starting Pcam align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignPcam.txt
+./statusext "puploop" "'CLOSED' 3" &
 menualign_default="pp"
 state="menualign"
 ;;  
@@ -1267,6 +1282,7 @@ state="menualign"
 	pp) 
 touch pause_PyAlignCam.txt
 echo "PAU" > ./status/status_alignPcam.txt
+./statusext "puploop" "'OPEN' 1" &
 aoconflogext "Pupil align loop pause"
 menualign_default="pr"
 state="menualign"
@@ -1274,6 +1290,7 @@ state="menualign"
    	 pk) 
 touch stop_PyAlignCam.txt
 echo "OFF" > ./status/status_alignPcam.txt
+./statusext "puploop" "'OPEN' 1" &
 tmux kill-session -t alignPcam
 aoconflogext "Pupil align loop kill"
 menualign_default="ps"
@@ -1307,11 +1324,7 @@ state="menualign"
 	flz) dmdispzero 5 ;;
 	fla) dm_update_channel 5 dmpyoffset.fits ;;
 	flm) tmux a -t pyrflatten ;;
-	fw)
-# set FW
-menualign_default="fw"
-state="menupyfw"
-;;
+
 
 	esac;;
    1) state="menutop";;   
@@ -1325,47 +1338,6 @@ fi
 
 
 
-
-
-
-
-#  CONFIGURATION SETUP INDEX - FW
-if [ $state = "menupyfw" ]; then
-stateok=1
-file="./status/status_fw.txt"
-
-if [ -f "$file" ]; then
-pyfw=$(echo "$(cat $file)")
-else
-pywfs="1"
-fi
-
-menuname="MOVE FW\n
-  FW current position : $pyfw\n"
-
-ls
-
-
-
-
-dialog --title "AO loop configuration" --ok-label "Move" --cancel-label "Back" --help-button --help-label "Exit" --default-item "${pyfw}" --menu "$menuname"  50 80 100 "${pyfwlist[@]}"  2> $tempfile
-#sleep 2
-
-retval=$?
-choiceval=$(cat $tempfile)
-case $retval in
-   0) state="menupyfw"
-pyfw=$(cat $tempfile)
-echo "setFW ${choiceval}"
-aoconflog "set FW ${choiceval}"
-SetFW ${choiceval}
-;; # button 1:
-   1) state="menualign";; 
-   2) state="menuexit";;
-   255) state="menuexit";;
-esac
-state="menualign"
-fi
 
 
 

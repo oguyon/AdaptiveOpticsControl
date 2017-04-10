@@ -90,7 +90,20 @@ function initDMfunc {
     rm ./conf/RMpokeCube.fits # remove poke cube
     ./auxscripts/mkHpoke # make masks, poke pattern (Hadamard mode)
     
+    # if DM is modal, create simple "./conf/DMmodes.fits"
+    if [ "$DMMODE" = "MODAL" ]; then
+./AOloopControl << EOF
+aolmksimplezpM ${dmxsize} ${dmysize} DMmodes
+savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes.fits"
+savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes_zonal.fits"
+exitCLI
+EOF
+    fi
     
+    # by default, set # of blocks to 1 
+	file="./conf/conf_NBmodeblocks.txt"
+    echo "1" > $file
+    NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 }
 
 

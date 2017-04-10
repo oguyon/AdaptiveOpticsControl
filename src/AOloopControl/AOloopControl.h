@@ -105,11 +105,9 @@ typedef struct
 	/* =============================================================================================== */
 
     char DMmodesname[80];
+     // BLOCKS OF MODES
     uint_fast16_t DMmodesNBblock; // number of mode blocks
     uint_fast16_t NBmodes_block[100]; // number of modes within each block
-
-    // BLOCKS OF MODES
-    uint_fast16_t NBMblocks; // number of mode blocks
     uint_fast16_t indexmaxMB[maxNBMB]; 
 
 	uint_fast16_t NBDMmodes;
@@ -138,10 +136,11 @@ typedef struct
 	// limits
 	int_fast8_t AUTOTUNE_LIMITS_ON;
 	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
+	float AUTOTUNE_LIMITS_mcoeff; // multiplicative coeff 
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 
 	int_fast8_t AUTOTUNE_GAINS_ON;
-	float AUTOTUNEGAINcoeff; // averaging coefficient (usually about 0.001 for second-level time response)
+	float AUTOTUNE_GAINS_gain; // averaging coefficient (usually about 0.1)
 	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
 	
  
@@ -490,6 +489,8 @@ int_fast8_t AOloopControl_AUTOTUNE_LIMITS_off();
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
 
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
+
+int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoeff);
 
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_on();
 

@@ -275,6 +275,23 @@ menuitems+=( " " " ")
 stringcenter "AO CONFIGURE AND CONTROL"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
+
+function_controlmatrix_readparams
+
+if [ -f "FUNCTION_C0.runproc" ] || [ -f "FUNCTION_C00.runproc" ]; then
+menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
+menuitems+=( "stopRM" "Stop RM acquisition" )
+menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
+menuitems+=( " " " " )
+else
+menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged (compute masks)" )
+menuitems+=( "C00" "   CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged (Re-use masks)" )
+menuitems+=( "C01" "   RM -> CM (staged)" )
+menuitems+=( "C1" "ADOPT CALIBRATION: staged -> conf, SharedMem" )
+fi
+
+
+menuitems+=( " " " ")
 menuitems+=( "M" "load all (M)emory" )
 menuitems+=( "C" "(C)onfigure/link AO loop" )
 
@@ -681,6 +698,185 @@ menutop_default="initDM"
 # =====================================================================================================================
 # ===================================  AO CONFIGURE AND CONTROL =======================================================
 # =====================================================================================================================
+
+
+
+C00) 
+tmuxnameC00="aol${LOOPNUMBER}calib00"
+
+RMCalibReuseMasks=1
+
+tmux new-session -d -s ${tmuxnameC00}
+tmux send-keys -t ${tmuxnameC00} " " C-c
+tmux send-keys -t ${tmuxnameC00} "" C-m
+logRunningProcess "FUNCTION_C00" "$tmuxnameC00" "==== CALIBRATION ===="
+
+# START CALIBRATION: RM(s) ACQUISITION
+function_configureloop_readparams
+function_nAUTOC
+sleep 0.1
+tmux send-keys -t ${tmuxnameC00} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
+
+tmux send-keys -t ${tmuxnameC00} "rm FUNCTION_C00.runproc" C-m
+menutop_default="stopRM"
+;;
+
+
+C01)
+# COMPUTE CM
+mkModesMODE=0; # full computation
+function_computeModesCM
+;;
+
+
+C0)
+echo "CALIBRATE ALL"
+RMCalibReuseMasks=0
+# block computeModesCM until this file is removed (will be done after RMs acquisition)
+touch FUNCTION_computeModesCM.block
+if [ $C0test -eq 0 ]; then
+touch FUNCTION_SharedMemLoadCM.block
+fi
+
+tmuxnameC0="aol${LOOPNUMBER}caliball"
+tmux new-session -d -s ${tmuxnameC0}
+tmux send-keys -t ${tmuxnameC0} " " C-c
+tmux send-keys -t ${tmuxnameC0} "" C-m
+logRunningProcess "FUNCTION_C0" "$tmuxnameC0" "==== CALIBRATION ===="
+
+# START CALIBRATION: RM(s) ACQUISITION
+function_configureloop_readparams
+
+function_nAUTOC
+
+sleep 0.1
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
+
+# COMPUTE CM
+mkModesMODE=0; # full computation
+tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation mkModesMODE 0\"" C-m
+tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
+function_computeModesCM
+
+tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
+menutop_default="stopRM"
+;;
+
+
+
+stopRM)
+pkill -USR2 aol${LOOPNUMBER}zrespM
+menutop_default="stopRMLO"
+;;
+
+
+
+stopRMLO)
+pkill -USR2 aol${LOOPNUMBER}LOrespM
+;;
+
+
+
+	C1) # ADOPT CALIBRATION
+tmuxnameC0="aol${LOOPNUMBER}caliball"
+tmux send-keys -t ${tmuxnameC0} " " C-c
+tmux send-keys -t ${tmuxnameC0} "" C-m
+
+touch FUNCTION_SharedMemLoadCM.block
+# SELECT CONFIGURATION NAME
+mkdir -p ./CONF
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+
+dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+retval="$?"
+confname=$(cat $tempfile)
+
+aoconflogext "SAVE configuration to ${confname}"
+echo "saving to ${confname}   tempfile = $tempfile"
+echo "${confname}" > ./confname.txt
+
+
+
+# IF LOOP IS ON - TURN IT OFF HERE
+procONstat=$( cat ./status/stat_procON.txt )
+procONstat_old="$procONstat"
+loopONstat=$( cat ./status/stat_loopON.txt )
+loopONstat_old="$loopONstat"
+if [ "$procONstat" = " ON" ]; then
+ if [ "$loopONstat" = " ON" ]; then
+  tmux send-keys -t ${tmuxnameC0} "# loopONstat = 1 -> TURNING OFF LOOP" C-m
+  function_LOOP_OFF ${tmuxnameC0}
+  sleep 0.5
+ fi
+ tmux send-keys -t ${tmuxnameC0} "# procONstat = 1 -> TURNING OFF PROCESSES" C-m
+ function_AOloopProcess_OFF ${tmuxnameC0}
+else
+tmux send-keys -t ${tmuxnameC0} "# loopONstat = 0 -> PROCEEDING" C-m
+fi
+
+
+# UPDATE CONFIGURATION (staged -> conf)
+tmux send-keys -t ${tmuxnameC0} "aoconflogext \"Update all configuration files\"" C-m
+tmux send-keys -t ${tmuxnameC0} "cp ./conf_staged/*.txt ./conf/" C-m
+
+
+# LOAD CALIBRATION (conf -> shared mem) 
+tmux send-keys -t ${tmuxnameC0} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"Update calibration configuration files\"" C-m
+# zonal calib
+for imname in $RMZONALCALIBlist
+do
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+done
+# modal calib
+for imname in $RMMODALCALIBlist
+do
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+done
+
+
+# SAVE CONFIGURATION
+tmux send-keys -t ${tmuxnameC0} "mkdir -p \"${confname}\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/conf_* \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/RMpoke.fits \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/Hpoke.fits \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/RMmat.fits \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/RMpixindex.fits \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m	
+
+
+# LOAD CM (conf -> shared mem)
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile aolmkmodes.runproc" C-m # waiting for mkmodes to complete
+tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
+function_SharedMemLoadCM
+
+
+# IF LOOP WAS ON, RESTART HERE
+if [ "$procONstat_old" = " ON" ]; then
+ tmux send-keys -t ${tmuxnameC0} "# TURNING PROCESSES BACK ON" C-m
+ function_AOloopProcess_ON ${tmuxnameC0}
+ sleep 20
+ if [ "$loopONstat_old" = " ON" ]; then
+  tmux send-keys -t ${tmuxnameC0} "# TURNING LOOP BACK ON" C-m
+  function_LOOP_ON ${tmuxnameC0}
+ else
+  tmux send-keys -t ${tmuxnameC0} "# LEAVING LOOP OFF" C-m
+ fi
+else
+tmux send-keys -t ${tmuxnameC0} "# LEAVING PROCESSES OFF" C-m
+fi
+
+;;
+
+
 
 	M)
 AOloadMem 1

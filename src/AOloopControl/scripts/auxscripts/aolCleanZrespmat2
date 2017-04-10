@@ -14,7 +14,7 @@ echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Process zonal resp matrix $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "Cleans zonal response matrices in ./zresptmp/ directory"
-echo "if images conf/RMpixindex.fits conf/RMHmat.fits exist, use Hadamard coding/decoding"
+echo "if images conf/RMpixindex.fits conf/RMmat.fits exist, use them for coding/decoding"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h]"
@@ -128,10 +128,11 @@ pname="aol${loopnb}zrespM"
 ./AOloopControl -n $pname << EOF
 aolnb $loopnb
 loadfits "./conf/RMpokeCube.fits" RMpokeC
-loadfits "./conf/RMHmat.fits" Hmat
+loadfits "./conf/RMmat.fits" RMmat
 loadfits "./conf/RMpixindex.fits" pixindexim
 loadfits zrespmat0.fits zrespmat0
 loadfits wfsref00.fits wfsref00
+
 aolproczrm zrespmat0 wfsref00 zrespmat wfsmap dmmap
 
 savefits zrespmat "!zrespM.fits"

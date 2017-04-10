@@ -1141,10 +1141,10 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
-    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
-    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
+    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network. mode=1 uses counter instead of semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]> <RT priority>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0 80");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)");
     data.NBcmd++;
 
 
@@ -4752,7 +4752,6 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 	
 	
 	
-	
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -4828,12 +4827,11 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
-        
-		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
-
+		data.image[IDout].md[0].cnt1 = kk;
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
-
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+		
         kk++;
         if(kk==data.image[IDin].md[0].size[2])
             kk = 0;

@@ -94,9 +94,15 @@ fi
 
 
 loopnb=$(cat LOOPNUMBER)
+csetname="aol${loopnb}RT"
 
 
 ./AOloopControl -n $pname << EOF
+csetpmove ${csetname}
+
+# TEST MODE
+readshmim dm00disp10
+
 aolautotunegains $loopnb aol${loopnb}_autogain
 exitCLI
 EOF

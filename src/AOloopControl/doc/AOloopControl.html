@@ -50,7 +50,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Feb 21, 2017</h3>
+<h3 class="date">Apr 05, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -76,8 +76,13 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview-1"><span class="toc-section-number">2.4.1</span> Overview</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#aoloopcontrol-setup"><span class="toc-section-number">3</span> AOloopControl setup</a><ul>
+<li><a href="#aoloopcontrol-setup-and-overview"><span class="toc-section-number">3</span> AOloopControl setup and overview</a><ul>
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
+<li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a><ul>
+<li><a href="#automatically-generated-internal-log-very-detailed"><span class="toc-section-number">3.2.1</span> Automatically generated internal log (very detailed)</a></li>
+<li><a href="#external-log-less-verbose"><span class="toc-section-number">3.2.2</span> External log (less verbose)</a></li>
+<li><a href="#interactive-user-log"><span class="toc-section-number">3.2.3</span> Interactive user log</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4</span> Setting up the hardware interfaces</a><ul>
 <li><a href="#top-level-script"><span class="toc-section-number">4.1</span> Top level script</a></li>
@@ -175,7 +180,8 @@ make install</code></pre>
 <pre><code>mkdir /&lt;workdir&gt;
 cd &lt;srcdir&gt;/src/AOloopControl/scripts
 ./syncscripts -e /&lt;workdir&gt;
-cd /&lt;workdir&gt;</code></pre>
+cd /&lt;workdir&gt;
+./syncscripts</code></pre>
 <p>Symbolic links to the source scripts and executable are now installed in the work directory :</p>
 <pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
 total 28
@@ -187,7 +193,7 @@ lrwxrwxrwx 1 olivier olivier   70 Feb 21 19:08 AOloopControl -&gt; /home/olivier
 drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
 drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
 lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -&gt; /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts</code></pre>
-<p>If new scripts are added in the source directory, running <code>./syncscripts</code> will add them to the work directory.</p>
+<p>If new scripts are added in the source directory, running <code>./syncscripts</code> again from the work directory will add them to the work directory.</p>
 <p>The main executable is <code>./AOloopControl</code>, which provides a command line interface (CLI) to all compiled code. Type <code>AOloopControl -h</code> for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (<code>m? &lt;module.c&gt;</code>) and help for each function (<code>cmd? &lt;functionname&gt;</code>). Type <code>help</code> within the CLI for additional directions.</p>
 <pre><code>olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
 type &quot;help&quot; for instructions
@@ -1027,8 +1033,8 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </div>
 </div>
 </div>
-<div id="aoloopcontrol-setup" class="section level1">
-<h1><span class="header-section-number">3</span> AOloopControl setup</h1>
+<div id="aoloopcontrol-setup-and-overview" class="section level1">
+<h1><span class="header-section-number">3</span> AOloopControl setup and overview</h1>
 <div id="gui-description" class="section level2">
 <h2><span class="header-section-number">3.1</span> GUI description</h2>
 <p>The script <code>aolconf</code> starts the main GUI, from which all setup and control can be done. The GUI consists of several main screens, as shown below.</p>
@@ -1037,16 +1043,40 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <p class="caption">aolconf GUI screens</p>
 </div>
 </div>
+<div id="commands-log" class="section level2">
+<h2><span class="header-section-number">3.2</span> Commands log</h2>
+<div id="automatically-generated-internal-log-very-detailed" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Automatically generated internal log (very detailed)</h3>
+<p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
+<pre><code>tail -f aolconf.log</code></pre>
+</div>
+<div id="external-log-less-verbose" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> External log (less verbose)</h3>
+<p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
+<pre><code>dologext &lt;string&gt;</code></pre>
+<p>The string usually consists of the loop name followed by comments.</p>
+</div>
+<div id="interactive-user-log" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Interactive user log</h3>
+<p>To start the interactive log script:</p>
+<pre><code>./aolconfscripts/aollog -i &lt;LOOPNAME&gt; NULL</code></pre>
+<p>Entries will be logged in the <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code> file (with sym link to <code>aolconf.log</code>).</p>
+<p>It is also common practice to start a <code>MISC</code> log for misc comments, also to be included in the external log:</p>
+<pre><code>./aolconfscripts/aollog -ie MISC NULL</code></pre>
+</div>
+</div>
 </div>
 <div id="setting-up-the-hardware-interfaces" class="section level1">
 <h1><span class="header-section-number">4</span> Setting up the hardware interfaces</h1>
 <div id="top-level-script" class="section level2">
 <h2><span class="header-section-number">4.1</span> Top level script</h2>
 <p>Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</p>
-<pre><code>aolconf -L 3 -N testsim</code></pre>
+<pre><code>./aolconf -L 3 -N testsim</code></pre>
 <p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
 <p>You can check the current loop number and name settings with:</p>
-<pre><code>aolconf -h</code></pre>
+<pre><code>./aolconf -h</code></pre>
+<p>The script can also launch a pre-written CPU/OS configuration script named <code>./aocscripts/cpuconfig_&lt;LOOPNAME&gt;</code> :</p>
+<pre><code>./aolconf -C</code></pre>
 </div>
 <div id="setting-the-dm-interface" class="section level2">
 <h2><span class="header-section-number">4.2</span> Setting the DM interface</h2>
@@ -1106,7 +1136,7 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </div>
 <div id="mode-c-create-a-new-modal-dm-mapped-to-an-existing-dm-using-another-loops-control-modes" class="section level3">
 <h3><span class="header-section-number">4.2.3</span> Mode [C]: Create a new modal DM, mapped to an existing DM using another loop's control modes</h3>
-<p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop.</p>
+<p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop (this is the loop we are setting up).</p>
 <ol style="list-style-type: decimal">
 <li><p>Select <strong>MODAL</strong> DM (<code>DMmodeZ</code> in <code>Top Menu</code> screen)</p></li>
 <li><p>Set <strong>DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). This is the DM index for loopB.</p></li>

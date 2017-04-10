@@ -90,6 +90,7 @@ reset=`tput sgr0`
 bold=`tput bold`
 
 touch null.runproc # avoids error message
+touch null.runprocQ # avoids error message
 
 while true;
 do
@@ -112,11 +113,25 @@ done
 echo "-------------------------------------------------------------------------------------------------------------------------------"
 
 echo " "
+echo "PROCESSES QUEUED"
+echo "Start Time                          Process Name                      Tmux session    Description"
+echo "-------------------------------------------------------------------------------------------------------------------------------"
+for file in *.runprocQ
+do
+line=$( cat $file )
+arr=($line)
+comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *[^ ][^ ]*  *//'`
+
+printf "%s    %40s   %40s    %s\n"   "${arr[0]}"  "${bold}${red}${arr[1]}${reset}"   "${bold}${green}${arr[2]}${reset}"  "$comment"
+done
+echo "-------------------------------------------------------------------------------------------------------------------------------"
+
+echo " "
 echo " "
 
 echo "LOCKS (indicates processes held waiting)"
 echo " "
-ls -1 function*.lock 2>/dev/null
+ls -1 *.block 2>/dev/null
 
 
 sleep 1.0

@@ -100,8 +100,10 @@ loopnb=$(cat LOOPNUMBER)
 
 
 ./AOloopControl -n $pname << EOF
+loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
 loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
-aolRM2CM zrespM contrM $1
+zrespMm=zrespM*wfsmask
+aolRM2CM zrespMm contrM $1
 savefits contrM "!$2"
 exitCLI
 EOF

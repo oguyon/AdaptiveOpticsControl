@@ -1381,7 +1381,7 @@ int profile(const char *ID_name, const char *outfile, double xcenter, double yce
 			// mean[i] /= counts[i];
 			// rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
 			rms[i] = sqrt(rms[i]/counts[i]);
-			fprintf(fp,"%.18f %.18f %.18f %ld %ld\n", dist[i], mean[i], rms[i], counts[i], i);
+			fprintf(fp,"%.18f %.18g %.18g %ld %ld\n", dist[i], mean[i], rms[i], counts[i], i);
 		}
     }
   

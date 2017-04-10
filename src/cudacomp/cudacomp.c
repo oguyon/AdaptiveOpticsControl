@@ -1352,7 +1352,7 @@ void *compute_function( void *ptr )
 
             // TEST
 
-            sprintf(fname, "gputest%d.txt", device);
+        /*    sprintf(fname, "gputest%d.txt", device);
             if((fptest = fopen(fname, "w"))==NULL)
             {
                 printf("ERROR: cannot create file \"%s\"\n", fname);
@@ -1363,7 +1363,7 @@ void *compute_function( void *ptr )
             for(ii=0; ii<gpumatmultconf[index].M; ii++)
                 fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
             fclose(fptest);
-
+*/
             if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr5[device]);
 
@@ -1602,6 +1602,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
     //fflush(stdout);
 
 
+
 	magma_init (); // initialize Magma
 	//  Allocate  host  memory
 	magma_smalloc_cpu (&a, lda*N);                  // host  memory  for a
@@ -1616,10 +1617,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
 
 
 
-	//printf("MAGMA READY\n");
-	//fflush(stdout);
-	
-	
+
 	
 	
 	
@@ -1651,15 +1649,16 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
      
      
      // Write eigenvalues
-    sprintf(fname, "eigenv_magma.dat");
+    sprintf(fname, "eigenv.dat.magma");
     if((fp=fopen(fname, "w"))==NULL)
       {
         printf("ERROR: cannot create file \"%s\"\n", fname);
         exit(0);
       }
     for(k=0; k<min_mn; k++)
-      fprintf(fp,"%ld %g\n", k, S1[k]);
+      fprintf(fp,"%5ld %20g %20g\n", k, S1[k], S1[k]/S1[0] );
     fclose(fp);
+
  
     egvlim = SVDeps * S1[0];
         
@@ -1940,6 +1939,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
 
         save_fits("mA", "!test_mA.fits");
+        delete_image_ID("mA");
     }
 
 
@@ -2077,7 +2077,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
     // Write eigenvalues
-    sprintf(fname, "eigenv_magma.dat");
+    sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", fname);
@@ -2086,12 +2086,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(MAGMAfloat==1)
     {
         for(k=0; k<m; k++)
-            fprintf(fp,"%ld %g\n", k, magmaf_w1[m-k-1]);
+            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magmaf_w1[m-k-1], magmaf_w1[m-k-1]/magmaf_w1[m-1], SVDeps*SVDeps);
     }
     else
     {
         for(k=0; k<m; k++)
-            fprintf(fp,"%ld %g\n", k, magma_w1[m-k-1]);
+            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magma_w1[m-k-1], magma_w1[m-k-1]/magma_w1[m-1], SVDeps*SVDeps);
     }
     fclose(fp);
 
@@ -2758,14 +2758,14 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
         exit(EXIT_FAILURE);
     }
 
-    sprintf(fname, "eigenv.dat");
+    sprintf(fname, "eigenv.dat.gsl");
     if((fp=fopen(fname, "w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", fname);
         exit(0);
     }
     for(i=0; i<n; i++)
-        fprintf(fp,"%ld %g\n", i, Sarray[i]);
+        fprintf(fp,"%5ld %20g %20g\n", i, Sarray[i], Sarray[i]/Sarray[0]);
     fclose(fp);
 
 

@@ -1279,8 +1279,9 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
     int bitindex = 4; // 0 = MSB
 
 
-	printf("STEP 00\n");
-	fflush(stdout);
+	double vx, vy, rmsx, rmsy;
+	
+
 
     if(WriteCIF==1)
     {
@@ -1556,9 +1557,11 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
 
     if(mkInfluenceFunctions==1) // TT and focus for each segment
     {
+		
         IDif = create_3Dimage_ID("hexpupif", size, size, 3*SEGcnt);
         for(seg=0; seg<SEGcnt; seg++)
         {
+			
             // piston
             kk = 3*seg;
             xc = 0.0;
@@ -1578,17 +1581,30 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
             xc /= tc;
             yc /= tc;
 
+
             // tip and tilt
+            rmsx = 0.0;
+            rmsy = 0.0;
             for(ii=0; ii<size; ii++)
                 for(jj=0; jj<size; jj++)
                 {
                     if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
                     {
-
-                        data.image[IDif].array.F[(kk+1)*size2+jj*size+ii] = 1.0*ii-xc;
-                        data.image[IDif].array.F[(kk+2)*size2+jj*size+ii] = 1.0*jj-yc;
+						vx = 1.0*ii-xc;
+                        data.image[IDif].array.F[(kk+1)*size2+jj*size+ii] = vx;
+						rmsx += vx*vx;
+						
+						vy = 1.0*jj-yc;
+                        data.image[IDif].array.F[(kk+2)*size2+jj*size+ii] = vy;
+                        rmsy += vy*vy;
                     }
                 }
+            for(ii=0;ii<size2;ii++)
+			{
+				data.image[IDif].array.F[(kk+1)*size2+ii] *= sqrt(tc/rmsx);
+				data.image[IDif].array.F[(kk+2)*size2+ii] *= sqrt(tc/rmsy);
+			}
+            
         }
     }
 

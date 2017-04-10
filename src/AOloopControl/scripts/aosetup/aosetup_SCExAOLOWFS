@@ -149,14 +149,20 @@ rm aocscripts/cpuconfig &> /dev/null
 ln -s $PWD/$cpuconfig_file aocscripts/cpuconfig 
 
 
+# WFS dark
+rm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+ln -s /tmp/ircam2crop_dark.im.shm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 
 
 mkdir -p conf
+
 DMindex="01"
 echo "$DMindex" > ./conf/conf_DMindex.txt
+
 echo "MODAL" > ./conf/conf_DMMODE.txt
 echo "5" > ./conf/conf_dm${DMindex}xsize.txt
 echo "1" > ./conf/conf_dm${DMindex}ysize.txt
+
 echo "1" > "./conf/conf_dm2dm_mode.txt"
 echo "0" > "./conf/conf_dmwfsref_mode.txt"
 echo "0" > "./conf/conf_dmvolt_mode.txt"

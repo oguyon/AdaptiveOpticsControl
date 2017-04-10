@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Feb 21, 2017
+% Apr 05, 2017
 
 
 
@@ -77,6 +77,7 @@ The work directory is where all scripts and high level commands should be run fr
 	cd <srcdir>/src/AOloopControl/scripts
 	./syncscripts -e /<workdir>
 	cd /<workdir>
+	./syncscripts
 
 Symbolic links to the source scripts and executable are now installed in the work directory :
 
@@ -91,7 +92,7 @@ Symbolic links to the source scripts and executable are now installed in the wor
 	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
 	lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
 
-If new scripts are added in the source directory, running `./syncscripts` will add them to the work directory.
+If new scripts are added in the source directory, running `./syncscripts` again from the work directory will add them to the work directory.
 
 
 The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions.
@@ -705,7 +706,7 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 
 
 
-# AOloopControl setup
+# AOloopControl setup and overview
 
 
 
@@ -718,6 +719,50 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 ![aolconf GUI screens](./figures/aolconfGUIscreens.jpg "GUI screens")
 
 
+## Commands log
+
+
+### Automatically generated internal log (very detailed)
+
+All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
+
+~~~~
+tail -f aolconf.log
+~~~~
+
+### External log (less verbose)
+
+The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
+
+~~~
+dologext <string>
+~~~
+
+The string usually consists of the loop name followed by comments.
+
+
+### Interactive user log
+
+To start the interactive log script:
+
+~~~
+./aolconfscripts/aollog -i <LOOPNAME> NULL
+~~~
+
+Entries will be logged in the `./logdir/<UTDATE>/logging/<LOOPNAME>.log` file (with sym link to `aolconf.log`).
+
+It is also common practice to start a `MISC` log for misc comments, also to be included in the external log:
+
+~~~
+./aolconfscripts/aollog -ie MISC NULL
+~~~
+
+
+
+
+
+
+
 
 # Setting up the hardware interfaces
 
@@ -727,7 +772,7 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):
 
 ~~~~~
-aolconf -L 3 -N testsim
+./aolconf -L 3 -N testsim
 ~~~~~
 
 The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
@@ -735,8 +780,14 @@ The loop name (`testsim` in the above example) will both allocate a name for the
 You can check the current loop number and name settings with:
 
 ~~~~~
-aolconf -h
+./aolconf -h
 ~~~~~
+
+The script can also launch a pre-written CPU/OS configuration script named `./aocscripts/cpuconfig_<LOOPNAME>` :
+
+~~~~
+./aolconf -C
+~~~~
 
 
 
@@ -803,7 +854,7 @@ Options [C] and [D] are `MODAL` options, as the DM does not represent physical s
 
 ### Mode [C]: Create a new modal DM, mapped to an existing DM using another loop's control modes
 
-In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop.
+In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop (this is the loop we are setting up).
 
 1. Select **MODAL** DM (`DMmodeZ` in `Top Menu` screen)
 
