@@ -1,4 +1,5 @@
-# AO loop control Overview
+# AO loop control {#AOloopControl}
+
 
 This module allows control of adaptive optics (AO) control loops.
 
@@ -12,15 +13,26 @@ Main features:
 
 
 
-# Top-level script: aolrun
 
-The top-level script is aolrun.
-
-Script aolrun initializes the control loop by reading configuration input parameters, and then responds to changes in the "wavefront sensor input" image. 
-Control loops are numbered. The loop number is read from local file LOOPNUMBER.
+# Scripts
 
 
-## Required input for aolrun, prior setup
+
+## aolconf (top level script)
+
+The top level script is aolconf, which is used to configure the loop and run it. It also includes a test mode with a simulated AO system.
+aolconf is located in the AOloopControl/scripts directory, along with multiple scripts that it calls.
+
+
+
+
+
+
+
+
+
+
+## aolrun
 
 The following table lists all input / files required prior to running aolrun
 
@@ -38,6 +50,9 @@ AOconf[loop].GPU                    | number of GPUs used                       
 AOconf[loop].GPUall                 | skip CPU image scaling and go straight to CPU ?  | local file ./conf/conf_GPUall.txt
 AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC | compute image total in separate thread ?         | local file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt
 MATRIX_COMPUTATION_MODE             | use single combined act-wfs matrix ?             | local file ./conf/conf_CMmode.txt
+
+
+
 
 
 

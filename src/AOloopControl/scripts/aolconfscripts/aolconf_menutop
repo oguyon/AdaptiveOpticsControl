@@ -235,18 +235,10 @@ fi
 menuitems+=( " " " ")
 file="$HOME/status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
-if [[ -f "$file" && ( "$initDMstat" = "0" || "$initDMstat" = "1" ) ]]; then
-echo "OK"
-else
-mkdir -p ./status
-echo "0" > $file
-fi
-
-file="$HOME/status/stat_initdm${DMindex}.txt"
-initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
 else
+mkdir -p ./status
 echo "0" > $file
 initDMstat=0
 fi
@@ -257,6 +249,7 @@ else
 menuitems+=( "stopDM" "STOP  DM comb process" )
 fi
 
+menuitems+=( "monDM" "Monitor  DM comb process" )
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
@@ -278,7 +271,7 @@ menuitems+=( " " " ")
 
 function_controlmatrix_readparams
 
-if [ -f "FUNCTION_C0.runproc" ] || [ -f "FUNCTION_C00.runproc" ]; then
+if [ -f "runproc/FUNCTION_C0.runproc" ] || [ -f "runproc/FUNCTION_C00.runproc" ]; then
 menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
 menuitems+=( "stopRM" "Stop RM acquisition" )
 menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
@@ -695,6 +688,15 @@ menutop_default="initDM"
 ;;
 
 
+	monDM)
+SF="DMmonstartup"
+echo "aoloopcontroldmcombmon $DMindex" > $SF 
+echo "exit" >> $SF
+$execname -n DMmon-$1 -f DMmonfifo -s $SF
+rm $SF
+;;
+
+
 # =====================================================================================================================
 # ===================================  AO CONFIGURE AND CONTROL =======================================================
 # =====================================================================================================================
@@ -715,9 +717,9 @@ logRunningProcess "FUNCTION_C00" "$tmuxnameC00" "==== CALIBRATION ===="
 function_configureloop_readparams
 function_nAUTOC
 sleep 0.1
-tmux send-keys -t ${tmuxnameC00} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
+tmux send-keys -t ${tmuxnameC00} "./auxscripts/waitonfile runproc/FUNCTION_nAUTOC.runproc" C-m
 
-tmux send-keys -t ${tmuxnameC00} "rm FUNCTION_C00.runproc" C-m
+tmux send-keys -t ${tmuxnameC00} "rm runproc/FUNCTION_C00.runproc" C-m
 menutop_default="stopRM"
 ;;
 
@@ -750,7 +752,7 @@ function_configureloop_readparams
 function_nAUTOC
 
 sleep 0.1
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile runproc/FUNCTION_nAUTOC.runproc" C-m
 
 # COMPUTE CM
 mkModesMODE=0; # full computation
@@ -758,7 +760,7 @@ tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
 function_computeModesCM
 
-tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
+tmux send-keys -t ${tmuxnameC0} "rm runproc/FUNCTION_C0.runproc" C-m
 menutop_default="stopRM"
 ;;
 
@@ -785,7 +787,7 @@ tmux send-keys -t ${tmuxnameC0} "" C-m
 touch FUNCTION_SharedMemLoadCM.block
 # SELECT CONFIGURATION NAME
 mkdir -p ./CONF
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 if [ -f "./conf/conf_loopconfname.txt" ]; then
 loopconfname=$(cat ./conf/conf_loopconfname.txt)
@@ -794,13 +796,14 @@ loopconfname=""
 fi
 
 dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
---cancel-label "Exit" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+--cancel-label "Exit" --fselect "./CONF/${CALIBdatestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
-echo "${confname}" > ./confname.txt
+echo "${confname}" > ./status/confname.txt
+aoconflog "CONFIGURATION ${confname}"
 
 
 
@@ -853,8 +856,14 @@ tmux send-keys -t ${tmuxnameC0} "cp conf/RMpixindex.fits \"${confname}/\"" C-m
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m	
 
 
+confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
+
+
 # LOAD CM (conf -> shared mem)
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile aolmkmodes.runproc" C-m # waiting for mkmodes to complete
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile runproc/aolmkmodes.runproc" C-m # waiting for mkmodes to complete
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
 function_SharedMemLoadCM
 

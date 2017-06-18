@@ -828,9 +828,15 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
 
         ID = image_ID(imnameamp);
+        IDre = image_ID(imnamere);
+        IDim = image_ID(imnameim);
         // normalize so the intensity sums to 1
         for(ii=0; ii<size2*nblambda; ii++)
-            data.image[ID].array.F[ii] /= sqrt(size2*optsyst[index].flux[0]/nblambda);
+        {
+			data.image[ID].array.F[ii] /= sqrt(size2*optsyst[index].flux[0]/nblambda);
+			data.image[IDre].array.F[ii] /= sqrt(size2*optsyst[index].flux[0]/nblambda);
+			data.image[IDim].array.F[ii] /= sqrt(size2*optsyst[index].flux[0]/nblambda);
+		}
 
         // compute and print total flux
         sprintf(imname, "psfi%ld", index);

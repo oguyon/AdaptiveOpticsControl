@@ -30,10 +30,11 @@ echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-hcs]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)              help"
-echo "     $(tput bold)-e$(tput sgr0) <DESTdir>    export syncscript to directory"
-echo "     $(tput bold)-s$(tput sgr0) <SRCdir>     source directory for scripts"
-echo "     $(tput bold)-c$(tput sgr0)              clear all files in directory (USE WITH CARE)"
+echo "     $(tput bold)-h$(tput sgr0)              (h)elp"
+echo "     $(tput bold)-e$(tput sgr0) <DESTdir>    (e)xport syncscript to directory"
+echo "     $(tput bold)-s$(tput sgr0) <SRCdir>     (s)ource directory for scripts"
+echo "     $(tput bold)-d$(tput sgr0)              har(d) copy instead of symbolic link"
+echo "     $(tput bold)-c$(tput sgr0)              (c)lear all files in directory (USE WITH CARE)"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -44,8 +45,9 @@ echo "------------------------------------------------------------------------"
 
 # ================= OPTIONS =============================
 
+HARD="0"
 
-while getopts :hcs:e: FLAG; do
+while getopts :hcs:e:d FLAG; do
   case $FLAG in
     h)  #show help
       printHELP
@@ -60,13 +62,16 @@ while getopts :hcs:e: FLAG; do
     ;;
     e) # export script to directory
     echo "$PWD" > $OPTARG/.scripts_src_dir.conf
-    rm $OPTARG/syncscripts
+    rm $OPTARG/syncscripts 2> /dev/null
     ln -s $PWD/syncscripts $OPTARG/syncscripts
     execname=$( ls $PWD/../../../bin/ )
     rm $OPTARG/AOloopControl 2> /dev/null
     echo "execname = \"$execname\""
     ln -s $PWD/../../../bin/$execname $OPTARG/AOloopControl
     exit
+    ;;
+    d)
+    HARD="1"
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -120,9 +125,15 @@ do
 
 	for entry in $srcdir1/*
 	do
-	filename="${entry##*/}"	
-	echo "   syncing directory $srcdir1 file $filename"
-	ln -fs $entry ./$dir/$filename
+	if [ ! -d $entry ]; then
+		filename="${entry##*/}"	
+		echo "   syncing directory $srcdir1 file $filename"
+		if [ $HARD -eq 1 ]; then
+		cp $entry ./$dir/$filename
+		else
+		ln -fs $entry ./$dir/$filename
+		fi
+	fi
 	done
 
 done

@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Olivier Guyon" />
+  <meta name="date" content="2017-05-29" />
   <title>AOloopControl</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -50,11 +51,11 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Apr 05, 2017</h3>
+<h3 class="date">May 29, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#initial-setup"><span class="toc-section-number">1</span> Initial Setup</a><ul>
+<li><a href="#AOloopControl_UserGuide"><span class="toc-section-number">1</span> Initial Setup</a><ul>
 <li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
 <li><a href="#pre-requisites"><span class="toc-section-number">1.2</span> Pre-requisites</a></li>
 <li><a href="#installing-the-adaptiveopticscontrol-package"><span class="toc-section-number">1.3</span> Installing the AdaptiveOpticsControl package</a></li>
@@ -126,12 +127,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview-3"><span class="toc-section-number">11.1</span> Overview</a></li>
 <li><a href="#scripts"><span class="toc-section-number">11.2</span> Scripts</a></li>
 </ul></li>
-<li><a href="#reference"><span class="toc-section-number">12</span> REFERENCE</a><ul>
-<li><a href="#semaphores"><span class="toc-section-number">12.1</span> Semaphores</a></li>
-</ul></li>
+<li><a href="#reference-additional-pages"><span class="toc-section-number">12</span> REFERENCE, ADDITIONAL PAGES</a></li>
 </ul>
 </div>
-<div id="initial-setup" class="section level1">
+<div id="AOloopControl_UserGuide" class="section level1">
 <h1><span class="header-section-number">1</span> Initial Setup</h1>
 <div id="scope" class="section level2">
 <h2><span class="header-section-number">1.1</span> Scope</h2>
@@ -147,6 +146,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li>fftw (single and double precision)</li>
 <li>gsl</li>
 <li>readline</li>
+<li>tmux</li>
 </ul>
 <p>Recommended:</p>
 <ul>
@@ -174,7 +174,7 @@ make install</code></pre>
 <p>Conventions:</p>
 <ul>
 <li><code>&lt;srcdir&gt;</code> is the source code directory, usually <code>.../AdaptiveOpticsControl-&lt;version&gt;</code></li>
-<li><code>&lt;workdir&gt;</code> is the work directory where the program and scripts will be executed</li>
+<li><code>&lt;workdir&gt;</code> is the work directory where the program and scripts will be executed. Note that the full path should end with <code>.../AOloop&lt;#&gt;</code> where <code>&lt;#&gt;</code> ranges from 0 to 9. For example, <code>AOloop2</code>.</li>
 </ul>
 <p>The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:</p>
 <pre><code>mkdir /&lt;workdir&gt;
@@ -1049,12 +1049,14 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <h3><span class="header-section-number">3.2.1</span> Automatically generated internal log (very detailed)</h3>
 <p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
 <pre><code>tail -f aolconf.log</code></pre>
+<p>Inside the bash script, function <code>aoconflog</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name.</p>
 </div>
 <div id="external-log-less-verbose" class="section level3">
 <h3><span class="header-section-number">3.2.2</span> External log (less verbose)</h3>
 <p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
 <pre><code>dologext &lt;string&gt;</code></pre>
 <p>The string usually consists of the loop name followed by comments.</p>
+<p>Inside the bash script, function <code>aoconflogext</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name.</p>
 </div>
 <div id="interactive-user-log" class="section level3">
 <h3><span class="header-section-number">3.2.3</span> Interactive user log</h3>
@@ -1118,7 +1120,7 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <li>OPTIONAL: <strong>set DM delay</strong> ('setDMdelayON' and 'setDMdelayval' in <code>Top Menu</code> screen)</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li><p><strong>Create the DM streams</strong> with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
+<li><p><strong>Create the DM streams</strong> with the <code>initDM</code> command in the <code>Top Menu</code>. You may need to run the <code>stopDM</code> command first.</p></li>
 <li><strong>autoconfigure DM: main DM (nolink)</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
 <ul>
 <li>dm##disp00 is linked to aol#_dmO (flat offset channel)</li>
@@ -1677,7 +1679,6 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 139
 140
 141
-142
 </pre></td><td class="sourceCode"><pre><code class="sourceCode">#! /bin/bash
 
 
@@ -1793,10 +1794,9 @@ readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
 readshmim aol${loopnb}_imWFS0tot
 readshmim aol${loopnb}_wfsref
-
 readshmim aol${loopnb}_wfsmask
+listim
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
-
 exitCLI
 EOF
 
@@ -1814,8 +1814,8 @@ readshmim aol${loopnb}_imWFS0tot
 readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_modeval
 readshmim aol${loopnb}_wfsmask
+listim
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
-
 exitCLI
 EOF
 
@@ -2343,77 +2343,13 @@ EOF</code></pre></td></tr></table></div>
 </table>
 </div>
 </div>
-<div id="reference" class="section level1">
-<h1><span class="header-section-number">12</span> REFERENCE</h1>
-<div id="semaphores" class="section level2">
-<h2><span class="header-section-number">12.1</span> Semaphores</h2>
-<table>
-<colgroup>
-<col width="20%" />
-<col width="79%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">dm00disp</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">0</td>
-<td>?</td>
-</tr>
-<tr class="even">
-<td align="left">6</td>
-<td>-&gt; compute simulated linear WFS image</td>
-</tr>
-</tbody>
-</table>
-<table>
-<colgroup>
-<col width="20%" />
-<col width="79%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">aol0_dmdisp</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">0</td>
-<td>?</td>
-</tr>
-<tr class="even">
-<td align="left">7</td>
-<td>-&gt; compute delayed DM : aol0_dmdispD</td>
-</tr>
-</tbody>
-</table>
-<table>
-<colgroup>
-<col width="20%" />
-<col width="79%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">aol0_imWFS0</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">0</td>
-<td>?</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td>-&gt; extract modes from WFS image script <code>./auxscripts/modesextractwfs</code></td>
-</tr>
-</tbody>
-</table>
-</div>
+<div id="reference-additional-pages" class="section level1">
+<h1><span class="header-section-number">12</span> REFERENCE, ADDITIONAL PAGES</h1>
+<ul>
+<li>Page <span class="citation">@subpage</span> streams_semaphores</li>
+<li>Page <span class="citation">@subpage</span> streams_semaphores</li>
+<li>Page <span class="citation">@subpage</span> streams_semaphores</li>
+</ul>
 </div>
 </body>
 </html>

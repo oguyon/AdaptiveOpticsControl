@@ -26,31 +26,48 @@ aoconflog "ERROR: $@"
 }
 
 
-# Queued process
+
+
+#
+# log queued process
+#
 function logRunningProcessQ0
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 	string=$( printf "%s   %20s   %20s   %s" "${datestr}" "$1" "$2" "$3" )
-	echo "$string" > $1.runprocQ
+	echo "$string" > runproc/$1.runprocQ
 }
 
+
+#
+# queued process becomes active
+# sends command to tmux session
+#
 function logRunningProcessQ
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 	string=$( printf "%s   %20s   %20s   %s" "${datestr}" "$1" "$2" "$3" )
-	echo "$string" > $1.runprocQ
-	tmux send-keys -t $2 "mv $1.runprocQ $1.runproc" C-m
+	echo "$string" > runproc/$1.runprocQ
+	tmux send-keys -t $2 "mv runproc/$1.runprocQ runproc/$1.runproc" C-m
 }
 
-
-
-
+#
+# log process
+#
 function logRunningProcess 
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 	string=$( printf "%s   %20s   %20s   %s" "${datestr}" "$1" "$2" "$3" )
-	echo "$string" > $1.runproc 
+	echo "$string" > runproc/$1.runproc 
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -99,6 +116,14 @@ fi
 
 function Fits2shm {
 aoconflog "Move FITS to shared memory : $1 -> $2"
+
+# is file a link ?
+if [ -L "$1" ]; then
+flink=$( readlink -f $1 )
+rm $1
+rsync -auL $flink $1
+fi
+
 if [ "$CPUconfRT" -eq "1" ];then
 $execname << EOF # move file to shared memory
 csetpmove system

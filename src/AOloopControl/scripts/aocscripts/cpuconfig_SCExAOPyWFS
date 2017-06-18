@@ -360,5 +360,5 @@ ssh scexao@scexao2 "tmux new-session -d -s ptp"
 ssh scexao@scexao2 "tmux send-keys -t ptp \"ls\" C-m"
 fi
 
-
-touch cpuconfigOK
+datestr="$( date -u )"
+echo "$datestr" > cpuconfigOK

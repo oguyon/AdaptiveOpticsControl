@@ -99,7 +99,7 @@ EOF
 
 function CreateDefaultConfiguration {
 $execname << EOF
-AOsimcoroLOWFS $CONFFILE
+AOsimcoroLOWFS "$CONFFILE"
 exit
 EOF
 }
@@ -206,6 +206,6 @@ loadfits "$LYOTSTOPRPHA" lyotstopreflpha
 loadfits "$LYOTSTOPTAMP" lyotstoptransmamp
 loadfits "$LYOTSTOPTPHA" lyotstoptransmpha
 loadfits "$LOWFSOPDMAP" lowfsopdmap
-AOsimcoroLOWFS $CONFFILE
+AOsimcoroLOWFS "$CONFFILE"
 exit
 EOF

@@ -68,6 +68,7 @@ echo "   -c                   (c)lear all settings"
 echo "  Runs top level script:"
 echo "   -L <long>            (L)oop number"
 echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
+echo "   -x                   load/initalize and e(x)it"
 echo "   -e <exec>            specify executable name (default: $execname)"
 echo "   -n                   do (n)ot load configuration on startup"
 echo "------------------------------------------------------------------------"
@@ -122,14 +123,26 @@ LOADMEM=1
 LOOPNAME_file="LOOPNAME"
 LOOPNUMBER_file="LOOPNUMBER"
 CPUconfRT="1"  # use CPU sets
+LOADexit="0"
 
 execname="./AOloopControl"
 
 mkdir -p logdir
 
+# runproc files indicating which processes are running
+mkdir -p runproc
+
 ### Start getopts code ###
-while getopts :hH:L:N:Ccn FLAG; do
+while getopts :hH:l:CcL:N:xe:n FLAG; do
   case $FLAG in
+    h)  #show help
+	if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
     H) # detailed help
     if [ "$OPTARG" == "cf" ]; then
     printHELP_confFILES
@@ -138,6 +151,28 @@ while getopts :hH:L:N:Ccn FLAG; do
     echo "ERROR: choice $OPTARG not recognized"
     exit
     ;;
+    l)
+    echo "Option not yet supported"
+    exit
+    ;;
+    C) # configure CPU
+    echo "Configure CPU"
+    ./aocscripts/cpuconfig_${LOOPNAME}
+    exit
+    ;;    
+    c) # clear
+    echo "Clearing all settings"
+    rm LOOPNUMBER 2> /dev/null
+    rm LOOPNAME 2> /dev/null
+    rm conf/* 2> /dev/null
+    rmdir conf 2> /dev/null
+    rm status/* 2> /dev/null
+    rmdir status 2> /dev/null
+    rm tmp/* 2> /dev/null
+    rmdir tmp 2> /dev/null
+    rm aolconf.log 2> /dev/null
+    exit
+    ;;    
     L)  #  set loop number
       LOOPNUMBER=$OPTARG
       echo "LOOP NUMBER = $LOOPNUMBER"
@@ -151,35 +186,12 @@ while getopts :hH:L:N:Ccn FLAG; do
     aoconflog "setting LOOPNAME to $LOOPNAME"
 	./aosetup/aosetup_${LOOPNAME}
     ;;
-    C) # configure CPU
-    echo "Configure CPU"
-    ./aocscripts/cpuconfig_${LOOPNAME}
-    exit
-    ;;
+	x)
+	LOADexit="1"
+	;;
     e) # set executable
     execnameFile=$OPTARG
     ln -s $execnameFile ./AOloopControl
-    ;;
-    h)  #show help
-	if [ "$singlelinehelp" -eq "0" ]; then
-      printHELP
-      else
-      printHELP1
-      fi
-      exit
-      ;;
-    c) # clear
-    echo "Clearing all settings"
-    rm LOOPNUMBER 2> /dev/null
-    rm LOOPNAME 2> /dev/null
-    rm conf/* 2> /dev/null
-    rmdir conf 2> /dev/null
-    rm status/* 2> /dev/null
-    rmdir status 2> /dev/null
-    rm tmp/* 2> /dev/null
-    rmdir tmp 2> /dev/null
-    rm aolconf.log 2> /dev/null
-    exit
     ;;
     n) # do not load configuration upon startup
     LOADMEM=0
@@ -595,7 +607,10 @@ AOloadMem 1
 fi
 
 
-
+if [ "$LOADexit" -eq "1" ]
+then
+exit
+fi
 
 
 # =================== STATE MACHINE ====================================

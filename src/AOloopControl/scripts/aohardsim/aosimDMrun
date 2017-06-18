@@ -35,8 +35,9 @@ echo "------------------------------------------------------------------------"
 
 
 function CreateDefaultConfiguration {
+echo "CREATING DMsim DEFAULT CONFIGURATION -> $CONFFILE"
 $execname << EOF
-AOsimDM $CONFFILE
+AOsimDM "$CONFFILE"
 exit
 EOF
 }
@@ -105,6 +106,6 @@ fi
 
 
 $execname -n $pname << EOF
-AOsimDM $CONFFILE
+AOsimDM "$CONFFILE"
 exit
 EOF

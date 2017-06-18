@@ -514,7 +514,7 @@ aoconflogext "set SDVlimall ${SVDlimall}"
 RM2CMm)
 tmuxname="aol${LOOPNUMBER}mkmodesM"
 tmux new-session -d -s $tmuxname
-logRunningProcess "aolmkmodes" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
+logRunningProcess "aolmkmodesM" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
 mkdir -p DMmodes
 mkdir -p respM
 mkdir -p contrM
@@ -560,7 +560,7 @@ tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMcact/contrM
 done
 
 
-tmux send-keys -t $tmuxname "rm aolmkmodesM.runproc" C-m
+tmux send-keys -t $tmuxname "rm runproc/aolmkmodesM.runproc" C-m
 menucontrolmatrix_default="RM2CMm"
 ;;
 
@@ -684,7 +684,7 @@ menucontrolmatrix_default="CM"
 
 
 chkSMloadCM)
-if [ -f "aolmkmodes.runproc" ]; then
+if [ -f "runproc/aolmkmodes.runproc" ]; then
 menucontrolmatrix_default="chkSMloadCM"
 else
 menucontrolmatrix_default="SMloadCM"

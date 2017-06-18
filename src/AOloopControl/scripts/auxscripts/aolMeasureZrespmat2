@@ -162,7 +162,7 @@ fi
 aolnb $loopnb
 csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube
-savefits RMpokeCube "!_RMpokeCube_test00.fits"
+#savefits RMpokeCube "!_RMpokeCube_test00.fits"
 aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} RMpokeCube wfsresp wfsref ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
 savefits wfsresp "!zrespmat0.fits"
 savefits wfsref "!wfsref00.fits"

@@ -3822,12 +3822,15 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
         }
 
 
-		if(twait>0)
-			usleep(twait1);
-		
+	//	printf("wait\n");
+	//	fflush(stdout);
+
 		if(twait1<0)
 			twait1 = 0;
 		
+		if(twait>0)
+			usleep(twait1);
+				
 		clock_gettime(CLOCK_REALTIME, &t1);
         tdiff = info_time_diff(t0, t1);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -3836,7 +3839,10 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 			twait1 ++;
 		else
 			twait1 --;
-		//printf("timing info : %11.9lf  %ld  %ld\n", tdiffv, );
+		
+		
+		//printf("%ld   timing info : %11.9lf  %ld %ld\n", iter, tdiffv, twait1, twait);
+		//fflush(stdout);
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
         {

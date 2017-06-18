@@ -68,6 +68,24 @@ if [ -d $1 ]
 fi
 }
 
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+}
+
+
+
+
+
 KILLPROCESSES=0
 
 # ================= OPTIONS =============================
@@ -110,6 +128,7 @@ fi
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
+checkCommand tmux
 checkFile $srcdir/aosimDMrun
 checkFile $srcdir/aosimDMstart
 checkFile $srcdir/aosimmkWF
@@ -165,39 +184,36 @@ fi
 
 
 
-ln -s $PWD/AOloopControl $PWD/$srcdir/AOloopControl
-ln -s $PWD/atmwf $PWD/$srcdir/atmwf
-
-
 tmuxname="aosimDMcomb"
 echo "Executing aosimDMstart in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "cd $srcdir" C-M
-tmux send-keys -t $tmuxname "./aosimDMstart" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimDMstart" C-M
 
 tmuxname="aosimDMrun"
 echo "Executing aosimDMrun in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "cd $srcdir" C-M
-tmux send-keys -t $tmuxname "./aosimDMrun" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimDMrun" C-M
+
+sleep 1  # give time to create dm05dispmap
+
+
 
 tmuxname="aosimmkWF"
 echo "Executing aosimmkWF in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "cd $srcdir" C-M
-tmux send-keys -t $tmuxname "./aosimmkWF" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimmkWF" C-M
+
+
 
 tmuxname="aosimPyrWFS"
 echo "Executing aosimPyrWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "cd $srcdir" C-M
-tmux send-keys -t $tmuxname "./aosimPyrWFS" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimPyrWFS" C-M
 
 tmuxname="aosimcoroLOWFS"
 echo "Executing aosimcoroLOWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname
-tmux send-keys -t $tmuxname "cd $srcdir" C-M
-tmux send-keys -t $tmuxname "./aosimcoroLOWFS" C-M
+tmux send-keys -t $tmuxname "./$srcdir/aosimcoroLOWFS" C-M
 
 
 echo ""

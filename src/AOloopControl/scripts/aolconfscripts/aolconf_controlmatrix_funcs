@@ -273,7 +273,7 @@ chmod +x $computeModesCMscriptfile
 tmux send-keys -t $tmuxnameMCM "./$computeModesCMscriptfile" C-m
 
 
-tmux send-keys -t $tmuxnameMCM "rm aolmkmodes.runproc" C-m
+tmux send-keys -t $tmuxnameMCM "rm runproc/aolmkmodes.runproc" C-m
 
 
 tmux send-keys -t $tmuxnameMCM "./aolconfscripts/aollog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
@@ -287,8 +287,10 @@ tmux send-keys -t $tmuxnameMCM "dologext $LOOPNAME CM computation DONE &" C-m
 
 function function_SharedMemLoadCM {
 tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
-
+echo "tmux new-session -s ${tmuxnameSMlCM} -d"
+echo "CREATING SESSION : ${tmuxnameSMlCM}"
 tmux new-session -s ${tmuxnameSMlCM} -d
+tmux ls | grep ${tmuxnameSMlCM}
 tmux send-keys -t ${tmuxnameSMlCM} "" C-c
 tmux send-keys -t ${tmuxnameSMlCM} " " C-m
 
@@ -315,10 +317,11 @@ for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2} ;
 echo "./auxscripts/aolReadConfFile ${imname}" >> script_SharedMemLoadCM	
 echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedMemLoadCM
 done
+done
+
 chmod +x script_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
-tmux send-keys -t ${tmuxnameSMlCM} "rm SharedMemLoadCM.runproc" C-m	
-
+tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m	
 
 
 #ReadConfFile "DMmodes${i2}"
@@ -335,8 +338,5 @@ tmux send-keys -t ${tmuxnameSMlCM} "rm SharedMemLoadCM.runproc" C-m
 
 #ReadConfFile "contrMcact${i2}_00"
 #getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
-
-done
-
 }
 

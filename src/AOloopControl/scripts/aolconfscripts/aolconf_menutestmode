@@ -18,7 +18,7 @@ logRunningProcess "MeasDMmodesRec" "$tmuxname" "Measure DM modes AO loop recover
 tmux new-session -d -s ${tmuxname}
 aoconflog "Test Mode Recovery"
 tmux send-keys -t $tmuxname "./auxscripts/MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}" C-m
-tmux send-keys -t $tmuxname "rm MeasDMmodesRec.runproc" C-m
+tmux send-keys -t $tmuxname "rm runproc/MeasDMmodesRec.runproc" C-m
 tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_mrecON.txt" C-m
 }
 
@@ -28,7 +28,7 @@ mrecONstat="OFF"
 tmuxname="aol${LOOPNUMBER}mrec"
 echo "OFF" > ./status/stat_mrecON.txt
 tmux kill-session -t ${tmuxname}
-rm MeasDMmodesRec.runproc
+rm runproc/MeasDMmodesRec.runproc
 }
 
 
@@ -43,7 +43,7 @@ logRunningProcess "MeasLoopModeResp" "$tmuxname" "Measure AO loop temporal respo
 tmux new-session -d -s ${tmuxname}
 aoconflog "Measure AO loop temporal response"
 tmux send-keys -t $tmuxname "./auxscripts/MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
-tmux send-keys -t $tmuxname "rm MeasLoopModeResp.runproc" C-m
+tmux send-keys -t $tmuxname "rm runproc/MeasLoopModeResp.runproc" C-m
 tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_dmmtrON.txt" C-m
 }
 	
@@ -52,12 +52,19 @@ dmmtrONstat="OFF"
 tmuxname="aol${LOOPNUMBER}dmmtr"
 echo "OFF" > ./status/stat_dmmtrON.txt
 tmux kill-session -t ${tmuxname}
-rm MeasLoopModeResp.runproc
+rm runproc/MeasLoopModeResp.runproc
 }
 
 
 
 
+
+
+
+
+#########################################################################################
+##          LINEAR SIMULATOR  ON                                                       ##
+#########################################################################################
 
 function function_lsim_on {
 lsimONstat=" ON"
@@ -93,6 +100,12 @@ Readwfsimcamname
 }
 
 
+
+
+#########################################################################################
+##          LINEAR SIMULATOR  OFF                                                      ##
+#########################################################################################
+
 function function_lsim_off {
 lsimONstat="OFF"
 tmuxname="aol${LOOPNUMBER}linsim"
@@ -100,8 +113,8 @@ tmuxnameD="aol${LOOPNUMBER}linsimD"
 echo "OFF" > ./status/stat_lsimON.txt
 tmux kill-session -t ${tmuxnameD}
 tmux kill-session -t ${tmuxname}
-rm aollinsimDelay.runproc
-rm aollindm2wfsim.runproc
+rm runproc/aollinsimDelay.runproc
+rm runproc/aollindm2wfsim.runproc
 cp ./conf/conf_wfsimhardware_name.txt ./conf/conf_wfsim_name.txt
 
 # turn on DM voltage
@@ -116,6 +129,10 @@ dmflat
 
 Readwfsimcamname
 }
+
+
+
+
 
 
 
@@ -171,6 +188,10 @@ menuname="TEST MODE [${testloopstatus}]"
 
 stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr$string\Zn" )
+
+
+
+### LINEAR SIMULATOR
 
 menuitems+=( "-" " " )
 stringcenter "LINEAR SIMULATOR"
@@ -670,6 +691,7 @@ menucontrolloop_default="linsimDelay"
 ;;
 
 
+
 	lsimon)
 ReadConfFile "zrespMlinsim"
 ReadConfFile "wfsref0linsim"
@@ -681,6 +703,9 @@ menutestmode_default="lsimoff"
 function_lsim_off
 menutestmode_default="lsimon"
 ;;
+
+
+
 
 	tv)
 tmux a -t aol${LOOPNUMBER}test
@@ -891,18 +916,30 @@ fi
 
 ./auxscripts/aolRMmeas_sensitivity ${mzRMsensAmpnm} ${wfslambdanm}
 
+file="conf/conf_conflastloaded_name.txt"
+if [ -f "$file" ]; then
+confnameloaded=$( cat $file )
+else
+confnameloaded=" "
+fi
+
+outfname=$( basename $confnameloaded )
 
 mkdir -p perfMeas
 str=`( printf "%04ld" "$mzRMsensAmpnm")`
-fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
+#fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
+fname="./perfMeas/${outfname}_wfs_sensitivity.txt"
 echo "# amplitude = $mzRMsensAmpnm nm" > $fname
-echo "# WFS lambda = $wfslambda um" >> $fname
+echo "# WFS lambda = $wfslambdanm nm" >> $fname
 echo " " >> $fname
 cat wfs_sensitivity.txt >> $fname
 rm wfs_sensitivity.txt
 
-mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
-mv WFSmodesXP.fits ./perfMeas/WFSmodesXP.${datestr}.fits
+#mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
+#mv WFSmodesXP.fits ./perfMeas/WFSmodesXP.${datestr}.fits
+
+mv DMmodesXP.fits ./perfMeas/${outfname}_DMmodesXP.fits
+mv WFSmodesXP.fits ./perfMeas/${outfname}_WFSmodesXP.fits
 ;;
 
 

@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 function CreateDefaultConfiguration {
 $execname << EOF
-AOsimPyrWFS $CONFFILE
+AOsimPyrWFS "$CONFFILE"
 exit
 EOF
 }
@@ -103,6 +103,6 @@ if [ ! -f $CONFFILE ]
 fi
 
 $execname -n $pname << EOF
-AOsimPyrWFS $CONFFILE
+AOsimPyrWFS "$CONFFILE"
 exit
 EOF

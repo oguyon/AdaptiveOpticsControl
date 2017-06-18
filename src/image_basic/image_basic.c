@@ -4235,14 +4235,10 @@ long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float fr
         ptr0 += sizeof(float)*xysize*k;
         data.image[IDs].md[0].write = 1;
         memcpy ((void*) ptr1, (void*) ptr0, sizeof(float)*xysize);
-        if(data.image[IDs].sem > 0)
-        {
-            sem_getvalue(data.image[IDs].semptr[0], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[IDs].semptr[0]);
-        }
+
         data.image[IDs].md[0].write = 0;
         data.image[IDs].md[0].cnt0++;
+        COREMOD_MEMORY_image_set_sempost_byID(IDs, -1);
 
         usleep ( tdelay );
         k++;

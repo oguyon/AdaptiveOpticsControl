@@ -142,12 +142,28 @@ logwfsimstat="0"
 fi
 if [ "${logwfsimstat}" = "0" ];
 then
-menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim" )
+menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim                WFS image" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn                 WFS image\Zn" )
 fi
 
 
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+logwfsref0stat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsref0stat" = "0" || "$logwfsref0stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logwfsref0stat="0"
+fi
+if [ "${logwfsref0stat}" = "0" ];
+then
+menuitems+=( "lwfsref01" "START logging aol${LOOPNUMBER}_wfsref0              WFS reference0" )
+else
+menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0\Zn               WFS reference0\Zn" )
+fi
 
 
 file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
@@ -160,10 +176,105 @@ logwfsrefstat="0"
 fi
 if [ "${logwfsrefstat}" = "0" ];
 then
-menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref" )
+menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref               WFS reference" )
 else
-menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn" )
+menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn                WFS reference\Zn" )
 fi
+
+menuitems+=( " " " " )
+
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+loggainbstat=$( cat $file )
+if [[ -f "$file" && ( "$loggainbstat" = "0" || "$loggainbstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+loggainbstat="0"
+fi
+if [ "${loggainbstat}" = "0" ];
+then
+menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                 Block gain" )
+else
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                 Block gain\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+logDMmodeGAINstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeGAINstat" = "0" || "$logDMmodeGAINstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeGAINstat="0"
+fi
+if [ "${logDMmodeGAINstat}" = "0" ];
+then
+menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN            DM mode gain" )
+else
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn           DM mode gain\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+logDMmodeLIMITstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeLIMITstat" = "0" || "$logDMmodeLIMITstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeLIMITstat="0"
+fi
+if [ "${logDMmodeLIMITstat}" = "0" ];
+then
+menuitems+=( "ldmmodelimit1" "START logging aol${LOOPNUMBER}_DMmode_LIMIT         DM mode limit" )
+else
+menuitems+=( "ldmmodelimit0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_LIMIT\Zn          DM mode limit\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+logmultfbstat=$( cat $file )
+if [[ -f "$file" && ( "$logmultfbstat" = "0" || "$logmultfbstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmultfbstat="0"
+fi
+if [ "${logmultfstat}" = "0" ];
+then
+menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb                 Block mult factor" )
+else
+menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn                 Block mult factor\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+logDMmodeMULTFstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeMULTFstat" = "0" || "$logDMmodeMULTFstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeMULTFstat="0"
+fi
+if [ "${logDMmodeMULTFstat}" = "0" ];
+then
+menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF            DM mode mult factor" )
+else
+menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn           DM mode mult factor\Zn" )
+fi
+
+
+
+
+menuitems+=( " " " " )
+
+
 
 
 file="./status/stat_log_dm${DMindex}disp.txt"
@@ -176,9 +287,9 @@ logdmdispstat=0
 fi
 if [ "${logdmdispstat}" = "0" ];
 then
-menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp" )
+menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp                  total DM displacement" )
 else
-menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn" )
+menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn                   total DM displacement" )
 fi
 
 
@@ -192,9 +303,9 @@ logdmdisp00stat=0
 fi
 if [ "${logdmdisp00stat}" = "0" ];
 then
-menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp00" )
+menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp00                DM channel 00" )
 else
-menuitems+=( "ldmdisp000" "\Z1\ZrSTOP logging dm${DMindex}disp00\Zn" )
+menuitems+=( "ldmdisp000" "\Z1\ZrSTOP logging dm${DMindex}disp00\Zn                 DM channel 00" )
 fi
 
 
@@ -209,9 +320,9 @@ logdmdisp01stat=0
 fi
 if [ "${logdmdisp01stat}" = "0" ];
 then
-menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp01" )
+menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp01                DM channel 01" )
 else
-menuitems+=( "ldmdisp010" "\Z1\ZrSTOP logging dm${DMindex}disp01\Zn" )
+menuitems+=( "ldmdisp010" "\Z1\ZrSTOP logging dm${DMindex}disp01\Zn                 DM channel 01" )
 fi
 
 
@@ -225,9 +336,9 @@ logdmdisp02stat=0
 fi
 if [ "${logdmdisp02stat}" = "0" ];
 then
-menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp02" )
+menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp02                DM channel 02" )
 else
-menuitems+=( "ldmdisp020" "\Z1\ZrSTOP logging dm${DMindex}disp02\Zn" )
+menuitems+=( "ldmdisp020" "\Z1\ZrSTOP logging dm${DMindex}disp02\Zn                 DM channel 02" )
 fi
 
 
@@ -241,9 +352,9 @@ logdmdisp03stat=0
 fi
 if [ "${logdmdisp03stat}" = "0" ];
 then
-menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp03" )
+menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp03                DM channel 03" )
 else
-menuitems+=( "ldmdisp030" "\Z1\ZrSTOP logging dm${DMindex}disp03\Zn" )
+menuitems+=( "ldmdisp030" "\Z1\ZrSTOP logging dm${DMindex}disp03\Zn                 DM channel 03" )
 fi
 
 
@@ -257,9 +368,9 @@ logdmdisp04stat=0
 fi
 if [ "${logdmdisp04stat}" = "0" ];
 then
-menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp04" )
+menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp04                DM channel 04" )
 else
-menuitems+=( "ldmdisp040" "\Z1\ZrSTOP logging dm${DMindex}disp04\Zn" )
+menuitems+=( "ldmdisp040" "\Z1\ZrSTOP logging dm${DMindex}disp04\Zn                 DM channel 04" )
 fi
 
 
@@ -273,9 +384,9 @@ logdmdisp05stat=0
 fi
 if [ "${logdmdisp05stat}" = "0" ];
 then
-menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp05" )
+menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp05                DM channel 05" )
 else
-menuitems+=( "ldmdisp050" "\Z1\ZrSTOP logging dm${DMindex}disp05\Zn" )
+menuitems+=( "ldmdisp050" "\Z1\ZrSTOP logging dm${DMindex}disp05\Zn                 DM channel 05" )
 fi
 
 
@@ -290,9 +401,9 @@ logdmdisp06stat=0
 fi
 if [ "${logdmdisp06stat}" = "0" ];
 then
-menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp06" )
+menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp06                DM channel 06" )
 else
-menuitems+=( "ldmdisp060" "\Z1\ZrSTOP logging dm${DMindex}disp06\Zn" )
+menuitems+=( "ldmdisp060" "\Z1\ZrSTOP logging dm${DMindex}disp06\Zn                 DM channel 06" )
 fi
 
 
@@ -306,9 +417,9 @@ logdmdisp07stat=0
 fi
 if [ "${logdmdisp07stat}" = "0" ];
 then
-menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp07" )
+menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp07                DM channel 07" )
 else
-menuitems+=( "ldmdisp070" "\Z1\ZrSTOP logging dm${DMindex}disp07\Zn" )
+menuitems+=( "ldmdisp070" "\Z1\ZrSTOP logging dm${DMindex}disp07\Zn                 DM channel 07" )
 fi
 
 
@@ -322,9 +433,9 @@ logdmdisp08stat=0
 fi
 if [ "${logdmdisp08stat}" = "0" ];
 then
-menuitems+=( "ldmdisp081" "START logging dm${DMindex}disp08" )
+menuitems+=( "ldmdisp081" "START logging dm${DMindex}disp08                DM channel 08" )
 else
-menuitems+=( "ldmdisp080" "\Z1\ZrSTOP logging dm${DMindex}disp08\Zn" )
+menuitems+=( "ldmdisp080" "\Z1\ZrSTOP logging dm${DMindex}disp08\Zn                 DM channel 08" )
 fi
 
 
@@ -338,9 +449,9 @@ logdmdisp09stat=0
 fi
 if [ "${logdmdisp09stat}" = "0" ];
 then
-menuitems+=( "ldmdisp091" "START logging dm${DMindex}disp09" )
+menuitems+=( "ldmdisp091" "START logging dm${DMindex}disp09                DM channel 09" )
 else
-menuitems+=( "ldmdisp090" "\Z1\ZrSTOP logging dm${DMindex}disp09\Zn" )
+menuitems+=( "ldmdisp090" "\Z1\ZrSTOP logging dm${DMindex}disp09\Zn                 DM channel 09" )
 fi
 
 
@@ -354,9 +465,9 @@ logdmdisp10stat=0
 fi
 if [ "${logdmdisp10stat}" = "0" ];
 then
-menuitems+=( "ldmdisp101" "START logging dm${DMindex}disp10" )
+menuitems+=( "ldmdisp101" "START logging dm${DMindex}disp10                DM channel 10" )
 else
-menuitems+=( "ldmdisp100" "\Z1\ZrSTOP logging dm${DMindex}disp10\Zn" )
+menuitems+=( "ldmdisp100" "\Z1\ZrSTOP logging dm${DMindex}disp10\Zn                 DM channel 10" )
 fi
 
 
@@ -370,15 +481,15 @@ logdmdisp11stat=0
 fi
 if [ "${logdmdisp11stat}" = "0" ];
 then
-menuitems+=( "ldmdisp111" "START logging dm${DMindex}disp11" )
+menuitems+=( "ldmdisp111" "START logging dm${DMindex}disp11                DM channel 11" )
 else
-menuitems+=( "ldmdisp110" "\Z1\ZrSTOP logging dm${DMindex}disp11\Zn" )
+menuitems+=( "ldmdisp110" "\Z1\ZrSTOP logging dm${DMindex}disp11\Zn                 DM channel 11" )
 fi
 
+menuitems+=( " " " " )
 
+if [ "${dm2dm_mode}" = "0" ]; then
 
-if [ "${dm2dm_mode}" = "0" ];
-then
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalstat" = "0" || "$logmodevalstat" = "1" ) ]]; then
@@ -389,11 +500,40 @@ logmodevalstat=0
 fi
 if [ "${logmodevalstat}" = "0" ];
 then
-menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval" )
+menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval              WFS mode values" )
 else
-menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
+menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS mode values" )
 fi
 
+file="./status/stat_log_modeval_dm_now.txt"
+logmodevaldmnowstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevaldmnowstat" = "0" || "$logmodevaldmnowstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevaldmnowstat=0
+fi
+if [ "${logmodevaldmnowstat}" = "0" ];
+then
+menuitems+=( "lmodevaldmnow1" "START logging aol${LOOPNUMBER}_modeval_dm_now       DM mode values" )
+else
+menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
+fi
+
+file="./status/stat_log_modeval_dm_now_filt.txt"
+logmodevaldmnowfiltstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevaldmnowfiltstat" = "0" || "$logmodevaldmnowfiltstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevaldmnowfiltstat=0
+fi
+if [ "${logmodevaldmnowfiltstat}" = "0" ];
+then
+menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now_filt  WFS mode values" )
+else
+menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
+fi
 
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )
@@ -405,12 +545,19 @@ logmodevalolstat=0
 fi
 if [ "${logmodevalolstat}" = "0" ];
 then
-menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
 else
-menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn" )
+menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            open loop mode values" )
 fi
 
 fi
+
+
+
+
+
+
+
 
 menuitems+=( " " " " )
 
@@ -524,6 +671,18 @@ menurecord_default="lwfsim1"
 ;;
 
 
+    lwfsref01)
+startstreamlog aol${LOOPNUMBER}_wfsref0
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+menurecord_default="lwfsref00"
+;;
+    lwfsref00)
+stopstreamlog aol${LOOPNUMBER}_wfsref0
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+menurecord_default="lwfsref01"
+;;
+
+
     lwfsref1)
 startstreamlog aol${LOOPNUMBER}_wfsref
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
@@ -534,6 +693,69 @@ stopstreamlog aol${LOOPNUMBER}_wfsref
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 menurecord_default="lwfsref1"
 ;;
+
+
+    lgainb1)
+startstreamlog aol${LOOPNUMBER}_gainb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+menurecord_default="lgainb0"
+;;
+    lgainb0)
+stopstreamlog aol${LOOPNUMBER}_gainb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+menurecord_default="lgainb1"
+;;
+
+
+    ldmmodegain1)
+startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+menurecord_default="ldmmodegain0"
+;;
+    ldmmodegain0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+menurecord_default="ldmmodegain1"
+;;
+
+
+
+    ldmmodelimit1)
+startstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+menurecord_default="ldmmodelimit0"
+;;
+    ldmmodelimit0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+menurecord_default="ldmmodelimit1"
+;;
+
+
+
+    lmultfb1)
+startstreamlog aol${LOOPNUMBER}_multfb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+menurecord_default="lmultfb0"
+;;
+    lmultfb0)
+stopstreamlog aol${LOOPNUMBER}_multfb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+menurecord_default="lmultfb1"
+;;
+
+
+    ldmmodemultf1)
+startstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+menurecord_default="ldmmodemultf0"
+;;
+    ldmmodemultf0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+menurecord_default="ldmmodemultf1"
+;;
+
 
 
 
@@ -705,6 +927,34 @@ stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 menurecord_default="lmodeval1"
 ;;
+
+
+
+    lmodevaldmnow1)
+startstreamlog aol${LOOPNUMBER}_modeval_dm_now
+echo "1" > "./status/stat_log_modeval_dm_now.txt"
+menurecord_default="lmodevaldmnow0"
+;;
+    lmodevaldmnow0)
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_now
+echo "0" > "./status/stat_log_modeval_dm_now.txt"
+menurecord_default="lmodevaldmnow1"
+;;
+
+
+    lmodevaldmnowfilt1)
+startstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
+echo "1" > "./status/stat_log_modeval_dm_now_filt.txt"
+menurecord_default="lmodevaldmnowfilt0"
+;;
+    lmodevaldmnowfilt0)
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
+echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
+menurecord_default="lmodevaldmnowfilt1"
+;;
+
+
+
 
 
     lmodevalol1)

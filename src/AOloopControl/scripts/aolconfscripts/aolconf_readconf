@@ -301,28 +301,40 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
 
-
-
-
-
-
-function ReadWFSdarkfname {
+function Readwfsdarkname {
 file="./conf/conf_wfsdark_name.txt"
 if [ -a $file ]
 	then
-	wfsdarkfname=$(echo "$(cat $file)")
+	wfsdark=$(echo "$(cat $file)")
 	else
-	wfsdarkfname="wfsdark.fits" #default
+	wfsdark="wfsdark" #default
 fi
-aoconflog "linking wfsdark to file ${wfsdarkfname}"
-if [ -f $wfsdarkfname ];then
-rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
-Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
-ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
-else
-printWARNING "File $wfsdarkfname does not exist: no WFS dark frame"
-fi
+# WFS raw image
+aoconflog "linking wfsdark to ${wfsdark}"
+ln -sf /tmp/${wfsdark}.im.shm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 }
+
+
+
+
+
+#function ReadWFSdarkfname {
+#file="./conf/conf_wfsdark_name.txt"
+#if [ -a $file ]
+#	then
+#	wfsdarkfname=$(echo "$(cat $file)")
+#	else
+#	wfsdarkfname="wfsdark.fits" #default
+#fi
+#aoconflog "linking wfsdark to file ${wfsdarkfname}"
+#if [ -f $wfsdarkfname ];then
+#rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+#Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
+#ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
+#else
+#printWARNING "File $wfsdarkfname does not exist: no WFS dark frame"
+#fi
+#}
 
 
 
@@ -403,19 +415,19 @@ ln -s $PWD/${dmmaskRMfname} conf/aol${LOOPNUMBER}_dmmaskRM.fits
 
 
 
-function ReadDMmapfname {
-file="./conf/conf_dmmap_name.txt"
-if [ -a $file ]
-	then
-	dmmapfname=$(echo "$(cat $file)")
-	else
-	dmmapfname="dmmap.fits" #default
-fi
-aoconflog "linking dmmap to file ${dmmapfname}"
-rm /tmp/aol${LOOPNUMBER}_dmmap.im.shm
-Fits2shm ${dmmapfname} aol${LOOPNUMBER}_dmmap
-ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
-}
+#function ReadDMmapfname {
+#file="./conf/conf_dmmap_name.txt"
+#if [ -a $file ]
+#	then
+#	dmmapfname=$(echo "$(cat $file)")
+#	else
+#	dmmapfname="dmmap.fits" #default
+#fi
+#aoconflog "linking dmmap to file ${dmmapfname}"
+#rm /tmp/aol${LOOPNUMBER}_dmmap.im.shm
+#Fits2shm ${dmmapfname} aol${LOOPNUMBER}_dmmap
+#ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
+#}
 
 
 function ReadWFSref0fname {
@@ -502,7 +514,15 @@ if [ -a $file ]
 	else
 	fname="$1.fits" #default
 fi
-aoconflog "linking $1 to ${fname}" 
+aoconflog "ReadConfFile: linking $1 to ${fname}" 
+
+# is file a link ?
+if [ -L "$fname" ]; then
+flink=$( readlink -f $fname )
+rm $fname
+rsync -auL $flink $fname
+fi
+
 ./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 rm conf/aol${LOOPNUMBER}_$1.fits
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
@@ -637,17 +657,17 @@ function ReadDMturbtint {
         then
         dmturbtint=$(echo "$(cat $file)")
         else
-        dmturbtint=0.1 #default
+        dmturbtint=80 #default
     fi
     aoconflog "dmturbtint = ${dmturbtint}"
-                tmux new-session -d -s DMturbtint
-                tmux send-keys -t DMturbtint "$execname " C-m
-                if [ "$CPUconfRT" -eq "1" ]; then
-                tmux send-keys -t DMturbtint "csetpmove system" C-m
-                fi
-                tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
-                tmux send-keys -t DMturbtint "exit" C-m
-                tmux send-keys -t DMturbtint "exit" C-m
+    tmux new-session -d -s DMturbtint
+    tmux send-keys -t DMturbtint "$execname " C-m
+    if [ "$CPUconfRT" -eq "1" ]; then
+    tmux send-keys -t DMturbtint "csetpmove system" C-m
+    fi
+    tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
 }
 
 

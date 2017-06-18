@@ -19,6 +19,7 @@ fi
 
 
 
+
 function function_controlloop_readparams 
 {
 
@@ -810,10 +811,12 @@ echo "cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" >> $scriptfile
 echo "exitCLI" >> $scriptfile
 echo "EOF" >> $scriptfile
 
-
 if [ "$1" = "NULL" ]; then
+echo "TMUX NULL"
 ./$scriptfile
 else
+echo "TMUX $1"
+echo "tmux send-keys -t $1 \"./$scriptfile\""
 tmux send-keys -t $1 "./$scriptfile"
 fi
 }
@@ -847,7 +850,7 @@ logRunningProcessQ0 "aolctr" "$tmuxname" "AO loop control prompt"
 
 echo "tmux send-keys -t ${tmuxname} \" \" C-m" >> $scriptfile
 echo "tmux send-keys -t ${tmuxname} \" \" C-m" >> $scriptfile
-echo "tmux send-keys -t ${tmuxname} \"mv aolctr.runprocQ aolctr.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolctr.runprocQ runproc/aolctr.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t ${tmuxname} \"./auxscripts/aolctr\" C-m" >> $scriptfile
 
 
@@ -855,7 +858,7 @@ echo "sleep 1" >> $scriptfile
 echo "tmux new-session -d -s aol${LOOPNUMBER}-run" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m" >> $scriptfile
 logRunningProcessQ0 "aolrun" "aol${LOOPNUMBER}-run" "AO loop real-time loop"
-echo "tmux send-keys -t aol${LOOPNUMBER}-run \"mv aolrun.runprocQ aolrun.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-run \"mv runproc/aolrun.runprocQ runproc/aolrun.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-run \"./auxscripts/aolrun\" C-m" >> $scriptfile
 
 echo "sleep 1" >> $scriptfile
@@ -927,7 +930,7 @@ tmuxname="aol${LOOPNUMBER}wfszpo"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "aolzpwfscloop" "$tmuxname" "AO loop zero point offset (zonal, CPU-based)"
-echo "tmux send-keys -t ${tmuxname} \"mv aolzpwfscloop.runprocQ aolzpwfscloop.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolzpwfscloop.runprocQ runproc/aolzpwfscloop.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"$execname -n aol${LOOPNUMBER}wfszpo\" C-m" >> $scriptfile
 if [ "$CPUconfRT" -eq "1" ];then
 echo "tmux send-keys -t $tmuxname \"csetpmove aol${LOOPNUMBER}RT\" C-m" >> $scriptfile
@@ -953,7 +956,7 @@ tmuxname="aol${LOOPNUMBER}mexwfs"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
-echo "tmux send-keys -t ${tmuxname} \"mv modesextractwfs.runprocQ modesextractwfs.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/modesextractwfs.runprocQ runproc/modesextractwfs.runproc\" C-m" >> $scriptfile
 if [ "$CMmode" -eq "1" ]; then
 echo "tmux send-keys -t $tmuxname \"./auxscripts/modesextractwfs ${GPUmodesextrwfs}\" C-m" >> $scriptfile
 else
@@ -971,7 +974,7 @@ tmuxname="aol${LOOPNUMBER}meol"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
-echo "tmux send-keys -t ${tmuxname} \"mv aolcompolm.runprocQ aolcompolm.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolcompolm.runprocQ runproc/aolcompolm.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"./AOloopControl -p ${tmuxname}\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"csetpmove aol${LOOPNUMBER}RT\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"aolcompolm ${LOOPNUMBER}\" C-m" >> $scriptfile
@@ -986,7 +989,7 @@ tmuxname="aol${LOOPNUMBER}dmfwb"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "aolmcoeffs2dmmap" "$tmuxname" "DM modal (post-filtering) write back"
-echo "tmux send-keys -t ${tmuxname} \"mv aolmcoeffs2dmmap.runprocQ aolmcoeffs2dmmap.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolmcoeffs2dmmap.runprocQ runproc/aolmcoeffs2dmmap.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmcoeffs2dmmap -p ${tmuxname} -f ${GPUdmfwb}\" C-m" >> $scriptfile
 fi
 
@@ -999,7 +1002,7 @@ tmuxname="aol${LOOPNUMBER}dmCave"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "aol_dmCave" "$tmuxname" "AO loop compute time-averaged DM correction"
-echo "tmux send-keys -t ${tmuxname} \"mv aol_dmCave.runprocQ aol_dmCave.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aol_dmCave.runprocQ runproc/aol_dmCave.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"./auxscripts/aol_dmCave 0.0005\" C-m" >> $scriptfile
 fi
 
@@ -1022,7 +1025,7 @@ tmuxname="aol${LOOPNUMBER}wfsresave"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 logRunningProcessQ0 "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
-echo "tmux send-keys -t ${tmuxname} \"mv aolmkWFSres.runprocQ aolmkWFSres.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolmkWFSres.runprocQ runproc/aolmkWFSres.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmkWFSres 0.0005\" C-m" >> $scriptfile
 fi
 
@@ -1064,23 +1067,23 @@ fi
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aoloff\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolkill\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"exitCLI\" C-m" >> $scriptfile
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"rm aolctr.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"rm runproc/aolctr.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-run C-c" >> $scriptfile
 echo "pkill -9 aol${LOOPNUMBER}-run" >> $scriptfile
-echo "rm aolrun.runproc" >> $scriptfile
+echo "rm runproc/aolrun.runproc" >> $scriptfile
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
 echo "pkill -9 aol${LOOPNUMBER}wfszpo" >> $scriptfile
 tmuxname="aol${LOOPNUMBER}wfszpo"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm aolzpwfscloop.runproc" >> $scriptfile
+echo "rm runproc/aolzpwfscloop.runproc" >> $scriptfile
 fi
 
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm modesextractwfs.runproc" >> $scriptfile
+echo "rm runproc/modesextractwfs.runproc" >> $scriptfile
 echo "echo \"0\" > \"./status/stat_log_modeval.txt\"" >> $scriptfile
 fi
 
@@ -1088,7 +1091,7 @@ if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm aolcompolm.runproc" >> $scriptfile
+echo "rm runproc/aolcompolm.runproc" >> $scriptfile
 echo "echo \"0\" > \"./status/stat_log_modeval_ol.txt\"" >> $scriptfile
 fi
 
@@ -1096,21 +1099,21 @@ if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmfwb"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm aolmcoeffs2dmmap.runproc" >> $scriptfile
+echo "rm runproc/aolmcoeffs2dmmap.runproc" >> $scriptfile
 fi
 
 if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmCave"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm aol_dmCave.runproc" >> $scriptfile
+echo "rm runproc/aol_dmCave.runproc" >> $scriptfile
 fi
 
 if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}wfsresave"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
-echo "rm aolmkWFSres.runproc" >> $scriptfile
+echo "rm runproc/aolmkWFSres.runproc" >> $scriptfile
 fi
 
 if [ "$procWFSres2refONstat" = " ON" ]; then

@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Apr 05, 2017
+% May 29, 2017
 
 
 
@@ -9,10 +9,7 @@
 
 
 
-
-
-
-# Initial Setup
+# Initial Setup {#AOloopControl_UserGuide}
 
 ## Scope
 
@@ -29,6 +26,7 @@ Libraries required :
 - fftw (single and double precision)
 - gsl
 - readline
+- tmux
 
 
 Recommended:
@@ -69,7 +67,7 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 Conventions:
 
 - `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
-- `<workdir>` is the work directory where the program and scripts will be executed
+- `<workdir>` is the work directory where the program and scripts will be executed. Note that the full path should end with `.../AOloop<#>` where `<#>` ranges from 0 to 9. For example, `AOloop2`.
 
 The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
 
@@ -595,6 +593,11 @@ All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscri
 tail -f aolconf.log
 ~~~~
 
+Inside the bash script, function `aoconflog` is used to call `aolconfscripts/aollog` with the proper loop name.
+
+
+
+
 ### External log (less verbose)
 
 The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
@@ -604,6 +607,9 @@ dologext <string>
 ~~~
 
 The string usually consists of the loop name followed by comments.
+
+Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name.
+
 
 
 ### Interactive user log
@@ -701,7 +707,7 @@ Options [C] and [D] are `MODAL` options, as the DM does not represent physical s
 
 - OPTIONAL: **set DM delay** ('setDMdelayON' and 'setDMdelayval' in `Top Menu` screen)
 
-3. **Create the DM streams** with the `initDM` command in the `Top Menu`.
+3. **Create the DM streams** with the `initDM` command in the `Top Menu`. You may need to run the `stopDM` command first.
 
 4. **autoconfigure DM: main DM (nolink)** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
 	- dm##disp00 is linked to aol#_dmO      (flat offset channel)
@@ -1166,45 +1172,9 @@ File                          Description
 
 
 
-# REFERENCE
-
-## Semaphores
+# REFERENCE, ADDITIONAL PAGES
 
 
--------------- -----------------------------------------------------------
-dm00disp       
--------------- -----------------------------------------------------------
-0              ?
-
-6              -> compute simulated linear WFS image 
-               
--------------- -----------------------------------------------------------
-
-
-
-
--------------- -----------------------------------------------------------
-aol0_dmdisp       
--------------- -----------------------------------------------------------
-0              ?
-
-7              -> compute delayed DM : aol0_dmdispD 
-               
--------------- -----------------------------------------------------------
-
-
-
--------------- -----------------------------------------------------------
-aol0_imWFS0    
--------------- -----------------------------------------------------------
-0              ?
-
-2              -> extract modes from WFS image
-               script `./auxscripts/modesextractwfs`
-               
--------------- -----------------------------------------------------------
-
-
-
-
-
+* Page @subpage streams_semaphores
+* Page @subpage streams_semaphores
+* Page @subpage streams_semaphores

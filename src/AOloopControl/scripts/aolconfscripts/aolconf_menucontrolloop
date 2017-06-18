@@ -1216,7 +1216,7 @@ menucontrolloop_default="wresolON"
 ;;
 
 	wresolinit)
-WFSresidualOffsetLoop_init
+WFSresidualOffsetLoop_init "NULL"
 menucontrolloop_default="wresolinit"
 ;;
 

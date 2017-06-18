@@ -89,8 +89,8 @@ green=`tput setaf 2`
 reset=`tput sgr0`
 bold=`tput bold`
 
-touch null.runproc # avoids error message
-touch null.runprocQ # avoids error message
+touch runproc/null.runproc # avoids error message
+touch runproc/null.runprocQ # avoids error message
 
 while true;
 do
@@ -102,7 +102,7 @@ echo " "
 echo "PROCESSES RUNNING"
 echo "Start Time                          Process Name                      Tmux session    Description"
 echo "-------------------------------------------------------------------------------------------------------------------------------"
-for file in *.runproc
+for file in runproc/*.runproc
 do
 line=$( cat $file )
 arr=($line)
@@ -116,7 +116,7 @@ echo " "
 echo "PROCESSES QUEUED"
 echo "Start Time                          Process Name                      Tmux session    Description"
 echo "-------------------------------------------------------------------------------------------------------------------------------"
-for file in *.runprocQ
+for file in runproc/*.runprocQ
 do
 line=$( cat $file )
 arr=($line)

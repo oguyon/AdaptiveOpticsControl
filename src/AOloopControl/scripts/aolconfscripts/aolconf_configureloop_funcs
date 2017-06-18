@@ -87,7 +87,7 @@ if [ -f "./conf/conf_wfslambdanm.txt" ]; then
 wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
 fi
 
-wfsdarkfname="/tmp/aol${LOOPNUMBER}_wfsdark.im.shm"
+
 
 file="conf/conf_MASKS_LOCK.txt"
 if [ -a $file ]
@@ -345,7 +345,7 @@ echo "ENTERING function_nAUTOC"
 
 
 
-if [ ! -f "FUNCTION_nAUTOC.runproc" ]; then
+if [ ! -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
 echo "start calib"
 aoconflogext "START AUTO CALIBRATION"
 
@@ -374,7 +374,7 @@ cp -rf conf_staged conf_staged.000
 # this function populates conf_staged directory
 function_acqWFSresp
 
-tmux send-keys -t ${tmuxname} "rm FUNCTION_nAUTOC.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/FUNCTION_nAUTOC.runproc" C-m
 
 else
 echo "already running"
@@ -413,7 +413,7 @@ else
 	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolMeasureLOrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureLOrespmat2.runproc" C-m
 
 tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
@@ -435,7 +435,7 @@ tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
 # STAGING DIRECTORIES
 dir_conf_staged="conf_staged"
 
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+aCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s ${tmuxnameaWFSr}
 logRunningProcessQ "aolMeasureZrespmat2" "$tmuxnameaWFSr" "Acquire zonal RM"
@@ -463,7 +463,7 @@ else
     tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolMeasureZrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureZrespmat2.runproc" C-m
 
 
 
@@ -503,7 +503,7 @@ mkdir -p $stageddir
 tmux send-keys -t ${tmuxnameaWFSr} "cp zrespM.fits $stageddir" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "cp wfsmap.fits $stageddir" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "cp dmmap.fits $stageddir" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolCleanZrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolCleanZrespmat2.runproc" C-m
 
 
 
@@ -526,7 +526,7 @@ if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxnameaWFSr} "savefits dmmaskRM \"!dmmaskRM.fits\"" C-m
 	tmux send-keys -t ${tmuxnameaWFSr} "exitCLI" C-m	
 fi
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkMasks.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolmkMasks.runproc" C-m
 
 
 
@@ -543,7 +543,7 @@ tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkMasks.runproc" C-m
 if [ "$DMMODE" = "ZONAL" ]; then
 	logRunningProcessQ "mkDMslaveActprox" "${tmuxnameaWFSr}" "Make slaved actuator DM mask"
 	tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
-	tmux send-keys -t ${tmuxnameaWFSr} "rm mkDMslaveActprox.runproc" C-m
+	tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/mkDMslaveActprox.runproc" C-m
 else # set dmmask to 1, dmslaved to 0
 	tmux send-keys -t ${tmuxnameaWFSr} "$execname" C-m
 	tmux send-keys -t ${tmuxnameaWFSr} "readshmim aol${LOOPNUMBER}_dmC" C-m
@@ -581,7 +581,7 @@ tmux send-keys -t ${tmuxnameaWFSr} "exitCLI" C-m
 for imname in $RMZONALCALIBlist
 do
 	mkdir -p ${imname}
-	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
+	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits" C-m
 done
 
 
@@ -602,7 +602,7 @@ if [ "$RMCalibReuseMasks" = "0" ]; then
 tmux send-keys -t ${tmuxnameaWFSr} "# DMMODE is ZONAL -> MAKING LOW ORDER MODES" C-m
 logRunningProcessQ "aolmkLO_DMmodes" "${tmuxnameaWFSr}" "Make LO DM modes"
 tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkLO_DMmodes.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolmkLO_DMmodes.runproc" C-m
 fi
 
 
@@ -626,7 +626,7 @@ fi
 for imname in $RMMODALCALIBlist
 do
 	mkdir -p ${imname}
-	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
+	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits" C-m
 done
 
 
@@ -644,13 +644,13 @@ mkdir -p $dir
 if [ "$DMMODE" = "ZONAL" ]; then
 	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
 	do
-		tmux send-keys -t ${tmuxnameaWFSr} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxnameaWFSr} "echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
 		tmux send-keys -t ${tmuxnameaWFSr} "mv ${imname}.fits ./${dir}/" C-m
 	done
 else
 	for imname in $RMZONALCALIBlist
 	do
-		tmux send-keys -t ${tmuxnameaWFSr} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxnameaWFSr} "echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
 		tmux send-keys -t ${tmuxnameaWFSr} "mv ${imname}.fits ./${dir}/" C-m
 	done
 fi
@@ -667,8 +667,6 @@ tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"A
 #             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
 # =============================================================================================================
 
-
-
 }
 
 
@@ -677,99 +675,97 @@ tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"A
 
 
 
-function function_zresp_on {
-zrespMstat=" ON"
-tmuxname="aol${LOOPNUMBER}zrespM"
-rm function_zresp_off.wait
-echo " ON" > ./status/stat_zrespM.txt
-logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response matrix"
+#function function_zresp_on {
+#zrespMstat=" ON"
+#tmuxname="aol${LOOPNUMBER}zrespM"
+#rm function_zresp_off.wait
+#echo " ON" > ./status/stat_zrespM.txt
+#logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response matrix"
 
-tmux new-session -d -s $tmuxname
-if pgrep "aol${LOOPNUMBER}run" > /dev/null
-then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-else
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-fi
+#tmux new-session -d -s $tmuxname
+#if pgrep "aol${LOOPNUMBER}run" > /dev/null
+#then # use option -r to re-use AO shared memory configuration
+#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+#else
+#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+#fi
 
-tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
 
-echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
-}
+#echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+#aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
+#}
 
 
-#
-# arg 1 is time [sec] until zresp process will be stopped
-#
-function function_zresp_off 
-{
-zrespMstat="OFF"
-echo "OFF" > ./status/stat_zrespM.txt
-tmuxname="aol${LOOPNUMBER}zrespMc"
-tmux new-session -d -s ${tmuxname}
+##
+## arg 1 is time [sec] until zresp process will be stopped
+##
+#function function_zresp_off 
+#{
+#zrespMstat="OFF"
+#echo "OFF" > ./status/stat_zrespM.txt
+#tmuxname="aol${LOOPNUMBER}zrespMc"
+#tmux new-session -d -s ${tmuxname}
+##tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
+##tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
+#tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "pkill -USR2 aol${LOOPNUMBER}zrespM" C-m
+#tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
+#tmux send-keys -t ${tmuxname} "rm runproc/aolMeasureZrespmat.runproc" C-m
+#tmux send-keys -t ${tmuxname} "sleep 0.2" C-m
 #tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
-#tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "pkill -USR2 aol${LOOPNUMBER}zrespM" C-m
-tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
-tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
-tmux send-keys -t ${tmuxname} "sleep 0.2" C-m
-tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
-aoconflogext "STOP HO RM acquision in $1 sec max"
+#aoconflogext "STOP HO RM acquision in $1 sec max"
 
-tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
-logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
-tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+#tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
+#logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
+#tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
 
-tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
+#tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
+#tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
 
-mkdir -p zrespM
-mkdir -p wfsref
-mkdir -p wfsref0
-mkdir -p wfsmap
-mkdir -p dmmap
-mkdir -p wfsmask
+#mkdir -p zrespM
+#mkdir -p wfsref
+#mkdir -p wfsref0
+#mkdir -p wfsmap
+#mkdir -p dmmap
+#mkdir -p wfsmask
 
-if [ "$DMMODE" = "ZONAL" ]; then
-mkdir -p dmmask
-mkdir -p dmmaskRM
-mkdir -p dmslaved
-fi
+#if [ "$DMMODE" = "ZONAL" ]; then
+#mkdir -p dmmask
+#mkdir -p dmmaskRM
+#mkdir -p dmslaved
+#fi
 
-if [ "$DMMODE" = "ZONAL" ]; then
-if [ "$MASKS_LOCK" -eq "1" ]; then
-tmux send-keys -t ${tmuxname} "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
-tmux send-keys -t ${tmuxname} "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
-tmux send-keys -t ${tmuxname} "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
-tmux send-keys -t ${tmuxname} "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
-fi
-fi
-
-
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-
-if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-fi
+#if [ "$DMMODE" = "ZONAL" ]; then
+#if [ "$MASKS_LOCK" -eq "1" ]; then
+#tmux send-keys -t ${tmuxname} "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
+#fi
+#fi
 
 
+#zCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+#tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${zCALIBdatestr}.fits" C-m
 
-# move from staged to ./conf/
-UpdateCalib_staged_zrm_tmux "${tmuxname}"
+#if [ "$DMMODE" = "ZONAL" ]; then
+#tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${zCALIBdatestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits" C-m
+#fi
 
-tmux send-keys -t ${tmuxname} "rm aolCleanZrespmat.runproc" C-m
-}
+## move from staged to ./conf/
+#UpdateCalib_staged_zrm_tmux "${tmuxname}"
+
+#tmux send-keys -t ${tmuxname} "rm runproc/aolCleanZrespmat.runproc" C-m
+#}
 
 
 
@@ -778,7 +774,7 @@ function function_upzrm_tmux ()
 tmux new-session -d -s $1
 logRunningProcess "aolupzrm" "$1" "Update zonal response matrix calibration to latest"
 tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
-tmux send-keys -t $1 "rm aolupzrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolupzrm.runproc" C-m
 }
 
 
@@ -811,7 +807,7 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
 fi
-tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/SMloadzrm.runproc" C-m
 }
 
 
@@ -831,34 +827,34 @@ tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes ${cpamax} ${mb} ${SVDlim[10
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+upMODESdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
-echo "DMmodes/DMmodes_${datestr}.fits" > ./conf/conf_DMmodes_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${upMODESdatestr}.fits" C-m
+echo "DMmodes/DMmodes_${upMODESdatestr}.fits" > ./conf/conf_DMmodes_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
-echo "respM/respM_${datestr}.fits" > ./conf/conf_respM_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${upMODESdatestr}.fits" C-m
+echo "respM/respM_${upMODESdatestr}.fits" > ./conf/conf_respM_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat.fits contrM/contrM_${datestr}.fits" C-m
-echo "contrM/contrM_${datestr}.fits" > ./conf/conf_contrM_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat.fits contrM/contrM_${upMODESdatestr}.fits" C-m
+echo "contrM/contrM_${upMODESdatestr}.fits" > ./conf/conf_contrM_name.txt
 
 
 i2="$mb"
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits" C-m
-echo "DMmodes/DMmodes${i2}_${datestr}.fits" > ./conf/conf_DMmodes${i2}_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${upMODESdatestr}.fits" C-m
+echo "DMmodes/DMmodes${i2}_${upMODESdatestr}.fits" > ./conf/conf_DMmodes${i2}_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits" C-m
-echo "respM/respM${i2}_${datestr}.fits" > ./conf/conf_respM${i2}_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${upMODESdatestr}.fits" C-m
+echo "respM/respM${i2}_${upMODESdatestr}.fits" > ./conf/conf_respM${i2}_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits" C-m
-echo "contrM/contrM${i2}_${datestr}.fits" > ./conf/conf_contrM${i2}_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${upMODESdatestr}.fits" C-m
+echo "contrM/contrM${i2}_${upMODESdatestr}.fits" > ./conf/conf_contrM${i2}_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits" C-m
-echo "contrMc/contrMc${i2}_${datestr}.fits" > ./conf/conf_contrMc${i2}_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${upMODESdatestr}.fits" C-m
+echo "contrMc/contrMc${i2}_${upMODESdatestr}.fits" > ./conf/conf_contrMc${i2}_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
-echo "contrMcact/contrMcact${i2}_${datestr}.fits" > ./conf/conf_contrMcact${i2}_name.txt
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${upMODESdatestr}.fits" C-m
+echo "contrMcact/contrMcact${i2}_${upMODESdatestr}.fits" > ./conf/conf_contrMcact${i2}_name.txt
 
 
 
@@ -894,23 +890,23 @@ function UpdateCalib_staged_zrm {
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
+echo "zrespM/zrespM_${zCALIBdatestr}.fits" > ./${dir}/conf_zrespM_name.txt
 mv zrespmat.fits ./${dir}/
-echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
+echo "wfsref0/wfsref0_${zCALIBdatestr}.fits" > ./${dir}/conf_wfsref0_name.txt
 mv  wfsref0.fits ./${dir}/
-echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
+echo "wfsmap/wfsmap_${zCALIBdatestr}.fits" > ./${dir}/conf_wfsmap_name.txt
 mv wfsmap.fits ./${dir}/
-echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
+echo "dmmap/dmmap_${zCALIBdatestr}.fits" > ./${dir}/conf_dmmap_name.txt
 mv dmmap.fits ./${dir}/
-echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
+echo "wfsmask/wfsmask_${zCALIBdatestr}.fits" > ./${dir}/conf_wfsmask_name.txt
 mv wfsmap.fits ./${dir}/
 
 if [ "$DMMODE" = "ZONAL" ]; then
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
+echo "dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
 mv dmmaskRM.fits ./${dir}/
-echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
+echo "dmslaved/dmslaved_${zCALIBdatestr}.fits" > ./${dir}/conf_dmslaved_name.txt
 mv dmslaved.fits ./${dir}/
-echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
+echo "dmmask/dmmask_${zCALIBdatestr}.fits" > ./${dir}/conf_dmmask_name.txt
 mv dmmask.fits ./${dir}/
 fi
 
@@ -920,23 +916,23 @@ fi
 function UpdateCalib_staged_zrm_tmux {
 dir="$dir_conf_staged"
 mkdir -p $dir
-tmux send-keys -t $1 "echo \"zrespM/zrespM_${datestr}.fits\" > ./${dir}/conf_zrespM_name.txt" C-m
+tmux send-keys -t $1 "echo \"zrespM/zrespM_${zCALIBdatestr}.fits\" > ./${dir}/conf_zrespM_name.txt" C-m
 tmux send-keys -t $1 "mv zrespmat.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"wfsref0/wfsref0_${datestr}.fits\" > ./${dir}/conf_wfsref0_name.txt" C-m
+tmux send-keys -t $1 "echo \"wfsref0/wfsref0_${zCALIBdatestr}.fits\" > ./${dir}/conf_wfsref0_name.txt" C-m
 tmux send-keys -t $1 "mv  wfsref0.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"wfsmap/wfsmap_${datestr}.fits\" > ./${dir}/conf_wfsmap_name.txt" C-m
+tmux send-keys -t $1 "echo \"wfsmap/wfsmap_${zCALIBdatestr}.fits\" > ./${dir}/conf_wfsmap_name.txt" C-m
 tmux send-keys -t $1 "mv wfsmap.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"dmmap/dmmap_${datestr}.fits\" > ./${dir}/conf_dmmap_name.txt" C-m
+tmux send-keys -t $1 "echo \"dmmap/dmmap_${zCALIBdatestr}.fits\" > ./${dir}/conf_dmmap_name.txt" C-m
 tmux send-keys -t $1 "mv dmmap.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"wfsmask/wfsmask_${datestr}.fits\" > ./${dir}/conf_wfsmask_name.txt" C-m
+tmux send-keys -t $1 "echo \"wfsmask/wfsmask_${zCALIBdatestr}.fits\" > ./${dir}/conf_wfsmask_name.txt" C-m
 tmux send-keys -t $1 "mv wfsmap.fits ./${dir}/" C-m
 
 if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t $1 "echo \"dmmaskRM/dmmaskRM_${datestr}.fits\" > ./${dir}/conf_dmmaskRM_name.txt" C-m
+tmux send-keys -t $1 "echo \"dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits\" > ./${dir}/conf_dmmaskRM_name.txt" C-m
 tmux send-keys -t $1 "mv dmmaskRM.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"dmslaved/dmslaved_${datestr}.fits\" > ./${dir}/conf_dmslaved_name.txt" C-m
+tmux send-keys -t $1 "echo \"dmslaved/dmslaved_${zCALIBdatestr}.fits\" > ./${dir}/conf_dmslaved_name.txt" C-m
 tmux send-keys -t $1 "mv dmslaved.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"dmmask/dmmask_${datestr}.fits\" > ./${dir}/conf_dmmask_name.txt" C-m
+tmux send-keys -t $1 "echo \"dmmask/dmmask_${zCALIBdatestr}.fits\" > ./${dir}/conf_dmmask_name.txt" C-m
 tmux send-keys -t $1 "mv dmmask.fits ./${dir}/" C-m
 fi
 }
@@ -964,7 +960,7 @@ echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmM
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 
 tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
-tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 }
 
 
@@ -980,7 +976,7 @@ tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $2 function_LOresp_o
 
 tmux send-keys -t $1 "pkill -USR1 aol${LOOPNUMBER}LOrespM" C-m
 tmux send-keys -t $1 "echo \"OFF\" > ./status/stat_LOrespM.txt" C-m
-tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
@@ -996,14 +992,14 @@ mkdir -p LOwfsmap
 mkdir -p LOdmmap
 mkdir -p LOwfsmask
 mkdir -p LOdmmask
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t $1 "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp respM_LOmodes.fits LODMmodes/LODMmodes_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+mCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+tmux send-keys -t $1 "cp LOrespmat.fits LOrespM/LOrespM_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp respM_LOmodes.fits LODMmodes/LODMmodes_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp LOdmmap.fits LOdmmap/LOdmmap_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${mCALIBdatestr}.fits" C-m
+tmux send-keys -t $1 "cp LOdmmask.fits LOdmmask/LOdmmask_${mCALIBdatestr}.fits" C-m
 
 
 #rm cleanLOresp.run
@@ -1013,7 +1009,7 @@ tmux send-keys -t $1 "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 #waitforfile cleanLOresp.run
 #rm cleanLOresp.run
 UpdateCalib_staged_mrm_tmux "$1"
-tmux send-keys -t $1 "rm aolCleanLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolCleanLOrespmat.runproc" C-m
 }
 
 
@@ -1022,7 +1018,7 @@ function function_upmrm_tmux ()
 tmux new-session -d -s $1
 logRunningProcess "aolupmrm" "$1" "Update LO modal response matrix calibration to latest"
 tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
-tmux send-keys -t $1 "rm aolupmrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolupmrm.runproc" C-m
 }
 
 
@@ -1035,7 +1031,7 @@ tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LOrespM" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LODMmodes" C-m
-tmux send-keys -t $1 "rm SMloadmrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/SMloadmrm.runproc" C-m
 }
 
 
@@ -1046,19 +1042,19 @@ function UpdateCalib_staged_mrm {
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-echo "LOrespM/LOrespM_${datestr}.fits" > ./${dir}/conf_LOrespM_name.txt
+echo "LOrespM/LOrespM_${mCALIBdatestr}.fits" > ./${dir}/conf_LOrespM_name.txt
 mv LOrespmat.fits ./${dir}/
-echo "LODMmodes/LODMmodes_${datestr}.fits" > ./${dir}/conf_LODMmodes_name.txt
+echo "LODMmodes/LODMmodes_${mCALIBdatestr}.fits" > ./${dir}/conf_LODMmodes_name.txt
 mv respM_LOmodes.fits ./${dir}/
-echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./${dir}/conf_LOwfsref0_name.txt
+echo "LOwfsref0/LOwfsref0_${mCALIBdatestr}.fits" > ./${dir}/conf_LOwfsref0_name.txt
 mv LOwfsref0.fits ./${dir}/
-echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./${dir}/conf_LOwfsmap_name.txt
+echo "LOwfsmap/LOwfsmap_${mCALIBdatestr}.fits" > ./${dir}/conf_LOwfsmap_name.txt
 mv LOwfsmap.fits ./${dir}/
-echo "LOdmmap/LOdmmap_${datestr}.fits" > ./${dir}/conf_LOdmmap_name.txt
+echo "LOdmmap/LOdmmap_${mCALIBdatestr}.fits" > ./${dir}/conf_LOdmmap_name.txt
 mv LOdmmap.fits ./${dir}/
-echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./${dir}/conf_LOwfsmask_name.txt
+echo "LOwfsmask/LOwfsmask_${mCALIBdatestr}.fits" > ./${dir}/conf_LOwfsmask_name.txt
 mv LOwfsmask.fits ./${dir}/
-echo "LOdmmask/LOdmmask_${datestr}.fits" > ./${dir}/conf_LOdmmask_name.txt
+echo "LOdmmask/LOdmmask_${mCALIBdatestr}.fits" > ./${dir}/conf_LOdmmask_name.txt
 mv LOdmmask.fits ./${dir}/
 }
 
@@ -1067,19 +1063,19 @@ function UpdateCalib_staged_mrm_tmux {
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-tmux send-keys -t $1 "echo \"LOrespM/LOrespM_${datestr}.fits\" > ./${dir}/conf_LOrespM_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOrespM/LOrespM_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOrespM_name.txt" C-m
 tmux send-keys -t $1 "mv LOrespmat.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LODMmodes/LODMmodes_${datestr}.fits\" > ./${dir}/conf_LODMmodes_name.txt" C-m
+tmux send-keys -t $1 "echo \"LODMmodes/LODMmodes_${mCALIBdatestr}.fits\" > ./${dir}/conf_LODMmodes_name.txt" C-m
 tmux send-keys -t $1 "mv respM_LOmodes.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LOwfsref0/LOwfsref0_${datestr}.fits\" > ./${dir}/conf_LOwfsref0_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOwfsref0/LOwfsref0_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOwfsref0_name.txt" C-m
 tmux send-keys -t $1 "mv LOwfsref0.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LOwfsmap/LOwfsmap_${datestr}.fits\" > ./${dir}/conf_LOwfsmap_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOwfsmap/LOwfsmap_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOwfsmap_name.txt" C-m
 tmux send-keys -t $1 "mv LOwfsmap.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LOdmmap/LOdmmap_${datestr}.fits\" > ./${dir}/conf_LOdmmap_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOdmmap/LOdmmap_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOdmmap_name.txt" C-m
 tmux send-keys -t $1 "mv LOdmmap.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LOwfsmask/LOwfsmask_${datestr}.fits\" > ./${dir}/conf_LOwfsmask_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOwfsmask/LOwfsmask_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOwfsmask_name.txt" C-m
 tmux send-keys -t $1 "mv LOwfsmask.fits ./${dir}/" C-m
-tmux send-keys -t $1 "echo \"LOdmmask/LOdmmask_${datestr}.fits\" > ./${dir}/conf_LOdmmask_name.txt" C-m
+tmux send-keys -t $1 "echo \"LOdmmask/LOdmmask_${mCALIBdatestr}.fits\" > ./${dir}/conf_LOdmmask_name.txt" C-m
 tmux send-keys -t $1 "mv LOdmmask.fits ./${dir}/" C-m
 }
 

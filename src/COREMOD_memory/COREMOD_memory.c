@@ -26,6 +26,7 @@
 
 
 
+
 #ifdef __MACH__
 #include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
@@ -5017,6 +5018,7 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 	
 	IDimc = create_3Dimage_ID("_tmpc", xsize, ysize, zsize);
 	
+	list_image_ID();
 	
 	IDout = image_ID(IDout_name);
     if(IDout==-1) // CREATE IT
@@ -5052,8 +5054,8 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 			if(kkin==zsize)
 				kkin = 0;
 			cnt0old = cnt0;		
-		//	printf("New frame detected: %ld  ->  %ld\n", cnt0, kkin);
-	//		fflush(stdout);
+			printf("New frame detected: %ld  ->  %ld\n", cnt0, kkin);
+			fflush(stdout);
 		}
 		
 		clock_gettime(CLOCK_REALTIME, &tnow);
@@ -5062,8 +5064,8 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 		cntskip = 0;
 		tdiff = info_time_diff(t0array[kkout], tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-	//	printf("tdiff = %f us   ", tdiffv*1e6);
-	//	fflush(stdout);
+		//printf("tdiff = %f us   ", tdiffv*1e6);
+		//fflush(stdout);
 		while((tdiffv>1.0e-6*delayus)&&(cntskip<zsize))
 			{
 				cntskip++;				
@@ -5073,8 +5075,9 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 				tdiff = info_time_diff(t0array[kkout], tnow);
 				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 			}
-	//	printf("cntskip = %ld\n", cntskip);
-//		fflush(stdout);
+		//printf("cntskip = %ld\n", cntskip);
+		//fflush(stdout);
+		
 		if(cntskip>0)
 		{
 			data.image[IDout].md[0].write = 1;
@@ -6480,7 +6483,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, const cha
         break;
     }
 
-    cnt = data.image[ID].md[0].cnt0;
+    cnt = data.image[ID].md[0].cnt0 - 1;
 
     buffer = 0;
     index = 0;

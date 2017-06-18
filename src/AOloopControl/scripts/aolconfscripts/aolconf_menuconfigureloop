@@ -215,26 +215,13 @@ stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
  
 
-if [ -f "$wfsdarkfname" ]; then
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
-OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "wfsdark" "[${OKstr}] WFS camera dark        \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn" )
-else
-OKstr="\Z5 OPTIONAL \Zn"
-menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
-confOK=0
-fi
+makemenuitemstringaolshm "wfsdark" "WFS dark"
+menuitems+=( "wfsdark" "$menustring" )
 
 
-#acqudarkstat=$( cat ./status/stat_acqudark.txt )
-#if [ "${acqudarkstat}" = "OFF" ];
-#then
-menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LOOPNUMBER}_wfsdark" )
-#fi
-#if [ "${acqudarkstat}" = " ON" ];
-#then
-#menuitems+=( "adarkoff" "\Z1\Zr             STOP WFS dark acquisition                     \Zn" )
-#fi
+
+
+menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<date>.fits" )
 
 
 
@@ -286,22 +273,10 @@ fi
 
 
 
-#if [ -f "autocalibration.runproc" ]; then
-#menuitems+=( "[ACstopK]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
-#menuitems+=( "[ACstopZ]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
-#if [ "$DMMODE" = "ZONAL" ]; then
-#menuitems+=( "[ACstopM]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
-#fi
-#else
-#menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acquisition time = ${RMacqTimeZ} s" )
-#menuitems+=( " " " " )
-#menuitems+=( " " " " )
-#fi
 
 
 
-
-if [ -f "FUNCTION_nAUTOC.runproc" ]; then
+if [ -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
@@ -310,7 +285,26 @@ fi
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
+
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
+
+
+file="conf/conf_conflastloaded_name.txt"
+if [ -f "$file" ]; then
+confnameloaded=$( cat $file )
+else
+confnameloaded=" "
+fi
+
+file="conf/conf_conflastloaded_time.txt"
+if [ -f "$file" ]; then
+confloadedtime=$( cat $file )
+else
+confloadedtime=" "
+fi
+
+
+menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
 menuitems+=( " " " " )
 
 
@@ -349,7 +343,7 @@ menuitems+=( "zrespM" "$menustring" )
 #menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
-#if [ "$DMMODE" = "ZONAL" ]; then
+
 
 if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
@@ -357,10 +351,7 @@ if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
 fi
 
-#else
-#RMpokeMode=0
-#menuitems+=( " " " " )
-#fi
+
 
 
 if [ "${WFSnorm}" -eq "0" ]; then
@@ -375,33 +366,6 @@ fi
 
 
 
-#if [ -f "aolCleanZrespmat.runproc" ]; then
-#	menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
-#	menuitems+=( " " " " )
-#else
-#	if [ "${zrespMstat}" = "OFF" ];
-#	then
-#		menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
-
-#		if [ "${zrespmatnbiter}" -lt 4 ]; then
-#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-#		else
-#			menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
-#		fi
-
-#		menuitems+=( "zrespoff" "            PROCESS zrespM" )
-#		menuitems+=( " " " ")
-#	else
-#		menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
-#		if [ "${zrespmatnbiter}" -lt 4 ]; then
-#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-#		else
-#			menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
-#		fi
-
-#menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
-#	fi
-#fi
 
 
 makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
@@ -425,27 +389,6 @@ makemenuitemstringaolshm "wfsref0" "WFS reference"
 menuitems+=( "wfsref0" "$menustring" )
 
 
-
-#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-#if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
-#echo "OK"
-#else
-#echo "OFF" > ./status/stat_acquwfsref0.txt
-#acquwfsref0stat="OFF"
-#fi
-
-#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-#if [ "${acquwfsref0stat}" = "OFF" ];
-#then
-#menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
-#menuitems+=( " " " " )
-#fi
-#if [ "${acquwfsref0stat}" = " ON" ];
-#then
-#menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
-#menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
-#menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
-#fi
 
 
 
@@ -474,10 +417,6 @@ fi
 fi
 
 
-#menuitems+=(" " " ")
-#menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
-#menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
-
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -499,29 +438,6 @@ then
 
     makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
     menuitems+=( "LOrespM" "$menustring" )
-
-
-#    if [ "${LOrespMstat}" = "OFF" ];
-#    then
-#        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
-#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-#        else
-#            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
-#        fi
-#        menuitems+=( " " " ")
-#    else
-#        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
-#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-#        else
-#            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
-#        fi
-#        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
-#    fi
-
-#	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
-#	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 fi
@@ -911,20 +827,35 @@ aoconflogext "set WFS lambda [nm] to ${wfslambdanm}"
 
 
 
-
-
-	dark)
+	wfsdark)
+case $amode in
+	0)
+cd wfsdark
 exec 3>&1;
-wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
-echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
-ReadWFSdarkfname
+wfsdarkfname=$(dialog --title "Select WFS dark file name" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
+cd ..
+echo "wfsdark/$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+ReadConfFile "wfsdark"
 ;;
+	1)
+imname=$( cat ./conf/conf_wfsdark_name.txt )
+ds9 $imname &
+;;
+esac
+menucontrolloop_default="wfsdark"
+state="menuconfigureloop"
+;;
+
+
+
+
+
 	adark_on)
 aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
-tmux new-session -d -s adark
-tmux send-keys -t adark "./aocscripts/takedark_${LOOPNAME} 10000" C-m
+tmux new-session -d -s adark${LOOPNUMBER}
+tmux send-keys -t adark${LOOPNUMBER} "./aocscripts/takedark_${LOOPNAME}" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
@@ -1024,106 +955,6 @@ menucontrolloop_default="sACmrmN"
 
 
 
-ACstopK)
-if [ "$DMMODE" = "ZONAL" ]; then
-tmux kill-session -t aol${LOOPNUMBER}LOrespM
-tmux kill-session -t aol${LOOPNUMBER}LOrespMc
-fi
-tmux kill-session -t aol${LOOPNUMBER}zrespM
-tmux kill-session -t aol${LOOPNUMBER}zrespMc
-if [ "$DMMODE" = "ZONAL" ]; then
-rm function_LOresp_on_tmux.lock
-rm function_LOresp_off_tmux.lock
-rm aolCleanLOrespmat.runproc  
-rm aolMeasureLOrespmat.runproc  
-rm aolupmrm.runproc  
-fi
-rm autocalibration.runproc  
-if [ "$DMMODE" = "ZONAL" ]; then
-rm SMloadmrm.runproc
-fi
-rm aolCleanZrespmat.runproc   
-rm aolMeasureZrespmat.runproc   
-rm aolupzrm.runproc
-rm SMloadzrm.runproc
-./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
-echo "OFF" > ./status/stat_zrespM.txt 
-if [ "$DMMODE" = "ZONAL" ]; then
-echo "OFF" > ./status/stat_LOrespM.txt
-fi
-./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
-aoconflogext "STOP AUTO CALIBRATION"
-menucontrolloop_default="AUTOC"
-;;
-
-
-ACstopZ)
-touch function_zresp_off.wait
-;;
-
-ACstopM)
-touch function_LOresp_off.wait
-;;
-
-
-AUTOC)
-aoconflogext "START AUTO CALIBRATION"
-# archive
-dirnb=20
-i0=`( printf "%03d" "$dirnb" )`
-rm -rf conf_staged.$i0
-
-
-# save old RMs
-while [ $dirnb -gt 0 ]; do
-	i=$(($dirnb))
-	i1=$(($dirnb-1))
-	is=`( printf "%03d" "$i" )`
-	i1s=`( printf "%03d" "$i1" )`
-	mv conf_staged.$i1s conf_staged.$is
-	let dirnb-=1
-done    
- 
-cp -rf conf_staged conf_staged.000
-
-logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
-if [ "$DMMODE" = "ZONAL" ]; then
-touch function_LOresp_on_tmux.lock
-touch function_LOresp_off_tmux.lock
-fi
-function_zresp_on
-function_zresp_off $ACzrmtime
-tmuxname="aol${LOOPNUMBER}zrespMc"
-
-
-function_upzrm_tmux ${tmuxname}
-
-# load to shared memory
-function_SMloadzrm_tmux ${tmuxname}
-
-if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t ${tmuxname} "rm function_LOresp_on_tmux.lock" C-m
-tmux send-keys -t ${tmuxname} "rm function_LOresp_off_tmux.lock" C-m
-
-RMmodal=$( cat ./conf/conf_RMmodal.txt )
-if [ "${RMmodal}" = " ON" ];
-then
-tmuxname="aol${LOOPNUMBER}LOrespM"
-function_LOresp_on_tmux $tmuxname
-tmuxname="aol${LOOPNUMBER}LOrespMc"
-function_LOresp_off_tmux ${tmuxname} $ACmrmtime
-function_upmrm_tmux ${tmuxname}
-function_SMloadmrm_tmux ${tmuxname}
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
-else
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
-fi
-else
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
-fi
-;;
-
-
 
 
 
@@ -1163,10 +994,7 @@ done
 
 	Sconf)
 mkdir -p ./CONF
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-#exec 3>&1;
-#confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_" $nbwlines $nbwcols)
-#exec 3>&-;
+CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 if [ -f "./conf/conf_loopconfname.txt" ]; then
 loopconfname=$(cat ./conf/conf_loopconfname.txt)
@@ -1175,16 +1003,23 @@ loopconfname=""
 fi
 
 dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
---cancel-label "Exit" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+--cancel-label "Exit" --fselect "./CONF/${CALIBdatestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
+aoconflog "CONFIGURATION ${confname}"
+echo "${confname}" > ./status/confname.txt
 echo "saving to ${confname}   tempfile = $tempfile"
+
+confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 case $retval in
    0) # button
- echo "${confname}" > ./confname.txt
+# echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/conf_* "${confname}/"
 cp conf/RMpoke.fits "${confname}/"
@@ -1198,27 +1033,32 @@ esac
 
 	Lconf)
 mkdir -p ./CONF
-#exec 3>&1;
-#confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
-#exec 3>&-;
 
 dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 
-echo "${confname}" > confname.txt
 aoconflogext "LOAD configuration from ${confname}"
+aoconflog "CONFIGURATION ${confname}"
+echo "${confname}" > ./status/confname.txt
 echo "confname = $confname"
 
 
 confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt1
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 case $retval in
    0) # button
    
 if [ -d ${confname} ]; then
 cp "${confname}"/conf_*.txt ./conf/
+
+mv conf/conf_conflastloaded_name.txt1 conf/conf_conflastloaded_name.txt
+
 
 # set up symbolic links to streams
 for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
@@ -1229,7 +1069,7 @@ do
 done
 
 # set up symbolic links to FITS files in conf directory
-for name in zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
+for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
 do
 	fname=$( cat "./conf/conf_${name}_name.txt" )
 	ln -s "$fname" "./conf/aol${LOOPNUMBER}_${name}.fits"
@@ -1447,10 +1287,12 @@ aoconflogext "RM: set WFS normalize OFF"
 menucontrolloop_default="WFSNon"
 ;;
 
-	zresp_on)
-function_zresp_on
-menucontrolloop_default="zrespoff"
-;;
+#	zresp_on)
+#function_zresp_on
+#menucontrolloop_default="zrespoff"
+#;;
+
+
 
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrespMc"
@@ -1480,42 +1322,28 @@ fi
 fi
 
 
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+zCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp zrespmat.fits zrespM/zrespM_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsref0.fits wfsref0/wfsref0_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmap.fits wfsmap/wfsmap_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmap.fits dmmap/dmmap_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${zCALIBdatestr}.fits" C-m
 
 if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmask.fits dmmask/dmmask_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmslaved.fits dmslaved/dmslaved_${zCALIBdatestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits" C-m
 fi
 
-
-#if [ "$MASKS_LOCK" -eq "1" ]; then
-#echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
-#else
-#echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
-#fi
-
-
-#rm cleanZresp.run
-#tmux send-keys -t  ${tmuxname} "touch cleanZresp.run" C-m
-#tmux send-keys -t ${tmuxname} "exit" C-m
-#waitforfile cleanZresp.run
-#rm cleanZresp.run
-#sleep 0.5
 UpdateCalib_staged_zrm_tmux ${tmuxname}
 ;;
 
 
-	zrespoff)
-function_zresp_off 0
-menucontrolloop_default="zresp_on"
-state="menuconfigureloop"
-;;
+#	zrespoff)
+#function_zresp_off 0
+#menucontrolloop_default="zresp_on"
+#state="menuconfigureloop"
+#;;
 
 
 
@@ -1719,7 +1547,7 @@ case $amode in
 	0)
 cd dmmap
 exec 3>&1;
-dmmapfname=$(dialog --title "Select DM map file name" --stdout --fselect "${dmmapfname}" $nbwlines $nbwcols)
+dmmapfname=$(dialog --title "Select DM map file name" --stdout --fselect "wfsdark/" $nbwlines $nbwcols)
 cd ..
 echo "./dmmap/$dmmapfname" > ./conf/conf_dmmap_name.txt
 ReadConfFile "dmmap"
@@ -1808,6 +1636,7 @@ esac
 menucontrolloop_default="wfsref0"
 state="menuconfigureloop"
 ;;
+
 	awfsref0_on)
 acquwfsref0stat=" ON"
 echo " ON" > ./status/stat_acquwfsref0.txt
@@ -1822,6 +1651,7 @@ aoconflogext "START taking WFS reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
 ;;
+
 	awfsref0off)
 acquwfsref0stat="OFF"
 echo "OFF" > ./status/stat_acquwfsref0.txt

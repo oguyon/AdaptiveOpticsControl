@@ -30,10 +30,10 @@ tmux send-keys -t $tmuxname "$execname -n dmturbctr" C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 fi
-tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} 0.1" C-m
-tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} 10000" C-m
-tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} 1.0" C-m
-tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
+#tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} 0.1" C-m
+#tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} 10000" C-m
+#tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} 1.0" C-m
+#tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
 
 }
 
@@ -67,9 +67,10 @@ tmuxname="aosim${LOOPNUMBER}dm${DMindex}mkturb"
 logRunningProcess "dmmkturb2file" "$tmuxname" "Creating DM turbulence sequence"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
 tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m
 tmux send-keys -t $tmuxname "exitCLI" C-m
-tmux send-keys -t $tmuxname "rm dmmkturb2file.runproc" C-m
+tmux send-keys -t $tmuxname "rm runproc/dmmkturb2file.runproc" C-m
 }

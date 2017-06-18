@@ -81,11 +81,11 @@ DMindex=05
 DMsize=50
 NBchannel=12
 
-WFsize=128
+#WFsize=128
 
 
 $execname -n simDMstart << EOF
-creaimshm wf1opd $WFsize $WFsize
+#creaimshm wf1opd $WFsize $WFsize
 aolcontrolDMcomb $DMindex $DMsize $DMsize $NBchannel 2 0 dmmodes out${DMindex}disp 0 wfsrefrm wfsrefout 0 dmvolt 0.0 150.0
 exit
 EOF
