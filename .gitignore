@@ -10,7 +10,6 @@ compileREADME.txt
 *.bak
 sync
 TBE
-html/
 latex/
 *.m4
 missing
