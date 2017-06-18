@@ -1,3 +1,0 @@
-ln -s $HOME/src/Cfits/src/AOloopControl/scripts/aolconf .
-ln -s $HOME/src/Cfits/src/AOloopControl/scripts/aolctr .
-ln -s $HOME/src/Cfits/src/AOloopControl/scripts/aolrun .
