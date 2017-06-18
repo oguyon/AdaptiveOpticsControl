@@ -1,11 +1,14 @@
 /**
  * @file    AOloopControl.c
- * @author  O. Guyon
- * @date    17 Jun 2017
  * @brief   Adaptive Optics Control loop engine
- *
  * 
  * AO engine uses stream data structure
+ *  
+ * @author  O. Guyon
+ * @date    17 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
  * 
  * @see http://www.
  */
