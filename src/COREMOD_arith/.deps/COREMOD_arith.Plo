@@ -28,7 +28,6 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/time.h \
@@ -52,8 +51,8 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h /usr/include/longnam.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
- /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /home/olivier/src/Cfits/src/CLIcore.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/semaphore.h \
@@ -67,10 +66,10 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/00CORE/00CORE.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h
+ /home/olivier/src/Cfits/src/00CORE/00CORE.h \
+ /home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h \
+ /home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h \
+ /home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h
 
 /usr/include/stdc-predef.h:
 
@@ -154,8 +153,6 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
-
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
@@ -216,7 +213,7 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
 
 /usr/include/longnam.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/include/unistd.h:
 
@@ -260,10 +257,10 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/00CORE/00CORE.h:
+/home/olivier/src/Cfits/src/00CORE/00CORE.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h:
+/home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h:
+/home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h:
+/home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h:

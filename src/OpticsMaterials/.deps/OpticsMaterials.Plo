@@ -33,8 +33,7 @@ OpticsMaterials.lo: OpticsMaterials.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/stdio.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
@@ -127,8 +126,6 @@ OpticsMaterials.lo: OpticsMaterials.c /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
-
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
 
 /usr/include/stdio.h:
 

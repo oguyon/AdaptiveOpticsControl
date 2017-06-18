@@ -21,8 +21,7 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/stdlib.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
@@ -42,8 +41,8 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /usr/include/xlocale.h /usr/include/x86_64-linux-gnu/bits/string.h \
  /usr/include/x86_64-linux-gnu/bits/string2.h \
  /usr/include/x86_64-linux-gnu/bits/string3.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
- /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /home/olivier/src/Cfits/src/CLIcore.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/semaphore.h \
@@ -61,16 +60,16 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h \
- /home/olivier/src/AdaptiveOpticsControl/src/info/info.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_gen/image_gen.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_basic/image_basic.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_filter/image_filter.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_iofits/COREMOD_iofits.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h \
- /home/olivier/src/AdaptiveOpticsControl/src/fft/fft.h \
- /home/olivier/src/AdaptiveOpticsControl/src/psf/psf.h
+ /home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h \
+ /home/olivier/src/Cfits/src/info/info.h \
+ /home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h \
+ /home/olivier/src/Cfits/src/image_gen/image_gen.h \
+ /home/olivier/src/Cfits/src/image_basic/image_basic.h \
+ /home/olivier/src/Cfits/src/image_filter/image_filter.h \
+ /home/olivier/src/Cfits/src/COREMOD_iofits/COREMOD_iofits.h \
+ /home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h \
+ /home/olivier/src/Cfits/src/fft/fft.h \
+ /home/olivier/src/Cfits/src/psf/psf.h
 
 /usr/include/stdc-predef.h:
 
@@ -134,8 +133,6 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
-
 /usr/include/stdlib.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
@@ -186,7 +183,7 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/string3.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/include/unistd.h:
 
@@ -242,22 +239,22 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h:
+/home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/info/info.h:
+/home/olivier/src/Cfits/src/info/info.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h:
+/home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_gen/image_gen.h:
+/home/olivier/src/Cfits/src/image_gen/image_gen.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_basic/image_basic.h:
+/home/olivier/src/Cfits/src/image_basic/image_basic.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_filter/image_filter.h:
+/home/olivier/src/Cfits/src/image_filter/image_filter.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_iofits/COREMOD_iofits.h:
+/home/olivier/src/Cfits/src/COREMOD_iofits/COREMOD_iofits.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h:
+/home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/fft/fft.h:
+/home/olivier/src/Cfits/src/fft/fft.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/psf/psf.h:
+/home/olivier/src/Cfits/src/psf/psf.h:

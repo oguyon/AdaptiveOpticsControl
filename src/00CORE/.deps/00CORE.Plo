@@ -47,8 +47,7 @@
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/errno.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
@@ -58,7 +57,7 @@
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
+ /home/olivier/src/Cfits/src/CLIcore.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/semaphore.h \
  /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/fftw3.h \
@@ -71,7 +70,7 @@
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h
+ /home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h
 
 /usr/include/stdc-predef.h:
 
@@ -199,8 +198,6 @@
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
-
 /usr/include/errno.h:
 
 /usr/include/x86_64-linux-gnu/bits/errno.h:
@@ -229,7 +226,7 @@
 
 /usr/include/x86_64-linux-gnu/bits/unistd.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h:
 
@@ -267,4 +264,4 @@
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h:
+/home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h:

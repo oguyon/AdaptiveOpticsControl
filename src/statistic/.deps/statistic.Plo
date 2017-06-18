@@ -12,8 +12,7 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/stdlib.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/stdlib.h \
  /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
@@ -47,8 +46,7 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
  /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/gsl/gsl_inline.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
+ /usr/include/gsl/gsl_inline.h /home/olivier/src/Cfits/src/CLIcore.h \
  /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -61,9 +59,9 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/00CORE/00CORE.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h \
- /home/olivier/src/AdaptiveOpticsControl/src/statistic/statistic.h
+ /home/olivier/src/Cfits/src/00CORE/00CORE.h \
+ /home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h \
+ /home/olivier/src/Cfits/src/statistic/statistic.h
 
 /usr/include/stdc-predef.h:
 
@@ -100,8 +98,6 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
-
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
 
 /usr/include/stdlib.h:
 
@@ -199,7 +195,7 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
 
 /usr/include/gsl/gsl_inline.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/include/unistd.h:
 
@@ -235,8 +231,8 @@ statistic.lo: statistic.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/00CORE/00CORE.h:
+/home/olivier/src/Cfits/src/00CORE/00CORE.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h:
+/home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/statistic/statistic.h:
+/home/olivier/src/Cfits/src/statistic/statistic.h:

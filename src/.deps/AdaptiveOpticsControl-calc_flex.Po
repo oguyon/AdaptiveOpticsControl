@@ -44,8 +44,7 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/ctype.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/ctype.h \
  calc.h calc_bison.h CLIcore.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
@@ -187,8 +186,6 @@ AdaptiveOpticsControl-calc_flex.o: calc_flex.c /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
-
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
 
 /usr/include/ctype.h:
 

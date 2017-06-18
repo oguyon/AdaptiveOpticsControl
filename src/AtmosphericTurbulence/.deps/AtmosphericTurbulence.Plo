@@ -42,11 +42,10 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h /usr/include/assert.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/assert.h \
  /usr/include/x86_64-linux-gnu/sys/time.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
- /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /home/olivier/src/Cfits/src/CLIcore.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/semaphore.h \
@@ -64,23 +63,23 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h \
- /home/olivier/src/AdaptiveOpticsControl/src/fft/fft.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_basic/image_basic.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_iofits/COREMOD_iofits.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_filter/image_filter.h \
- /home/olivier/src/AdaptiveOpticsControl/src/info/info.h \
- /home/olivier/src/AdaptiveOpticsControl/src/image_gen/image_gen.h \
- /home/olivier/src/AdaptiveOpticsControl/src/statistic/statistic.h \
- /home/olivier/src/AdaptiveOpticsControl/src/linopt_imtools/linopt_imtools.h \
- /home/olivier/src/AdaptiveOpticsControl/src/AtmosphericTurbulence/AtmosphericTurbulence.h \
- /home/olivier/src/AdaptiveOpticsControl/src/psf/psf.h \
- /home/olivier/src/AdaptiveOpticsControl/src/WFpropagate/WFpropagate.h \
- /home/olivier/src/AdaptiveOpticsControl/src/OpticsMaterials/OpticsMaterials.h \
- /home/olivier/src/AdaptiveOpticsControl/src/AtmosphereModel/AtmosphereModel.h \
- /home/olivier/src/AdaptiveOpticsControl/src/cudacomp/cudacomp.h \
+ /home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h \
+ /home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h \
+ /home/olivier/src/Cfits/src/fft/fft.h \
+ /home/olivier/src/Cfits/src/image_basic/image_basic.h \
+ /home/olivier/src/Cfits/src/COREMOD_iofits/COREMOD_iofits.h \
+ /home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h \
+ /home/olivier/src/Cfits/src/image_filter/image_filter.h \
+ /home/olivier/src/Cfits/src/info/info.h \
+ /home/olivier/src/Cfits/src/image_gen/image_gen.h \
+ /home/olivier/src/Cfits/src/statistic/statistic.h \
+ /home/olivier/src/Cfits/src/linopt_imtools/linopt_imtools.h \
+ /home/olivier/src/Cfits/src/AtmosphericTurbulence/AtmosphericTurbulence.h \
+ /home/olivier/src/Cfits/src/psf/psf.h \
+ /home/olivier/src/Cfits/src/WFpropagate/WFpropagate.h \
+ /home/olivier/src/Cfits/src/OpticsMaterials/OpticsMaterials.h \
+ /home/olivier/src/Cfits/src/AtmosphereModel/AtmosphereModel.h \
+ /home/olivier/src/Cfits/src/cudacomp/cudacomp.h \
  /usr/local/cuda/include/cuda_runtime_api.h \
  /usr/local/cuda/include/host_defines.h \
  /usr/local/cuda/include/builtin_types.h \
@@ -223,13 +222,11 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
-
 /usr/include/assert.h:
 
 /usr/include/x86_64-linux-gnu/sys/time.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/include/unistd.h:
 
@@ -285,39 +282,39 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_memory/COREMOD_memory.h:
+/home/olivier/src/Cfits/src/COREMOD_memory/COREMOD_memory.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_arith/COREMOD_arith.h:
+/home/olivier/src/Cfits/src/COREMOD_arith/COREMOD_arith.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/fft/fft.h:
+/home/olivier/src/Cfits/src/fft/fft.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_basic/image_basic.h:
+/home/olivier/src/Cfits/src/image_basic/image_basic.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_iofits/COREMOD_iofits.h:
+/home/olivier/src/Cfits/src/COREMOD_iofits/COREMOD_iofits.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h:
+/home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_filter/image_filter.h:
+/home/olivier/src/Cfits/src/image_filter/image_filter.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/info/info.h:
+/home/olivier/src/Cfits/src/info/info.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/image_gen/image_gen.h:
+/home/olivier/src/Cfits/src/image_gen/image_gen.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/statistic/statistic.h:
+/home/olivier/src/Cfits/src/statistic/statistic.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/linopt_imtools/linopt_imtools.h:
+/home/olivier/src/Cfits/src/linopt_imtools/linopt_imtools.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/AtmosphericTurbulence/AtmosphericTurbulence.h:
+/home/olivier/src/Cfits/src/AtmosphericTurbulence/AtmosphericTurbulence.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/psf/psf.h:
+/home/olivier/src/Cfits/src/psf/psf.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/WFpropagate/WFpropagate.h:
+/home/olivier/src/Cfits/src/WFpropagate/WFpropagate.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/OpticsMaterials/OpticsMaterials.h:
+/home/olivier/src/Cfits/src/OpticsMaterials/OpticsMaterials.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/AtmosphereModel/AtmosphereModel.h:
+/home/olivier/src/Cfits/src/AtmosphereModel/AtmosphereModel.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/cudacomp/cudacomp.h:
+/home/olivier/src/Cfits/src/cudacomp/cudacomp.h:
 
 /usr/local/cuda/include/cuda_runtime_api.h:
 

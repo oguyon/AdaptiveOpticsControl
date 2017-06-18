@@ -42,9 +42,8 @@ AtmosphereModel.lo: AtmosphereModel.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/x86_64-linux-gnu/bits/math-finite.h \
- /home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h \
- /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /home/olivier/src/Cfits/src/CLIcore.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/semaphore.h \
@@ -62,9 +61,9 @@ AtmosphereModel.lo: AtmosphereModel.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h \
- /home/olivier/src/AdaptiveOpticsControl/src/AtmosphereModel/AtmosphereModel.h \
- /home/olivier/src/AdaptiveOpticsControl/src/OpticsMaterials/OpticsMaterials.h
+ /home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h \
+ /home/olivier/src/Cfits/src/AtmosphereModel/AtmosphereModel.h \
+ /home/olivier/src/Cfits/src/OpticsMaterials/OpticsMaterials.h
 
 /usr/include/stdc-predef.h:
 
@@ -180,9 +179,7 @@ AtmosphereModel.lo: AtmosphereModel.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-finite.h:
-
-/home/olivier/src/AdaptiveOpticsControl/src/CLIcore.h:
+/home/olivier/src/Cfits/src/CLIcore.h:
 
 /usr/include/unistd.h:
 
@@ -238,8 +235,8 @@ AtmosphereModel.lo: AtmosphereModel.c /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/COREMOD_tools/COREMOD_tools.h:
+/home/olivier/src/Cfits/src/COREMOD_tools/COREMOD_tools.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/AtmosphereModel/AtmosphereModel.h:
+/home/olivier/src/Cfits/src/AtmosphereModel/AtmosphereModel.h:
 
-/home/olivier/src/AdaptiveOpticsControl/src/OpticsMaterials/OpticsMaterials.h:
+/home/olivier/src/Cfits/src/OpticsMaterials/OpticsMaterials.h:
