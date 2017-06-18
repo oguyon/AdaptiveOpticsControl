@@ -163,7 +163,7 @@ U\+S\+I\+N\+G \char`\"{}imlist.\+txt\char`\"{} A\+N\+D \char`\"{}cmdfile.\+txt\c
 If you start Cfits with the \char`\"{}-\/l\char`\"{} option, the file \char`\"{}imlist.\+txt\char`\"{} contains the list of images currently in memory in a A\+S\+C\+I\+I table. You can use standard unix tools to process this list and issue commands. For example, if you want to save all images with x size $>$ 200 onto disk as single precision F\+I\+T\+S files \+:
 
 \begin{quote}
-!awk '\{if (\$4$>$200) print \$2\}' imlist.\+txt$\vert$ xargs -\/\+I \{\} echo save\+\_\+fl \{\} \{\}\+\_\+tmp.\+fits $>$ cmdfile.\+txt \end{quote}
+!awk \textquotesingle{}\{if (\$4$>$200) print \$2\}\textquotesingle{} imlist.\+txt$\vert$ xargs -\/\+I \{\} echo save\+\_\+fl \{\} \{\}\+\_\+tmp.\+fits $>$ cmdfile.\+txt \end{quote}
 
 
 \subsection*{A\+R\+I\+T\+H\+M\+E\+T\+I\+C O\+P\+E\+R\+A\+T\+I\+O\+N\+S}

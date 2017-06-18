@@ -1,302 +1,976 @@
-\hypertarget{AOloopControl_8h}{\section{src/\+A\+Oloop\+Control/\+A\+Oloop\+Control.h File Reference}
+\hypertarget{AOloopControl_8h}{}\section{src/\+A\+Oloop\+Control/\+A\+Oloop\+Control.h File Reference}
 \label{AOloopControl_8h}\index{src/\+A\+Oloop\+Control/\+A\+Oloop\+Control.\+h@{src/\+A\+Oloop\+Control/\+A\+Oloop\+Control.\+h}}
-}
+
+
+Function prototypes for Adaptive Optics Control loop engine.  
+
+
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
 struct \hyperlink{structAOLOOPCONTROL__CONF}{A\+O\+L\+O\+O\+P\+C\+O\+N\+T\+R\+O\+L\+\_\+\+C\+O\+N\+F}
-\item 
+\begin{DoxyCompactList}\small\item\em Main A\+Oloop\+Control structure. \end{DoxyCompactList}\item 
 struct \hyperlink{structTHDATA__IMTOTAL}{T\+H\+D\+A\+T\+A\+\_\+\+I\+M\+T\+O\+T\+A\+L}
 \end{DoxyCompactItemize}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
 \#define \hyperlink{AOloopControl_8h_a1607e57c6edf0fe69d995ec9b00b2d2d}{max\+N\+B\+M\+B}~100
+\item 
+\#define \hyperlink{AOloopControl_8h_a545b173d2890751a42402351faf60149}{M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R}~100
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-long \hyperlink{AOloopControl_8h_a5c3b0bdcff0ed83ed3f9f217b14c014d}{A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf} (long loopnb)
-\begin{DoxyCompactList}\small\item\em Creates a blank configuration. \end{DoxyCompactList}\item 
-int \hyperlink{AOloopControl_8h_a8da218e072b44146cdc1d47f80d49e3c}{init\+\_\+\+A\+Oloop\+Control} ()
+static void \hyperlink{AOloopControl_8h_abf02c7b987ff57fa38605aafc2df2c2e}{A\+Oloop\+Control\+\_\+log\+Function\+Call} (const int logfunc\+M\+O\+D\+E, const char $\ast$Function\+Name, const long \hyperlink{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}{line}, char $\ast$comments)
+\begin{DoxyCompactList}\small\item\em Log function call (for testing / debugging only). \end{DoxyCompactList}\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ad051291ea3a3e240dbb933eff63b9f42}{init\+\_\+\+A\+Oloop\+Control} ()
+\begin{DoxyCompactList}\small\item\em Initialize A\+Oloop\+Control command line interface. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{Indent}{\bf 1. I\+N\+I\+T\+I\+A\+L\+I\+Z\+A\+T\+I\+O\+N, configurations}\par
+{\em Allocate memory, import/export configurations }\begin{DoxyCompactItemize}
 \item 
-long \hyperlink{AOloopControl_8h_ad0ae22b447c41a10cf7f3614dfbcd49c}{A\+Oloop\+Control\+\_\+mk\+Modes} (char $\ast$I\+D\+\_\+name, long msize, float C\+P\+Amax, float delta\+C\+P\+A, double xc, double yx, double r0, double r1, int Mask\+Mode)
+static int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a365d8d6964d35b903928ae33966f2b72}{A\+Oloop\+Control\+\_\+loadconfigure} (long loop, int mode, int level)
 \item 
-int \hyperlink{AOloopControl_8h_abafcddf53edec67a3729837724449116}{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop} (char $\ast$in\+\_\+name, char $\ast$out\+\_\+name, long size\+\_\+x, long size\+\_\+y, long xstart, long ystart)
-\item 
-int \hyperlink{AOloopControl_8h_a5dd93c01f73c5a77832eb9d3cb5d89c4}{compute\+\_\+\+Control\+Matrix} (long loop, long N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D, char $\ast$I\+D\+\_\+\+Rmatrix\+\_\+name, char $\ast$I\+D\+\_\+\+Cmatrix\+\_\+name, char $\ast$I\+D\+\_\+\+V\+Tmatrix\+\_\+name, double Beta, long N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D\+\_\+\+S\+T\+E\+P, float eigenvlim)
-\begin{DoxyCompactList}\small\item\em Computes control matrix using S\+V\+D. \end{DoxyCompactList}\item 
-int \hyperlink{AOloopControl_8h_a7071ae48e7bdbd03bc3c13ff143ec017}{A\+Oloop\+Control\+\_\+\+Initialize\+Memory} ()
-\item 
-int \hyperlink{AOloopControl_8h_aebbd9ebfb4bb8e187b37fcf60b453b3d}{Average\+\_\+cam\+\_\+frames} (long loop, long Nb\+Ave, int R\+M)
-\item 
-long \hyperlink{AOloopControl_8h_acc9ab7061d6a728e55bcacd6742448c1}{A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes} (long loop, long N\+Bmodes, char $\ast$I\+Dname)
-\item 
-long \hyperlink{AOloopControl_8h_a433c21c6619529f2a61c2b4c22a7c287}{A\+Oloop\+Control\+\_\+load\+C\+M} (long loop, char $\ast$C\+Mfname)
-\item 
-int \hyperlink{AOloopControl_8h_a25c5f36d50bdfd0be2cdf0476c300e03}{A\+Oloop\+Control\+\_\+loadconfigure} (long loop, int mode)
-\item 
-int \hyperlink{AOloopControl_8h_a50857db2034c5affb27df150a136098f}{set\+\_\+\+D\+M\+\_\+modes} (long loop)
-\item 
-long \hyperlink{AOloopControl_8h_af1fb87c4df5022fc7d227ddd0c3dcbe4}{Measure\+\_\+zonal\+R\+M} (long loop, double ampl, double delays, long N\+Bave, char $\ast$zrespm\+\_\+name, char $\ast$W\+F\+Sref\+\_\+name, char $\ast$W\+F\+Smap\+\_\+name, char $\ast$D\+Mmap\+\_\+name)
-\item 
-int \hyperlink{AOloopControl_8h_a40f5dfb872f856f68b6dec2a72f126bb}{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error} (long loop, long N\+Bframes, long N\+Bpha, char $\ast$I\+Dout\+\_\+name)
-\item 
-int \hyperlink{AOloopControl_8h_af46ddde2c87335138a1a11eee3442119}{A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E} (char $\ast$I\+Din\+\_\+name, char $\ast$I\+Dcorr\+\_\+name, double pha)
-\item 
-int \hyperlink{AOloopControl_8h_ab51676f77cfd9e45abd24cb0a68a08e7}{Measure\+\_\+\+Resp\+\_\+\+Matrix} (long loop, long Nb\+Ave, float amp, long nbloop, long f\+Delay, long N\+Biter)
-\item 
-int \hyperlink{AOloopControl_8h_a629fc1fdecf7ffcf538a9292ee0f3f08}{Control\+Matrix\+Multiply} (float $\ast$cm\+\_\+array, float $\ast$imarray, long m, long n, float $\ast$outvect)
-\item 
-long \hyperlink{AOloopControl_8h_a90718da3540a468ed4ffd1e8ba2a0f4b}{compute\+\_\+\+Combined\+Control\+Matrix} (char $\ast$I\+Dcmat\+\_\+name, char $\ast$I\+Dmodes\+\_\+name, char $\ast$I\+Dwfsmask\+\_\+name, char $\ast$I\+Ddmmask\+\_\+name, char $\ast$I\+Dcmatc\+\_\+name, char $\ast$I\+Dcmatc\+\_\+active\+\_\+name)
-\item 
-int \hyperlink{AOloopControl_8h_ae49a1c95d630e0924f5fcc570f8c3f90}{A\+Ocompute} (long loop)
-\item 
-int \hyperlink{AOloopControl_8h_a49e9b7e1597c463530fdaa7e7ec56150}{A\+Oloop\+Control\+\_\+run} ()
-\item 
-int \hyperlink{AOloopControl_8h_ac2130a837323ad0ead68e773805d463b}{A\+Oloop\+Control\+\_\+printloopstatus} (long loop, long nbcol)
-\item 
-int \hyperlink{AOloopControl_8h_a15b7e95b4f672093999baa32340ba2d1}{A\+Oloop\+Control\+\_\+loop\+Monitor} (long loop, double frequ, long nbcol)
-\item 
-int \hyperlink{AOloopControl_8h_a44d6b74e377a16df7fc07c6540c028a8}{A\+Oloop\+Control\+\_\+status\+Stats} ()
-\item 
-int \hyperlink{AOloopControl_8h_a393d9b6ae87a47e1d1e4ce32f9078bcd}{A\+Oloop\+Control\+\_\+showparams} (long loop)
-\item 
-int \hyperlink{AOloopControl_8h_a2d13870a1f5ae080dfc54d02cb2d31be}{A\+Oloop\+Control\+\_\+set\+Loop\+Number} (long loop)
-\item 
-int \hyperlink{AOloopControl_8h_a2c85b4bdaa4d20924f5faf5a70f64c3e}{A\+Oloop\+Control\+\_\+loopkill} ()
-\item 
-int \hyperlink{AOloopControl_8h_ac12e4ec8eab5e0e1997297c19132c738}{A\+Oloop\+Control\+\_\+loopon} ()
-\item 
-int \hyperlink{AOloopControl_8h_a1459e03fb4779fca74d482c4844b20b7}{A\+Oloop\+Control\+\_\+loopoff} ()
-\item 
-int \hyperlink{AOloopControl_8h_a8507068917e5ce955a643d40d0dcc0e3}{A\+Oloop\+Control\+\_\+logon} ()
-\item 
-int \hyperlink{AOloopControl_8h_af9e154a6fb28dfba8c8acf770431923d}{A\+Oloop\+Control\+\_\+loopstep} (long loop, long N\+Bstep)
-\item 
-int \hyperlink{AOloopControl_8h_a2b8abc25c5776e3adfdf9abff393b4de}{A\+Oloop\+Control\+\_\+logoff} ()
-\item 
-int \hyperlink{AOloopControl_8h_a7eff3756b677cbbb8162855660b06598}{A\+Oloop\+Control\+\_\+loopreset} ()
-\item 
-int \hyperlink{AOloopControl_8h_a5f9c5ad3207860e9d7aa798ac1c9fae5}{A\+Oloop\+Control\+\_\+setgain} (float gain)
-\item 
-int \hyperlink{AOloopControl_8h_a8b75616de0409597277e78ccc25e8e28}{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor} (float W\+F\+Snormfloor)
-\item 
-int \hyperlink{AOloopControl_8h_a2e67072df4000cbf36d0a288a9ad600c}{A\+Oloop\+Control\+\_\+setmaxlimit} (float maxlimit)
-\item 
-int \hyperlink{AOloopControl_8h_a103446360a63ad9db77d165bf0c70953}{A\+Oloop\+Control\+\_\+setmult} (float multcoeff)
-\item 
-int \hyperlink{AOloopControl_8h_ab613f72b3d71fcbd8e7c66c5ca984661}{A\+Oloop\+Control\+\_\+setframes\+Ave} (long nbframes)
-\item 
-int \hyperlink{AOloopControl_8h_a821eb358bf66f0110683f11f2e9f8bd3}{A\+Oloop\+Control\+\_\+setgainrange} (long m0, long m1, float gainval)
-\item 
-int \hyperlink{AOloopControl_8h_a5b18dda711594cd8a420618f1f19131f}{A\+Oloop\+Control\+\_\+setlimitrange} (long m0, long m1, float limval)
-\item 
-int \hyperlink{AOloopControl_8h_a539de519b6705f61d72b6242cd5a85ed}{A\+Oloop\+Control\+\_\+setmultfrange} (long m0, long m1, float multfval)
-\item 
-int \hyperlink{AOloopControl_8h_aaa126a387977664e7f916666792e3613}{A\+Oloop\+Control\+\_\+setgainblock} (long mb, float gainval)
-\item 
-int \hyperlink{AOloopControl_8h_a8eea3d2e25d628b9faf4ec4a721cc92f}{A\+Oloop\+Control\+\_\+setlimitblock} (long mb, float limitval)
-\item 
-int \hyperlink{AOloopControl_8h_ac1ca4245db1545afae825f1dc8466522}{A\+Oloop\+Control\+\_\+setmultfblock} (long mb, float multfval)
-\item 
-int \hyperlink{AOloopControl_8h_afabfd422328c9a189efe384efe6dfd9b}{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf} ()
-\item 
-int \hyperlink{AOloopControl_8h_aed00192695ec7d687bc7c2122bf91c90}{A\+Oloop\+Control\+\_\+scan\+Gain\+Block} (long N\+Bblock, long N\+Bstep, float gain\+Start, float gain\+End, long N\+Bgain)
-\item 
-int \hyperlink{AOloopControl_8h_a15b78cd3a44b44c60cf340e457c421f9}{A\+Oloop\+Control\+\_\+\+Inject\+Mode} (long index, float ampl)
-\item 
-int \hyperlink{AOloopControl_8h_afbfea6c276731196c933505b60d8ee95}{A\+Oloop\+Control\+\_\+\+Auto\+Tune} ()
-\item 
-int \hyperlink{AOloopControl_8h_a144da569d55ee48a672152c2ec145846}{A\+Oloop\+Control\+\_\+setparam} (long loop, char $\ast$key, double value)
+static int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a00f88e3ff7676af9ffc3d9835f336055}{A\+Oloop\+Control\+\_\+\+Initialize\+Memory} ()
 \end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 2.1. L\+O\+A\+D D\+A\+T\+A S\+T\+R\+E\+A\+M\+S}\par
+\begin{DoxyCompactItemize}
+\item 
+long \hyperlink{AOloopControl_8h_a119111bd69fc11e62f5911d6daf16427}{A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim} (const char $\ast$name, const char $\ast$fname, long xsize, long ysize)
+\item 
+long \hyperlink{AOloopControl_8h_a6b5771f15f14e76afc4b7899378a4a63}{A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim} (const char $\ast$name, const char $\ast$fname, long xsize, long ysize, long zsize)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 2.2. D\+A\+T\+A S\+T\+R\+E\+A\+M\+S P\+R\+O\+C\+E\+S\+S\+I\+N\+G}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a9fba32dfbf6fc91072fefb019709e5de}{A\+Oloop\+Control\+\_\+\+Ave\+Stream} (const char $\ast$I\+Dname, double alpha, const char $\ast$I\+Dname\+\_\+out\+\_\+ave, const char $\ast$I\+Dname\+\_\+out\+\_\+\+A\+C, const char $\ast$I\+Dname\+\_\+out\+\_\+\+R\+M\+S)
+\item 
+long \hyperlink{AOloopControl_8h_a2504ada89010d0d6ed22a56a5ad0d26b}{A\+Oloop\+Control\+\_\+frame\+Delay} (const char $\ast$I\+Din\+\_\+name, const char $\ast$I\+Dkern\+\_\+name, const char $\ast$I\+Dout\+\_\+name, int insem)
+\item 
+long \hyperlink{AOloopControl_8h_aac1ee60290e62511898ba6a0712d6e89}{A\+Oloop\+Control\+\_\+stream3\+Dto2\+D} (const char $\ast$in\+\_\+name, const char $\ast$out\+\_\+name, int N\+Bcols, int insem)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 2.3. M\+I\+S\+C C\+O\+M\+P\+U\+T\+A\+T\+I\+O\+N R\+O\+U\+T\+I\+N\+E\+S}\par
+\begin{DoxyCompactItemize}
+\item 
+static long \hyperlink{AOloopControl_8h_ad2184079c9d0653be06f2a757f89f03b}{A\+Oloop\+Control\+\_\+\+Cross\+Product} (const char $\ast$I\+D1\+\_\+name, const char $\ast$I\+D2\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+static void $\ast$ \hyperlink{AOloopControl_8h_ae528115f70c3ee4537c8c6f374ada43f}{compute\+\_\+function\+\_\+imtotal} (void $\ast$ptr)
+\item 
+static void $\ast$ \hyperlink{AOloopControl_8h_a08adf8f45f2ea29016a5afc556a4de37}{compute\+\_\+function\+\_\+dark\+\_\+subtract} (void $\ast$ptr)
+\item 
+long \hyperlink{AOloopControl_8h_aca1efa77245c9a949748aa440fd129e2}{A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M} (long dmxsize, long dmysize, char $\ast$I\+Dout\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_a06b2bff59d932e427de8e45e7f695b81}{A\+Oloop\+Control\+\_\+dm2opdmaploop} (char $\ast$D\+Mdisp\+\_\+name, char $\ast$O\+P\+Dmap\+\_\+name, int semindex)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 3. W\+F\+S I\+N\+P\+U\+T}\par
+{\em Read camera imates }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a341495b61e5c8647d214853b082a35de}{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop} (const char $\ast$in\+\_\+name, const char $\ast$out\+\_\+name, long size\+\_\+x, long size\+\_\+y, long xstart, long ystart)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a275196fb78a1b7413a18a2df3ebcf995}{Read\+\_\+cam\+\_\+frame} (long loop, int R\+M, int normalize, int Pixel\+Stream\+Mode, int Init\+Sem)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 4. A\+C\+Q\+U\+I\+R\+I\+N\+G C\+A\+L\+I\+B\+R\+A\+T\+I\+O\+N}\par
+{\em Measure system response }\begin{DoxyCompactItemize}
+\item 
+long \hyperlink{AOloopControl_8h_ab6baed05afd1b77dbd32314daa67db8f}{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C} (long loop, long delayfr, long delay\+R\+M1us, long N\+Bave, long N\+Bexcl, const char $\ast$I\+Dpoke\+C\+\_\+name, const char $\ast$I\+Dout\+C\+\_\+name, int normalize, int A\+Oinit\+Mode, long N\+Bcycle)
+\begin{DoxyCompactList}\small\item\em Measures W\+F\+S image response to a series of D\+M patterns. \end{DoxyCompactList}\item 
+long \hyperlink{AOloopControl_8h_a65793b504cc7620823608ab97fdc9f2c}{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response} (long loop, float ampl, long delayfr, long delay\+R\+M1us, long N\+Bave, long N\+Bexcl, const char $\ast$I\+Dpoke\+C\+\_\+name, const char $\ast$I\+Dresp\+C\+\_\+name, const char $\ast$I\+Dwfsref\+\_\+name, int normalize, int A\+Oinit\+Mode, long N\+Bcycle)
+\item 
+long \hyperlink{AOloopControl_8h_a6d1b0800971b05314c7f5eebff78946b}{A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M} (long loop, double ampl, long delayfr, long delay\+R\+M1us, long N\+Bave, long N\+Bexcl, const char $\ast$zrespm\+\_\+name, const char $\ast$W\+F\+Sref\+\_\+name, const char $\ast$W\+F\+Smap\+\_\+name, const char $\ast$D\+Mmap\+\_\+name, long mode, int normalize, int A\+Oinit\+Mode, long N\+Bcycle)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ac9edeb536fcd625b1e3489c2be236bb4}{Measure\+\_\+\+Resp\+\_\+\+Matrix} (long loop, long Nb\+Ave, float amp, long nbloop, long f\+Delay, long N\+Biter)
+\item 
+long \hyperlink{AOloopControl_8h_a38df51aca049463698df9c0f4e6a3ae9}{A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast} (const char $\ast$D\+Mmodes\+\_\+name, const char $\ast$dm\+R\+M\+\_\+name, const char $\ast$im\+W\+F\+S\+\_\+name, long semtrig, float Hardware\+Lag, float loopfrequ, float ampl, const char $\ast$outname)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 5. C\+O\+M\+P\+U\+T\+I\+N\+G C\+A\+L\+I\+B\+R\+A\+T\+I\+O\+N}\par
+{\em Compute control matrix, modes }\begin{DoxyCompactItemize}
+\item 
+long \hyperlink{AOloopControl_8h_a8c343270c191f582f7e78bc93d14e020}{A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes} (const char $\ast$D\+Mmask\+\_\+name, const char $\ast$outname)
+\item 
+long \hyperlink{AOloopControl_8h_a41ebed0e0ddd99dafbc540ccf98981f6}{A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M} (const char $\ast$inname, const char $\ast$Hmatname, const char $\ast$indexname, const char $\ast$outname)
+\item 
+long \hyperlink{AOloopControl_8h_a90e9b6afa897ace3ef44a6c76713ca36}{A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes} (const char $\ast$I\+D\+\_\+name, long msizex, long msizey, float C\+P\+Amax, float delta\+C\+P\+A, double xc, double yc, double r0, double r1, int Mask\+Mode)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ac14a18018141d013f407549b58372039}{A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask} (long loop, const char $\ast$zrespm\+\_\+name, const char $\ast$W\+F\+Smap\+\_\+name, const char $\ast$D\+Mmap\+\_\+name, float dmmask\+\_\+perclow, float dmmask\+\_\+coefflow, float dmmask\+\_\+perchigh, float dmmask\+\_\+coeffhigh, float wfsmask\+\_\+perclow, float wfsmask\+\_\+coefflow, float wfsmask\+\_\+perchigh, float wfsmask\+\_\+coeffhigh)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aa8d93769a16d759b707a9020b09fb122}{A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M} (long loop, const char $\ast$I\+Dzrespm0\+\_\+name, const char $\ast$I\+Dwfsref\+\_\+name, const char $\ast$I\+Dzrespm\+\_\+name, const char $\ast$W\+F\+Smap\+\_\+name, const char $\ast$D\+Mmap\+\_\+name)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a20fdd47b0b8c2cdc88e718d9b40f218d}{A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt} (long loop, const char $\ast$zrespm\+\_\+name, const char $\ast$W\+F\+Sref0\+\_\+name, const char $\ast$W\+F\+Smap\+\_\+name, const char $\ast$D\+Mmap\+\_\+name, double rmampl, int normalize)
+\item 
+long \hyperlink{AOloopControl_8h_a40a46ea5e2f19b89a8e0e3d8aed9a918}{A\+Oloop\+Control\+\_\+mk\+C\+M} (const char $\ast$respm\+\_\+name, const char $\ast$cm\+\_\+name, float S\+V\+Dlim)
+\item 
+long \hyperlink{AOloopControl_8h_aa6bf2ce9febc5e32dff6aca580b10df9}{A\+Oloop\+Control\+\_\+mk\+Slaved\+Act} (const char $\ast$I\+Dmask\+R\+M\+\_\+name, float pixrad, const char $\ast$I\+Dout\+\_\+name)
+\item 
+static long \hyperlink{AOloopControl_8h_aebcde04c52ff38663997bc4a93b5d1db}{A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect} (const char $\ast$I\+Dmask\+R\+M\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+static long \hyperlink{AOloopControl_8h_aa971a1729c621acd6a136f412bdd3b8c}{A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes} (const char $\ast$I\+Din\+\_\+name, const char $\ast$I\+Dmask\+\_\+name, const char $\ast$I\+Dcpa\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_a39ddf72f920986c1649b261b37b6f354}{A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext} (const char $\ast$I\+Din\+\_\+name, const char $\ast$I\+Dmask\+\_\+name, const char $\ast$I\+Dsl\+\_\+name, const char $\ast$I\+Dout\+\_\+name, float r0)
+\item 
+long \hyperlink{AOloopControl_8h_ab544c040d4d7dfdecba70ca81705a63e}{A\+Oloop\+Control\+\_\+mk\+Modes} (const char $\ast$I\+D\+\_\+name, long msizex, long msizey, float C\+P\+Amax, float delta\+C\+P\+A, double xc, double yx, double r0, double r1, int Mask\+Mode, int Block\+N\+B, float S\+V\+Dlim)
+\item 
+long \hyperlink{AOloopControl_8h_a033fef53bdac22ba19da7d000e4a44c0}{A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple} (const char $\ast$I\+Din\+\_\+name, long N\+Bmblock, long Cmblock, float S\+V\+Dlim)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a8cf3900737760125925db90d50a3792a}{compute\+\_\+\+Control\+Matrix} (long loop, long N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D, const char $\ast$I\+D\+\_\+\+Rmatrix\+\_\+name, const char $\ast$I\+D\+\_\+\+Cmatrix\+\_\+name, const char $\ast$I\+D\+\_\+\+V\+Tmatrix\+\_\+name, double Beta, long N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D\+\_\+\+S\+T\+E\+P, float eigenvlim)
+\begin{DoxyCompactList}\small\item\em Computes control matrix using S\+V\+D. \end{DoxyCompactList}\item 
+long \hyperlink{AOloopControl_8h_ab38b851c264f398e041901b46fe0379c}{compute\+\_\+\+Combined\+Control\+Matrix} (const char $\ast$I\+Dcmat\+\_\+name, const char $\ast$I\+Dmodes\+\_\+name, const char $\ast$I\+Dwfsmask\+\_\+name, const char $\ast$I\+Ddmmask\+\_\+name, const char $\ast$I\+Dcmatc\+\_\+name, const char $\ast$I\+Dcmatc\+\_\+active\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_abdc9cf4fdc8825eafe0f4a6ee2a8897b}{A\+Oloop\+Control\+\_\+load\+C\+M} (long loop, const char $\ast$C\+Mfname)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 6. R\+E\+A\+L T\+I\+M\+E C\+O\+M\+P\+U\+T\+I\+N\+G R\+O\+U\+T\+I\+N\+E\+S}\par
+{\em calls C\+P\+U and G\+P\+U processing }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a002e9ae8ce1c79e6a4ef371e9b814a9a}{A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop} (const char $\ast$I\+Dzpdm\+\_\+name, const char $\ast$I\+Dzresp\+M\+\_\+name, const char $\ast$I\+Dwfszp\+\_\+name)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a65d72b70aa47177ca3d2dae68ae5a988}{A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop} (long loopnb, const char $\ast$I\+D\+\_\+\+W\+F\+Szp\+\_\+name, int N\+Bzp, const char $\ast$I\+Dwfsref0\+\_\+name, const char $\ast$I\+Dwfsref\+\_\+name)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a9dc5a252d41a2a37735e289953c25126}{A\+Oloop\+Control\+\_\+run} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a3682e64838d25674a308c533631fc2b8}{Control\+Matrix\+Multiply} (float $\ast$cm\+\_\+array, float $\ast$imarray, long m, long n, float $\ast$outvect)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a2c297aecabe48d90878ca37428bd0c71}{set\+\_\+\+D\+M\+\_\+modes} (long loop)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a5e3a34b141f6d28a8bcebad1bc5b3789}{set\+\_\+\+D\+M\+\_\+modes\+R\+M} (long loop)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a19a66458a8453e9f5e6ec19a93c3e70a}{A\+Ocompute} (long loop, int normalize)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a54911dd0bffb3bbe82beeba4b1499344}{A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop} (const char $\ast$I\+D\+\_\+\+C\+M\+\_\+name, const char $\ast$I\+D\+\_\+\+W\+F\+Sref\+\_\+name, const char $\ast$I\+D\+\_\+\+W\+F\+Sim\+\_\+name, const char $\ast$I\+D\+\_\+\+W\+F\+Simtot\+\_\+name, const char $\ast$I\+D\+\_\+coeff\+\_\+name)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a6a15c56ac277ca878548cde4674d9fb0}{A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop} (const char $\ast$modecoeffs\+\_\+name, const char $\ast$D\+Mmodes\+\_\+name, int sem\+Trigg, const char $\ast$out\+\_\+name, int G\+P\+Uindex, long loop, int offload\+Mode)
+\item 
+long \hyperlink{AOloopControl_8h_aa93e227dac127632ba119916ad1da85c}{A\+Oloop\+Control\+\_\+sig2\+Modecoeff} (const char $\ast$W\+F\+Sim\+\_\+name, const char $\ast$I\+Dwfsref\+\_\+name, const char $\ast$W\+F\+Smodes\+\_\+name, const char $\ast$outname)
+\item 
+long \hyperlink{AOloopControl_8h_ac33639c8c0d7f53740746beb62203067}{A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage} (long loop, float alpha)
+\item 
+long \hyperlink{AOloopControl_8h_ae6bb2e33b7f979e7db354e71a29441aa}{A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes} (long loop)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aee12877621c3893222540cbc80ea7ac8}{A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains} (long loop, const char $\ast$I\+Dout\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_ac28a204bc08926a450a9d2bad7fa6de2}{A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload} (const char $\ast$streamin, const char $\ast$streamout, float twait, float offcoeff, float multcoeff)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 7. P\+R\+E\+D\+I\+C\+T\+I\+V\+E C\+O\+N\+T\+R\+O\+L}\par
+{\em Predictive control using W\+F\+S telemetry }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aaf78d8caa0c27cb632ea00c97e0399b4}{A\+Oloop\+Control\+\_\+map\+Predictive\+Filter} (const char $\ast$I\+Dmodecoeff\+\_\+name, long modeout, double delayfr)
+\item 
+double \hyperlink{AOloopControl_8h_a366588e72f3596ce6c09dcb083d51632}{A\+Oloop\+Control\+\_\+test\+Predictive\+Filter} (const char $\ast$I\+Dtrace\+\_\+name, long mode, double delayfr, long filtsize, const char $\ast$I\+Dfilt\+\_\+name, double S\+V\+Deps)
+\item 
+long \hyperlink{AOloopControl_8h_acdad903dbd67f4e4fb2af1adfacd49bd}{A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input} (long loop, long P\+Fblock)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 8. L\+O\+O\+P C\+O\+N\+T\+R\+O\+L I\+N\+T\+E\+R\+F\+A\+C\+E}\par
+{\em Set parameters }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a64f827e2784e3efde48ed4891d6d19f1}{A\+Oloop\+Control\+\_\+set\+Loop\+Number} (long loop)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a066fb86fe042071a48b93697d1d29918}{A\+Oloop\+Control\+\_\+setparam} (long loop, const char $\ast$key, double value)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.1. M\+A\+I\+N C\+O\+N\+T\+R\+O\+L \+: L\+O\+O\+P O\+N/\+O\+F\+F S\+T\+A\+R\+T/\+S\+T\+O\+P/\+S\+T\+E\+P/\+R\+E\+S\+E\+T}\par
+{\em Set parameters }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aaa36c0f5676f5945a0d89fdcc1fc881a}{A\+Oloop\+Control\+\_\+loopon} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ae5cb5075877becd5d2bc72cc4d75fcc0}{A\+Oloop\+Control\+\_\+loopoff} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a7e0c1278a38599e95fe3a80f7f9d81d7}{A\+Oloop\+Control\+\_\+loopkill} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a80e9d045d44ebe3981beb78e32c482c3}{A\+Oloop\+Control\+\_\+loopstep} (long loop, long N\+Bstep)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a561e18ffa331146fbed2ca53a6c6fdb4}{A\+Oloop\+Control\+\_\+loopreset} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.2. D\+A\+T\+A L\+O\+G\+G\+I\+N\+G}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_adfbb7e9917d08216d9d97f243feb5f39}{A\+Oloop\+Control\+\_\+logon} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a298c97e99df82a600200beae487f6cf8}{A\+Oloop\+Control\+\_\+logoff} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.3. P\+R\+I\+M\+A\+R\+Y D\+M W\+R\+I\+T\+E}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a857c19e62e6acda10fca64adfa7fc565}{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a2a1d9a544f9f193c864f236f04742a54}{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.4. I\+N\+T\+E\+G\+R\+A\+T\+O\+R A\+U\+T\+O T\+U\+N\+I\+N\+G}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a4b592751014219bf5c8afcb12c0d1a01}{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a8fb5c314e68474a374f91a0a716d689d}{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_acb01629d624f7fff31e0be7a39325df9}{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta} (float A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a663727797a7a261b38259bbc69e73a61}{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc} (float A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a2640a90affa01148c4d2082b26e6c9d7}{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff} (float A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a161f9b2b9cf3fabb48103a880f2dfa32}{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a31cadbcb286f552074469a1757fadf37}{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.5. P\+R\+E\+D\+I\+C\+T\+I\+V\+E F\+I\+L\+T\+E\+R O\+N/\+O\+F\+F}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aff4558a2984773735b46e129777b0ad8}{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a26bea9d5d6452a589541c1757ff4ba21}{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.6. T\+I\+M\+I\+N\+G P\+A\+R\+A\+M\+E\+T\+E\+R\+S}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a06643f59e3a58d157bdc715b5598481f}{A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ} (float loopfrequ)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ab34df3780e349046fc276ec2c38a7daa}{A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame} (float hardwlatency\+\_\+frame)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ab3d591ac4058ea11985efc9f9a13ddcc}{A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame} (float complatency\+\_\+frame)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a98be0f94027398487d2a6696631943e9}{A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame} (float wfsmextrlatency\+\_\+frame)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf -\/ 8.7. C\+O\+N\+T\+R\+O\+L L\+O\+O\+P P\+A\+R\+A\+M\+E\+T\+E\+R\+S}\par
+\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a12814ba8c8ae4ebaaa90885a93d0f33b}{A\+Oloop\+Control\+\_\+setgain} (float gain)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a02026f2deb2e03abfc7de384afeb3974}{A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain} (float gain)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a7ba98a514afc5552b970e2171467abfb}{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor} (float W\+F\+Snormfloor)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a7ecfb134b94893b705ba5b37c38424ce}{A\+Oloop\+Control\+\_\+setmaxlimit} (float maxlimit)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_aef6bb5af1656b860264887edba29d386}{A\+Oloop\+Control\+\_\+setmult} (float multcoeff)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a0a6a191fb615f972df917fe20d62fee9}{A\+Oloop\+Control\+\_\+setframes\+Ave} (long nbframes)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a626367be40aa1f1cc29dda561c60d7cc}{A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain} (long loop, long blocknb, float gain, int add)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a13674593e6774f6d4f00fc72cfe49448}{A\+Oloop\+Control\+\_\+scan\+Gain\+Block} (long N\+Bblock, long N\+Bstep, float gain\+Start, float gain\+End, long N\+Bgain)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 9. S\+T\+A\+T\+U\+S / T\+E\+S\+T\+I\+N\+G / P\+E\+R\+F M\+E\+A\+S\+U\+R\+E\+M\+E\+N\+T}\par
+{\em Measure loop behavior }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_adf77a149d6ff2d0b18e569303f0c9368}{A\+Oloop\+Control\+\_\+printloopstatus} (long loop, long nbcol, long I\+Dmodeval\+\_\+dm, long I\+Dmodeval, long I\+Dmodevalave, long I\+Dmodevalrms, long ksize)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a275277227b2cba09bc34c2a485377d4c}{A\+Oloop\+Control\+\_\+loop\+Monitor} (long loop, double frequ, long nbcol)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a3f42f726a512e1f75866e9d4f738b6ba}{A\+Oloop\+Control\+\_\+status\+Stats} (int updateconf)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a06e86fac0533d77ef55adb8ff2b35206}{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf} ()
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a74fdc73422171316d47412158bdd0de6}{A\+Oloop\+Control\+\_\+showparams} (long loop)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ac3f68a9b79e43a57e11d85517a9627d1}{A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed} (const char $\ast$dmname, long delayus, long N\+Bpts, float ampl)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a9ebac7ca5867f9ed5ec5e47a66144c69}{A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency} (const char $\ast$dmname, char $\ast$wfsname, float O\+P\+Damp, long N\+Biter)
+\item 
+long \hyperlink{AOloopControl_8h_a94cb5f3704243147e65bd49282a845e0}{A\+Oloop\+Control\+\_\+blockstats} (long loop, const char $\ast$I\+Dout\+\_\+name)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a75fd4a66a5158dc2dd447d550bf2efc5}{A\+Oloop\+Control\+\_\+\+Inject\+Mode} (long index, float ampl)
+\item 
+long \hyperlink{AOloopControl_8h_ae27f6760cd27d872f66f1a987495ae3b}{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp} (const char $\ast$D\+Mmodes\+\_\+name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, const char $\ast$D\+Mmask\+\_\+name, const char $\ast$D\+Mstream\+\_\+in\+\_\+name, const char $\ast$D\+Mstream\+\_\+out\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_aee37a54924eccbcc85565718c6eca560}{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery} (const char $\ast$D\+Mmodes\+\_\+name, float ampl, const char $\ast$D\+Mmask\+\_\+name, const char $\ast$D\+Mstream\+\_\+in\+\_\+name, const char $\ast$D\+Mstream\+\_\+out\+\_\+name, const char $\ast$D\+Mstream\+\_\+meas\+\_\+name, long tlagus, long N\+Bave, const char $\ast$I\+Dout\+\_\+name, const char $\ast$I\+Doutrms\+\_\+name, const char $\ast$I\+Doutmeas\+\_\+name, const char $\ast$I\+Doutmeasrms\+\_\+name)
+\item 
+long \hyperlink{AOloopControl_8h_ac334b00affe34ab36927ea271ca0bf46}{A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq} (const char $\ast$I\+Dname\+\_\+out, long N\+Bpt, long N\+Bmodes)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a41cb4171b617b7de790b7d28c217d945}{A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity} (const char $\ast$I\+Ddmmodes\+\_\+name, const char $\ast$I\+Ddmmask\+\_\+name, const char $\ast$I\+Dwfsref\+\_\+name, const char $\ast$I\+Dwfsresp\+\_\+name, const char $\ast$I\+Dwfsmask\+\_\+name, float amplimitnm, float lambdanm, const char $\ast$foutname)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 10. F\+O\+C\+A\+L P\+L\+A\+N\+E S\+P\+E\+C\+K\+L\+E M\+O\+D\+U\+L\+A\+T\+I\+O\+N / C\+O\+N\+T\+R\+O\+L}\par
+{\em custom F\+P A\+O routines }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_adfb1e7d884741b9eefc631d15ff93613}{A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O} (const char $\ast$psfstream\+\_\+name, const char $\ast$I\+Dmodes\+\_\+name, const char $\ast$dmstream\+\_\+name, long delayframe, long N\+Bframes)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a5a8acc15a46ed4ac0ed26263a2955dd8}{A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B} (const char $\ast$I\+Dprobe\+A\+\_\+name, const char $\ast$I\+Dprobe\+B\+\_\+name, const char $\ast$I\+Ddmstream\+\_\+name, const char $\ast$I\+Drespmat\+\_\+name, const char $\ast$I\+Dwfsrefstream\+\_\+name, double delay, long N\+Bprobes)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 11. P\+R\+O\+C\+E\+S\+S L\+O\+G F\+I\+L\+E\+S}\par
+{\em process log files }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a9fc28b4fe0560796be68d45b9b7f713a}{A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval} (const char $\ast$I\+Dname)
+\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}{\bf 11. O\+B\+S\+O\+L\+E\+T\+E ?}\par
+{\em These functions are no longer used }\begin{DoxyCompactItemize}
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a2d9b1c71a5514ba67d70477207b494cf}{A\+Oloop\+Control\+\_\+setgainrange} (long m0, long m1, float gainval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a88ddf773aec58b280ff76d4d89f47a7e}{A\+Oloop\+Control\+\_\+setlimitrange} (long m0, long m1, float limval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a5fc8cc093517606c31656dc9ca36fd8c}{A\+Oloop\+Control\+\_\+setmultfrange} (long m0, long m1, float multfval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_a3f6cdb9194a6b4a9dba9abb5fe5bbc96}{A\+Oloop\+Control\+\_\+setgainblock} (long mb, float gainval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ab2c43dd74f7c55633c154aebd7743c15}{A\+Oloop\+Control\+\_\+setlimitblock} (long mb, float limitval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_acaa7ada51992e69ac63fa26012e116aa}{A\+Oloop\+Control\+\_\+setmultfblock} (long mb, float multfval)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl_8h_ab4875a7b1ba20facd8e0f8a2af632569}{A\+Oloop\+Control\+\_\+\+Auto\+Tune} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\subsection{Detailed Description}
+Function prototypes for Adaptive Optics Control loop engine. 
+
+A\+O engine uses stream data structure
+
+\begin{DoxyAuthor}{Author}
+O. Guyon 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+17 Jun 2017
+\end{DoxyDate}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000002}{Bug}]No known bugs. \end{DoxyRefDesc}
+
+
+\begin{DoxySeeAlso}{See also}
+\href{http://www}{\tt http\+://www}. 
+\end{DoxySeeAlso}
 
 
 \subsection{Macro Definition Documentation}
-\hypertarget{AOloopControl_8h_a1607e57c6edf0fe69d995ec9b00b2d2d}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!max\+N\+B\+M\+B@{max\+N\+B\+M\+B}}
+\hypertarget{AOloopControl_8h_a545b173d2890751a42402351faf60149}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R@{M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R}}
+\index{M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R@{M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R}]{\setlength{\rightskip}{0pt plus 5cm}\#define M\+A\+X\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+T\+I\+M\+E\+R~100}\label{AOloopControl_8h_a545b173d2890751a42402351faf60149}
+\hypertarget{AOloopControl_8h_a1607e57c6edf0fe69d995ec9b00b2d2d}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!max\+N\+B\+M\+B@{max\+N\+B\+M\+B}}
 \index{max\+N\+B\+M\+B@{max\+N\+B\+M\+B}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{max\+N\+B\+M\+B}]{\setlength{\rightskip}{0pt plus 5cm}\#define max\+N\+B\+M\+B~100}}\label{AOloopControl_8h_a1607e57c6edf0fe69d995ec9b00b2d2d}
+\subsubsection[{max\+N\+B\+M\+B}]{\setlength{\rightskip}{0pt plus 5cm}\#define max\+N\+B\+M\+B~100}\label{AOloopControl_8h_a1607e57c6edf0fe69d995ec9b00b2d2d}
 
 
 \subsection{Function Documentation}
-\hypertarget{AOloopControl_8h_ae49a1c95d630e0924f5fcc570f8c3f90}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Ocompute@{A\+Ocompute}}
+\hypertarget{AOloopControl_8h_a19a66458a8453e9f5e6ec19a93c3e70a}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Ocompute@{A\+Ocompute}}
 \index{A\+Ocompute@{A\+Ocompute}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Ocompute}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Ocompute (
+\subsubsection[{A\+Ocompute}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Ocompute (
 \begin{DoxyParamCaption}
-\item[{long}]{loop}
+\item[{long}]{loop, }
+\item[{int}]{normalize}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ae49a1c95d630e0924f5fcc570f8c3f90}
-\hypertarget{AOloopControl_8h_afbfea6c276731196c933505b60d8ee95}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Auto\+Tune@{A\+Oloop\+Control\+\_\+\+Auto\+Tune}}
-\index{A\+Oloop\+Control\+\_\+\+Auto\+Tune@{A\+Oloop\+Control\+\_\+\+Auto\+Tune}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Auto\+Tune}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+Auto\+Tune (
+)}\label{AOloopControl_8h_a19a66458a8453e9f5e6ec19a93c3e70a}
+\hypertarget{AOloopControl_8h_ac3f68a9b79e43a57e11d85517a9627d1}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed@{A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed}}
+\index{A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed@{A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Ocontrol\+Loop\+\_\+\+Test\+D\+M\+Speed (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{dmname, }
+\item[{long}]{delayus, }
+\item[{long}]{N\+Bpts, }
+\item[{float}]{ampl}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ac3f68a9b79e43a57e11d85517a9627d1}
+\hypertarget{AOloopControl_8h_a9ebac7ca5867f9ed5ec5e47a66144c69}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency@{A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency}}
+\index{A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency@{A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Ocontrol\+Loop\+\_\+\+Test\+System\+Latency (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{dmname, }
+\item[{char $\ast$}]{wfsname, }
+\item[{float}]{O\+P\+Damp, }
+\item[{long}]{N\+Biter}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a9ebac7ca5867f9ed5ec5e47a66144c69}
+\hypertarget{AOloopControl_8h_a119111bd69fc11e62f5911d6daf16427}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim@{A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim}}
+\index{A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim@{A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+2\+Dloadcreate\+\_\+shmim (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{name, }
+\item[{const char $\ast$}]{fname, }
+\item[{long}]{xsize, }
+\item[{long}]{ysize}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a119111bd69fc11e62f5911d6daf16427}
+\hypertarget{AOloopControl_8h_a6b5771f15f14e76afc4b7899378a4a63}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim@{A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim}}
+\index{A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim@{A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+3\+Dloadcreate\+\_\+shmim (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{name, }
+\item[{const char $\ast$}]{fname, }
+\item[{long}]{xsize, }
+\item[{long}]{ysize, }
+\item[{long}]{zsize}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a6b5771f15f14e76afc4b7899378a4a63}
+\hypertarget{AOloopControl_8h_a41cb4171b617b7de790b7d28c217d945}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity@{A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity}}
+\index{A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity@{A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Analyze\+R\+M\+\_\+sensitivity (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Ddmmodes\+\_\+name, }
+\item[{const char $\ast$}]{I\+Ddmmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsref\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsresp\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsmask\+\_\+name, }
+\item[{float}]{amplimitnm, }
+\item[{float}]{lambdanm, }
+\item[{const char $\ast$}]{foutname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a41cb4171b617b7de790b7d28c217d945}
+\hypertarget{AOloopControl_8h_a26bea9d5d6452a589541c1757ff4ba21}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff@{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff}}
+\index{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff@{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+R\+P\+Foff (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_afbfea6c276731196c933505b60d8ee95}
-\hypertarget{AOloopControl_8h_abafcddf53edec67a3729837724449116}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop@{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}}
-\index{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop@{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop (
+)}\label{AOloopControl_8h_a26bea9d5d6452a589541c1757ff4ba21}
+\hypertarget{AOloopControl_8h_aff4558a2984773735b46e129777b0ad8}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon@{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon}}
+\index{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon@{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+R\+P\+Fon (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{in\+\_\+name, }
-\item[{char $\ast$}]{out\+\_\+name, }
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aff4558a2984773735b46e129777b0ad8}
+\hypertarget{AOloopControl_8h_ab4875a7b1ba20facd8e0f8a2af632569}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Auto\+Tune@{A\+Oloop\+Control\+\_\+\+Auto\+Tune}}
+\index{A\+Oloop\+Control\+\_\+\+Auto\+Tune@{A\+Oloop\+Control\+\_\+\+Auto\+Tune}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Auto\+Tune}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Auto\+Tune (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ab4875a7b1ba20facd8e0f8a2af632569}
+\hypertarget{AOloopControl_8h_a31cadbcb286f552074469a1757fadf37}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off}}
+\index{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+off (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a31cadbcb286f552074469a1757fadf37}
+\hypertarget{AOloopControl_8h_a161f9b2b9cf3fabb48103a880f2dfa32}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on}}
+\index{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+G\+A\+I\+N\+S\+\_\+on (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a161f9b2b9cf3fabb48103a880f2dfa32}
+\hypertarget{AOloopControl_8h_a8fb5c314e68474a374f91a0a716d689d}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off}}
+\index{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+off (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a8fb5c314e68474a374f91a0a716d689d}
+\hypertarget{AOloopControl_8h_a4b592751014219bf5c8afcb12c0d1a01}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on}}
+\index{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on@{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+on (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a4b592751014219bf5c8afcb12c0d1a01}
+\hypertarget{AOloopControl_8h_aee12877621c3893222540cbc80ea7ac8}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains@{A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains}}
+\index{A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains@{A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Auto\+Tune\+Gains (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aee12877621c3893222540cbc80ea7ac8}
+\hypertarget{AOloopControl_8h_a9fba32dfbf6fc91072fefb019709e5de}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Ave\+Stream@{A\+Oloop\+Control\+\_\+\+Ave\+Stream}}
+\index{A\+Oloop\+Control\+\_\+\+Ave\+Stream@{A\+Oloop\+Control\+\_\+\+Ave\+Stream}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Ave\+Stream}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Ave\+Stream (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dname, }
+\item[{double}]{alpha, }
+\item[{const char $\ast$}]{I\+Dname\+\_\+out\+\_\+ave, }
+\item[{const char $\ast$}]{I\+Dname\+\_\+out\+\_\+\+A\+C, }
+\item[{const char $\ast$}]{I\+Dname\+\_\+out\+\_\+\+R\+M\+S}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a9fba32dfbf6fc91072fefb019709e5de}
+\hypertarget{AOloopControl_8h_a94cb5f3704243147e65bd49282a845e0}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+blockstats@{A\+Oloop\+Control\+\_\+blockstats}}
+\index{A\+Oloop\+Control\+\_\+blockstats@{A\+Oloop\+Control\+\_\+blockstats}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+blockstats}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+blockstats (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a94cb5f3704243147e65bd49282a845e0}
+\hypertarget{AOloopControl_8h_acdad903dbd67f4e4fb2af1adfacd49bd}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input@{A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input}}
+\index{A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input@{A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+buil\+P\+Floop\+\_\+\+Watch\+Input (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{long}]{P\+Fblock}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_acdad903dbd67f4e4fb2af1adfacd49bd}
+\hypertarget{AOloopControl_8h_a341495b61e5c8647d214853b082a35de}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop@{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}}
+\index{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop@{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+camimage\+\_\+extract2\+D\+\_\+sharedmem\+\_\+loop (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{in\+\_\+name, }
+\item[{const char $\ast$}]{out\+\_\+name, }
 \item[{long}]{size\+\_\+x, }
 \item[{long}]{size\+\_\+y, }
 \item[{long}]{xstart, }
 \item[{long}]{ystart}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_abafcddf53edec67a3729837724449116}
-\hypertarget{AOloopControl_8h_a7071ae48e7bdbd03bc3c13ff143ec017}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Initialize\+Memory@{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}}
-\index{A\+Oloop\+Control\+\_\+\+Initialize\+Memory@{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+Initialize\+Memory (
+)}\label{AOloopControl_8h_a341495b61e5c8647d214853b082a35de}
+\hypertarget{AOloopControl_8h_a54911dd0bffb3bbe82beeba4b1499344}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop@{A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop}}
+\index{A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop@{A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Comp\+Modes\+\_\+loop (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+D\+\_\+\+C\+M\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+W\+F\+Sref\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+W\+F\+Sim\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+W\+F\+Simtot\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+coeff\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a54911dd0bffb3bbe82beeba4b1499344}
+\hypertarget{AOloopControl_8h_ae6bb2e33b7f979e7db354e71a29441aa}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes@{A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes}}
+\index{A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes@{A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Compute\+Open\+Loop\+Modes (
+\begin{DoxyParamCaption}
+\item[{long}]{loop}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ae6bb2e33b7f979e7db354e71a29441aa}
+\hypertarget{AOloopControl_8h_ac33639c8c0d7f53740746beb62203067}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage@{A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage}}
+\index{A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage@{A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+compute\+W\+F\+Sresidualimage (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{float}]{alpha}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ac33639c8c0d7f53740746beb62203067}
+\hypertarget{AOloopControl_8h_ad2184079c9d0653be06f2a757f89f03b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Cross\+Product@{A\+Oloop\+Control\+\_\+\+Cross\+Product}}
+\index{A\+Oloop\+Control\+\_\+\+Cross\+Product@{A\+Oloop\+Control\+\_\+\+Cross\+Product}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Cross\+Product}]{\setlength{\rightskip}{0pt plus 5cm}static long A\+Oloop\+Control\+\_\+\+Cross\+Product (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+D1\+\_\+name, }
+\item[{const char $\ast$}]{I\+D2\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_ad2184079c9d0653be06f2a757f89f03b}
+\hypertarget{AOloopControl_8h_ac28a204bc08926a450a9d2bad7fa6de2}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload@{A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload}}
+\index{A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload@{A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+dm2dm\+\_\+offload (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{streamin, }
+\item[{const char $\ast$}]{streamout, }
+\item[{float}]{twait, }
+\item[{float}]{offcoeff, }
+\item[{float}]{multcoeff}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ac28a204bc08926a450a9d2bad7fa6de2}
+\hypertarget{AOloopControl_8h_a06b2bff59d932e427de8e45e7f695b81}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+dm2opdmaploop@{A\+Oloop\+Control\+\_\+dm2opdmaploop}}
+\index{A\+Oloop\+Control\+\_\+dm2opdmaploop@{A\+Oloop\+Control\+\_\+dm2opdmaploop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+dm2opdmaploop}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+dm2opdmaploop (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{D\+Mdisp\+\_\+name, }
+\item[{char $\ast$}]{O\+P\+Dmap\+\_\+name, }
+\item[{int}]{semindex}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a06b2bff59d932e427de8e45e7f695b81}
+\hypertarget{AOloopControl_8h_aebcde04c52ff38663997bc4a93b5d1db}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect@{A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect@{A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect}]{\setlength{\rightskip}{0pt plus 5cm}static long A\+Oloop\+Control\+\_\+\+D\+Medge\+Detect (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dmask\+R\+M\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_aebcde04c52ff38663997bc4a93b5d1db}
+\hypertarget{AOloopControl_8h_aa971a1729c621acd6a136f412bdd3b8c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes@{A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes@{A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}static long A\+Oloop\+Control\+\_\+\+D\+Mextrapolate\+Modes (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Din\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcpa\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_aa971a1729c621acd6a136f412bdd3b8c}
+\hypertarget{AOloopControl_8h_a5a8acc15a46ed4ac0ed26263a2955dd8}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B@{A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B@{A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+D\+Mmodulate\+A\+B (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dprobe\+A\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dprobe\+B\+\_\+name, }
+\item[{const char $\ast$}]{I\+Ddmstream\+\_\+name, }
+\item[{const char $\ast$}]{I\+Drespmat\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsrefstream\+\_\+name, }
+\item[{double}]{delay, }
+\item[{long}]{N\+Bprobes}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a5a8acc15a46ed4ac0ed26263a2955dd8}
+\hypertarget{AOloopControl_8h_a2a1d9a544f9f193c864f236f04742a54}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off@{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off@{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+off (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a7071ae48e7bdbd03bc3c13ff143ec017}
-\hypertarget{AOloopControl_8h_a15b78cd3a44b44c60cf340e457c421f9}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Inject\+Mode@{A\+Oloop\+Control\+\_\+\+Inject\+Mode}}
+)}\label{AOloopControl_8h_a2a1d9a544f9f193c864f236f04742a54}
+\hypertarget{AOloopControl_8h_a857c19e62e6acda10fca64adfa7fc565}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on@{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on@{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+D\+Mprimary\+Write\+\_\+on (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a857c19e62e6acda10fca64adfa7fc565}
+\hypertarget{AOloopControl_8h_a39ddf72f920986c1649b261b37b6f354}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext@{A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext}}
+\index{A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext@{A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+D\+Mslave\+Ext (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Din\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dsl\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{float}]{r0}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a39ddf72f920986c1649b261b37b6f354}
+\hypertarget{AOloopControl_8h_a2504ada89010d0d6ed22a56a5ad0d26b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+frame\+Delay@{A\+Oloop\+Control\+\_\+frame\+Delay}}
+\index{A\+Oloop\+Control\+\_\+frame\+Delay@{A\+Oloop\+Control\+\_\+frame\+Delay}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+frame\+Delay}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+frame\+Delay (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Din\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dkern\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{int}]{insem}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a2504ada89010d0d6ed22a56a5ad0d26b}
+\hypertarget{AOloopControl_8h_a6a15c56ac277ca878548cde4674d9fb0}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop@{A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop}}
+\index{A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop@{A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+G\+P\+Umodecoeffs2dm\+\_\+filt\+\_\+loop (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{modecoeffs\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mmodes\+\_\+name, }
+\item[{int}]{sem\+Trigg, }
+\item[{const char $\ast$}]{out\+\_\+name, }
+\item[{int}]{G\+P\+Uindex, }
+\item[{long}]{loop, }
+\item[{int}]{offload\+Mode}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a6a15c56ac277ca878548cde4674d9fb0}
+\hypertarget{AOloopControl_8h_a41ebed0e0ddd99dafbc540ccf98981f6}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M@{A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M}}
+\index{A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M@{A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Hadamard\+\_\+decode\+R\+M (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{inname, }
+\item[{const char $\ast$}]{Hmatname, }
+\item[{const char $\ast$}]{indexname, }
+\item[{const char $\ast$}]{outname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a41ebed0e0ddd99dafbc540ccf98981f6}
+\hypertarget{AOloopControl_8h_a00f88e3ff7676af9ffc3d9835f336055}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Initialize\+Memory@{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}}
+\index{A\+Oloop\+Control\+\_\+\+Initialize\+Memory@{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Initialize\+Memory}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Initialize\+Memory (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_a00f88e3ff7676af9ffc3d9835f336055}
+\hypertarget{AOloopControl_8h_a75fd4a66a5158dc2dd447d550bf2efc5}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Inject\+Mode@{A\+Oloop\+Control\+\_\+\+Inject\+Mode}}
 \index{A\+Oloop\+Control\+\_\+\+Inject\+Mode@{A\+Oloop\+Control\+\_\+\+Inject\+Mode}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Inject\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+Inject\+Mode (
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Inject\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Inject\+Mode (
 \begin{DoxyParamCaption}
 \item[{long}]{index, }
 \item[{float}]{ampl}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a15b78cd3a44b44c60cf340e457c421f9}
-\hypertarget{AOloopControl_8h_a433c21c6619529f2a61c2b4c22a7c287}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+load\+C\+M@{A\+Oloop\+Control\+\_\+load\+C\+M}}
+)}\label{AOloopControl_8h_a75fd4a66a5158dc2dd447d550bf2efc5}
+\hypertarget{AOloopControl_8h_abdc9cf4fdc8825eafe0f4a6ee2a8897b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+load\+C\+M@{A\+Oloop\+Control\+\_\+load\+C\+M}}
 \index{A\+Oloop\+Control\+\_\+load\+C\+M@{A\+Oloop\+Control\+\_\+load\+C\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+load\+C\+M}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+load\+C\+M (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{char $\ast$}]{C\+Mfname}
+\item[{const char $\ast$}]{C\+Mfname}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a433c21c6619529f2a61c2b4c22a7c287}
-\hypertarget{AOloopControl_8h_a25c5f36d50bdfd0be2cdf0476c300e03}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loadconfigure@{A\+Oloop\+Control\+\_\+loadconfigure}}
+)}\label{AOloopControl_8h_abdc9cf4fdc8825eafe0f4a6ee2a8897b}
+\hypertarget{AOloopControl_8h_a365d8d6964d35b903928ae33966f2b72}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loadconfigure@{A\+Oloop\+Control\+\_\+loadconfigure}}
 \index{A\+Oloop\+Control\+\_\+loadconfigure@{A\+Oloop\+Control\+\_\+loadconfigure}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loadconfigure}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loadconfigure (
+\subsubsection[{A\+Oloop\+Control\+\_\+loadconfigure}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loadconfigure (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{int}]{mode}
+\item[{int}]{mode, }
+\item[{int}]{level}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a25c5f36d50bdfd0be2cdf0476c300e03}
-\hypertarget{AOloopControl_8h_a2b8abc25c5776e3adfdf9abff393b4de}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+logoff@{A\+Oloop\+Control\+\_\+logoff}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_a365d8d6964d35b903928ae33966f2b72}
+\hypertarget{AOloopControl_8h_abf02c7b987ff57fa38605aafc2df2c2e}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+log\+Function\+Call@{A\+Oloop\+Control\+\_\+log\+Function\+Call}}
+\index{A\+Oloop\+Control\+\_\+log\+Function\+Call@{A\+Oloop\+Control\+\_\+log\+Function\+Call}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+log\+Function\+Call}]{\setlength{\rightskip}{0pt plus 5cm}static void A\+Oloop\+Control\+\_\+log\+Function\+Call (
+\begin{DoxyParamCaption}
+\item[{const int}]{logfunc\+M\+O\+D\+E, }
+\item[{const char $\ast$}]{Function\+Name, }
+\item[{const long}]{line, }
+\item[{char $\ast$}]{comments}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_abf02c7b987ff57fa38605aafc2df2c2e}
+
+
+Log function call (for testing / debugging only). 
+
+Function calls are logged if A\+O\+L\+O\+O\+P\+C\+O\+N\+T\+R\+O\+L\+\_\+\+L\+O\+G\+F\+U\+N\+C is defined
+
+Variable A\+O\+L\+O\+O\+P\+C\+O\+N\+T\+R\+O\+L\+\_\+logfunc\+\_\+level keeps track of function depth\+: ~\newline
+ it is incremented when entering a function ~\newline
+ decremented when exiting a function
+
+Variable A\+O\+L\+O\+O\+P\+C\+O\+N\+T\+R\+O\+L\+\_\+logfunc\+\_\+level\+\_\+max sets the max depth of logging
+
+\begin{DoxyVerb}like this\end{DoxyVerb}
+
+
+At the beginning of each function, insert this code\+: 
+\begin{DoxyCode}
+1 #ifdef AOLOOPCONTROL\_LOGFUNC
+2 AOloopControl\_logFunctionCall( 0, \_\_FUNCTION\_\_, \_\_LINE\_\_, "");
+3 #endif
+\end{DoxyCode}
+ and at the end of each function\+: 
+\begin{DoxyCode}
+1 #ifdef AOLOOPCONTROL\_LOGFUNC
+2 AOloopControl\_logFunctionCall( 1, \_\_FUNCTION\_\_, \_\_LINE\_\_, "");
+3 #endif
+\end{DoxyCode}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em logfunc\+M\+O\+D\+E} & Log mode, 0\+:entering function, 1\+:exiting function \\
+\hline
+{\em Function\+Name} & Name of function, usually {\bfseries F\+U\+N\+C\+T\+I\+O\+N} so that preprocessor fills this parameter. \\
+\hline
+{\em line} & Line in cource code, usually {\bfseries L\+I\+N\+E} so that preprocessor fills this parameter. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+This function does not return anything.
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Carefully set depth value to avoid large output file. 
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+May slow down code. Only use for debugging. Output file may grow very quickly. 
+\end{DoxyWarning}
+\hypertarget{AOloopControl_8h_a298c97e99df82a600200beae487f6cf8}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+logoff@{A\+Oloop\+Control\+\_\+logoff}}
 \index{A\+Oloop\+Control\+\_\+logoff@{A\+Oloop\+Control\+\_\+logoff}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+logoff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+logoff (
+\subsubsection[{A\+Oloop\+Control\+\_\+logoff}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+logoff (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a2b8abc25c5776e3adfdf9abff393b4de}
-\hypertarget{AOloopControl_8h_a8507068917e5ce955a643d40d0dcc0e3}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+logon@{A\+Oloop\+Control\+\_\+logon}}
+)}\label{AOloopControl_8h_a298c97e99df82a600200beae487f6cf8}
+\hypertarget{AOloopControl_8h_adfbb7e9917d08216d9d97f243feb5f39}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+logon@{A\+Oloop\+Control\+\_\+logon}}
 \index{A\+Oloop\+Control\+\_\+logon@{A\+Oloop\+Control\+\_\+logon}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+logon}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+logon (
+\subsubsection[{A\+Oloop\+Control\+\_\+logon}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+logon (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a8507068917e5ce955a643d40d0dcc0e3}
-\hypertarget{AOloopControl_8h_a2c85b4bdaa4d20924f5faf5a70f64c3e}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopkill@{A\+Oloop\+Control\+\_\+loopkill}}
+)}\label{AOloopControl_8h_adfbb7e9917d08216d9d97f243feb5f39}
+\hypertarget{AOloopControl_8h_a9fc28b4fe0560796be68d45b9b7f713a}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval@{A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval}}
+\index{A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval@{A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+logprocess\+\_\+modeval (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a9fc28b4fe0560796be68d45b9b7f713a}
+\hypertarget{AOloopControl_8h_a7e0c1278a38599e95fe3a80f7f9d81d7}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopkill@{A\+Oloop\+Control\+\_\+loopkill}}
 \index{A\+Oloop\+Control\+\_\+loopkill@{A\+Oloop\+Control\+\_\+loopkill}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loopkill}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loopkill (
+\subsubsection[{A\+Oloop\+Control\+\_\+loopkill}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loopkill (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a2c85b4bdaa4d20924f5faf5a70f64c3e}
-\hypertarget{AOloopControl_8h_a15b7e95b4f672093999baa32340ba2d1}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loop\+Monitor@{A\+Oloop\+Control\+\_\+loop\+Monitor}}
+)}\label{AOloopControl_8h_a7e0c1278a38599e95fe3a80f7f9d81d7}
+\hypertarget{AOloopControl_8h_a275277227b2cba09bc34c2a485377d4c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loop\+Monitor@{A\+Oloop\+Control\+\_\+loop\+Monitor}}
 \index{A\+Oloop\+Control\+\_\+loop\+Monitor@{A\+Oloop\+Control\+\_\+loop\+Monitor}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loop\+Monitor}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loop\+Monitor (
+\subsubsection[{A\+Oloop\+Control\+\_\+loop\+Monitor}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loop\+Monitor (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
 \item[{double}]{frequ, }
 \item[{long}]{nbcol}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a15b7e95b4f672093999baa32340ba2d1}
-\hypertarget{AOloopControl_8h_a1459e03fb4779fca74d482c4844b20b7}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopoff@{A\+Oloop\+Control\+\_\+loopoff}}
+)}\label{AOloopControl_8h_a275277227b2cba09bc34c2a485377d4c}
+\hypertarget{AOloopControl_8h_ae5cb5075877becd5d2bc72cc4d75fcc0}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopoff@{A\+Oloop\+Control\+\_\+loopoff}}
 \index{A\+Oloop\+Control\+\_\+loopoff@{A\+Oloop\+Control\+\_\+loopoff}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loopoff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loopoff (
+\subsubsection[{A\+Oloop\+Control\+\_\+loopoff}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loopoff (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a1459e03fb4779fca74d482c4844b20b7}
-\hypertarget{AOloopControl_8h_ac12e4ec8eab5e0e1997297c19132c738}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopon@{A\+Oloop\+Control\+\_\+loopon}}
+)}\label{AOloopControl_8h_ae5cb5075877becd5d2bc72cc4d75fcc0}
+\hypertarget{AOloopControl_8h_aaa36c0f5676f5945a0d89fdcc1fc881a}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopon@{A\+Oloop\+Control\+\_\+loopon}}
 \index{A\+Oloop\+Control\+\_\+loopon@{A\+Oloop\+Control\+\_\+loopon}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loopon}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loopon (
+\subsubsection[{A\+Oloop\+Control\+\_\+loopon}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loopon (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ac12e4ec8eab5e0e1997297c19132c738}
-\hypertarget{AOloopControl_8h_a7eff3756b677cbbb8162855660b06598}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopreset@{A\+Oloop\+Control\+\_\+loopreset}}
+)}\label{AOloopControl_8h_aaa36c0f5676f5945a0d89fdcc1fc881a}
+\hypertarget{AOloopControl_8h_a561e18ffa331146fbed2ca53a6c6fdb4}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopreset@{A\+Oloop\+Control\+\_\+loopreset}}
 \index{A\+Oloop\+Control\+\_\+loopreset@{A\+Oloop\+Control\+\_\+loopreset}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loopreset}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loopreset (
+\subsubsection[{A\+Oloop\+Control\+\_\+loopreset}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loopreset (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a7eff3756b677cbbb8162855660b06598}
-\hypertarget{AOloopControl_8h_af9e154a6fb28dfba8c8acf770431923d}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopstep@{A\+Oloop\+Control\+\_\+loopstep}}
+)}\label{AOloopControl_8h_a561e18ffa331146fbed2ca53a6c6fdb4}
+\hypertarget{AOloopControl_8h_a80e9d045d44ebe3981beb78e32c482c3}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+loopstep@{A\+Oloop\+Control\+\_\+loopstep}}
 \index{A\+Oloop\+Control\+\_\+loopstep@{A\+Oloop\+Control\+\_\+loopstep}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+loopstep}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+loopstep (
+\subsubsection[{A\+Oloop\+Control\+\_\+loopstep}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+loopstep (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
 \item[{long}]{N\+Bstep}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_af9e154a6fb28dfba8c8acf770431923d}
-\hypertarget{AOloopControl_8h_acc9ab7061d6a728e55bcacd6742448c1}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes@{A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes}}
-\index{A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes@{A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Make\+D\+M\+Modes (
+)}\label{AOloopControl_8h_a80e9d045d44ebe3981beb78e32c482c3}
+\hypertarget{AOloopControl_8h_aaf78d8caa0c27cb632ea00c97e0399b4}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+map\+Predictive\+Filter@{A\+Oloop\+Control\+\_\+map\+Predictive\+Filter}}
+\index{A\+Oloop\+Control\+\_\+map\+Predictive\+Filter@{A\+Oloop\+Control\+\_\+map\+Predictive\+Filter}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+map\+Predictive\+Filter}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+map\+Predictive\+Filter (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dmodecoeff\+\_\+name, }
+\item[{long}]{modeout, }
+\item[{double}]{delayfr}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aaf78d8caa0c27cb632ea00c97e0399b4}
+\hypertarget{AOloopControl_8h_a65793b504cc7620823608ab97fdc9f2c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response}}
+\index{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+S\+\_\+lin\+Response (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{long}]{N\+Bmodes, }
-\item[{char $\ast$}]{I\+Dname}
+\item[{float}]{ampl, }
+\item[{long}]{delayfr, }
+\item[{long}]{delay\+R\+M1us, }
+\item[{long}]{N\+Bave, }
+\item[{long}]{N\+Bexcl, }
+\item[{const char $\ast$}]{I\+Dpoke\+C\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dresp\+C\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsref\+\_\+name, }
+\item[{int}]{normalize, }
+\item[{int}]{A\+Oinit\+Mode, }
+\item[{long}]{N\+Bcycle}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_acc9ab7061d6a728e55bcacd6742448c1}
-\hypertarget{AOloopControl_8h_a5c3b0bdcff0ed83ed3f9f217b14c014d}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf@{A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf}}
-\index{A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf@{A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+make\+Template\+A\+Oloopconf (
-\begin{DoxyParamCaption}
-\item[{long}]{loopnb}
-\end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a5c3b0bdcff0ed83ed3f9f217b14c014d}
-
-
-Creates a blank configuration. 
-
-\hypertarget{AOloopControl_8h_a40f5dfb872f856f68b6dec2a72f126bb}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error}}
-\index{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Scam\+\_\+\+Periodic\+Error (
+)}\label{AOloopControl_8h_a65793b504cc7620823608ab97fdc9f2c}
+\hypertarget{AOloopControl_8h_ab6baed05afd1b77dbd32314daa67db8f}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C}}
+\index{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Measure\+\_\+\+W\+F\+Sresp\+C (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{long}]{N\+Bframes, }
-\item[{long}]{N\+Bpha, }
-\item[{char $\ast$}]{I\+Dout\+\_\+name}
+\item[{long}]{delayfr, }
+\item[{long}]{delay\+R\+M1us, }
+\item[{long}]{N\+Bave, }
+\item[{long}]{N\+Bexcl, }
+\item[{const char $\ast$}]{I\+Dpoke\+C\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+C\+\_\+name, }
+\item[{int}]{normalize, }
+\item[{int}]{A\+Oinit\+Mode, }
+\item[{long}]{N\+Bcycle}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a40f5dfb872f856f68b6dec2a72f126bb}
-Record periodic camera signal (to be used if there is a periodic camera error)
+)}\label{AOloopControl_8h_ab6baed05afd1b77dbd32314daa67db8f}
 
-folds the signal onto one period in frames
 
-find periodicity ( coarse search )
+Measures W\+F\+S image response to a series of D\+M patterns. 
 
-toggles to 1 when curve first goes above level1
+A\+Oinit\+Mode = 0\+: create A\+O shared mem struct A\+Oinit\+Mode = 1\+: connect only to A\+O shared mem struct
 
-toggles to 1 when curve first goes above level2 after level1\+O\+K
+I\+N\+P\+U\+T \+: D\+Mpoke\+\_\+name \+: set of D\+M patterns O\+U\+T\+P\+U\+T \+: W\+F\+Smap\+\_\+name \+: W\+F\+S response maps
 
-toggles to 1 when curve first goes above level3 after level2\+O\+K
+U\+S\+R1 signal will stop acquisition immediately U\+S\+R2 signal completes current cycles and stops acquisition \hypertarget{AOloopControl_8h_a6d1b0800971b05314c7f5eebff78946b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M}}
+\index{A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M@{A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Measure\+\_\+zonal\+R\+M (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{double}]{ampl, }
+\item[{long}]{delayfr, }
+\item[{long}]{delay\+R\+M1us, }
+\item[{long}]{N\+Bave, }
+\item[{long}]{N\+Bexcl, }
+\item[{const char $\ast$}]{zrespm\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Sref0\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Smap\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mmap\+\_\+name, }
+\item[{long}]{mode, }
+\item[{int}]{normalize, }
+\item[{int}]{A\+Oinit\+Mode, }
+\item[{long}]{N\+Bcycle}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a6d1b0800971b05314c7f5eebff78946b}
+Measures zonal response matrix -\/$>$ collapses it to D\+M response map and W\+F\+S response map (both maps show amplitude of actuator effect on W\+F\+S)
 
-find periodicity ( fine search )
+mode \+: 0\+: compute W\+F\+Smap and D\+Mmap 1\+: compute W\+F\+Smap, D\+Mmap, W\+F\+Smask and D\+Mmask -\/$>$ images wfsmask and dmmask N\+O\+T\+E can take custom poke matrix (loaded in image name R\+Mpoke\+Cube)
 
-building phase cube \hypertarget{AOloopControl_8h_ad0ae22b447c41a10cf7f3614dfbcd49c}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Modes@{A\+Oloop\+Control\+\_\+mk\+Modes}}
+A\+S\+Y\+N\+C = 1 -\/$>$ record A\+L\+L frames and assemble the R\+M off-\/line
+
+A\+Oinit\+Mode = 0\+: create A\+O shared mem struct A\+Oinit\+Mode = 1\+: connect only to A\+O shared mem struct \hypertarget{AOloopControl_8h_ac14a18018141d013f407549b58372039}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask@{A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask}}
+\index{A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask@{A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+mk\+Calib\+\_\+map\+\_\+mask (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{const char $\ast$}]{zrespm\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Smap\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mmap\+\_\+name, }
+\item[{float}]{dmmask\+\_\+perclow, }
+\item[{float}]{dmmask\+\_\+coefflow, }
+\item[{float}]{dmmask\+\_\+perchigh, }
+\item[{float}]{dmmask\+\_\+coeffhigh, }
+\item[{float}]{wfsmask\+\_\+perclow, }
+\item[{float}]{wfsmask\+\_\+coefflow, }
+\item[{float}]{wfsmask\+\_\+perchigh, }
+\item[{float}]{wfsmask\+\_\+coeffhigh}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ac14a18018141d013f407549b58372039}
+\hypertarget{AOloopControl_8h_a40a46ea5e2f19b89a8e0e3d8aed9a918}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+C\+M@{A\+Oloop\+Control\+\_\+mk\+C\+M}}
+\index{A\+Oloop\+Control\+\_\+mk\+C\+M@{A\+Oloop\+Control\+\_\+mk\+C\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+C\+M}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+C\+M (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{respm\+\_\+name, }
+\item[{const char $\ast$}]{cm\+\_\+name, }
+\item[{float}]{S\+V\+Dlim}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a40a46ea5e2f19b89a8e0e3d8aed9a918}
+\hypertarget{AOloopControl_8h_a8c343270c191f582f7e78bc93d14e020}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes@{A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes}}
+\index{A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes@{A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Hadamard\+Modes (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{D\+Mmask\+\_\+name, }
+\item[{const char $\ast$}]{outname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a8c343270c191f582f7e78bc93d14e020}
+\hypertarget{AOloopControl_8h_a90e9b6afa897ace3ef44a6c76713ca36}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes@{A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes}}
+\index{A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes@{A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mklo\+D\+Mmodes (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{msizex, }
+\item[{long}]{msizey, }
+\item[{float}]{C\+P\+Amax, }
+\item[{float}]{delta\+C\+P\+A, }
+\item[{double}]{xc, }
+\item[{double}]{yc, }
+\item[{double}]{r0, }
+\item[{double}]{r1, }
+\item[{int}]{Mask\+Mode}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a90e9b6afa897ace3ef44a6c76713ca36}
+C\+P\+A for each Zernike (somewhat arbitrary... used to sort modes in C\+P\+A)
+
+extract xc and yc from mask
+
+Remove excluded modes
+
+S\+L\+A\+V\+E\+D A\+C\+T\+U\+A\+T\+O\+R\+S \hypertarget{AOloopControl_8h_ab544c040d4d7dfdecba70ca81705a63e}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Modes@{A\+Oloop\+Control\+\_\+mk\+Modes}}
 \index{A\+Oloop\+Control\+\_\+mk\+Modes@{A\+Oloop\+Control\+\_\+mk\+Modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+mk\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Modes (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
-\item[{long}]{msize, }
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{long}]{msizex, }
+\item[{long}]{msizey, }
 \item[{float}]{C\+P\+Amax, }
 \item[{float}]{delta\+C\+P\+A, }
 \item[{double}]{xc, }
 \item[{double}]{yx, }
 \item[{double}]{r0, }
 \item[{double}]{r1, }
-\item[{int}]{Mask\+Mode}
+\item[{int}]{Mask\+Mode, }
+\item[{int}]{Block\+N\+B, }
+\item[{float}]{S\+V\+Dlim}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ad0ae22b447c41a10cf7f3614dfbcd49c}
+)}\label{AOloopControl_8h_ab544c040d4d7dfdecba70ca81705a63e}
 C\+P\+A for each Zernike (somewhat arbitrary... used to sort modes in C\+P\+A)
 
 modesfreqcpa I\+D
+
+S\+T\+E\+P 1\+: C\+R\+E\+A\+T\+E S\+T\+A\+R\+T\+I\+N\+G P\+O\+I\+N\+T \+: Z\+E\+R\+N\+I\+K\+E\+S + F\+O\+U\+R\+I\+E\+R M\+O\+D\+E\+S
 
 if Mmask exists, use it, otherwise create it
 
@@ -304,42 +978,147 @@ extract xc and yc from mask
 
 3\+: tip, tilt, focus
 
-Remove excluded modes \hypertarget{AOloopControl_8h_ac2130a837323ad0ead68e773805d463b}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+printloopstatus@{A\+Oloop\+Control\+\_\+printloopstatus}}
+Remove excluded modes if they exist
+
+Remove excluded modes if they exist
+
+C\+O\+M\+P\+U\+T\+E W\+F\+S R\+E\+S\+P\+O\+N\+S\+E T\+O M\+O\+D\+E\+S -\/$>$ fmodes\+W\+F\+S00all.\+fits
+
+S\+T\+E\+P 2\+: S\+E\+P\+A\+R\+A\+T\+E D\+M M\+O\+D\+E\+S I\+N\+T\+O B\+L\+O\+C\+K\+S A\+N\+D M\+A\+S\+K
+
+S\+T\+E\+P 3\+: R\+E\+M\+O\+V\+E N\+U\+L\+L S\+P\+A\+C\+E W\+I\+T\+H\+I\+N E\+A\+C\+H B\+L\+O\+C\+K -\/ U\+S\+E S\+V\+Dlim00 F\+O\+R C\+U\+T\+O\+F\+F -\/$>$ fmodes1all.\+fits (D\+M space)
+
+S\+T\+E\+P 4\+: R\+E\+M\+O\+V\+E M\+O\+D\+E\+S T\+H\+A\+T A\+R\+E C\+O\+N\+T\+A\+I\+N\+E\+D I\+N P\+R\+E\+V\+I\+O\+U\+S B\+L\+O\+C\+K\+S, A\+N\+D E\+N\+F\+O\+R\+C\+E D\+M-\/\+S\+P\+A\+C\+E O\+R\+T\+H\+O\+G\+O\+N\+A\+L\+I\+T\+Y B\+E\+T\+W\+E\+E\+N B\+L\+O\+C\+K\+S -\/$>$ fmodes2all.\+fits (D\+M space) fmodes1all -\/$>$ fmodes2all
+
+S\+T\+E\+P 5\+: R\+E\+M\+O\+V\+E N\+U\+L\+L S\+P\+A\+C\+E W\+I\+T\+H\+I\+N E\+A\+C\+H B\+L\+O\+C\+K -\/ U\+S\+E S\+V\+Dlim01 F\+O\+R C\+U\+T\+O\+F\+F -\/$>$ fmodes2ball.\+fits (D\+M space)
+
+S\+T\+E\+P 6\+: C\+O\+M\+P\+U\+T\+E W\+F\+S R\+E\+S\+P\+O\+N\+S\+E T\+O M\+O\+D\+E\+S fmodes2ball -\/$>$ fmodes\+W\+F\+S0all.\+fits
+
+Load ... or create W\+F\+S mask
+
+S\+T\+E\+P 7\+: R\+E\+M\+O\+V\+E W\+F\+S M\+O\+D\+E\+S T\+H\+A\+T A\+R\+E C\+O\+N\+T\+A\+I\+N\+E\+D I\+N P\+R\+E\+V\+I\+O\+U\+S B\+L\+O\+C\+K\+S, A\+N\+D E\+N\+F\+O\+R\+C\+E W\+F\+S-\/\+S\+P\+A\+C\+E O\+R\+T\+H\+O\+G\+O\+N\+A\+L\+I\+T\+Y B\+E\+T\+W\+E\+E\+N B\+L\+O\+C\+K\+S Input\+: fmodes\+W\+F\+S0all (corresponding to fmodes2ball) Output -\/$>$ fmodes\+W\+F\+S1all / fmodes3all
+
+S\+T\+E\+P 8\+: S\+V\+D W\+F\+S S\+P\+A\+C\+E I\+N E\+A\+C\+H B\+L\+O\+C\+K fmodes\+W\+F\+S1all, fmodes3 -\/$>$ fmodesall
+
+eigen mode index
+
+W\+F\+S M\+O\+D\+E\+S, M\+O\+D\+A\+L C\+O\+N\+T\+R\+O\+L M\+A\+T\+R\+I\+C\+E\+S \hypertarget{AOloopControl_8h_a033fef53bdac22ba19da7d000e4a44c0}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple@{A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple}}
+\index{A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple@{A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Modes\+\_\+\+Simple (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Din\+\_\+name, }
+\item[{long}]{N\+Bmblock, }
+\item[{long}]{Cmblock, }
+\item[{float}]{S\+V\+Dlim}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a033fef53bdac22ba19da7d000e4a44c0}
+\hypertarget{AOloopControl_8h_aca1efa77245c9a949748aa440fd129e2}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M@{A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M}}
+\index{A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M@{A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Simple\+Zpoke\+M (
+\begin{DoxyParamCaption}
+\item[{long}]{dmxsize, }
+\item[{long}]{dmysize, }
+\item[{char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aca1efa77245c9a949748aa440fd129e2}
+\hypertarget{AOloopControl_8h_aa6bf2ce9febc5e32dff6aca580b10df9}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Slaved\+Act@{A\+Oloop\+Control\+\_\+mk\+Slaved\+Act}}
+\index{A\+Oloop\+Control\+\_\+mk\+Slaved\+Act@{A\+Oloop\+Control\+\_\+mk\+Slaved\+Act}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Slaved\+Act}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Slaved\+Act (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dmask\+R\+M\+\_\+name, }
+\item[{float}]{pixrad, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aa6bf2ce9febc5e32dff6aca580b10df9}
+\hypertarget{AOloopControl_8h_ac334b00affe34ab36927ea271ca0bf46}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq@{A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq}}
+\index{A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq@{A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+Test\+Dynamic\+Mode\+Seq (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dname\+\_\+out, }
+\item[{long}]{N\+Bpt, }
+\item[{long}]{N\+Bmodes}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ac334b00affe34ab36927ea271ca0bf46}
+\hypertarget{AOloopControl_8h_adfb1e7d884741b9eefc631d15ff93613}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O@{A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O}}
+\index{A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O@{A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Optimize\+P\+S\+F\+\_\+\+L\+O (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{psfstream\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmodes\+\_\+name, }
+\item[{const char $\ast$}]{dmstream\+\_\+name, }
+\item[{long}]{delayframe, }
+\item[{long}]{N\+Bframes}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_adfb1e7d884741b9eefc631d15ff93613}
+\hypertarget{AOloopControl_8h_adf77a149d6ff2d0b18e569303f0c9368}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+printloopstatus@{A\+Oloop\+Control\+\_\+printloopstatus}}
 \index{A\+Oloop\+Control\+\_\+printloopstatus@{A\+Oloop\+Control\+\_\+printloopstatus}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+printloopstatus}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+printloopstatus (
+\subsubsection[{A\+Oloop\+Control\+\_\+printloopstatus}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+printloopstatus (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{long}]{nbcol}
+\item[{long}]{nbcol, }
+\item[{long}]{I\+Dmodeval\+\_\+dm, }
+\item[{long}]{I\+Dmodeval, }
+\item[{long}]{I\+Dmodevalave, }
+\item[{long}]{I\+Dmodevalrms, }
+\item[{long}]{ksize}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ac2130a837323ad0ead68e773805d463b}
-\hypertarget{AOloopControl_8h_af46ddde2c87335138a1a11eee3442119}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E@{A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E}}
-\index{A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E@{A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+Remove\+\_\+\+W\+F\+Scam\+P\+E (
+)}\label{AOloopControl_8h_adf77a149d6ff2d0b18e569303f0c9368}
+\hypertarget{AOloopControl_8h_aa8d93769a16d759b707a9020b09fb122}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M@{A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M}}
+\index{A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M@{A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Process\+\_\+zresp\+M (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+Din\+\_\+name, }
-\item[{char $\ast$}]{I\+Dcorr\+\_\+name, }
-\item[{double}]{pha}
+\item[{long}]{loop, }
+\item[{const char $\ast$}]{I\+Dzrespm0\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsref\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dzrespm\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Smap\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mmap\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_af46ddde2c87335138a1a11eee3442119}
-remove W\+F\+S camera periodic error
-
-pha\+: phase from 0.\+0 to 1.\+0 \hypertarget{AOloopControl_8h_afabfd422328c9a189efe384efe6dfd9b}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf@{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf}}
+)}\label{AOloopControl_8h_aa8d93769a16d759b707a9020b09fb122}
+\hypertarget{AOloopControl_8h_a20fdd47b0b8c2cdc88e718d9b40f218d}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt@{A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt}}
+\index{A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt@{A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+Process\+Zresp\+M\+\_\+medianfilt (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{const char $\ast$}]{zrespm\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Sref0\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Smap\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mmap\+\_\+name, }
+\item[{double}]{rmampl, }
+\item[{int}]{normalize}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a20fdd47b0b8c2cdc88e718d9b40f218d}
+\hypertarget{AOloopControl_8h_a06e86fac0533d77ef55adb8ff2b35206}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf@{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf}}
 \index{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf@{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf (
+\subsubsection[{A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+reset\+R\+M\+Sperf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_afabfd422328c9a189efe384efe6dfd9b}
-\hypertarget{AOloopControl_8h_a49e9b7e1597c463530fdaa7e7ec56150}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+run@{A\+Oloop\+Control\+\_\+run}}
+)}\label{AOloopControl_8h_a06e86fac0533d77ef55adb8ff2b35206}
+\hypertarget{AOloopControl_8h_a38df51aca049463698df9c0f4e6a3ae9}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast@{A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast}}
+\index{A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast@{A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Resp\+Matrix\+\_\+\+Fast (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{D\+Mmodes\+\_\+name, }
+\item[{const char $\ast$}]{dm\+R\+M\+\_\+name, }
+\item[{const char $\ast$}]{im\+W\+F\+S\+\_\+name, }
+\item[{long}]{semtrig, }
+\item[{float}]{Hardware\+Lag, }
+\item[{float}]{loopfrequ, }
+\item[{float}]{ampl, }
+\item[{const char $\ast$}]{outname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a38df51aca049463698df9c0f4e6a3ae9}
+\hypertarget{AOloopControl_8h_a9dc5a252d41a2a37735e289953c25126}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+run@{A\+Oloop\+Control\+\_\+run}}
 \index{A\+Oloop\+Control\+\_\+run@{A\+Oloop\+Control\+\_\+run}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+run}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+run (
+\subsubsection[{A\+Oloop\+Control\+\_\+run}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+run (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a49e9b7e1597c463530fdaa7e7ec56150}
-main routine \hypertarget{AOloopControl_8h_aed00192695ec7d687bc7c2122bf91c90}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+scan\+Gain\+Block@{A\+Oloop\+Control\+\_\+scan\+Gain\+Block}}
+)}\label{AOloopControl_8h_a9dc5a252d41a2a37735e289953c25126}
+main routine \hypertarget{AOloopControl_8h_a13674593e6774f6d4f00fc72cfe49448}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+scan\+Gain\+Block@{A\+Oloop\+Control\+\_\+scan\+Gain\+Block}}
 \index{A\+Oloop\+Control\+\_\+scan\+Gain\+Block@{A\+Oloop\+Control\+\_\+scan\+Gain\+Block}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+scan\+Gain\+Block}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+scan\+Gain\+Block (
+\subsubsection[{A\+Oloop\+Control\+\_\+scan\+Gain\+Block}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+scan\+Gain\+Block (
 \begin{DoxyParamCaption}
 \item[{long}]{N\+Bblock, }
 \item[{long}]{N\+Bstep, }
@@ -347,164 +1126,305 @@ main routine \hypertarget{AOloopControl_8h_aed00192695ec7d687bc7c2122bf91c90}{\i
 \item[{float}]{gain\+End, }
 \item[{long}]{N\+Bgain}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_aed00192695ec7d687bc7c2122bf91c90}
-\hypertarget{AOloopControl_8h_ab613f72b3d71fcbd8e7c66c5ca984661}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setframes\+Ave@{A\+Oloop\+Control\+\_\+setframes\+Ave}}
-\index{A\+Oloop\+Control\+\_\+setframes\+Ave@{A\+Oloop\+Control\+\_\+setframes\+Ave}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setframes\+Ave}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setframes\+Ave (
+)}\label{AOloopControl_8h_a13674593e6774f6d4f00fc72cfe49448}
+\hypertarget{AOloopControl_8h_acb01629d624f7fff31e0be7a39325df9}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta (
 \begin{DoxyParamCaption}
-\item[{long}]{nbframes}
+\item[{float}]{A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+delta}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ab613f72b3d71fcbd8e7c66c5ca984661}
-\hypertarget{AOloopControl_8h_a5f9c5ad3207860e9d7aa798ac1c9fae5}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgain@{A\+Oloop\+Control\+\_\+setgain}}
-\index{A\+Oloop\+Control\+\_\+setgain@{A\+Oloop\+Control\+\_\+setgain}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setgain}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setgain (
+)}\label{AOloopControl_8h_acb01629d624f7fff31e0be7a39325df9}
+\hypertarget{AOloopControl_8h_a2640a90affa01148c4d2082b26e6c9d7}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff (
+\begin{DoxyParamCaption}
+\item[{float}]{A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+mcoeff}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a2640a90affa01148c4d2082b26e6c9d7}
+\hypertarget{AOloopControl_8h_a663727797a7a261b38259bbc69e73a61}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc@{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+\+A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc (
+\begin{DoxyParamCaption}
+\item[{float}]{A\+U\+T\+O\+T\+U\+N\+E\+\_\+\+L\+I\+M\+I\+T\+S\+\_\+perc}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a663727797a7a261b38259bbc69e73a61}
+\hypertarget{AOloopControl_8h_ab3d591ac4058ea11985efc9f9a13ddcc}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+complatency\+\_\+frame (
+\begin{DoxyParamCaption}
+\item[{float}]{complatency\+\_\+frame}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ab3d591ac4058ea11985efc9f9a13ddcc}
+\hypertarget{AOloopControl_8h_ab34df3780e349046fc276ec2c38a7daa}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+hardwlatency\+\_\+frame (
+\begin{DoxyParamCaption}
+\item[{float}]{hardwlatency\+\_\+frame}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ab34df3780e349046fc276ec2c38a7daa}
+\hypertarget{AOloopControl_8h_a06643f59e3a58d157bdc715b5598481f}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ@{A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ@{A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+loopfrequ (
+\begin{DoxyParamCaption}
+\item[{float}]{loopfrequ}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a06643f59e3a58d157bdc715b5598481f}
+\hypertarget{AOloopControl_8h_a626367be40aa1f1cc29dda561c60d7cc}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain@{A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain@{A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+modeblock\+\_\+gain (
+\begin{DoxyParamCaption}
+\item[{long}]{loop, }
+\item[{long}]{blocknb, }
+\item[{float}]{gain, }
+\item[{int}]{add}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a626367be40aa1f1cc29dda561c60d7cc}
+\hypertarget{AOloopControl_8h_a98be0f94027398487d2a6696631943e9}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame}}
+\index{A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame@{A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+\_\+wfsmextrlatency\+\_\+frame (
+\begin{DoxyParamCaption}
+\item[{float}]{wfsmextrlatency\+\_\+frame}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a98be0f94027398487d2a6696631943e9}
+\hypertarget{AOloopControl_8h_a02026f2deb2e03abfc7de384afeb3974}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain@{A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain}}
+\index{A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain@{A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+A\+R\+P\+Fgain (
 \begin{DoxyParamCaption}
 \item[{float}]{gain}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a5f9c5ad3207860e9d7aa798ac1c9fae5}
-\hypertarget{AOloopControl_8h_aaa126a387977664e7f916666792e3613}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgainblock@{A\+Oloop\+Control\+\_\+setgainblock}}
+)}\label{AOloopControl_8h_a02026f2deb2e03abfc7de384afeb3974}
+\hypertarget{AOloopControl_8h_a0a6a191fb615f972df917fe20d62fee9}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setframes\+Ave@{A\+Oloop\+Control\+\_\+setframes\+Ave}}
+\index{A\+Oloop\+Control\+\_\+setframes\+Ave@{A\+Oloop\+Control\+\_\+setframes\+Ave}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+setframes\+Ave}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setframes\+Ave (
+\begin{DoxyParamCaption}
+\item[{long}]{nbframes}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a0a6a191fb615f972df917fe20d62fee9}
+\hypertarget{AOloopControl_8h_a12814ba8c8ae4ebaaa90885a93d0f33b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgain@{A\+Oloop\+Control\+\_\+setgain}}
+\index{A\+Oloop\+Control\+\_\+setgain@{A\+Oloop\+Control\+\_\+setgain}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+setgain}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setgain (
+\begin{DoxyParamCaption}
+\item[{float}]{gain}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a12814ba8c8ae4ebaaa90885a93d0f33b}
+\hypertarget{AOloopControl_8h_a3f6cdb9194a6b4a9dba9abb5fe5bbc96}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgainblock@{A\+Oloop\+Control\+\_\+setgainblock}}
 \index{A\+Oloop\+Control\+\_\+setgainblock@{A\+Oloop\+Control\+\_\+setgainblock}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setgainblock}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setgainblock (
+\subsubsection[{A\+Oloop\+Control\+\_\+setgainblock}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setgainblock (
 \begin{DoxyParamCaption}
 \item[{long}]{mb, }
 \item[{float}]{gainval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_aaa126a387977664e7f916666792e3613}
-\hypertarget{AOloopControl_8h_a821eb358bf66f0110683f11f2e9f8bd3}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgainrange@{A\+Oloop\+Control\+\_\+setgainrange}}
+)}\label{AOloopControl_8h_a3f6cdb9194a6b4a9dba9abb5fe5bbc96}
+\hypertarget{AOloopControl_8h_a2d9b1c71a5514ba67d70477207b494cf}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setgainrange@{A\+Oloop\+Control\+\_\+setgainrange}}
 \index{A\+Oloop\+Control\+\_\+setgainrange@{A\+Oloop\+Control\+\_\+setgainrange}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setgainrange}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setgainrange (
+\subsubsection[{A\+Oloop\+Control\+\_\+setgainrange}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setgainrange (
 \begin{DoxyParamCaption}
 \item[{long}]{m0, }
 \item[{long}]{m1, }
 \item[{float}]{gainval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a821eb358bf66f0110683f11f2e9f8bd3}
-\hypertarget{AOloopControl_8h_a8eea3d2e25d628b9faf4ec4a721cc92f}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setlimitblock@{A\+Oloop\+Control\+\_\+setlimitblock}}
+)}\label{AOloopControl_8h_a2d9b1c71a5514ba67d70477207b494cf}
+\hypertarget{AOloopControl_8h_ab2c43dd74f7c55633c154aebd7743c15}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setlimitblock@{A\+Oloop\+Control\+\_\+setlimitblock}}
 \index{A\+Oloop\+Control\+\_\+setlimitblock@{A\+Oloop\+Control\+\_\+setlimitblock}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setlimitblock}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setlimitblock (
+\subsubsection[{A\+Oloop\+Control\+\_\+setlimitblock}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setlimitblock (
 \begin{DoxyParamCaption}
 \item[{long}]{mb, }
 \item[{float}]{limitval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a8eea3d2e25d628b9faf4ec4a721cc92f}
-\hypertarget{AOloopControl_8h_a5b18dda711594cd8a420618f1f19131f}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setlimitrange@{A\+Oloop\+Control\+\_\+setlimitrange}}
+)}\label{AOloopControl_8h_ab2c43dd74f7c55633c154aebd7743c15}
+\hypertarget{AOloopControl_8h_a88ddf773aec58b280ff76d4d89f47a7e}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setlimitrange@{A\+Oloop\+Control\+\_\+setlimitrange}}
 \index{A\+Oloop\+Control\+\_\+setlimitrange@{A\+Oloop\+Control\+\_\+setlimitrange}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setlimitrange}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setlimitrange (
+\subsubsection[{A\+Oloop\+Control\+\_\+setlimitrange}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setlimitrange (
 \begin{DoxyParamCaption}
 \item[{long}]{m0, }
 \item[{long}]{m1, }
 \item[{float}]{limval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a5b18dda711594cd8a420618f1f19131f}
-\hypertarget{AOloopControl_8h_a2d13870a1f5ae080dfc54d02cb2d31be}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+Loop\+Number@{A\+Oloop\+Control\+\_\+set\+Loop\+Number}}
+)}\label{AOloopControl_8h_a88ddf773aec58b280ff76d4d89f47a7e}
+\hypertarget{AOloopControl_8h_a64f827e2784e3efde48ed4891d6d19f1}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+Loop\+Number@{A\+Oloop\+Control\+\_\+set\+Loop\+Number}}
 \index{A\+Oloop\+Control\+\_\+set\+Loop\+Number@{A\+Oloop\+Control\+\_\+set\+Loop\+Number}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+set\+Loop\+Number}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+set\+Loop\+Number (
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+Loop\+Number}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+Loop\+Number (
 \begin{DoxyParamCaption}
 \item[{long}]{loop}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a2d13870a1f5ae080dfc54d02cb2d31be}
-append process name with loop number \hypertarget{AOloopControl_8h_a2e67072df4000cbf36d0a288a9ad600c}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmaxlimit@{A\+Oloop\+Control\+\_\+setmaxlimit}}
+)}\label{AOloopControl_8h_a64f827e2784e3efde48ed4891d6d19f1}
+append process name with loop number \hypertarget{AOloopControl_8h_a7ecfb134b94893b705ba5b37c38424ce}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmaxlimit@{A\+Oloop\+Control\+\_\+setmaxlimit}}
 \index{A\+Oloop\+Control\+\_\+setmaxlimit@{A\+Oloop\+Control\+\_\+setmaxlimit}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setmaxlimit}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setmaxlimit (
+\subsubsection[{A\+Oloop\+Control\+\_\+setmaxlimit}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setmaxlimit (
 \begin{DoxyParamCaption}
 \item[{float}]{maxlimit}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a2e67072df4000cbf36d0a288a9ad600c}
-\hypertarget{AOloopControl_8h_a103446360a63ad9db77d165bf0c70953}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmult@{A\+Oloop\+Control\+\_\+setmult}}
+)}\label{AOloopControl_8h_a7ecfb134b94893b705ba5b37c38424ce}
+\hypertarget{AOloopControl_8h_aef6bb5af1656b860264887edba29d386}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmult@{A\+Oloop\+Control\+\_\+setmult}}
 \index{A\+Oloop\+Control\+\_\+setmult@{A\+Oloop\+Control\+\_\+setmult}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setmult}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setmult (
+\subsubsection[{A\+Oloop\+Control\+\_\+setmult}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setmult (
 \begin{DoxyParamCaption}
 \item[{float}]{multcoeff}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a103446360a63ad9db77d165bf0c70953}
-\hypertarget{AOloopControl_8h_ac1ca4245db1545afae825f1dc8466522}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmultfblock@{A\+Oloop\+Control\+\_\+setmultfblock}}
+)}\label{AOloopControl_8h_aef6bb5af1656b860264887edba29d386}
+\hypertarget{AOloopControl_8h_acaa7ada51992e69ac63fa26012e116aa}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmultfblock@{A\+Oloop\+Control\+\_\+setmultfblock}}
 \index{A\+Oloop\+Control\+\_\+setmultfblock@{A\+Oloop\+Control\+\_\+setmultfblock}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setmultfblock}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setmultfblock (
+\subsubsection[{A\+Oloop\+Control\+\_\+setmultfblock}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setmultfblock (
 \begin{DoxyParamCaption}
 \item[{long}]{mb, }
 \item[{float}]{multfval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ac1ca4245db1545afae825f1dc8466522}
-\hypertarget{AOloopControl_8h_a539de519b6705f61d72b6242cd5a85ed}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmultfrange@{A\+Oloop\+Control\+\_\+setmultfrange}}
+)}\label{AOloopControl_8h_acaa7ada51992e69ac63fa26012e116aa}
+\hypertarget{AOloopControl_8h_a5fc8cc093517606c31656dc9ca36fd8c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setmultfrange@{A\+Oloop\+Control\+\_\+setmultfrange}}
 \index{A\+Oloop\+Control\+\_\+setmultfrange@{A\+Oloop\+Control\+\_\+setmultfrange}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setmultfrange}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setmultfrange (
+\subsubsection[{A\+Oloop\+Control\+\_\+setmultfrange}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setmultfrange (
 \begin{DoxyParamCaption}
 \item[{long}]{m0, }
 \item[{long}]{m1, }
 \item[{float}]{multfval}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a539de519b6705f61d72b6242cd5a85ed}
-\hypertarget{AOloopControl_8h_a144da569d55ee48a672152c2ec145846}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setparam@{A\+Oloop\+Control\+\_\+setparam}}
+)}\label{AOloopControl_8h_a5fc8cc093517606c31656dc9ca36fd8c}
+\hypertarget{AOloopControl_8h_a066fb86fe042071a48b93697d1d29918}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+setparam@{A\+Oloop\+Control\+\_\+setparam}}
 \index{A\+Oloop\+Control\+\_\+setparam@{A\+Oloop\+Control\+\_\+setparam}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+setparam}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+setparam (
+\subsubsection[{A\+Oloop\+Control\+\_\+setparam}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+setparam (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{char $\ast$}]{key, }
+\item[{const char $\ast$}]{key, }
 \item[{double}]{value}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a144da569d55ee48a672152c2ec145846}
-\hypertarget{AOloopControl_8h_a8b75616de0409597277e78ccc25e8e28}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor@{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor}}
+)}\label{AOloopControl_8h_a066fb86fe042071a48b93697d1d29918}
+\hypertarget{AOloopControl_8h_a7ba98a514afc5552b970e2171467abfb}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor@{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor}}
 \index{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor@{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor (
+\subsubsection[{A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+set\+W\+F\+Snormfloor (
 \begin{DoxyParamCaption}
 \item[{float}]{W\+F\+Snormfloor}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a8b75616de0409597277e78ccc25e8e28}
-\hypertarget{AOloopControl_8h_a393d9b6ae87a47e1d1e4ce32f9078bcd}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+showparams@{A\+Oloop\+Control\+\_\+showparams}}
+)}\label{AOloopControl_8h_a7ba98a514afc5552b970e2171467abfb}
+\hypertarget{AOloopControl_8h_a74fdc73422171316d47412158bdd0de6}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+showparams@{A\+Oloop\+Control\+\_\+showparams}}
 \index{A\+Oloop\+Control\+\_\+showparams@{A\+Oloop\+Control\+\_\+showparams}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+showparams}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+showparams (
+\subsubsection[{A\+Oloop\+Control\+\_\+showparams}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+showparams (
 \begin{DoxyParamCaption}
 \item[{long}]{loop}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a393d9b6ae87a47e1d1e4ce32f9078bcd}
-\hypertarget{AOloopControl_8h_a44d6b74e377a16df7fc07c6540c028a8}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+status\+Stats@{A\+Oloop\+Control\+\_\+status\+Stats}}
+)}\label{AOloopControl_8h_a74fdc73422171316d47412158bdd0de6}
+\hypertarget{AOloopControl_8h_aa93e227dac127632ba119916ad1da85c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+sig2\+Modecoeff@{A\+Oloop\+Control\+\_\+sig2\+Modecoeff}}
+\index{A\+Oloop\+Control\+\_\+sig2\+Modecoeff@{A\+Oloop\+Control\+\_\+sig2\+Modecoeff}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+sig2\+Modecoeff}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+sig2\+Modecoeff (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{W\+F\+Sim\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsref\+\_\+name, }
+\item[{const char $\ast$}]{W\+F\+Smodes\+\_\+name, }
+\item[{const char $\ast$}]{outname}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aa93e227dac127632ba119916ad1da85c}
+\hypertarget{AOloopControl_8h_a3f42f726a512e1f75866e9d4f738b6ba}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+status\+Stats@{A\+Oloop\+Control\+\_\+status\+Stats}}
 \index{A\+Oloop\+Control\+\_\+status\+Stats@{A\+Oloop\+Control\+\_\+status\+Stats}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+status\+Stats}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+status\+Stats (
+\subsubsection[{A\+Oloop\+Control\+\_\+status\+Stats}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+status\+Stats (
 \begin{DoxyParamCaption}
-{}
+\item[{int}]{updateconf}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a44d6b74e377a16df7fc07c6540c028a8}
-\hypertarget{AOloopControl_8h_aebbd9ebfb4bb8e187b37fcf60b453b3d}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Average\+\_\+cam\+\_\+frames@{Average\+\_\+cam\+\_\+frames}}
-\index{Average\+\_\+cam\+\_\+frames@{Average\+\_\+cam\+\_\+frames}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{Average\+\_\+cam\+\_\+frames}]{\setlength{\rightskip}{0pt plus 5cm}int Average\+\_\+cam\+\_\+frames (
+)}\label{AOloopControl_8h_a3f42f726a512e1f75866e9d4f738b6ba}
+\hypertarget{AOloopControl_8h_aac1ee60290e62511898ba6a0712d6e89}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+stream3\+Dto2\+D@{A\+Oloop\+Control\+\_\+stream3\+Dto2\+D}}
+\index{A\+Oloop\+Control\+\_\+stream3\+Dto2\+D@{A\+Oloop\+Control\+\_\+stream3\+Dto2\+D}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+stream3\+Dto2\+D}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+stream3\+Dto2\+D (
 \begin{DoxyParamCaption}
-\item[{long}]{loop, }
-\item[{long}]{Nb\+Ave, }
-\item[{int}]{R\+M}
+\item[{const char $\ast$}]{in\+\_\+name, }
+\item[{const char $\ast$}]{out\+\_\+name, }
+\item[{int}]{N\+Bcols, }
+\item[{int}]{insem}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_aebbd9ebfb4bb8e187b37fcf60b453b3d}
-Read image from W\+F\+S camera
+)}\label{AOloopControl_8h_aac1ee60290e62511898ba6a0712d6e89}
+\hypertarget{AOloopControl_8h_ae27f6760cd27d872f66f1a987495ae3b}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp@{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp}}
+\index{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp@{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Test\+D\+Mmode\+Resp (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{D\+Mmodes\+\_\+name, }
+\item[{long}]{index, }
+\item[{float}]{ampl, }
+\item[{float}]{fmin, }
+\item[{float}]{fmax, }
+\item[{float}]{fmultstep, }
+\item[{float}]{avetime, }
+\item[{long}]{dtus, }
+\item[{const char $\ast$}]{D\+Mmask\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mstream\+\_\+in\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mstream\+\_\+out\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_ae27f6760cd27d872f66f1a987495ae3b}
+\hypertarget{AOloopControl_8h_aee37a54924eccbcc85565718c6eca560}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery@{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery}}
+\index{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery@{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+Test\+D\+Mmodes\+\_\+\+Recovery (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{D\+Mmodes\+\_\+name, }
+\item[{float}]{ampl, }
+\item[{const char $\ast$}]{D\+Mmask\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mstream\+\_\+in\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mstream\+\_\+out\+\_\+name, }
+\item[{const char $\ast$}]{D\+Mstream\+\_\+meas\+\_\+name, }
+\item[{long}]{tlagus, }
+\item[{long}]{N\+Bave, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{const char $\ast$}]{I\+Doutrms\+\_\+name, }
+\item[{const char $\ast$}]{I\+Doutmeas\+\_\+name, }
+\item[{const char $\ast$}]{I\+Doutmeasrms\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_aee37a54924eccbcc85565718c6eca560}
+\hypertarget{AOloopControl_8h_a366588e72f3596ce6c09dcb083d51632}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+test\+Predictive\+Filter@{A\+Oloop\+Control\+\_\+test\+Predictive\+Filter}}
+\index{A\+Oloop\+Control\+\_\+test\+Predictive\+Filter@{A\+Oloop\+Control\+\_\+test\+Predictive\+Filter}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+test\+Predictive\+Filter}]{\setlength{\rightskip}{0pt plus 5cm}double A\+Oloop\+Control\+\_\+test\+Predictive\+Filter (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dtrace\+\_\+name, }
+\item[{long}]{modeout, }
+\item[{double}]{delayfr, }
+\item[{long}]{filtsize, }
+\item[{const char $\ast$}]{I\+Dfilt\+\_\+name, }
+\item[{double}]{S\+V\+Deps}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a366588e72f3596ce6c09dcb083d51632}
+predictive control based on S\+V\+D
 
-supports ring buffer puts image from camera buffer aoconf\+I\+D\+\_\+\+W\+F\+S into aoconf\+I\+D\+\_\+\+W\+F\+S1 (supplied by user)
-
-R\+M = 1 if response matrix
-
-image is normalized by dividing by (total + A\+Oconf\mbox{[}loop\mbox{]}.W\+F\+Snormfloor) \hypertarget{AOloopControl_8h_a90718da3540a468ed4ffd1e8ba2a0f4b}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+\+Combined\+Control\+Matrix@{compute\+\_\+\+Combined\+Control\+Matrix}}
+input\+: mode values trace \mbox{[}ii\+: time, jj\+: mode number\mbox{]} mode index delayfr \mbox{[}delay in frame unit\mbox{]} filtsize \mbox{[}number of samples in filter\mbox{]} \hypertarget{AOloopControl_8h_a65d72b70aa47177ca3d2dae68ae5a988}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop@{A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop}}
+\index{A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop@{A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+W\+F\+Szeropoint\+\_\+sum\+\_\+update\+\_\+loop (
+\begin{DoxyParamCaption}
+\item[{long}]{loopnb, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+W\+F\+Szp\+\_\+name, }
+\item[{int}]{N\+Bzp, }
+\item[{const char $\ast$}]{I\+Dwfsref0\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsref\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a65d72b70aa47177ca3d2dae68ae5a988}
+\hypertarget{AOloopControl_8h_a002e9ae8ce1c79e6a4ef371e9b814a9a}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop@{A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop}}
+\index{A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop@{A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+\+W\+F\+Szpupdate\+\_\+loop (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dzpdm\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dzresp\+M\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfszp\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a002e9ae8ce1c79e6a4ef371e9b814a9a}
+\hypertarget{AOloopControl_8h_ab38b851c264f398e041901b46fe0379c}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+\+Combined\+Control\+Matrix@{compute\+\_\+\+Combined\+Control\+Matrix}}
 \index{compute\+\_\+\+Combined\+Control\+Matrix@{compute\+\_\+\+Combined\+Control\+Matrix}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
 \subsubsection[{compute\+\_\+\+Combined\+Control\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}long compute\+\_\+\+Combined\+Control\+Matrix (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+Dcmat\+\_\+name, }
-\item[{char $\ast$}]{I\+Dmodes\+\_\+name, }
-\item[{char $\ast$}]{I\+Dwfsmask\+\_\+name, }
-\item[{char $\ast$}]{I\+Ddmmask\+\_\+name, }
-\item[{char $\ast$}]{I\+Dcmatc\+\_\+name, }
-\item[{char $\ast$}]{I\+Dcmatc\+\_\+active\+\_\+name}
+\item[{const char $\ast$}]{I\+Dcmat\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmodes\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dwfsmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Ddmmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcmatc\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcmatc\+\_\+active\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a90718da3540a468ed4ffd1e8ba2a0f4b}
-\hypertarget{AOloopControl_8h_a5dd93c01f73c5a77832eb9d3cb5d89c4}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+\+Control\+Matrix@{compute\+\_\+\+Control\+Matrix}}
+)}\label{AOloopControl_8h_ab38b851c264f398e041901b46fe0379c}
+\hypertarget{AOloopControl_8h_a8cf3900737760125925db90d50a3792a}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+\+Control\+Matrix@{compute\+\_\+\+Control\+Matrix}}
 \index{compute\+\_\+\+Control\+Matrix@{compute\+\_\+\+Control\+Matrix}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{compute\+\_\+\+Control\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}int compute\+\_\+\+Control\+Matrix (
+\subsubsection[{compute\+\_\+\+Control\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t compute\+\_\+\+Control\+Matrix (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
 \item[{long}]{N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D, }
-\item[{char $\ast$}]{I\+D\+\_\+\+Rmatrix\+\_\+name, }
-\item[{char $\ast$}]{I\+D\+\_\+\+Cmatrix\+\_\+name, }
-\item[{char $\ast$}]{I\+D\+\_\+\+V\+Tmatrix\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+Rmatrix\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+Cmatrix\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+V\+Tmatrix\+\_\+name, }
 \item[{double}]{Beta, }
 \item[{long}]{N\+B\+\_\+\+M\+O\+D\+E\+\_\+\+R\+E\+M\+O\+V\+E\+D\+\_\+\+S\+T\+E\+P, }
 \item[{float}]{eigenvlim}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a5dd93c01f73c5a77832eb9d3cb5d89c4}
+)}\label{AOloopControl_8h_a8cf3900737760125925db90d50a3792a}
 
 
 Computes control matrix using S\+V\+D. 
@@ -525,9 +1445,23 @@ if modes\+M exists, compute eigenmodes using rotation matrix
 
 eigen mode index
 
-second, build the \char`\"{}inverse\char`\"{} of the diagonal matrix of eigenvalues (matrix1) \hypertarget{AOloopControl_8h_a629fc1fdecf7ffcf538a9292ee0f3f08}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Control\+Matrix\+Multiply@{Control\+Matrix\+Multiply}}
+second, build the \char`\"{}inverse\char`\"{} of the diagonal matrix of eigenvalues (matrix1) \hypertarget{AOloopControl_8h_a08adf8f45f2ea29016a5afc556a4de37}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+function\+\_\+dark\+\_\+subtract@{compute\+\_\+function\+\_\+dark\+\_\+subtract}}
+\index{compute\+\_\+function\+\_\+dark\+\_\+subtract@{compute\+\_\+function\+\_\+dark\+\_\+subtract}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{compute\+\_\+function\+\_\+dark\+\_\+subtract}]{\setlength{\rightskip}{0pt plus 5cm}static void$\ast$ compute\+\_\+function\+\_\+dark\+\_\+subtract (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{ptr}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_a08adf8f45f2ea29016a5afc556a4de37}
+\hypertarget{AOloopControl_8h_ae528115f70c3ee4537c8c6f374ada43f}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!compute\+\_\+function\+\_\+imtotal@{compute\+\_\+function\+\_\+imtotal}}
+\index{compute\+\_\+function\+\_\+imtotal@{compute\+\_\+function\+\_\+imtotal}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{compute\+\_\+function\+\_\+imtotal}]{\setlength{\rightskip}{0pt plus 5cm}static void$\ast$ compute\+\_\+function\+\_\+imtotal (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{ptr}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl_8h_ae528115f70c3ee4537c8c6f374ada43f}
+\hypertarget{AOloopControl_8h_a3682e64838d25674a308c533631fc2b8}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Control\+Matrix\+Multiply@{Control\+Matrix\+Multiply}}
 \index{Control\+Matrix\+Multiply@{Control\+Matrix\+Multiply}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{Control\+Matrix\+Multiply}]{\setlength{\rightskip}{0pt plus 5cm}int Control\+Matrix\+Multiply (
+\subsubsection[{Control\+Matrix\+Multiply}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t Control\+Matrix\+Multiply (
 \begin{DoxyParamCaption}
 \item[{float $\ast$}]{cm\+\_\+array, }
 \item[{float $\ast$}]{imarray, }
@@ -535,17 +1469,21 @@ second, build the \char`\"{}inverse\char`\"{} of the diagonal matrix of eigenval
 \item[{long}]{n, }
 \item[{float $\ast$}]{outvect}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a629fc1fdecf7ffcf538a9292ee0f3f08}
-\hypertarget{AOloopControl_8h_a8da218e072b44146cdc1d47f80d49e3c}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!init\+\_\+\+A\+Oloop\+Control@{init\+\_\+\+A\+Oloop\+Control}}
+)}\label{AOloopControl_8h_a3682e64838d25674a308c533631fc2b8}
+\hypertarget{AOloopControl_8h_ad051291ea3a3e240dbb933eff63b9f42}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!init\+\_\+\+A\+Oloop\+Control@{init\+\_\+\+A\+Oloop\+Control}}
 \index{init\+\_\+\+A\+Oloop\+Control@{init\+\_\+\+A\+Oloop\+Control}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{init\+\_\+\+A\+Oloop\+Control}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+\+A\+Oloop\+Control (
+\subsubsection[{init\+\_\+\+A\+Oloop\+Control}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t init\+\_\+\+A\+Oloop\+Control (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a8da218e072b44146cdc1d47f80d49e3c}
-\hypertarget{AOloopControl_8h_ab51676f77cfd9e45abd24cb0a68a08e7}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Measure\+\_\+\+Resp\+\_\+\+Matrix@{Measure\+\_\+\+Resp\+\_\+\+Matrix}}
+)}\label{AOloopControl_8h_ad051291ea3a3e240dbb933eff63b9f42}
+
+
+Initialize A\+Oloop\+Control command line interface. 
+
+\hypertarget{AOloopControl_8h_ac9edeb536fcd625b1e3489c2be236bb4}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Measure\+\_\+\+Resp\+\_\+\+Matrix@{Measure\+\_\+\+Resp\+\_\+\+Matrix}}
 \index{Measure\+\_\+\+Resp\+\_\+\+Matrix@{Measure\+\_\+\+Resp\+\_\+\+Matrix}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{Measure\+\_\+\+Resp\+\_\+\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}int Measure\+\_\+\+Resp\+\_\+\+Matrix (
+\subsubsection[{Measure\+\_\+\+Resp\+\_\+\+Matrix}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t Measure\+\_\+\+Resp\+\_\+\+Matrix (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
 \item[{long}]{Nb\+Ave, }
@@ -554,25 +1492,35 @@ second, build the \char`\"{}inverse\char`\"{} of the diagonal matrix of eigenval
 \item[{long}]{f\+Delay, }
 \item[{long}]{N\+Biter}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_ab51676f77cfd9e45abd24cb0a68a08e7}
-measures response matrix A\+N\+D reference local arrays for image acquision \hypertarget{AOloopControl_8h_af1fb87c4df5022fc7d227ddd0c3dcbe4}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Measure\+\_\+zonal\+R\+M@{Measure\+\_\+zonal\+R\+M}}
-\index{Measure\+\_\+zonal\+R\+M@{Measure\+\_\+zonal\+R\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{Measure\+\_\+zonal\+R\+M}]{\setlength{\rightskip}{0pt plus 5cm}long Measure\+\_\+zonal\+R\+M (
+)}\label{AOloopControl_8h_ac9edeb536fcd625b1e3489c2be236bb4}
+measures response matrix A\+N\+D reference local arrays for image acquision \hypertarget{AOloopControl_8h_a275196fb78a1b7413a18a2df3ebcf995}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!Read\+\_\+cam\+\_\+frame@{Read\+\_\+cam\+\_\+frame}}
+\index{Read\+\_\+cam\+\_\+frame@{Read\+\_\+cam\+\_\+frame}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{Read\+\_\+cam\+\_\+frame}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t Read\+\_\+cam\+\_\+frame (
 \begin{DoxyParamCaption}
 \item[{long}]{loop, }
-\item[{double}]{ampl, }
-\item[{double}]{delays, }
-\item[{long}]{N\+Bave, }
-\item[{char $\ast$}]{zrespm\+\_\+name, }
-\item[{char $\ast$}]{W\+F\+Sref\+\_\+name, }
-\item[{char $\ast$}]{W\+F\+Smap\+\_\+name, }
-\item[{char $\ast$}]{D\+Mmap\+\_\+name}
+\item[{int}]{R\+M, }
+\item[{int}]{normalize, }
+\item[{int}]{Pixel\+Stream\+Mode, }
+\item[{int}]{Init\+Sem}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_af1fb87c4df5022fc7d227ddd0c3dcbe4}
-Measures zonal response matrix -\/$>$ collapses it to D\+M response map and W\+F\+S response map (both maps show amplitude of actuator effect on W\+F\+S) \hypertarget{AOloopControl_8h_a50857db2034c5affb27df150a136098f}{\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!set\+\_\+\+D\+M\+\_\+modes@{set\+\_\+\+D\+M\+\_\+modes}}
+)}\label{AOloopControl_8h_a275196fb78a1b7413a18a2df3ebcf995}
+Read image from W\+F\+S camera
+
+supports ring buffer puts image from camera buffer aoconf\+I\+D\+\_\+wfsim into aoconf\+I\+D\+\_\+im\+W\+F\+S1 (supplied by user)
+
+R\+M = 1 if response matrix
+
+if normalize == 1, image is normalized by dividing by (total + A\+Oconf\mbox{[}loop\mbox{]}.W\+F\+Snormfloor) if Pixel\+Stream\+Mode = 1, read on semaphore 1, return slice index \hypertarget{AOloopControl_8h_a2c297aecabe48d90878ca37428bd0c71}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!set\+\_\+\+D\+M\+\_\+modes@{set\+\_\+\+D\+M\+\_\+modes}}
 \index{set\+\_\+\+D\+M\+\_\+modes@{set\+\_\+\+D\+M\+\_\+modes}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
-\subsubsection[{set\+\_\+\+D\+M\+\_\+modes}]{\setlength{\rightskip}{0pt plus 5cm}int set\+\_\+\+D\+M\+\_\+modes (
+\subsubsection[{set\+\_\+\+D\+M\+\_\+modes}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t set\+\_\+\+D\+M\+\_\+modes (
 \begin{DoxyParamCaption}
 \item[{long}]{loop}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl_8h_a50857db2034c5affb27df150a136098f}
+)}\label{AOloopControl_8h_a2c297aecabe48d90878ca37428bd0c71}
+\hypertarget{AOloopControl_8h_a5e3a34b141f6d28a8bcebad1bc5b3789}{}\index{A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}!set\+\_\+\+D\+M\+\_\+modes\+R\+M@{set\+\_\+\+D\+M\+\_\+modes\+R\+M}}
+\index{set\+\_\+\+D\+M\+\_\+modes\+R\+M@{set\+\_\+\+D\+M\+\_\+modes\+R\+M}!A\+Oloop\+Control.\+h@{A\+Oloop\+Control.\+h}}
+\subsubsection[{set\+\_\+\+D\+M\+\_\+modes\+R\+M}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t set\+\_\+\+D\+M\+\_\+modes\+R\+M (
+\begin{DoxyParamCaption}
+\item[{long}]{loop}
+\end{DoxyParamCaption}
+)}\label{AOloopControl_8h_a5e3a34b141f6d28a8bcebad1bc5b3789}

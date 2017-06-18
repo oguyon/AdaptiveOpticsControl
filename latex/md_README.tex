@@ -1,0 +1,49 @@
+Adaptive Optics Wavefront control tools for high contrast imaging
+
+Uses shared memory for fast low-\/latency communication to hardware
+
+Includes a simulator of hardware (D\+M, Camera)\+: the same code can be tested on actual hardware or in a simulation mode.
+
+Supports multiple simultaneously running control loops and data logging.
+
+\subsection*{Downloading source code}
+
+Latest distribution is on \href{https://github.com/oguyon/AdaptiveOpticsControl}{\tt github}. You can clone the repository, or download the latest .tar.\+gz distribution.
+
+\subsection*{Compilation}
+
+The source code follows the standard G\+N\+U build process\+:
+
+./configure
+
+make
+
+make install
+
+\subsection*{Documentation}
+
+Please consult the \href{http://oguyon.github.io/AdaptiveOpticsControl/}{\tt online documentation}.
+
+\subsection*{Libraries}
+
+The following libraries are used\+:
+\begin{DoxyItemize}
+\item readline, for reading the command line input
+\item flex, for parsing the command line input
+\item bison, to interpret the command line input
+\item fftw, for performing Fourier Transforms
+\item gsl, for math functions and tools
+\item fitsio, for reading and writing F\+I\+T\+S image files
+\end{DoxyItemize}
+
+\subsection*{Source Code Architecture}
+
+Written in C. The main is a command line interface (C\+L\+I). Source code is in \hyperlink{CLIcore_8c}{C\+L\+Icore.\+c} and \hyperlink{CLIcore_8h}{C\+L\+Icore.\+h}. Key data structures (such as the image data structure) are declared in \hyperlink{CLIcore_8h}{C\+L\+Icore.\+h}.
+
+\subsection*{How to run the turbulence simulator}
+
+Copy scripts from ./src/\+Atmospheric\+Turbulence/scripts directory to working directory. Edit and execute the main script \char`\"{}runturb\char`\"{}
+
+\subsection*{Credits}
+
+This software was developed with support from the National Science Foundation (award \#1006063), N\+A\+S\+A and N\+A\+O\+J/\+Subaru Telescope. 

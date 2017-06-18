@@ -1,6 +1,5 @@
-\hypertarget{AOloopControl__DM_8h}{\section{src/\+A\+Oloop\+Control\+\_\+\+D\+M/\+A\+Oloop\+Control\+\_\+\+D\+M.h File Reference}
+\hypertarget{AOloopControl__DM_8h}{}\section{src/\+A\+Oloop\+Control\+\_\+\+D\+M/\+A\+Oloop\+Control\+\_\+\+D\+M.h File Reference}
 \label{AOloopControl__DM_8h}\index{src/\+A\+Oloop\+Control\+\_\+\+D\+M/\+A\+Oloop\+Control\+\_\+\+D\+M.\+h@{src/\+A\+Oloop\+Control\+\_\+\+D\+M/\+A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-}
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
@@ -15,214 +14,351 @@ struct \hyperlink{structAOLOOPCONTROL__DMTURBCONF}{A\+O\+L\+O\+O\+P\+C\+O\+N\+T\
 \item 
 \#define \hyperlink{AOloopControl__DM_8h_ade5d421b07d86c3588490f79d0416243}{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}~\char`\"{}/tmp/dmturb.\+conf.\+shm\char`\"{}
 \item 
-\#define \hyperlink{AOloopControl__DM_8h_a27f91dcf4025c354015057c9d860bdd7}{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N}~8
+\#define \hyperlink{AOloopControl__DM_8h_a9a7706e372afbef5fa4868ea819455e6}{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X}~20
 \end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \hyperlink{AOloopControl__DM_8h_ad63110c83cfc65f22a044cb57709d6f6}{init\+\_\+\+A\+Osyst\+Sim} ()
+int \hyperlink{AOloopControl__DM_8h_a59c2210415bf5dcf30636d77230bcef5}{init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_a861c36824195ec9ea09a57566a5f95f1}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize} (long size1d)
+static struct timespec \hyperlink{AOloopControl__DM_8h_a2d6bf0841f5747a9a04d0b75b6df7f9e}{time\+\_\+diff} (struct timespec start, struct timespec end)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a38b793b4fb7f50c97c263ecde9238126}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname} (char $\ast$name)
+static int \hyperlink{AOloopControl__DM_8h_a4959224d82ce7eda5ad3d05a5218a3e8}{make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local} (const char $\ast$I\+D\+\_\+name1, const char $\ast$I\+D\+\_\+name2, long size, float outerscale, float innerscale)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a9d50ee54e14225fd5cc945793b57e0d6}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V} (long I\+Ddisp, long I\+Dvolt)
+static int \hyperlink{AOloopControl__DM_8h_ae45b5a023f5925091f6a9b6c742b6004}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_afbd01af0321912775da66029e7e42607}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf} ()
+static int \hyperlink{AOloopControl__DM_8h_abb8c74636b601e1cb8c3747a09d040c9}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_a31da92d4a1d8be89f224a5dedaf7da86}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf} ()
+static int \hyperlink{AOloopControl__DM_8h_a87e64c56a8590a6cf7859adc1bc10a2c}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_ac5bde04cbad9f03840a40acabff1e9a2}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf} ()
+int \hyperlink{AOloopControl__DM_8h_a2570f680462b9f6e4e041e99d5a90124}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V} (long D\+Mindex)
 \item 
-int \hyperlink{AOloopControl__DM_8h_ab27f86b2eff86e2758873b917cd51644}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels} (int mode)
+int \hyperlink{AOloopControl__DM_8h_ad70cbe6e8c1af80f890e560f0a0e7a0b}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels} (long D\+Mindex, long xsize, long ysize, int N\+Bchannel, int Ave\+Mode, int dm2dm\+\_\+mode, const char $\ast$dm2dm\+\_\+\+D\+Mmodes, const char $\ast$dm2dm\+\_\+outdisp, int wfsrefmode, const char $\ast$wfsref\+\_\+\+W\+F\+S\+Resp\+Mat, const char $\ast$wfsref\+\_\+out, int voltmode, const char $\ast$I\+Dvolt\+\_\+name, float D\+Clevel, float maxvolt)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a81fe57ccb7d963dd3394be1a4e32063c}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain} (int ch, float gain)
+int \hyperlink{AOloopControl__DM_8h_ad5e093be28052fa0fb58caac501738df}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff} (long D\+Mindex)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a3884bff99ae02885eb779ac360859ebc}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus} ()
+int \hyperlink{AOloopControl__DM_8h_a9b9c6aa6b9270a9af545311c48a2b25b}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff} (long D\+Mindex)
 \item 
-int \hyperlink{AOloopControl__DM_8h_aedc3fb19edfb5c1fbac63ce2d8919734}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff} ()
+int \hyperlink{AOloopControl__DM_8h_ad5deb546c15a3d4cd7dea8db66a30fd2}{A\+Oloop\+Control\+\_\+print\+D\+Mconf} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_a86793b147c6e282b6eb84decb8584d1a}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff} ()
+int \hyperlink{AOloopControl__DM_8h_ae4c71850ba018415d4d035fd4b158a49}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus} (long D\+Mindex)
+\item 
+int \hyperlink{AOloopControl__DM_8h_a2d84b19a6c3085fa15e64aa18d7587ec}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain} (long D\+Mindex, int ch, float gain)
+\item 
+int \hyperlink{AOloopControl__DM_8h_a21a85e0539b97ed9a9a6c68ff84b7803}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N} (long D\+Mindex)
+\item 
+int \hyperlink{AOloopControl__DM_8h_a7e5a30402aa50096075e972867eb074b}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F} (long D\+Mindex)
+\item 
+int \hyperlink{AOloopControl__DM_8h_adaa990f4673def77cb2019f7e9228c73}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T} (long D\+Mindex, float maxvolt)
+\item 
+int \hyperlink{AOloopControl__DM_8h_a97e2a164428e27ab6d1d0a69942bf705}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel} (long D\+Mindex, float D\+Clevel)
+\item 
+int \hyperlink{AOloopControl__DM_8h_ad68eb7da3c36f3e7c45f12756a4504ec}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode} (long D\+Mindex, int mode)
+\item 
+int \hyperlink{AOloopControl__DM_8h_aa9a237fb5501e5343ca1f842dd621338}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan} (long D\+Mindex, int chan)
+\item 
+int \hyperlink{AOloopControl__DM_8h_adda94a8de23e16374c2977d1795560ac}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem} (long D\+Mindex, int sem)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{AOloopControl__DM_8h_a785634c9c05b2dd28876dc7270eb53d9}{A\+Oloop\+Control\+\_\+print\+D\+Mturbconf} ()
 \item 
 int \hyperlink{AOloopControl__DM_8h_aa47c0bcf181141f7016422c4c96c9c23}{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf} ()
 \item 
 int \hyperlink{AOloopControl__DM_8h_ab7d115bf256eaddaf712aae855292727}{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf} ()
 \item 
-int \hyperlink{AOloopControl__DM_8h_ab1c88f42452263cd727f472b259a274e}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff} ()
+int \hyperlink{AOloopControl__DM_8h_a753ddc180adc194137d12c87beccfd7a}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff} (long D\+Mindex)
 \item 
-int \hyperlink{AOloopControl__DM_8h_ab450e2b7aaa09c545503655886495006}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed} (double wspeed)
+int \hyperlink{AOloopControl__DM_8h_a68344f64ce3863aa1b64fc8b091f8823}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed} (long D\+Mindex, double wspeed)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a5c69f2f2779f41359ff1dc68c387a546}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl} (double ampl)
+int \hyperlink{AOloopControl__DM_8h_a370d38f71c562acfdec4da1b2a0b23ce}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl} (long D\+Mindex, double ampl)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a69559fec57988bee9dc0b85de700f0a0}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff} (double L\+Ocoeff)
+int \hyperlink{AOloopControl__DM_8h_a060b7d2a1f299164a102364ccdcce477}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff} (long D\+Mindex, double L\+Ocoeff)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a4154164ccbc8f526892f1b547a40a92b}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint} (long tint)
+int \hyperlink{AOloopControl__DM_8h_aeec005b65491d44dea5925f01485dfd7}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint} (long D\+Mindex, long tint)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a8ded0b844bfa95901d992b5d5eb60900}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus} ()
+int \hyperlink{AOloopControl__DM_8h_a610df93188155eedd2c719bba8024d56}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus} (long D\+Mindex)
 \item 
-int \hyperlink{AOloopControl__DM_8h_a8c982f685fce684b74733d3b0496d6d2}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb} ()
+int \hyperlink{AOloopControl__DM_8h_a08fe6f8f2374edcc371510574c629e44}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb} (long D\+Mindex, int mode, const char $\ast$I\+Dout\+\_\+name, long N\+Bsamples)
+\item 
+long \hyperlink{AOloopControl__DM_8h_a6fcd293aae715d8bb815765d957061ab}{A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle} (char $\ast$I\+Doutname, long D\+Mindex, long N\+Bpts, float ampl)
+\item 
+long \hyperlink{AOloopControl__DM_8h_a0ee1201e82111917c3efd41e946cdb9e}{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq} (char $\ast$I\+Doutname, long D\+Mindex, int X\+Ymode, int bin, long N\+Bcycle)
 \end{DoxyCompactItemize}
 
 
 \subsection{Macro Definition Documentation}
-\hypertarget{AOloopControl__DM_8h_a3a582ea1ddd59cc7730a495c0d0d110d}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F@{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F}}
+\hypertarget{AOloopControl__DM_8h_a3a582ea1ddd59cc7730a495c0d0d110d}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F@{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F}}
 \index{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F@{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F~\char`\"{}/tmp/dmdispcombconf.\+conf.\+shm\char`\"{}}}\label{AOloopControl__DM_8h_a3a582ea1ddd59cc7730a495c0d0d110d}
-\hypertarget{AOloopControl__DM_8h_a27f91dcf4025c354015057c9d860bdd7}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N@{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N}}
-\index{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N@{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N~8}}\label{AOloopControl__DM_8h_a27f91dcf4025c354015057c9d860bdd7}
-\hypertarget{AOloopControl__DM_8h_ade5d421b07d86c3588490f79d0416243}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E@{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}}
+\subsubsection[{D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+I\+S\+P\+C\+O\+M\+B\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E\+\_\+\+C\+O\+N\+F~\char`\"{}/tmp/dmdispcombconf.\+conf.\+shm\char`\"{}}\label{AOloopControl__DM_8h_a3a582ea1ddd59cc7730a495c0d0d110d}
+\hypertarget{AOloopControl__DM_8h_a9a7706e372afbef5fa4868ea819455e6}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X@{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X}}
+\index{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X@{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+M\+\_\+\+N\+U\+M\+B\+E\+R\+\_\+\+C\+H\+A\+N\+M\+A\+X~20}\label{AOloopControl__DM_8h_a9a7706e372afbef5fa4868ea819455e6}
+\hypertarget{AOloopControl__DM_8h_ade5d421b07d86c3588490f79d0416243}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E@{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}}
 \index{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E@{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E~\char`\"{}/tmp/dmturb.\+conf.\+shm\char`\"{}}}\label{AOloopControl__DM_8h_ade5d421b07d86c3588490f79d0416243}
+\subsubsection[{D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+M\+T\+U\+R\+B\+C\+O\+N\+F\+\_\+\+F\+I\+L\+E\+N\+A\+M\+E~\char`\"{}/tmp/dmturb.\+conf.\+shm\char`\"{}}\label{AOloopControl__DM_8h_ade5d421b07d86c3588490f79d0416243}
 
 
 \subsection{Function Documentation}
-\hypertarget{AOloopControl__DM_8h_a81fe57ccb7d963dd3394be1a4e32063c}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain}}
+\hypertarget{AOloopControl__DM_8h_a2d84b19a6c3085fa15e64aa18d7587ec}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+chan\+\_\+setgain (
 \begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
 \item[{int}]{ch, }
 \item[{float}]{gain}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a81fe57ccb7d963dd3394be1a4e32063c}
-\hypertarget{AOloopControl__DM_8h_ab27f86b2eff86e2758873b917cd51644}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels}}
+)}\label{AOloopControl__DM_8h_a2d84b19a6c3085fa15e64aa18d7587ec}
+\hypertarget{AOloopControl__DM_8h_ad70cbe6e8c1af80f890e560f0a0e7a0b}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+\+Combine\+Channels (
 \begin{DoxyParamCaption}
-\item[{int}]{mode}
+\item[{long}]{D\+Mindex, }
+\item[{long}]{xsize, }
+\item[{long}]{ysize, }
+\item[{int}]{N\+Bchannel, }
+\item[{int}]{Ave\+Mode, }
+\item[{int}]{dm2dm\+\_\+mode, }
+\item[{const char $\ast$}]{dm2dm\+\_\+\+D\+Mmodes, }
+\item[{const char $\ast$}]{dm2dm\+\_\+outdisp, }
+\item[{int}]{wfsrefmode, }
+\item[{const char $\ast$}]{wfsref\+\_\+\+W\+F\+S\+Resp\+Mat, }
+\item[{const char $\ast$}]{wfsref\+\_\+out, }
+\item[{int}]{voltmode, }
+\item[{const char $\ast$}]{I\+Dvolt\+\_\+name, }
+\item[{float}]{D\+Clevel, }
+\item[{float}]{maxvolt}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ab27f86b2eff86e2758873b917cd51644}
-\hypertarget{AOloopControl__DM_8h_afbd01af0321912775da66029e7e42607}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf}}
+)}\label{AOloopControl__DM_8h_ad70cbe6e8c1af80f890e560f0a0e7a0b}
+\hypertarget{AOloopControl__DM_8h_ae45b5a023f5925091f6a9b6c742b6004}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf (
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf}]{\setlength{\rightskip}{0pt plus 5cm}static int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+createconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_afbd01af0321912775da66029e7e42607}
-\hypertarget{AOloopControl__DM_8h_a9d50ee54e14225fd5cc945793b57e0d6}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl__DM_8h_ae45b5a023f5925091f6a9b6c742b6004}
+\hypertarget{AOloopControl__DM_8h_a2570f680462b9f6e4e041e99d5a90124}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+disp2\+V (
 \begin{DoxyParamCaption}
-\item[{long}]{I\+Ddisp, }
-\item[{long}]{I\+Dvolt}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a9d50ee54e14225fd5cc945793b57e0d6}
-\hypertarget{AOloopControl__DM_8h_aedc3fb19edfb5c1fbac63ce2d8919734}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff}}
+)}\label{AOloopControl__DM_8h_a2570f680462b9f6e4e041e99d5a90124}
+\hypertarget{AOloopControl__DM_8h_ad5e093be28052fa0fb58caac501738df}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcomboff (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_aedc3fb19edfb5c1fbac63ce2d8919734}
-\hypertarget{AOloopControl__DM_8h_a3884bff99ae02885eb779ac360859ebc}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus}}
+)}\label{AOloopControl__DM_8h_ad5e093be28052fa0fb58caac501738df}
+\hypertarget{AOloopControl__DM_8h_ae4c71850ba018415d4d035fd4b158a49}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmdispcombstatus (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a3884bff99ae02885eb779ac360859ebc}
-\hypertarget{AOloopControl__DM_8h_a86793b147c6e282b6eb84decb8584d1a}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff}}
+)}\label{AOloopControl__DM_8h_ae4c71850ba018415d4d035fd4b158a49}
+\hypertarget{AOloopControl__DM_8h_a9b9c6aa6b9270a9af545311c48a2b25b}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmtrigoff (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a86793b147c6e282b6eb84decb8584d1a}
-\hypertarget{AOloopControl__DM_8h_a5c69f2f2779f41359ff1dc68c387a546}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl}}
+)}\label{AOloopControl__DM_8h_a9b9c6aa6b9270a9af545311c48a2b25b}
+\hypertarget{AOloopControl__DM_8h_a08fe6f8f2374edcc371510574c629e44}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
+\item[{int}]{mode, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{long}]{N\+Bsamples}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a08fe6f8f2374edcc371510574c629e44}
+\hypertarget{AOloopControl__DM_8h_a370d38f71c562acfdec4da1b2a0b23ce}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+ampl (
 \begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
 \item[{double}]{ampl}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a5c69f2f2779f41359ff1dc68c387a546}
-\hypertarget{AOloopControl__DM_8h_a69559fec57988bee9dc0b85de700f0a0}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff}}
+)}\label{AOloopControl__DM_8h_a370d38f71c562acfdec4da1b2a0b23ce}
+\hypertarget{AOloopControl__DM_8h_a060b7d2a1f299164a102364ccdcce477}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+\+L\+Ocoeff (
 \begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
 \item[{double}]{L\+Ocoeff}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a69559fec57988bee9dc0b85de700f0a0}
-\hypertarget{AOloopControl__DM_8h_a8ded0b844bfa95901d992b5d5eb60900}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus}}
+)}\label{AOloopControl__DM_8h_a060b7d2a1f299164a102364ccdcce477}
+\hypertarget{AOloopControl__DM_8h_a610df93188155eedd2c719bba8024d56}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+printstatus (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a8ded0b844bfa95901d992b5d5eb60900}
-\hypertarget{AOloopControl__DM_8h_a4154164ccbc8f526892f1b547a40a92b}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint}}
+)}\label{AOloopControl__DM_8h_a610df93188155eedd2c719bba8024d56}
+\hypertarget{AOloopControl__DM_8h_aeec005b65491d44dea5925f01485dfd7}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+tint (
 \begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
 \item[{long}]{tint}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a4154164ccbc8f526892f1b547a40a92b}
-\hypertarget{AOloopControl__DM_8h_ab450e2b7aaa09c545503655886495006}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed}}
+)}\label{AOloopControl__DM_8h_aeec005b65491d44dea5925f01485dfd7}
+\hypertarget{AOloopControl__DM_8h_a68344f64ce3863aa1b64fc8b091f8823}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturb\+\_\+wspeed (
 \begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
 \item[{double}]{wspeed}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ab450e2b7aaa09c545503655886495006}
-\hypertarget{AOloopControl__DM_8h_ab1c88f42452263cd727f472b259a274e}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff}}
+)}\label{AOloopControl__DM_8h_a68344f64ce3863aa1b64fc8b091f8823}
+\hypertarget{AOloopControl__DM_8h_a753ddc180adc194137d12c87beccfd7a}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+dmturboff (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ab1c88f42452263cd727f472b259a274e}
-\hypertarget{AOloopControl__DM_8h_a31da92d4a1d8be89f224a5dedaf7da86}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf}}
+)}\label{AOloopControl__DM_8h_a753ddc180adc194137d12c87beccfd7a}
+\hypertarget{AOloopControl__DM_8h_abb8c74636b601e1cb8c3747a09d040c9}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf (
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf}]{\setlength{\rightskip}{0pt plus 5cm}static int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+loadconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a31da92d4a1d8be89f224a5dedaf7da86}
-\hypertarget{AOloopControl__DM_8h_a38b793b4fb7f50c97c263ecde9238126}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname}}
-\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setname (
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl__DM_8h_abb8c74636b601e1cb8c3747a09d040c9}
+\hypertarget{AOloopControl__DM_8h_a0ee1201e82111917c3efd41e946cdb9e}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+\+D\+M\+\_\+mk\+Astro\+Grid\+\_\+seq (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{name}
+\item[{char $\ast$}]{I\+Doutname, }
+\item[{long}]{D\+Mindex, }
+\item[{int}]{X\+Ymode, }
+\item[{int}]{bin, }
+\item[{long}]{N\+Bcycle}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a38b793b4fb7f50c97c263ecde9238126}
-\hypertarget{AOloopControl__DM_8h_a861c36824195ec9ea09a57566a5f95f1}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize}}
-\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setsize (
+)}\label{AOloopControl__DM_8h_a0ee1201e82111917c3efd41e946cdb9e}
+\hypertarget{AOloopControl__DM_8h_a97e2a164428e27ab6d1d0a69942bf705}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+D\+Clevel (
 \begin{DoxyParamCaption}
-\item[{long}]{size1d}
+\item[{long}]{D\+Mindex, }
+\item[{float}]{D\+Clevel}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a861c36824195ec9ea09a57566a5f95f1}
-\hypertarget{AOloopControl__DM_8h_a8c982f685fce684b74733d3b0496d6d2}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb}}
-\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+turb (
+)}\label{AOloopControl__DM_8h_a97e2a164428e27ab6d1d0a69942bf705}
+\hypertarget{AOloopControl__DM_8h_adaa990f4673def77cb2019f7e9228c73}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+M\+A\+X\+V\+O\+L\+T (
 \begin{DoxyParamCaption}
-{}
+\item[{long}]{D\+Mindex, }
+\item[{float}]{maxvolt}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_a8c982f685fce684b74733d3b0496d6d2}
-\hypertarget{AOloopControl__DM_8h_ac5bde04cbad9f03840a40acabff1e9a2}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf}}
+)}\label{AOloopControl__DM_8h_adaa990f4673def77cb2019f7e9228c73}
+\hypertarget{AOloopControl__DM_8h_aa9a237fb5501e5343ca1f842dd621338}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Chan (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
+\item[{int}]{chan}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_aa9a237fb5501e5343ca1f842dd621338}
+\hypertarget{AOloopControl__DM_8h_ad68eb7da3c36f3e7c45f12756a4504ec}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Mode (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
+\item[{int}]{mode}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_ad68eb7da3c36f3e7c45f12756a4504ec}
+\hypertarget{AOloopControl__DM_8h_adda94a8de23e16374c2977d1795560ac}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+set\+Trig\+Sem (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex, }
+\item[{int}]{sem}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_adda94a8de23e16374c2977d1795560ac}
+\hypertarget{AOloopControl__DM_8h_a7e5a30402aa50096075e972867eb074b}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+F\+F (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a7e5a30402aa50096075e972867eb074b}
+\hypertarget{AOloopControl__DM_8h_a21a85e0539b97ed9a9a6c68ff84b7803}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N}}
+\index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+setvolt\+O\+N (
+\begin{DoxyParamCaption}
+\item[{long}]{D\+Mindex}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a21a85e0539b97ed9a9a6c68ff84b7803}
+\hypertarget{AOloopControl__DM_8h_a87e64c56a8590a6cf7859adc1bc10a2c}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf}}
 \index{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf@{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf (
+\subsubsection[{A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf}]{\setlength{\rightskip}{0pt plus 5cm}static int A\+Oloop\+Control\+\_\+\+D\+M\+\_\+unloadconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ac5bde04cbad9f03840a40acabff1e9a2}
-\hypertarget{AOloopControl__DM_8h_aa47c0bcf181141f7016422c4c96c9c23}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl__DM_8h_a87e64c56a8590a6cf7859adc1bc10a2c}
+\hypertarget{AOloopControl__DM_8h_aa47c0bcf181141f7016422c4c96c9c23}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf}}
 \index{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+createconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_aa47c0bcf181141f7016422c4c96c9c23}
-\hypertarget{AOloopControl__DM_8h_ab7d115bf256eaddaf712aae855292727}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf}}
+)}\label{AOloopControl__DM_8h_aa47c0bcf181141f7016422c4c96c9c23}
+\hypertarget{AOloopControl__DM_8h_ab7d115bf256eaddaf712aae855292727}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf}}
 \index{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf@{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
 \subsubsection[{A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+\+D\+Mturb\+\_\+loadconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ab7d115bf256eaddaf712aae855292727}
-\hypertarget{AOloopControl__DM_8h_ad63110c83cfc65f22a044cb57709d6f6}{\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!init\+\_\+\+A\+Osyst\+Sim@{init\+\_\+\+A\+Osyst\+Sim}}
-\index{init\+\_\+\+A\+Osyst\+Sim@{init\+\_\+\+A\+Osyst\+Sim}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
-\subsubsection[{init\+\_\+\+A\+Osyst\+Sim}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+\+A\+Osyst\+Sim (
+)}\label{AOloopControl__DM_8h_ab7d115bf256eaddaf712aae855292727}
+\hypertarget{AOloopControl__DM_8h_a6fcd293aae715d8bb815765d957061ab}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle@{A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle}}
+\index{A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle@{A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle}]{\setlength{\rightskip}{0pt plus 5cm}long A\+Oloop\+Control\+\_\+mk\+D\+M\+\_\+\+T\+T\+\_\+circle (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{I\+Doutname, }
+\item[{long}]{D\+Mindex, }
+\item[{long}]{N\+Bpts, }
+\item[{float}]{ampl}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a6fcd293aae715d8bb815765d957061ab}
+\hypertarget{AOloopControl__DM_8h_ad5deb546c15a3d4cd7dea8db66a30fd2}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+print\+D\+Mconf@{A\+Oloop\+Control\+\_\+print\+D\+Mconf}}
+\index{A\+Oloop\+Control\+\_\+print\+D\+Mconf@{A\+Oloop\+Control\+\_\+print\+D\+Mconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+print\+D\+Mconf}]{\setlength{\rightskip}{0pt plus 5cm}int A\+Oloop\+Control\+\_\+print\+D\+Mconf (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{AOloopControl__DM_8h_ad63110c83cfc65f22a044cb57709d6f6}
+)}\label{AOloopControl__DM_8h_ad5deb546c15a3d4cd7dea8db66a30fd2}
+\hypertarget{AOloopControl__DM_8h_a785634c9c05b2dd28876dc7270eb53d9}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!A\+Oloop\+Control\+\_\+print\+D\+Mturbconf@{A\+Oloop\+Control\+\_\+print\+D\+Mturbconf}}
+\index{A\+Oloop\+Control\+\_\+print\+D\+Mturbconf@{A\+Oloop\+Control\+\_\+print\+D\+Mturbconf}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{A\+Oloop\+Control\+\_\+print\+D\+Mturbconf}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t A\+Oloop\+Control\+\_\+print\+D\+Mturbconf (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a785634c9c05b2dd28876dc7270eb53d9}
+\hypertarget{AOloopControl__DM_8h_a59c2210415bf5dcf30636d77230bcef5}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M@{init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M}}
+\index{init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M@{init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+\+A\+Oloop\+Control\+\_\+\+D\+M (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{AOloopControl__DM_8h_a59c2210415bf5dcf30636d77230bcef5}
+\hypertarget{AOloopControl__DM_8h_a4959224d82ce7eda5ad3d05a5218a3e8}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local@{make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local}}
+\index{make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local@{make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local}]{\setlength{\rightskip}{0pt plus 5cm}static int make\+\_\+master\+\_\+turbulence\+\_\+screen\+\_\+local (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+D\+\_\+name1, }
+\item[{const char $\ast$}]{I\+D\+\_\+name2, }
+\item[{long}]{size, }
+\item[{float}]{outerscale, }
+\item[{float}]{innerscale}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl__DM_8h_a4959224d82ce7eda5ad3d05a5218a3e8}
+\hypertarget{AOloopControl__DM_8h_a2d6bf0841f5747a9a04d0b75b6df7f9e}{}\index{A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}!time\+\_\+diff@{time\+\_\+diff}}
+\index{time\+\_\+diff@{time\+\_\+diff}!A\+Oloop\+Control\+\_\+\+D\+M.\+h@{A\+Oloop\+Control\+\_\+\+D\+M.\+h}}
+\subsubsection[{time\+\_\+diff}]{\setlength{\rightskip}{0pt plus 5cm}static struct timespec time\+\_\+diff (
+\begin{DoxyParamCaption}
+\item[{struct timespec}]{start, }
+\item[{struct timespec}]{end}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{AOloopControl__DM_8h_a2d6bf0841f5747a9a04d0b75b6df7f9e}

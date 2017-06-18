@@ -1,77 +1,161 @@
-\hypertarget{linopt__imtools_8h}{\section{src/linopt\+\_\+imtools/linopt\+\_\+imtools.h File Reference}
+\hypertarget{linopt__imtools_8h}{}\section{src/linopt\+\_\+imtools/linopt\+\_\+imtools.h File Reference}
 \label{linopt__imtools_8h}\index{src/linopt\+\_\+imtools/linopt\+\_\+imtools.\+h@{src/linopt\+\_\+imtools/linopt\+\_\+imtools.\+h}}
-}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-long \hyperlink{linopt__imtools_8h_a8e15bb9667ec1057eab7a1268ac122a5}{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes} (char $\ast$I\+D\+\_\+name, long size, long kmax, float radius, float radfactlim)
+int \hyperlink{linopt__imtools_8h_afc117916939017260e807f28af155892}{init\+\_\+linopt\+\_\+imtools} ()
 \item 
-long \hyperlink{linopt__imtools_8h_a9570c3d46c58a222324dc170d1c8ff1e}{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes} (char $\ast$I\+D\+\_\+name, long size, float C\+P\+Amax, float delta\+C\+P\+A, float radius, float radfactlim, int write\+Mfile)
+long \hyperlink{linopt__imtools_8h_ab54ce92e786d475dae79a07cda07a905}{linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout} (const char $\ast$I\+Dinput\+\_\+name, const char $\ast$I\+Dinmask\+\_\+name, const char $\ast$I\+Doutput\+\_\+name, const char $\ast$I\+D\+R\+M\+\_\+name)
 \item 
-long \hyperlink{linopt__imtools_8h_a30c15b9723545ff49b047c0cd4e3f63e}{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable} (char $\ast$I\+Dmask\+\_\+name, char $\ast$I\+Dpixindex\+\_\+name, char $\ast$I\+Dpixmult\+\_\+name)
+long \hyperlink{linopt__imtools_8h_a43e68efaddc75fccc20aaddce0ce0e38}{linopt\+\_\+imtools\+\_\+make1\+Dpolynomials} (const char $\ast$I\+Dout\+\_\+name, long N\+Bpts, long Max\+Order, float r0pix)
 \item 
-long \hyperlink{linopt__imtools_8h_a5210720c3c4b83c441f59c823b98e96b}{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec} (char $\ast$I\+D\+\_\+name, char $\ast$I\+Dpixindex\+\_\+name, char $\ast$I\+Dpixmult\+\_\+name, char $\ast$I\+Dvec\+\_\+name)
+long \hyperlink{linopt__imtools_8h_aeed040346b9c664de625ba1a04fed869}{linopt\+\_\+compute\+\_\+1\+Dfit} (const char $\ast$fnamein, long N\+Bpt, long Max\+Order, const char $\ast$fnameout, int M\+O\+D\+E)
 \item 
-long \hyperlink{linopt__imtools_8h_abd307da15c19076e8ed40e3a710039c5}{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image} (char $\ast$I\+Dvec\+\_\+name, char $\ast$I\+Dpixindex\+\_\+name, char $\ast$I\+Dpixmult\+\_\+name, char $\ast$I\+D\+\_\+name, long xsize, long ysize)
+long \hyperlink{linopt__imtools_8h_a0eafe811d85ff5c8e8eaf06fbee04cff}{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes} (const char $\ast$I\+D\+\_\+name, long size, long kmax, float radius, float radfactlim)
 \item 
-long \hyperlink{linopt__imtools_8h_a5c77865d99afd50f6797b75981e3f631}{linopt\+\_\+imtools\+\_\+image\+\_\+construct} (char $\ast$I\+Dmodes\+\_\+name, char $\ast$I\+Dcoeff\+\_\+name, char $\ast$I\+D\+\_\+name)
+long \hyperlink{linopt__imtools_8h_a7ca85d341c28a35c3cf24f0281544c44}{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes} (const char $\ast$I\+D\+\_\+name, long size, float C\+P\+Amax, float delta\+C\+P\+A, float radius, float radfactlim, int write\+Mfile)
 \item 
-long \hyperlink{linopt__imtools_8h_ae0bc3ec8013ca3a2ad5e36330c5eadee}{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes} (char $\ast$I\+D\+\_\+name, char $\ast$I\+Dmodes\+\_\+name, char $\ast$I\+Dmask\+\_\+name, double S\+V\+Deps, char $\ast$I\+Dcoeff\+\_\+name, int reuse)
+long \hyperlink{linopt__imtools_8h_ae07da255b651c5b9c2dcb8ff8461673e}{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable} (const char $\ast$I\+Dmask\+\_\+name, const char $\ast$I\+Dpixindex\+\_\+name, const char $\ast$I\+Dpixmult\+\_\+name)
 \item 
-double \hyperlink{linopt__imtools_8h_a48c12aade18afab7a24b629249e0c803}{linopt\+\_\+imtools\+\_\+match\+\_\+slow} (char $\ast$I\+D\+\_\+name, char $\ast$I\+Dref\+\_\+name, char $\ast$I\+Dmask\+\_\+name, char $\ast$I\+Dsol\+\_\+name, char $\ast$I\+Dout\+\_\+name)
+long \hyperlink{linopt__imtools_8h_acdd05675c00002d528cf3527e43d1739}{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec} (const char $\ast$I\+D\+\_\+name, const char $\ast$I\+Dpixindex\+\_\+name, const char $\ast$I\+Dpixmult\+\_\+name, const char $\ast$I\+Dvec\+\_\+name)
 \item 
-double \hyperlink{linopt__imtools_8h_a7f305bde72fc1d2d4430bae0893f7bf0}{linopt\+\_\+imtools\+\_\+match} (char $\ast$I\+D\+\_\+name, char $\ast$I\+Dref\+\_\+name, char $\ast$I\+Dmask\+\_\+name, char $\ast$I\+Dsol\+\_\+name, char $\ast$I\+Dout\+\_\+name)
+long \hyperlink{linopt__imtools_8h_a8eb1cda29b603a7e7f8be4f49163f557}{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image} (const char $\ast$I\+Dvec\+\_\+name, const char $\ast$I\+Dpixindex\+\_\+name, const char $\ast$I\+Dpixmult\+\_\+name, const char $\ast$I\+D\+\_\+name, long xsize, long ysize)
+\item 
+long \hyperlink{linopt__imtools_8h_af390daa8d42ed3a46884cf54b91acfa1}{linopt\+\_\+imtools\+\_\+image\+\_\+construct} (const char $\ast$I\+Dmodes\+\_\+name, const char $\ast$I\+Dcoeff\+\_\+name, const char $\ast$I\+D\+\_\+name)
+\item 
+long \hyperlink{linopt__imtools_8h_a8ebbb8cb02d8a7b19abe1dbdcf1bd4af}{linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream} (const char $\ast$I\+Dmodes\+\_\+name, const char $\ast$I\+Dcoeff\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+long \hyperlink{linopt__imtools_8h_af333dc23263f00e0326f3bde719d1627}{linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp} (const char $\ast$I\+Din\+\_\+name, const char $\ast$I\+Dout\+\_\+name, const char $\ast$I\+Dcoeff\+\_\+name)
+\item 
+int \hyperlink{linopt__imtools_8h_a94d6b25fcfb460b2363109268210cc31}{linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse} (const char $\ast$I\+D\+\_\+\+Rmatrix\+\_\+name, const char $\ast$I\+D\+\_\+\+Cmatrix\+\_\+name, double S\+V\+Deps, long Max\+N\+Bmodes, const char $\ast$I\+D\+\_\+\+V\+Tmatrix\+\_\+name)
+\item 
+long \hyperlink{linopt__imtools_8h_a89de6a37c4046515b5006e2316de3f43}{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes} (const char $\ast$I\+D\+\_\+name, const char $\ast$I\+Dmodes\+\_\+name, const char $\ast$I\+Dmask\+\_\+name, double S\+V\+Deps, const char $\ast$I\+Dcoeff\+\_\+name, int reuse)
+\item 
+double \hyperlink{linopt__imtools_8h_aad48e6c29737ad901d4a20484c20b863}{linopt\+\_\+imtools\+\_\+match\+\_\+slow} (const char $\ast$I\+D\+\_\+name, const char $\ast$I\+Dref\+\_\+name, const char $\ast$I\+Dmask\+\_\+name, const char $\ast$I\+Dsol\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
+\item 
+double \hyperlink{linopt__imtools_8h_a58880d72f814fc608aa5c35c91c8a5d1}{linopt\+\_\+imtools\+\_\+match} (const char $\ast$I\+D\+\_\+name, const char $\ast$I\+Dref\+\_\+name, const char $\ast$I\+Dmask\+\_\+name, const char $\ast$I\+Dsol\+\_\+name, const char $\ast$I\+Dout\+\_\+name)
 \end{DoxyCompactItemize}
 
 
 \subsection{Function Documentation}
-\hypertarget{linopt__imtools_8h_a5c77865d99afd50f6797b75981e3f631}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+image\+\_\+construct@{linopt\+\_\+imtools\+\_\+image\+\_\+construct}}
+\hypertarget{linopt__imtools_8h_afc117916939017260e807f28af155892}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!init\+\_\+linopt\+\_\+imtools@{init\+\_\+linopt\+\_\+imtools}}
+\index{init\+\_\+linopt\+\_\+imtools@{init\+\_\+linopt\+\_\+imtools}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{init\+\_\+linopt\+\_\+imtools}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+linopt\+\_\+imtools (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_afc117916939017260e807f28af155892}
+\hypertarget{linopt__imtools_8h_aeed040346b9c664de625ba1a04fed869}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+compute\+\_\+1\+Dfit@{linopt\+\_\+compute\+\_\+1\+Dfit}}
+\index{linopt\+\_\+compute\+\_\+1\+Dfit@{linopt\+\_\+compute\+\_\+1\+Dfit}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+compute\+\_\+1\+Dfit}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+compute\+\_\+1\+Dfit (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{fnamein, }
+\item[{long}]{N\+Bpt, }
+\item[{long}]{Max\+Order, }
+\item[{const char $\ast$}]{fnameout, }
+\item[{int}]{M\+O\+D\+E}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_aeed040346b9c664de625ba1a04fed869}
+\hypertarget{linopt__imtools_8h_ab54ce92e786d475dae79a07cda07a905}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout@{linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout}}
+\index{linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout@{linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+compute\+\_\+lin\+R\+M\+\_\+from\+\_\+inout (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dinput\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dinmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Doutput\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+R\+M\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_ab54ce92e786d475dae79a07cda07a905}
+\hypertarget{linopt__imtools_8h_af333dc23263f00e0326f3bde719d1627}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp@{linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp}}
+\index{linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp@{linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+compute\+\_\+\+S\+V\+Ddecomp (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Din\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcoeff\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_af333dc23263f00e0326f3bde719d1627}
+Write rotation matrix to go from D\+M modes to eigenmodes
+
+Compute S\+V\+D decomp
+
+eigen mode index \hypertarget{linopt__imtools_8h_a94d6b25fcfb460b2363109268210cc31}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse@{linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse}}
+\index{linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse@{linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse}]{\setlength{\rightskip}{0pt plus 5cm}int linopt\+\_\+compute\+\_\+\+S\+V\+Dpseudo\+Inverse (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+D\+\_\+\+Rmatrix\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+Cmatrix\+\_\+name, }
+\item[{double}]{S\+V\+Deps, }
+\item[{long}]{Max\+N\+Bmodes, }
+\item[{const char $\ast$}]{I\+D\+\_\+\+V\+Tmatrix\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_a94d6b25fcfb460b2363109268210cc31}
+\hypertarget{linopt__imtools_8h_af390daa8d42ed3a46884cf54b91acfa1}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+image\+\_\+construct@{linopt\+\_\+imtools\+\_\+image\+\_\+construct}}
 \index{linopt\+\_\+imtools\+\_\+image\+\_\+construct@{linopt\+\_\+imtools\+\_\+image\+\_\+construct}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+image\+\_\+construct}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+image\+\_\+construct (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+Dmodes\+\_\+name, }
-\item[{char $\ast$}]{I\+Dcoeff\+\_\+name, }
-\item[{char $\ast$}]{I\+D\+\_\+name}
+\item[{const char $\ast$}]{I\+Dmodes\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcoeff\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a5c77865d99afd50f6797b75981e3f631}
-\hypertarget{linopt__imtools_8h_ae0bc3ec8013ca3a2ad5e36330c5eadee}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes@{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes}}
+)}\label{linopt__imtools_8h_af390daa8d42ed3a46884cf54b91acfa1}
+\hypertarget{linopt__imtools_8h_a8ebbb8cb02d8a7b19abe1dbdcf1bd4af}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream@{linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream}}
+\index{linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream@{linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+image\+\_\+construct\+\_\+stream (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dmodes\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcoeff\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_a8ebbb8cb02d8a7b19abe1dbdcf1bd4af}
+\hypertarget{linopt__imtools_8h_a89de6a37c4046515b5006e2316de3f43}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes@{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes}}
 \index{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes@{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+image\+\_\+fit\+Modes (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
-\item[{char $\ast$}]{I\+Dmodes\+\_\+name, }
-\item[{char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmodes\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
 \item[{double}]{S\+V\+Deps, }
-\item[{char $\ast$}]{I\+Dcoeff\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dcoeff\+\_\+name, }
 \item[{int}]{reuse}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_ae0bc3ec8013ca3a2ad5e36330c5eadee}
-\hypertarget{linopt__imtools_8h_a5210720c3c4b83c441f59c823b98e96b}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec@{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec}}
+)}\label{linopt__imtools_8h_a89de6a37c4046515b5006e2316de3f43}
+\hypertarget{linopt__imtools_8h_acdd05675c00002d528cf3527e43d1739}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec@{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec}}
 \index{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec@{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+\+Image\+\_\+to\+\_\+vec (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixindex\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixmult\+\_\+name, }
-\item[{char $\ast$}]{I\+Dvec\+\_\+name}
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixindex\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixmult\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dvec\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a5210720c3c4b83c441f59c823b98e96b}
-\hypertarget{linopt__imtools_8h_a8e15bb9667ec1057eab7a1268ac122a5}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes@{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes}}
+)}\label{linopt__imtools_8h_acdd05675c00002d528cf3527e43d1739}
+\hypertarget{linopt__imtools_8h_a43e68efaddc75fccc20aaddce0ce0e38}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+make1\+Dpolynomials@{linopt\+\_\+imtools\+\_\+make1\+Dpolynomials}}
+\index{linopt\+\_\+imtools\+\_\+make1\+Dpolynomials@{linopt\+\_\+imtools\+\_\+make1\+Dpolynomials}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
+\subsubsection[{linopt\+\_\+imtools\+\_\+make1\+Dpolynomials}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+make1\+Dpolynomials (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{I\+Dout\+\_\+name, }
+\item[{long}]{N\+Bpts, }
+\item[{long}]{Max\+Order, }
+\item[{float}]{r0pix}
+\end{DoxyParamCaption}
+)}\label{linopt__imtools_8h_a43e68efaddc75fccc20aaddce0ce0e38}
+\hypertarget{linopt__imtools_8h_a0eafe811d85ff5c8e8eaf06fbee04cff}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes@{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes}}
 \index{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes@{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+make\+Cos\+Rad\+Modes (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
 \item[{long}]{size, }
 \item[{long}]{kmax, }
 \item[{float}]{radius, }
 \item[{float}]{radfactlim}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a8e15bb9667ec1057eab7a1268ac122a5}
-\hypertarget{linopt__imtools_8h_a9570c3d46c58a222324dc170d1c8ff1e}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes@{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes}}
+)}\label{linopt__imtools_8h_a0eafe811d85ff5c8e8eaf06fbee04cff}
+\hypertarget{linopt__imtools_8h_a7ca85d341c28a35c3cf24f0281544c44}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes@{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes}}
 \index{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes@{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+make\+C\+P\+Amodes (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
 \item[{long}]{size, }
 \item[{float}]{C\+P\+Amax, }
 \item[{float}]{delta\+C\+P\+A, }
@@ -79,47 +163,47 @@ double \hyperlink{linopt__imtools_8h_a7f305bde72fc1d2d4430bae0893f7bf0}{linopt\+
 \item[{float}]{radfactlim, }
 \item[{int}]{write\+Mfile}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a9570c3d46c58a222324dc170d1c8ff1e}
-\hypertarget{linopt__imtools_8h_a30c15b9723545ff49b047c0cd4e3f63e}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable@{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable}}
+)}\label{linopt__imtools_8h_a7ca85d341c28a35c3cf24f0281544c44}
+\hypertarget{linopt__imtools_8h_ae07da255b651c5b9c2dcb8ff8461673e}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable@{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable}}
 \index{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable@{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+mask\+\_\+to\+\_\+pixtable (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+Dmask\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixindex\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixmult\+\_\+name}
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixindex\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixmult\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a30c15b9723545ff49b047c0cd4e3f63e}
-\hypertarget{linopt__imtools_8h_a7f305bde72fc1d2d4430bae0893f7bf0}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+match@{linopt\+\_\+imtools\+\_\+match}}
+)}\label{linopt__imtools_8h_ae07da255b651c5b9c2dcb8ff8461673e}
+\hypertarget{linopt__imtools_8h_a58880d72f814fc608aa5c35c91c8a5d1}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+match@{linopt\+\_\+imtools\+\_\+match}}
 \index{linopt\+\_\+imtools\+\_\+match@{linopt\+\_\+imtools\+\_\+match}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+match}]{\setlength{\rightskip}{0pt plus 5cm}double linopt\+\_\+imtools\+\_\+match (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
-\item[{char $\ast$}]{I\+Dref\+\_\+name, }
-\item[{char $\ast$}]{I\+Dmask\+\_\+name, }
-\item[{char $\ast$}]{I\+Dsol\+\_\+name, }
-\item[{char $\ast$}]{I\+Dout\+\_\+name}
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dref\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dsol\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a7f305bde72fc1d2d4430bae0893f7bf0}
-\hypertarget{linopt__imtools_8h_a48c12aade18afab7a24b629249e0c803}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+match\+\_\+slow@{linopt\+\_\+imtools\+\_\+match\+\_\+slow}}
+)}\label{linopt__imtools_8h_a58880d72f814fc608aa5c35c91c8a5d1}
+\hypertarget{linopt__imtools_8h_aad48e6c29737ad901d4a20484c20b863}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+match\+\_\+slow@{linopt\+\_\+imtools\+\_\+match\+\_\+slow}}
 \index{linopt\+\_\+imtools\+\_\+match\+\_\+slow@{linopt\+\_\+imtools\+\_\+match\+\_\+slow}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+match\+\_\+slow}]{\setlength{\rightskip}{0pt plus 5cm}double linopt\+\_\+imtools\+\_\+match\+\_\+slow (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+D\+\_\+name, }
-\item[{char $\ast$}]{I\+Dref\+\_\+name, }
-\item[{char $\ast$}]{I\+Dmask\+\_\+name, }
-\item[{char $\ast$}]{I\+Dsol\+\_\+name, }
-\item[{char $\ast$}]{I\+Dout\+\_\+name}
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dref\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dmask\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dsol\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dout\+\_\+name}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_a48c12aade18afab7a24b629249e0c803}
-\hypertarget{linopt__imtools_8h_abd307da15c19076e8ed40e3a710039c5}{\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image@{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image}}
+)}\label{linopt__imtools_8h_aad48e6c29737ad901d4a20484c20b863}
+\hypertarget{linopt__imtools_8h_a8eb1cda29b603a7e7f8be4f49163f557}{}\index{linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}!linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image@{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image}}
 \index{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image@{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image}!linopt\+\_\+imtools.\+h@{linopt\+\_\+imtools.\+h}}
 \subsubsection[{linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image}]{\setlength{\rightskip}{0pt plus 5cm}long linopt\+\_\+imtools\+\_\+vec\+\_\+to\+\_\+2\+D\+Image (
 \begin{DoxyParamCaption}
-\item[{char $\ast$}]{I\+Dvec\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixindex\+\_\+name, }
-\item[{char $\ast$}]{I\+Dpixmult\+\_\+name, }
-\item[{char $\ast$}]{I\+D\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dvec\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixindex\+\_\+name, }
+\item[{const char $\ast$}]{I\+Dpixmult\+\_\+name, }
+\item[{const char $\ast$}]{I\+D\+\_\+name, }
 \item[{long}]{xsize, }
 \item[{long}]{ysize}
 \end{DoxyParamCaption}
-)}}\label{linopt__imtools_8h_abd307da15c19076e8ed40e3a710039c5}
+)}\label{linopt__imtools_8h_a8eb1cda29b603a7e7f8be4f49163f557}

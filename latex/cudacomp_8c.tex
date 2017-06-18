@@ -1,14 +1,16 @@
-\hypertarget{cudacomp_8c}{\section{src/cudacomp/cudacomp.c File Reference}
+\hypertarget{cudacomp_8c}{}\section{src/cudacomp/cudacomp.c File Reference}
 \label{cudacomp_8c}\index{src/cudacomp/cudacomp.\+c@{src/cudacomp/cudacomp.\+c}}
-}
+{\ttfamily \#include $<$stdint.\+h$>$}\\*
 {\ttfamily \#include $<$stdio.\+h$>$}\\*
 {\ttfamily \#include $<$stdlib.\+h$>$}\\*
 {\ttfamily \#include $<$math.\+h$>$}\\*
 {\ttfamily \#include $<$unistd.\+h$>$}\\*
 {\ttfamily \#include $<$malloc.\+h$>$}\\*
 {\ttfamily \#include $<$string.\+h$>$}\\*
-{\ttfamily \#include $<$time.\+h$>$}\\*
 {\ttfamily \#include $<$sched.\+h$>$}\\*
+{\ttfamily \#include $<$signal.\+h$>$}\\*
+{\ttfamily \#include $<$semaphore.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
 {\ttfamily \#include $<$sys/types.\+h$>$}\\*
 {\ttfamily \#include $<$sys/file.\+h$>$}\\*
 {\ttfamily \#include $<$sys/mman.\+h$>$}\\*
@@ -18,30 +20,87 @@
 {\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+memory/\+C\+O\+R\+E\+M\+O\+D\+\_\+memory.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+iofits/\+C\+O\+R\+E\+M\+O\+D\+\_\+iofits.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+arith/\+C\+O\+R\+E\+M\+O\+D\+\_\+arith.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}info/info.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}cudacomp/cudacomp.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}linopt\+\_\+imtools/linopt\+\_\+imtools.\+h\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{cudacomp_8c_ac6afabdc09a49a433ee19d8a9486056d}{min}(a,  b)~(((a)$<$(b))?(a)\+:(b))
+\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \hyperlink{cudacomp_8c_a4dbe74792012a71e8f4c4f3e6fb00c6f}{init\+\_\+cudacomp} ()
+int\+\_\+fast8\+\_\+t \hyperlink{cudacomp_8c_aead9dadc577cf10ed989b89b8360c802}{init\+\_\+cudacomp} ()
 \end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
+int \hyperlink{cudacomp_8c_ac1a738ea19b335ef19aad2749c296937}{F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T} = 1
+\item 
 \hyperlink{structDATA}{D\+A\+T\+A} \hyperlink{cudacomp_8c_a9842752e03b4de9b4593f1a3b34364ab}{data}
+\item 
+pid\+\_\+t \hyperlink{cudacomp_8c_a5322f5738b8bf1f57458a31aea22f1db}{C\+L\+I\+P\+I\+D}
+\begin{DoxyCompactList}\small\item\em important directories and info \end{DoxyCompactList}\item 
+static struct timespec \hyperlink{cudacomp_8c_a59d2ab140fff2f63a38f4704a76fc2ec}{tnow}
+\item 
+static struct timespec \hyperlink{cudacomp_8c_a68e5522665259f4ae254e3bf493c4b18}{tdiff}
+\item 
+static double \hyperlink{cudacomp_8c_ad53086470a2fb4c9e57b950bef50e2c0}{tdiffv}
+\item 
+static int \hyperlink{cudacomp_8c_af31e8ffad732dfca1b633603a6f79724}{I\+Dtimerinit} = 0
+\item 
+static long \hyperlink{cudacomp_8c_a3bb6a7b11caac0af48ccd1dc9a2085bb}{I\+Dtiming} = -\/1
 \end{DoxyCompactItemize}
 
 
+\subsection{Macro Definition Documentation}
+\hypertarget{cudacomp_8c_ac6afabdc09a49a433ee19d8a9486056d}{}\index{cudacomp.\+c@{cudacomp.\+c}!min@{min}}
+\index{min@{min}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{min}]{\setlength{\rightskip}{0pt plus 5cm}\#define min(
+\begin{DoxyParamCaption}
+\item[{}]{a, }
+\item[{}]{b}
+\end{DoxyParamCaption}
+)~(((a)$<$(b))?(a)\+:(b))}\label{cudacomp_8c_ac6afabdc09a49a433ee19d8a9486056d}
+
+
 \subsection{Function Documentation}
-\hypertarget{cudacomp_8c_a4dbe74792012a71e8f4c4f3e6fb00c6f}{\index{cudacomp.\+c@{cudacomp.\+c}!init\+\_\+cudacomp@{init\+\_\+cudacomp}}
+\hypertarget{cudacomp_8c_aead9dadc577cf10ed989b89b8360c802}{}\index{cudacomp.\+c@{cudacomp.\+c}!init\+\_\+cudacomp@{init\+\_\+cudacomp}}
 \index{init\+\_\+cudacomp@{init\+\_\+cudacomp}!cudacomp.\+c@{cudacomp.\+c}}
-\subsubsection[{init\+\_\+cudacomp}]{\setlength{\rightskip}{0pt plus 5cm}int init\+\_\+cudacomp (
+\subsubsection[{init\+\_\+cudacomp}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t init\+\_\+cudacomp (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{cudacomp_8c_a4dbe74792012a71e8f4c4f3e6fb00c6f}
+)}\label{cudacomp_8c_aead9dadc577cf10ed989b89b8360c802}
 
 
 \subsection{Variable Documentation}
-\hypertarget{cudacomp_8c_a9842752e03b4de9b4593f1a3b34364ab}{\index{cudacomp.\+c@{cudacomp.\+c}!data@{data}}
+\hypertarget{cudacomp_8c_a5322f5738b8bf1f57458a31aea22f1db}{}\index{cudacomp.\+c@{cudacomp.\+c}!C\+L\+I\+P\+I\+D@{C\+L\+I\+P\+I\+D}}
+\index{C\+L\+I\+P\+I\+D@{C\+L\+I\+P\+I\+D}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{C\+L\+I\+P\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}pid\+\_\+t C\+L\+I\+P\+I\+D}\label{cudacomp_8c_a5322f5738b8bf1f57458a31aea22f1db}
+
+
+important directories and info 
+
+\hypertarget{cudacomp_8c_a9842752e03b4de9b4593f1a3b34364ab}{}\index{cudacomp.\+c@{cudacomp.\+c}!data@{data}}
 \index{data@{data}!cudacomp.\+c@{cudacomp.\+c}}
-\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}}\label{cudacomp_8c_a9842752e03b4de9b4593f1a3b34364ab}
+\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}\label{cudacomp_8c_a9842752e03b4de9b4593f1a3b34364ab}
+\hypertarget{cudacomp_8c_ac1a738ea19b335ef19aad2749c296937}{}\index{cudacomp.\+c@{cudacomp.\+c}!F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T@{F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T}}
+\index{F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T@{F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T}]{\setlength{\rightskip}{0pt plus 5cm}int F\+O\+R\+C\+E\+S\+E\+M\+I\+N\+I\+T = 1}\label{cudacomp_8c_ac1a738ea19b335ef19aad2749c296937}
+\hypertarget{cudacomp_8c_af31e8ffad732dfca1b633603a6f79724}{}\index{cudacomp.\+c@{cudacomp.\+c}!I\+Dtimerinit@{I\+Dtimerinit}}
+\index{I\+Dtimerinit@{I\+Dtimerinit}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{I\+Dtimerinit}]{\setlength{\rightskip}{0pt plus 5cm}int I\+Dtimerinit = 0\hspace{0.3cm}{\ttfamily [static]}}\label{cudacomp_8c_af31e8ffad732dfca1b633603a6f79724}
+\hypertarget{cudacomp_8c_a3bb6a7b11caac0af48ccd1dc9a2085bb}{}\index{cudacomp.\+c@{cudacomp.\+c}!I\+Dtiming@{I\+Dtiming}}
+\index{I\+Dtiming@{I\+Dtiming}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{I\+Dtiming}]{\setlength{\rightskip}{0pt plus 5cm}long I\+Dtiming = -\/1\hspace{0.3cm}{\ttfamily [static]}}\label{cudacomp_8c_a3bb6a7b11caac0af48ccd1dc9a2085bb}
+\hypertarget{cudacomp_8c_a68e5522665259f4ae254e3bf493c4b18}{}\index{cudacomp.\+c@{cudacomp.\+c}!tdiff@{tdiff}}
+\index{tdiff@{tdiff}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{tdiff}]{\setlength{\rightskip}{0pt plus 5cm}struct timespec tdiff\hspace{0.3cm}{\ttfamily [static]}}\label{cudacomp_8c_a68e5522665259f4ae254e3bf493c4b18}
+\hypertarget{cudacomp_8c_ad53086470a2fb4c9e57b950bef50e2c0}{}\index{cudacomp.\+c@{cudacomp.\+c}!tdiffv@{tdiffv}}
+\index{tdiffv@{tdiffv}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{tdiffv}]{\setlength{\rightskip}{0pt plus 5cm}double tdiffv\hspace{0.3cm}{\ttfamily [static]}}\label{cudacomp_8c_ad53086470a2fb4c9e57b950bef50e2c0}
+\hypertarget{cudacomp_8c_a59d2ab140fff2f63a38f4704a76fc2ec}{}\index{cudacomp.\+c@{cudacomp.\+c}!tnow@{tnow}}
+\index{tnow@{tnow}!cudacomp.\+c@{cudacomp.\+c}}
+\subsubsection[{tnow}]{\setlength{\rightskip}{0pt plus 5cm}struct timespec tnow\hspace{0.3cm}{\ttfamily [static]}}\label{cudacomp_8c_a59d2ab140fff2f63a38f4704a76fc2ec}

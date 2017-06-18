@@ -1,15 +1,16 @@
-\hypertarget{CLIcore_8c}{\section{src/\+C\+L\+Icore.c File Reference}
+\hypertarget{CLIcore_8c}{}\section{src/\+C\+L\+Icore.c File Reference}
 \label{CLIcore_8c}\index{src/\+C\+L\+Icore.\+c@{src/\+C\+L\+Icore.\+c}}
-}
+{\ttfamily \#include $<$stdint.\+h$>$}\\*
 {\ttfamily \#include $<$string.\+h$>$}\\*
 {\ttfamily \#include $<$C\+L\+Icore.\+h$>$}\\*
 {\ttfamily \#include $<$malloc.\+h$>$}\\*
 {\ttfamily \#include $<$stdio.\+h$>$}\\*
 {\ttfamily \#include $<$stdlib.\+h$>$}\\*
-{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$pthread.\+h$>$}\\*
+{\ttfamily \#include $<$unistd.\+h$>$}\\*
+{\ttfamily \#include $<$sys/time.\+h$>$}\\*
 {\ttfamily \#include $<$math.\+h$>$}\\*
 {\ttfamily \#include $<$errno.\+h$>$}\\*
-{\ttfamily \#include $<$unistd.\+h$>$}\\*
 {\ttfamily \#include $<$sys/types.\+h$>$}\\*
 {\ttfamily \#include $<$getopt.\+h$>$}\\*
 {\ttfamily \#include $<$ncurses.\+h$>$}\\*
@@ -18,6 +19,7 @@
 {\ttfamily \#include $<$stdbool.\+h$>$}\\*
 {\ttfamily \#include $<$sys/prctl.\+h$>$}\\*
 {\ttfamily \#include $<$sched.\+h$>$}\\*
+{\ttfamily \#include $<$signal.\+h$>$}\\*
 {\ttfamily \#include $<$readline/readline.\+h$>$}\\*
 {\ttfamily \#include $<$readline/history.\+h$>$}\\*
 {\ttfamily \#include $<$gsl/gsl\+\_\+rng.\+h$>$}\\*
@@ -29,8 +31,17 @@
 {\ttfamily \#include \char`\"{}C\+O\+R\+E\+M\+O\+D\+\_\+arith/\+C\+O\+R\+E\+M\+O\+D\+\_\+arith.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}calc.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}calc\+\_\+bison.\+h\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{CLIcore_8c_a369266c24eacffb87046522897a570d5}{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E}
+\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
+\item 
+int \hyperlink{CLIcore_8c_a2456979d39ad6205343f328542fbd437}{yy\+\_\+scan\+\_\+string} (const char $\ast$)
+\item 
+int \hyperlink{CLIcore_8c_ab596ae57cdabfb4b298edf3dde7cdf04}{yylex\+\_\+destroy} (void)
 \item 
 int \hyperlink{CLIcore_8c_ac22472c4ee36d70ae07159f83fb690d3}{user\+\_\+function} ()
 \item 
@@ -52,36 +63,40 @@ int \hyperlink{CLIcore_8c_a7560676ed2f15d3b48a588afc6084615}{re\+\_\+alloc} ()
 \item 
 int \hyperlink{CLIcore_8c_a08a15eb6d82a4967d50502a18fe5f205}{command\+\_\+line} (int argc, char $\ast$$\ast$argv)
 \item 
-int \hyperlink{CLIcore_8c_ad2db3c586e9264ff9b3a8dc9d0c3283d}{exit\+C\+L\+I} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a59af8cdd8ef607fb9221fb3a6a3185bb}{exit\+C\+L\+I} ()
 \begin{DoxyCompactList}\small\item\em C\+L\+I commands. \end{DoxyCompactList}\item 
-int \hyperlink{CLIcore_8c_a13166be76043b3dfccc0f830c846dc26}{help} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a8c42aee07751784b814e4d279b586ffd}{help} ()
 \item 
-int \hyperlink{CLIcore_8c_aa11fa3fee7f88f0e499c0315e5e9362b}{list\+\_\+commands} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_ace4bc9dcd102b590befe02a89a457d46}{list\+\_\+commands} ()
 \item 
-int \hyperlink{CLIcore_8c_ac04d84f0adab6c17029809ab2b7fd628}{list\+\_\+commands\+\_\+module} (char $\ast$modulename)
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_ad8d539b7a8f1960528a16a4a7516ba77}{list\+\_\+commands\+\_\+module} (char $\ast$modulename)
 \item 
-int \hyperlink{CLIcore_8c_afbc465e2fc0350eb1c71c3d11f09d4d7}{help\+\_\+command} (char $\ast$cmdkey)
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a522da96e72181268998f5371a2e771cd}{help\+\_\+command} (char $\ast$cmdkey)
 \begin{DoxyCompactList}\small\item\em command help~\newline
 \end{DoxyCompactList}\item 
-int \hyperlink{CLIcore_8c_aac3ae2fb745e63e33060d5c0b658f745}{print\+Info} ()
+void \hyperlink{CLIcore_8c_a4f31a6fd48ee5d4579ae4aaaa3cae285}{sig\+\_\+handler} (int signo)
+\begin{DoxyCompactList}\small\item\em signal catching \end{DoxyCompactList}\item 
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_af7b677cc9f4680de403254c23bcc2645}{print\+Info} ()
 \item 
-int \hyperlink{CLIcore_8c_a19cbc71c216503ddc1174753e9de80c4}{helpreadline} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a31e1e0bdd93d19a316b8d83741e48017}{helpreadline} ()
 \item 
-int \hyperlink{CLIcore_8c_a192d7d6900ff6b9ba21cff45f5fc20ed}{help\+\_\+cmd} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a32841e2d4954c9c57c464b81d0a4eb54}{help\+\_\+cmd} ()
 \item 
-int \hyperlink{CLIcore_8c_a59fa3b6d97c4c27cf562c1efe7665a80}{help\+\_\+module} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_acda89d7a39d7806e055c55f650e4467c}{help\+\_\+module} ()
 \item 
-int \hyperlink{CLIcore_8c_a0b938eaf8680b1a510e8b24caa121a70}{set\+\_\+default\+\_\+precision\+\_\+single} ()
+int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a58f813ca559ecbde1ad32275d32b9f6c}{set\+\_\+default\+\_\+precision\+\_\+single} ()
 \item 
-int \hyperlink{CLIcore_8c_a21cf484ed2d8042a284b20871d0824fc}{set\+\_\+default\+\_\+precision\+\_\+double} ()
+int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_aaae903153a32128cf13f841c527907cd}{set\+\_\+default\+\_\+precision\+\_\+double} ()
 \item 
-int \hyperlink{CLIcore_8c_afb065d6c0f7798b65614d2d73654c15d}{cfits\+\_\+usleep\+\_\+cli} ()
+int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_aa8c8cd420981d3b426cf2dd01d1df40b}{cfits\+\_\+usleep\+\_\+cli} ()
 \item 
-int \hyperlink{CLIcore_8c_a545e2eb87dada15cc88f19899c6a021d}{C\+L\+I\+\_\+execute\+\_\+line} ()
+static int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_a96110e28a48d1faed4d2623a9c61be2f}{C\+L\+I\+\_\+execute\+\_\+line} ()
 \item 
 void \hyperlink{CLIcore_8c_a8d0617e7616ff9298b4a0dd6c7111983}{rl\+\_\+cb} (char $\ast$linein)
 \begin{DoxyCompactList}\small\item\em Readline callback. \end{DoxyCompactList}\item 
-int \hyperlink{CLIcore_8c_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+uint\+\_\+fast16\+\_\+t \hyperlink{CLIcore_8c_a097efcf1913161adeffaf98921d0f5a5}{Register\+C\+L\+Icommand} (char $\ast$C\+L\+Ikey, char $\ast$C\+L\+Imodule, int\+\_\+fast8\+\_\+t($\ast$C\+L\+Ifptr)(), char $\ast$C\+L\+Iinfo, char $\ast$C\+L\+Isyntax, char $\ast$C\+L\+Iexample, char $\ast$C\+L\+I\+Ccall)
+\item 
+int\+\_\+fast8\+\_\+t \hyperlink{CLIcore_8c_aced9481495831c1e6eabb4426225d322}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em Command Line Interface (C\+L\+I) main~\newline
 . \end{DoxyCompactList}\item 
 int \hyperlink{CLIcore_8c_ab547559fc45f1fdbdd9d61c41ea621b1}{C\+L\+I\+\_\+checkarg0} (int argnum, int argtype, int \hyperlink{image__basic_8c_a8bb845778df5ade66dd9af426128a622}{errmsg})
@@ -92,6 +107,28 @@ int \hyperlink{CLIcore_8c_a8b68e72c423d42662e9c37f450ced2df}{C\+L\+I\+\_\+checka
 \end{DoxyCompactItemize}
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
+\item 
+pid\+\_\+t \hyperlink{CLIcore_8c_a5322f5738b8bf1f57458a31aea22f1db}{C\+L\+I\+P\+I\+D}
+\begin{DoxyCompactList}\small\item\em important directories and info \end{DoxyCompactList}\item 
+char \hyperlink{CLIcore_8c_a1eb488f2804d57c2fe61590f6e9c77f7}{Doc\+Dir} \mbox{[}200\mbox{]}
+\item 
+char \hyperlink{CLIcore_8c_aedb03ab482b6c7291fc929f4e7ff3f33}{Src\+Dir} \mbox{[}200\mbox{]}
+\item 
+char \hyperlink{CLIcore_8c_a9ebc4d9af3d9a26f49cccce824a976eb}{Build\+File} \mbox{[}200\mbox{]}
+\item 
+char \hyperlink{CLIcore_8c_ac3e78a1257c6b5e478a52bf5b478014b}{Build\+Date} \mbox{[}200\mbox{]}
+\item 
+char \hyperlink{CLIcore_8c_afeae30b051ddde8c1e7490fa91bc2fc6}{Build\+Time} \mbox{[}200\mbox{]}
+\item 
+uid\+\_\+t \hyperlink{CLIcore_8c_afcdbfc486152403a8152045c561db794}{euid\+\_\+real}
+\item 
+uid\+\_\+t \hyperlink{CLIcore_8c_a8a11142864e6c378d6c8268335b965ec}{euid\+\_\+called}
+\item 
+uid\+\_\+t \hyperlink{CLIcore_8c_a4013b1078f89c6a61f5572b3691ce817}{suid}
+\item 
+int \hyperlink{CLIcore_8c_aadfaed58c87f621d2863f9f598db072e}{T\+Y\+P\+E\+S\+I\+Z\+E} \mbox{[}9\mbox{]}
+\item 
+int \hyperlink{CLIcore_8c_a9a500d20c5951f1462377328ae5305f5}{C\+\_\+\+E\+R\+R\+N\+O}
 \item 
 int \hyperlink{CLIcore_8c_a95f627d7054b1abbffa2c6ea19bf05db}{Verbose} = 0
 \item 
@@ -118,27 +155,33 @@ int \hyperlink{CLIcore_8c_a970d70bbebe50d747e96c95a5c5024a3}{C\+L\+Imatch\+Mode}
 Olivier Guyon 
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
-Sept 4, 2014 
+2015 
 \end{DoxyDate}
 
 
+\subsection{Macro Definition Documentation}
+\hypertarget{CLIcore_8c_a369266c24eacffb87046522897a570d5}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E@{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E}}
+\index{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E@{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{\+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define \+\_\+\+G\+N\+U\+\_\+\+S\+O\+U\+R\+C\+E}\label{CLIcore_8c_a369266c24eacffb87046522897a570d5}
+
+
 \subsection{Function Documentation}
-\hypertarget{CLIcore_8c_afb065d6c0f7798b65614d2d73654c15d}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!cfits\+\_\+usleep\+\_\+cli@{cfits\+\_\+usleep\+\_\+cli}}
+\hypertarget{CLIcore_8c_aa8c8cd420981d3b426cf2dd01d1df40b}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!cfits\+\_\+usleep\+\_\+cli@{cfits\+\_\+usleep\+\_\+cli}}
 \index{cfits\+\_\+usleep\+\_\+cli@{cfits\+\_\+usleep\+\_\+cli}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{cfits\+\_\+usleep\+\_\+cli}]{\setlength{\rightskip}{0pt plus 5cm}int cfits\+\_\+usleep\+\_\+cli (
+\subsubsection[{cfits\+\_\+usleep\+\_\+cli}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t cfits\+\_\+usleep\+\_\+cli (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_afb065d6c0f7798b65614d2d73654c15d}
-\hypertarget{CLIcore_8c_acfa3a12412c06fe66437c5f77f066fa0}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg@{C\+L\+I\+\_\+checkarg}}
+)}\label{CLIcore_8c_aa8c8cd420981d3b426cf2dd01d1df40b}
+\hypertarget{CLIcore_8c_acfa3a12412c06fe66437c5f77f066fa0}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg@{C\+L\+I\+\_\+checkarg}}
 \index{C\+L\+I\+\_\+checkarg@{C\+L\+I\+\_\+checkarg}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{C\+L\+I\+\_\+checkarg}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+I\+\_\+checkarg (
 \begin{DoxyParamCaption}
 \item[{int}]{argnum, }
 \item[{int}]{argtype}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_acfa3a12412c06fe66437c5f77f066fa0}
-\hypertarget{CLIcore_8c_ab547559fc45f1fdbdd9d61c41ea621b1}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg0@{C\+L\+I\+\_\+checkarg0}}
+)}\label{CLIcore_8c_acfa3a12412c06fe66437c5f77f066fa0}
+\hypertarget{CLIcore_8c_ab547559fc45f1fdbdd9d61c41ea621b1}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg0@{C\+L\+I\+\_\+checkarg0}}
 \index{C\+L\+I\+\_\+checkarg0@{C\+L\+I\+\_\+checkarg0}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{C\+L\+I\+\_\+checkarg0}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+I\+\_\+checkarg0 (
 \begin{DoxyParamCaption}
@@ -146,16 +189,16 @@ Sept 4, 2014
 \item[{int}]{argtype, }
 \item[{int}]{errmsg}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_ab547559fc45f1fdbdd9d61c41ea621b1}
-\hypertarget{CLIcore_8c_a8b68e72c423d42662e9c37f450ced2df}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg\+\_\+noerrmsg@{C\+L\+I\+\_\+checkarg\+\_\+noerrmsg}}
+)}\label{CLIcore_8c_ab547559fc45f1fdbdd9d61c41ea621b1}
+\hypertarget{CLIcore_8c_a8b68e72c423d42662e9c37f450ced2df}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+checkarg\+\_\+noerrmsg@{C\+L\+I\+\_\+checkarg\+\_\+noerrmsg}}
 \index{C\+L\+I\+\_\+checkarg\+\_\+noerrmsg@{C\+L\+I\+\_\+checkarg\+\_\+noerrmsg}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{C\+L\+I\+\_\+checkarg\+\_\+noerrmsg}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+I\+\_\+checkarg\+\_\+noerrmsg (
 \begin{DoxyParamCaption}
 \item[{int}]{argnum, }
 \item[{int}]{argtype}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a8b68e72c423d42662e9c37f450ced2df}
-\hypertarget{CLIcore_8c_abdbce5b31d8dee481297ecec70cb210b}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+completion@{C\+L\+I\+\_\+completion}}
+)}\label{CLIcore_8c_a8b68e72c423d42662e9c37f450ced2df}
+\hypertarget{CLIcore_8c_abdbce5b31d8dee481297ecec70cb210b}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+completion@{C\+L\+I\+\_\+completion}}
 \index{C\+L\+I\+\_\+completion@{C\+L\+I\+\_\+completion}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{C\+L\+I\+\_\+completion}]{\setlength{\rightskip}{0pt plus 5cm}static char $\ast$$\ast$ C\+L\+I\+\_\+completion (
 \begin{DoxyParamCaption}
@@ -163,76 +206,76 @@ Sept 4, 2014
 \item[{int}]{start, }
 \item[{int}]{end}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{CLIcore_8c_abdbce5b31d8dee481297ecec70cb210b}
-\hypertarget{CLIcore_8c_a545e2eb87dada15cc88f19899c6a021d}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+execute\+\_\+line@{C\+L\+I\+\_\+execute\+\_\+line}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_abdbce5b31d8dee481297ecec70cb210b}
+\hypertarget{CLIcore_8c_a96110e28a48d1faed4d2623a9c61be2f}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+execute\+\_\+line@{C\+L\+I\+\_\+execute\+\_\+line}}
 \index{C\+L\+I\+\_\+execute\+\_\+line@{C\+L\+I\+\_\+execute\+\_\+line}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{C\+L\+I\+\_\+execute\+\_\+line}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+I\+\_\+execute\+\_\+line (
+\subsubsection[{C\+L\+I\+\_\+execute\+\_\+line}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t C\+L\+I\+\_\+execute\+\_\+line (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a545e2eb87dada15cc88f19899c6a021d}
-\hypertarget{CLIcore_8c_a000ddfcf96caf86a1900c586fbeb0b1c}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+generator@{C\+L\+I\+\_\+generator}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a96110e28a48d1faed4d2623a9c61be2f}
+\hypertarget{CLIcore_8c_a000ddfcf96caf86a1900c586fbeb0b1c}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+\_\+generator@{C\+L\+I\+\_\+generator}}
 \index{C\+L\+I\+\_\+generator@{C\+L\+I\+\_\+generator}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{C\+L\+I\+\_\+generator}]{\setlength{\rightskip}{0pt plus 5cm}char $\ast$ C\+L\+I\+\_\+generator (
 \begin{DoxyParamCaption}
 \item[{const char $\ast$}]{text, }
 \item[{int}]{state}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a000ddfcf96caf86a1900c586fbeb0b1c}
-\hypertarget{CLIcore_8c_a08a15eb6d82a4967d50502a18fe5f205}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!command\+\_\+line@{command\+\_\+line}}
+)}\label{CLIcore_8c_a000ddfcf96caf86a1900c586fbeb0b1c}
+\hypertarget{CLIcore_8c_a08a15eb6d82a4967d50502a18fe5f205}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!command\+\_\+line@{command\+\_\+line}}
 \index{command\+\_\+line@{command\+\_\+line}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{command\+\_\+line}]{\setlength{\rightskip}{0pt plus 5cm}int command\+\_\+line (
 \begin{DoxyParamCaption}
 \item[{int}]{argc, }
 \item[{char $\ast$$\ast$}]{argv}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a08a15eb6d82a4967d50502a18fe5f205}
-\hypertarget{CLIcore_8c_aaa38e8336f9b0dabd89fba19867a6e88}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!dupstr@{dupstr}}
+)}\label{CLIcore_8c_a08a15eb6d82a4967d50502a18fe5f205}
+\hypertarget{CLIcore_8c_aaa38e8336f9b0dabd89fba19867a6e88}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!dupstr@{dupstr}}
 \index{dupstr@{dupstr}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{dupstr}]{\setlength{\rightskip}{0pt plus 5cm}char $\ast$ dupstr (
 \begin{DoxyParamCaption}
 \item[{char $\ast$}]{s}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_aaa38e8336f9b0dabd89fba19867a6e88}
-\hypertarget{CLIcore_8c_ad2db3c586e9264ff9b3a8dc9d0c3283d}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!exit\+C\+L\+I@{exit\+C\+L\+I}}
+)}\label{CLIcore_8c_aaa38e8336f9b0dabd89fba19867a6e88}
+\hypertarget{CLIcore_8c_a59af8cdd8ef607fb9221fb3a6a3185bb}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!exit\+C\+L\+I@{exit\+C\+L\+I}}
 \index{exit\+C\+L\+I@{exit\+C\+L\+I}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{exit\+C\+L\+I}]{\setlength{\rightskip}{0pt plus 5cm}int exit\+C\+L\+I (
+\subsubsection[{exit\+C\+L\+I}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t exit\+C\+L\+I (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_ad2db3c586e9264ff9b3a8dc9d0c3283d}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a59af8cdd8ef607fb9221fb3a6a3185bb}
 
 
 C\+L\+I commands. 
 
-C\+L\+I functions. \hypertarget{CLIcore_8c_aba10aa7a7ca914de660d5e55c431baee}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!fn\+Exit1@{fn\+Exit1}}
+C\+L\+I functions. \hypertarget{CLIcore_8c_aba10aa7a7ca914de660d5e55c431baee}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!fn\+Exit1@{fn\+Exit1}}
 \index{fn\+Exit1@{fn\+Exit1}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{fn\+Exit1}]{\setlength{\rightskip}{0pt plus 5cm}void fn\+Exit1 (
 \begin{DoxyParamCaption}
 \item[{void}]{}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_aba10aa7a7ca914de660d5e55c431baee}
-\hypertarget{CLIcore_8c_a13166be76043b3dfccc0f830c846dc26}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help@{help}}
+)}\label{CLIcore_8c_aba10aa7a7ca914de660d5e55c431baee}
+\hypertarget{CLIcore_8c_a8c42aee07751784b814e4d279b586ffd}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help@{help}}
 \index{help@{help}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{help}]{\setlength{\rightskip}{0pt plus 5cm}int help (
+\subsubsection[{help}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t help (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a13166be76043b3dfccc0f830c846dc26}
-\hypertarget{CLIcore_8c_a192d7d6900ff6b9ba21cff45f5fc20ed}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+cmd@{help\+\_\+cmd}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a8c42aee07751784b814e4d279b586ffd}
+\hypertarget{CLIcore_8c_a32841e2d4954c9c57c464b81d0a4eb54}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+cmd@{help\+\_\+cmd}}
 \index{help\+\_\+cmd@{help\+\_\+cmd}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{help\+\_\+cmd}]{\setlength{\rightskip}{0pt plus 5cm}int help\+\_\+cmd (
+\subsubsection[{help\+\_\+cmd}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t help\+\_\+cmd (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a192d7d6900ff6b9ba21cff45f5fc20ed}
-\hypertarget{CLIcore_8c_afbc465e2fc0350eb1c71c3d11f09d4d7}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+command@{help\+\_\+command}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a32841e2d4954c9c57c464b81d0a4eb54}
+\hypertarget{CLIcore_8c_a522da96e72181268998f5371a2e771cd}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+command@{help\+\_\+command}}
 \index{help\+\_\+command@{help\+\_\+command}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{help\+\_\+command}]{\setlength{\rightskip}{0pt plus 5cm}int help\+\_\+command (
+\subsubsection[{help\+\_\+command}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t help\+\_\+command (
 \begin{DoxyParamCaption}
 \item[{char $\ast$}]{cmdkey}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_afbc465e2fc0350eb1c71c3d11f09d4d7}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a522da96e72181268998f5371a2e771cd}
 
 
 command help~\newline
@@ -243,42 +286,42 @@ command help~\newline
 \mbox{\tt in}  & {\em cmdkey} & Commmand name \\
 \hline
 \end{DoxyParams}
-\hypertarget{CLIcore_8c_a59fa3b6d97c4c27cf562c1efe7665a80}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+module@{help\+\_\+module}}
+\hypertarget{CLIcore_8c_acda89d7a39d7806e055c55f650e4467c}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!help\+\_\+module@{help\+\_\+module}}
 \index{help\+\_\+module@{help\+\_\+module}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{help\+\_\+module}]{\setlength{\rightskip}{0pt plus 5cm}int help\+\_\+module (
+\subsubsection[{help\+\_\+module}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t help\+\_\+module (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a59fa3b6d97c4c27cf562c1efe7665a80}
-\hypertarget{CLIcore_8c_a19cbc71c216503ddc1174753e9de80c4}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!helpreadline@{helpreadline}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_acda89d7a39d7806e055c55f650e4467c}
+\hypertarget{CLIcore_8c_a31e1e0bdd93d19a316b8d83741e48017}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!helpreadline@{helpreadline}}
 \index{helpreadline@{helpreadline}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{helpreadline}]{\setlength{\rightskip}{0pt plus 5cm}int helpreadline (
+\subsubsection[{helpreadline}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t helpreadline (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a19cbc71c216503ddc1174753e9de80c4}
-\hypertarget{CLIcore_8c_aa11fa3fee7f88f0e499c0315e5e9362b}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!list\+\_\+commands@{list\+\_\+commands}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_a31e1e0bdd93d19a316b8d83741e48017}
+\hypertarget{CLIcore_8c_ace4bc9dcd102b590befe02a89a457d46}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!list\+\_\+commands@{list\+\_\+commands}}
 \index{list\+\_\+commands@{list\+\_\+commands}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{list\+\_\+commands}]{\setlength{\rightskip}{0pt plus 5cm}int list\+\_\+commands (
+\subsubsection[{list\+\_\+commands}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t list\+\_\+commands (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_aa11fa3fee7f88f0e499c0315e5e9362b}
-\hypertarget{CLIcore_8c_ac04d84f0adab6c17029809ab2b7fd628}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!list\+\_\+commands\+\_\+module@{list\+\_\+commands\+\_\+module}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_ace4bc9dcd102b590befe02a89a457d46}
+\hypertarget{CLIcore_8c_ad8d539b7a8f1960528a16a4a7516ba77}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!list\+\_\+commands\+\_\+module@{list\+\_\+commands\+\_\+module}}
 \index{list\+\_\+commands\+\_\+module@{list\+\_\+commands\+\_\+module}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{list\+\_\+commands\+\_\+module}]{\setlength{\rightskip}{0pt plus 5cm}int list\+\_\+commands\+\_\+module (
+\subsubsection[{list\+\_\+commands\+\_\+module}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t list\+\_\+commands\+\_\+module (
 \begin{DoxyParamCaption}
 \item[{char $\ast$}]{modulename}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_ac04d84f0adab6c17029809ab2b7fd628}
-\hypertarget{CLIcore_8c_a0ddf1224851353fc92bfbff6f499fa97}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main@{main}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_ad8d539b7a8f1960528a16a4a7516ba77}
+\hypertarget{CLIcore_8c_aced9481495831c1e6eabb4426225d322}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main@{main}}
 \index{main@{main}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t main (
 \begin{DoxyParamCaption}
 \item[{int}]{argc, }
 \item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]}}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a0ddf1224851353fc92bfbff6f499fa97}
+)}\label{CLIcore_8c_aced9481495831c1e6eabb4426225d322}
 
 
 Command Line Interface (C\+L\+I) main~\newline
@@ -287,100 +330,175 @@ Command Line Interface (C\+L\+I) main~\newline
 uses readline to read user input~\newline
 parsing done with bison and flex becomes 1 after startup
 
-If fifo is on and file C\+L\+Istatup.\+txt exists, load it \hypertarget{CLIcore_8c_a5394e0be8c8a46c283f5b905ce8f676c}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main\+\_\+free@{main\+\_\+free}}
+If fifo is on and file C\+L\+Istatup.\+txt exists, load it \hypertarget{CLIcore_8c_a5394e0be8c8a46c283f5b905ce8f676c}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main\+\_\+free@{main\+\_\+free}}
 \index{main\+\_\+free@{main\+\_\+free}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{main\+\_\+free}]{\setlength{\rightskip}{0pt plus 5cm}void main\+\_\+free (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a5394e0be8c8a46c283f5b905ce8f676c}
-\hypertarget{CLIcore_8c_a0b8da71bf10f209b0dfa41f04551c4fc}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main\+\_\+init@{main\+\_\+init}}
+)}\label{CLIcore_8c_a5394e0be8c8a46c283f5b905ce8f676c}
+\hypertarget{CLIcore_8c_a0b8da71bf10f209b0dfa41f04551c4fc}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!main\+\_\+init@{main\+\_\+init}}
 \index{main\+\_\+init@{main\+\_\+init}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{main\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}void main\+\_\+init (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a0b8da71bf10f209b0dfa41f04551c4fc}
-defaults to floating point type \hypertarget{CLIcore_8c_aac3ae2fb745e63e33060d5c0b658f745}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!print\+Info@{print\+Info}}
+)}\label{CLIcore_8c_a0b8da71bf10f209b0dfa41f04551c4fc}
+defaults to floating point type \hypertarget{CLIcore_8c_af7b677cc9f4680de403254c23bcc2645}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!print\+Info@{print\+Info}}
 \index{print\+Info@{print\+Info}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{print\+Info}]{\setlength{\rightskip}{0pt plus 5cm}int print\+Info (
+\subsubsection[{print\+Info}]{\setlength{\rightskip}{0pt plus 5cm}static int\+\_\+fast8\+\_\+t print\+Info (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_aac3ae2fb745e63e33060d5c0b658f745}
-\hypertarget{CLIcore_8c_a7560676ed2f15d3b48a588afc6084615}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!re\+\_\+alloc@{re\+\_\+alloc}}
+)\hspace{0.3cm}{\ttfamily [static]}}\label{CLIcore_8c_af7b677cc9f4680de403254c23bcc2645}
+\hypertarget{CLIcore_8c_a7560676ed2f15d3b48a588afc6084615}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!re\+\_\+alloc@{re\+\_\+alloc}}
 \index{re\+\_\+alloc@{re\+\_\+alloc}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{re\+\_\+alloc}]{\setlength{\rightskip}{0pt plus 5cm}int re\+\_\+alloc (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a7560676ed2f15d3b48a588afc6084615}
-\hypertarget{CLIcore_8c_a8d0617e7616ff9298b4a0dd6c7111983}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!rl\+\_\+cb@{rl\+\_\+cb}}
+)}\label{CLIcore_8c_a7560676ed2f15d3b48a588afc6084615}
+\hypertarget{CLIcore_8c_a097efcf1913161adeffaf98921d0f5a5}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Register\+C\+L\+Icommand@{Register\+C\+L\+Icommand}}
+\index{Register\+C\+L\+Icommand@{Register\+C\+L\+Icommand}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Register\+C\+L\+Icommand}]{\setlength{\rightskip}{0pt plus 5cm}uint\+\_\+fast16\+\_\+t Register\+C\+L\+Icommand (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{C\+L\+Ikey, }
+\item[{char $\ast$}]{C\+L\+Imodule, }
+\item[{int\+\_\+fast8\+\_\+t($\ast$)()}]{C\+L\+Ifptr, }
+\item[{char $\ast$}]{C\+L\+Iinfo, }
+\item[{char $\ast$}]{C\+L\+Isyntax, }
+\item[{char $\ast$}]{C\+L\+Iexample, }
+\item[{char $\ast$}]{C\+L\+I\+Ccall}
+\end{DoxyParamCaption}
+)}\label{CLIcore_8c_a097efcf1913161adeffaf98921d0f5a5}
+\hypertarget{CLIcore_8c_a8d0617e7616ff9298b4a0dd6c7111983}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!rl\+\_\+cb@{rl\+\_\+cb}}
 \index{rl\+\_\+cb@{rl\+\_\+cb}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{rl\+\_\+cb}]{\setlength{\rightskip}{0pt plus 5cm}void rl\+\_\+cb (
 \begin{DoxyParamCaption}
 \item[{char $\ast$}]{linein}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a8d0617e7616ff9298b4a0dd6c7111983}
+)}\label{CLIcore_8c_a8d0617e7616ff9298b4a0dd6c7111983}
 
 
 Readline callback. 
 
-\hypertarget{CLIcore_8c_a21cf484ed2d8042a284b20871d0824fc}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!set\+\_\+default\+\_\+precision\+\_\+double@{set\+\_\+default\+\_\+precision\+\_\+double}}
+\hypertarget{CLIcore_8c_aaae903153a32128cf13f841c527907cd}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!set\+\_\+default\+\_\+precision\+\_\+double@{set\+\_\+default\+\_\+precision\+\_\+double}}
 \index{set\+\_\+default\+\_\+precision\+\_\+double@{set\+\_\+default\+\_\+precision\+\_\+double}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{set\+\_\+default\+\_\+precision\+\_\+double}]{\setlength{\rightskip}{0pt plus 5cm}int set\+\_\+default\+\_\+precision\+\_\+double (
+\subsubsection[{set\+\_\+default\+\_\+precision\+\_\+double}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t set\+\_\+default\+\_\+precision\+\_\+double (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a21cf484ed2d8042a284b20871d0824fc}
-\hypertarget{CLIcore_8c_a0b938eaf8680b1a510e8b24caa121a70}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!set\+\_\+default\+\_\+precision\+\_\+single@{set\+\_\+default\+\_\+precision\+\_\+single}}
+)}\label{CLIcore_8c_aaae903153a32128cf13f841c527907cd}
+\hypertarget{CLIcore_8c_a58f813ca559ecbde1ad32275d32b9f6c}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!set\+\_\+default\+\_\+precision\+\_\+single@{set\+\_\+default\+\_\+precision\+\_\+single}}
 \index{set\+\_\+default\+\_\+precision\+\_\+single@{set\+\_\+default\+\_\+precision\+\_\+single}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{set\+\_\+default\+\_\+precision\+\_\+single}]{\setlength{\rightskip}{0pt plus 5cm}int set\+\_\+default\+\_\+precision\+\_\+single (
+\subsubsection[{set\+\_\+default\+\_\+precision\+\_\+single}]{\setlength{\rightskip}{0pt plus 5cm}int\+\_\+fast8\+\_\+t set\+\_\+default\+\_\+precision\+\_\+single (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a0b938eaf8680b1a510e8b24caa121a70}
-\hypertarget{CLIcore_8c_ac22472c4ee36d70ae07159f83fb690d3}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!user\+\_\+function@{user\+\_\+function}}
+)}\label{CLIcore_8c_a58f813ca559ecbde1ad32275d32b9f6c}
+\hypertarget{CLIcore_8c_a4f31a6fd48ee5d4579ae4aaaa3cae285}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!sig\+\_\+handler@{sig\+\_\+handler}}
+\index{sig\+\_\+handler@{sig\+\_\+handler}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{sig\+\_\+handler}]{\setlength{\rightskip}{0pt plus 5cm}void sig\+\_\+handler (
+\begin{DoxyParamCaption}
+\item[{int}]{signo}
+\end{DoxyParamCaption}
+)}\label{CLIcore_8c_a4f31a6fd48ee5d4579ae4aaaa3cae285}
+
+
+signal catching 
+
+\hypertarget{CLIcore_8c_ac22472c4ee36d70ae07159f83fb690d3}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!user\+\_\+function@{user\+\_\+function}}
 \index{user\+\_\+function@{user\+\_\+function}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{user\+\_\+function}]{\setlength{\rightskip}{0pt plus 5cm}int user\+\_\+function (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_ac22472c4ee36d70ae07159f83fb690d3}
-\hypertarget{CLIcore_8c_a90dfbfc4af01ed2fa845ad04b5f40ed8}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!xmalloc@{xmalloc}}
+)}\label{CLIcore_8c_ac22472c4ee36d70ae07159f83fb690d3}
+\hypertarget{CLIcore_8c_a90dfbfc4af01ed2fa845ad04b5f40ed8}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!xmalloc@{xmalloc}}
 \index{xmalloc@{xmalloc}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
 \subsubsection[{xmalloc}]{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ xmalloc (
 \begin{DoxyParamCaption}
 \item[{int}]{size}
 \end{DoxyParamCaption}
-)}}\label{CLIcore_8c_a90dfbfc4af01ed2fa845ad04b5f40ed8}
+)}\label{CLIcore_8c_a90dfbfc4af01ed2fa845ad04b5f40ed8}
+\hypertarget{CLIcore_8c_a2456979d39ad6205343f328542fbd437}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!yy\+\_\+scan\+\_\+string@{yy\+\_\+scan\+\_\+string}}
+\index{yy\+\_\+scan\+\_\+string@{yy\+\_\+scan\+\_\+string}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{yy\+\_\+scan\+\_\+string}]{\setlength{\rightskip}{0pt plus 5cm}int yy\+\_\+scan\+\_\+string (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{}
+\end{DoxyParamCaption}
+)}\label{CLIcore_8c_a2456979d39ad6205343f328542fbd437}
+\hypertarget{CLIcore_8c_ab596ae57cdabfb4b298edf3dde7cdf04}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!yylex\+\_\+destroy@{yylex\+\_\+destroy}}
+\index{yylex\+\_\+destroy@{yylex\+\_\+destroy}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{yylex\+\_\+destroy}]{\setlength{\rightskip}{0pt plus 5cm}int yylex\+\_\+destroy (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\label{CLIcore_8c_ab596ae57cdabfb4b298edf3dde7cdf04}
 
 
 \subsection{Variable Documentation}
-\hypertarget{CLIcore_8c_a5f4566d37ec53f74821f22df71a6fb93}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!calctmpimname@{calctmpimname}}
+\hypertarget{CLIcore_8c_ac3e78a1257c6b5e478a52bf5b478014b}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Build\+Date@{Build\+Date}}
+\index{Build\+Date@{Build\+Date}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Build\+Date}]{\setlength{\rightskip}{0pt plus 5cm}char Build\+Date\mbox{[}200\mbox{]}}\label{CLIcore_8c_ac3e78a1257c6b5e478a52bf5b478014b}
+\hypertarget{CLIcore_8c_a9ebc4d9af3d9a26f49cccce824a976eb}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Build\+File@{Build\+File}}
+\index{Build\+File@{Build\+File}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Build\+File}]{\setlength{\rightskip}{0pt plus 5cm}char Build\+File\mbox{[}200\mbox{]}}\label{CLIcore_8c_a9ebc4d9af3d9a26f49cccce824a976eb}
+\hypertarget{CLIcore_8c_afeae30b051ddde8c1e7490fa91bc2fc6}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Build\+Time@{Build\+Time}}
+\index{Build\+Time@{Build\+Time}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Build\+Time}]{\setlength{\rightskip}{0pt plus 5cm}char Build\+Time\mbox{[}200\mbox{]}}\label{CLIcore_8c_afeae30b051ddde8c1e7490fa91bc2fc6}
+\hypertarget{CLIcore_8c_a9a500d20c5951f1462377328ae5305f5}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+\_\+\+E\+R\+R\+N\+O@{C\+\_\+\+E\+R\+R\+N\+O}}
+\index{C\+\_\+\+E\+R\+R\+N\+O@{C\+\_\+\+E\+R\+R\+N\+O}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{C\+\_\+\+E\+R\+R\+N\+O}]{\setlength{\rightskip}{0pt plus 5cm}int C\+\_\+\+E\+R\+R\+N\+O}\label{CLIcore_8c_a9a500d20c5951f1462377328ae5305f5}
+\hypertarget{CLIcore_8c_a5f4566d37ec53f74821f22df71a6fb93}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!calctmpimname@{calctmpimname}}
 \index{calctmpimname@{calctmpimname}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{calctmpimname}]{\setlength{\rightskip}{0pt plus 5cm}char calctmpimname\mbox{[}200\mbox{]}}}\label{CLIcore_8c_a5f4566d37ec53f74821f22df71a6fb93}
-\hypertarget{CLIcore_8c_a9e041e5e654d85941bd71358b0ef40f5}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Iexecute\+C\+M\+Dready@{C\+L\+Iexecute\+C\+M\+Dready}}
+\subsubsection[{calctmpimname}]{\setlength{\rightskip}{0pt plus 5cm}char calctmpimname\mbox{[}200\mbox{]}}\label{CLIcore_8c_a5f4566d37ec53f74821f22df71a6fb93}
+\hypertarget{CLIcore_8c_a9e041e5e654d85941bd71358b0ef40f5}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Iexecute\+C\+M\+Dready@{C\+L\+Iexecute\+C\+M\+Dready}}
 \index{C\+L\+Iexecute\+C\+M\+Dready@{C\+L\+Iexecute\+C\+M\+Dready}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{C\+L\+Iexecute\+C\+M\+Dready}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+Iexecute\+C\+M\+Dready = 0}}\label{CLIcore_8c_a9e041e5e654d85941bd71358b0ef40f5}
-\hypertarget{CLIcore_8c_a970d70bbebe50d747e96c95a5c5024a3}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Imatch\+Mode@{C\+L\+Imatch\+Mode}}
+\subsubsection[{C\+L\+Iexecute\+C\+M\+Dready}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+Iexecute\+C\+M\+Dready = 0}\label{CLIcore_8c_a9e041e5e654d85941bd71358b0ef40f5}
+\hypertarget{CLIcore_8c_a970d70bbebe50d747e96c95a5c5024a3}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Imatch\+Mode@{C\+L\+Imatch\+Mode}}
 \index{C\+L\+Imatch\+Mode@{C\+L\+Imatch\+Mode}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{C\+L\+Imatch\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+Imatch\+Mode = 0}}\label{CLIcore_8c_a970d70bbebe50d747e96c95a5c5024a3}
-\hypertarget{CLIcore_8c_a17fbe78d8166c9971c01d8acb0a74ee6}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Istartupfilename@{C\+L\+Istartupfilename}}
+\subsubsection[{C\+L\+Imatch\+Mode}]{\setlength{\rightskip}{0pt plus 5cm}int C\+L\+Imatch\+Mode = 0}\label{CLIcore_8c_a970d70bbebe50d747e96c95a5c5024a3}
+\hypertarget{CLIcore_8c_a5322f5738b8bf1f57458a31aea22f1db}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+I\+P\+I\+D@{C\+L\+I\+P\+I\+D}}
+\index{C\+L\+I\+P\+I\+D@{C\+L\+I\+P\+I\+D}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{C\+L\+I\+P\+I\+D}]{\setlength{\rightskip}{0pt plus 5cm}pid\+\_\+t C\+L\+I\+P\+I\+D}\label{CLIcore_8c_a5322f5738b8bf1f57458a31aea22f1db}
+
+
+important directories and info 
+
+\hypertarget{CLIcore_8c_a17fbe78d8166c9971c01d8acb0a74ee6}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!C\+L\+Istartupfilename@{C\+L\+Istartupfilename}}
 \index{C\+L\+Istartupfilename@{C\+L\+Istartupfilename}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{C\+L\+Istartupfilename}]{\setlength{\rightskip}{0pt plus 5cm}char C\+L\+Istartupfilename\mbox{[}200\mbox{]} = \char`\"{}C\+L\+Istartup.\+txt\char`\"{}}}\label{CLIcore_8c_a17fbe78d8166c9971c01d8acb0a74ee6}
-\hypertarget{CLIcore_8c_a9842752e03b4de9b4593f1a3b34364ab}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!data@{data}}
+\subsubsection[{C\+L\+Istartupfilename}]{\setlength{\rightskip}{0pt plus 5cm}char C\+L\+Istartupfilename\mbox{[}200\mbox{]} = \char`\"{}C\+L\+Istartup.\+txt\char`\"{}}\label{CLIcore_8c_a17fbe78d8166c9971c01d8acb0a74ee6}
+\hypertarget{CLIcore_8c_a9842752e03b4de9b4593f1a3b34364ab}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!data@{data}}
 \index{data@{data}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}}\label{CLIcore_8c_a9842752e03b4de9b4593f1a3b34364ab}
-\hypertarget{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!line@{line}}
+\subsubsection[{data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf D\+A\+T\+A} data}\label{CLIcore_8c_a9842752e03b4de9b4593f1a3b34364ab}
+\hypertarget{CLIcore_8c_a1eb488f2804d57c2fe61590f6e9c77f7}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Doc\+Dir@{Doc\+Dir}}
+\index{Doc\+Dir@{Doc\+Dir}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Doc\+Dir}]{\setlength{\rightskip}{0pt plus 5cm}char Doc\+Dir\mbox{[}200\mbox{]}}\label{CLIcore_8c_a1eb488f2804d57c2fe61590f6e9c77f7}
+\hypertarget{CLIcore_8c_a8a11142864e6c378d6c8268335b965ec}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!euid\+\_\+called@{euid\+\_\+called}}
+\index{euid\+\_\+called@{euid\+\_\+called}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{euid\+\_\+called}]{\setlength{\rightskip}{0pt plus 5cm}uid\+\_\+t euid\+\_\+called}\label{CLIcore_8c_a8a11142864e6c378d6c8268335b965ec}
+\hypertarget{CLIcore_8c_afcdbfc486152403a8152045c561db794}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!euid\+\_\+real@{euid\+\_\+real}}
+\index{euid\+\_\+real@{euid\+\_\+real}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{euid\+\_\+real}]{\setlength{\rightskip}{0pt plus 5cm}uid\+\_\+t euid\+\_\+real}\label{CLIcore_8c_afcdbfc486152403a8152045c561db794}
+\hypertarget{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!line@{line}}
 \index{line@{line}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{line}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ line}}\label{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}
-\hypertarget{CLIcore_8c_ae5371cd7e46f19a56efdff432345b508}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Listimfile@{Listimfile}}
+\subsubsection[{line}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ line}\label{CLIcore_8c_a8adb30f4f6669f927fd9232f686c637b}
+\hypertarget{CLIcore_8c_ae5371cd7e46f19a56efdff432345b508}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Listimfile@{Listimfile}}
 \index{Listimfile@{Listimfile}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{Listimfile}]{\setlength{\rightskip}{0pt plus 5cm}int Listimfile = 0}}\label{CLIcore_8c_ae5371cd7e46f19a56efdff432345b508}
-\hypertarget{CLIcore_8c_a4f8be0aef5b7a6c4f308f99f92370d74}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!rlquit@{rlquit}}
+\subsubsection[{Listimfile}]{\setlength{\rightskip}{0pt plus 5cm}int Listimfile = 0}\label{CLIcore_8c_ae5371cd7e46f19a56efdff432345b508}
+\hypertarget{CLIcore_8c_a4f8be0aef5b7a6c4f308f99f92370d74}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!rlquit@{rlquit}}
 \index{rlquit@{rlquit}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{rlquit}]{\setlength{\rightskip}{0pt plus 5cm}int rlquit = false}}\label{CLIcore_8c_a4f8be0aef5b7a6c4f308f99f92370d74}
-\hypertarget{CLIcore_8c_a95f627d7054b1abbffa2c6ea19bf05db}{\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Verbose@{Verbose}}
+\subsubsection[{rlquit}]{\setlength{\rightskip}{0pt plus 5cm}int rlquit = false}\label{CLIcore_8c_a4f8be0aef5b7a6c4f308f99f92370d74}
+\hypertarget{CLIcore_8c_aedb03ab482b6c7291fc929f4e7ff3f33}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Src\+Dir@{Src\+Dir}}
+\index{Src\+Dir@{Src\+Dir}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{Src\+Dir}]{\setlength{\rightskip}{0pt plus 5cm}char Src\+Dir\mbox{[}200\mbox{]}}\label{CLIcore_8c_aedb03ab482b6c7291fc929f4e7ff3f33}
+\hypertarget{CLIcore_8c_a4013b1078f89c6a61f5572b3691ce817}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!suid@{suid}}
+\index{suid@{suid}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{suid}]{\setlength{\rightskip}{0pt plus 5cm}uid\+\_\+t suid}\label{CLIcore_8c_a4013b1078f89c6a61f5572b3691ce817}
+\hypertarget{CLIcore_8c_aadfaed58c87f621d2863f9f598db072e}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!T\+Y\+P\+E\+S\+I\+Z\+E@{T\+Y\+P\+E\+S\+I\+Z\+E}}
+\index{T\+Y\+P\+E\+S\+I\+Z\+E@{T\+Y\+P\+E\+S\+I\+Z\+E}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
+\subsubsection[{T\+Y\+P\+E\+S\+I\+Z\+E}]{\setlength{\rightskip}{0pt plus 5cm}int T\+Y\+P\+E\+S\+I\+Z\+E\mbox{[}9\mbox{]}}\label{CLIcore_8c_aadfaed58c87f621d2863f9f598db072e}
+\hypertarget{CLIcore_8c_a95f627d7054b1abbffa2c6ea19bf05db}{}\index{C\+L\+Icore.\+c@{C\+L\+Icore.\+c}!Verbose@{Verbose}}
 \index{Verbose@{Verbose}!C\+L\+Icore.\+c@{C\+L\+Icore.\+c}}
-\subsubsection[{Verbose}]{\setlength{\rightskip}{0pt plus 5cm}int Verbose = 0}}\label{CLIcore_8c_a95f627d7054b1abbffa2c6ea19bf05db}
+\subsubsection[{Verbose}]{\setlength{\rightskip}{0pt plus 5cm}int Verbose = 0}\label{CLIcore_8c_a95f627d7054b1abbffa2c6ea19bf05db}
