@@ -1,33 +1,73 @@
+/**
+ * @file    AOsystSim.h
+ * @brief   Function prototypes for AOsystSim
+ * 
+ * 
+ * @author  O. Guyon
+ * @date    18 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ * @see https://github.com/oguyon/Cfits
+ */
+
+
 #ifndef _AOSYSTSIM_H
 #define _AOSYSTSIM_H
 
 
 
-int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name);
 
-long AOsystSim_mkTelPupDM(const char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx);
 
-long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name);
 
+/** @brief Module initialization
+ * 
+ * Registers command line interface commands
+ */
 int init_AOsystSim();
 
 
-int AOsystSim_mkWF(const char *CONF_FNAME);
-int AOsystSim_PyrWFS(const char *CONF_FNAME);
-int AOsystSim_DM(const char *CONF_FNAME);
-int AOsystSim_coroLOWFS(const char *CONF_FNAME);
 
+
+/** @brief Run AO system simulation
+ * 
+ * @param syncmode
+ * @param DMindex
+ * @param delayus
+ */
+ 
+ 
+
+/** @brief simplified AO system simulator (DM command -> WFS image part)
+ *
+ * Creates a DM map(s) and a WF error input
+ * When either DM map or WF error input changes, compute intensity outputs (images)
+ *
+ * @param syncmode    Synchronization mode. 0: sync to turbulence. 1: sync to DM. 2: sync to both, >2, use delayus
+ * @param DMindex     DM used for simulation
+ * @param delayus     Delay between loop iterations if syncmode>2
+ * 
+ *
+ */ 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
-long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor);
-int AOsystSim_FPWFS_mkprobes(const char *IDprobeA_name, const char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom);
-int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int NBprobes);
 
 
 
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 1. Analytical high contrast PSF simulation
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 typedef struct {
-    double alpha; // angle
+    double alpha;         /**< On-sky angular separation [rad] */
     double alpha_ld;
     double alpha_arcsec;
     double lambda0; // wavelength at seeing measurement [m]
@@ -93,7 +133,173 @@ typedef struct {
    
 } EXAOSIMCONF;
 
+/** @brief simple AO filtering model using Fourier analysis
+ *         simulates WFS integration, delay, noise (as a function of spatial frequency)
+ *
+ *  Open loop model
+ * 
+ *  AO simple filter is modeled by several 2D maps in spatial frequency:
+ *  aosf_noise : noise per spatial frequency
+ *  aosf_mult : signal throughput per spatial frequency
+ *  aosf_gain : loop gain to be applied per spatial frequency
+ */
+
+int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name);
 
 int_fast8_t AOsystSim_extremeAO_contrast_sim();
+
+///@}
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 2. Telescope pupil
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+/** @brief Make telescope pupil 
+ * 
+ * 
+ */ 
+long AOsystSim_mkTelPupDM(const char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx);
+
+
+/** @brief Fit measured DM response to telescope pupil 
+ * 
+ * 
+ */ 
+long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name);
+
+///@}
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 3. Wavefront 
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int AOsystSim_mkWF_mkCONF(const char *fname);
+
+int AOsystSim_mkWF(const char *CONF_FNAME);
+
+///@}
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 4. Wavefront Sensor
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int AOsystSim_WFSsim_Pyramid(const char *inWFc_name, const char *outWFSim_name, double modampl, long modnbpts);
+
+int AOsystSim_runWFS(long index, const char *IDout_name);
+
+int AOsystSim_PyrWFS_mkCONF(const char *fname);
+
+int AOsystSim_PyrWFS(const char *CONF_FNAME);
+
+///@}
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 5. Deformable mirror
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int AOsystSim_DMshape(const char *IDdmctrl_name, const char *IDdmifc_name, const char *IDdm_name);
+
+int AOsystSim_DM_mkCONF(const char *fname);
+
+int AOsystSim_DM(const char *CONF_FNAME);
+
+
+///@}
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 6. Coronagraph and LOWFS
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int AOsystSim_coroLOWFS(const char *CONF_FNAME);
+
+///@}
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 7. Focal plane WFS / C
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor);
+
+int AOsystSim_FPWFS_mkprobes(const char *IDprobeA_name, const char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom);
+
+int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int NBprobes);
+
+///@}
+
+
+
+
+
+
+
+
+
+
+
 
 #endif

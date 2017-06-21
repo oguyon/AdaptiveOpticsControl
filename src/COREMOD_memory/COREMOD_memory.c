@@ -1,3 +1,20 @@
+/**
+ * @file    COREMOD_memory.c
+ * @brief   cfitsTK memory functions
+ * 
+ * Functions to handle images and streams
+ *  
+ * @author  O. Guyon
+ * @date    18 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ * @see https://github.com/oguyon/Cfits
+ */
+
+
+
 #define _GNU_SOURCE
 
 #include <stdint.h>
@@ -636,9 +653,9 @@ int_fast8_t COREMOD_MEMORY_stream_halfimDiff_cli()
 
 int_fast8_t COREMOD_MEMORY_image_streamupdateloop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,5)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
     {
-        COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
         return 0;
     }
     else
@@ -1085,9 +1102,9 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
     strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]> <NBcubes> <period> <offsetus> <sync stream name> <semtrig> <timing mode>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000 3 3 154 ircam1 3 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
@@ -4727,10 +4744,19 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
 
 
 
-// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
-long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)
+// takes a 3Dimage(s) (circular buffer(s)) and writes slices to a 2D image with time interval specified in us
+long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)
 {
-    long IDin;
+    long *IDin;
+    long cubeindex;
+    char imname[200]; 
+    long IDsync;
+    long long cntsync;
+    long pcnt = 0;
+    long offsetfr = 0;
+    long offsetfrcnt = 0;
+    int cntDelayMode = 0;
+    
     long IDout;
     long kk;
     long *arraysize;
@@ -4753,76 +4779,144 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 	
 	
 	
+	
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     #endif
 
 
+	if(NBcubes<1)
+	{
+		printf("ERROR: invalid number of input cubes, needs to be >0");
+		return(-1);
+	}
+		
+	
+
+	IDin = (long*) malloc(sizeof(long)*NBcubes);
+	if(NBcubes==1)
+		IDin[0] = image_ID(IDinname);
+	else
+	{
+		IDsync = image_ID(IDsync_name);
+		
+		for(cubeindex=0; cubeindex<NBcubes; cubeindex++)
+		{
+			sprintf(imname, "%s_%03ld", IDinname, cubeindex);
+			IDin[cubeindex] = image_ID(imname);
+		}
+		offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
+	
+		printf("FRAMES OFFSET = %ld\n", offsetfr);
+	}
+
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
 
-    IDin = image_ID(IDinname);
-    naxis = data.image[IDin].md[0].naxis;
+ 
+    naxis = data.image[IDin[0]].md[0].naxis;
     arraysize = (long*) malloc(sizeof(long)*3);
     if(naxis != 3)
     {
         printf("ERROR: input image %s should be 3D\n", IDinname);
         exit(0);
     }
-    arraysize[0] = data.image[IDin].md[0].size[0];
-    arraysize[1] = data.image[IDin].md[0].size[1];
-    arraysize[2] = data.image[IDin].md[0].size[2];
+    arraysize[0] = data.image[IDin[0]].md[0].size[0];
+    arraysize[1] = data.image[IDin[0]].md[0].size[1];
+    arraysize[2] = data.image[IDin[0]].md[0].size[2];
 
 
 
-    atype = data.image[IDin].md[0].atype;
+    atype = data.image[IDin[0]].md[0].atype;
 
 	IDout = image_ID(IDoutname);
 	if(IDout == -1)
 	{
-    IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
+		IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
 	}
+	
+	cubeindex = 0;
+	pcnt = 0;
+	if(NBcubes>1)
+		cntsync = data.image[IDsync].md[0].cnt0;
+	
+   twait1 = usperiod;
+	kk = 0;
+	cntDelayMode = 0;
+	
+	while(1)
+    {
+	
+	if(NBcubes>1)
+	{
+		if(cntsync != data.image[IDsync].md[0].cnt0)
+		{
+			pcnt++;
+			cntsync = data.image[IDsync].md[0].cnt0;
+		}
+		if(pcnt==period)
+		{
+			pcnt = 0;
+			offsetfrcnt = 0;
+			cntDelayMode = 1;
+		}
+		
+		if(cntDelayMode == 1)
+		{
+			if(offsetfrcnt < offsetfr)
+			{
+				offsetfrcnt++;
+			}
+			else
+			{
+				cntDelayMode = 0;
+				cubeindex++;
+				kk = 0;
+			}
+		}
+		if(cubeindex==NBcubes)
+			cubeindex = 0;
+	}
+	
 	
     switch ( atype ) {
     case CHAR:
-        ptr0s = (char*) data.image[IDin].array.C;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.C;
         ptr1 = (char*) data.image[IDout].array.C;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(char);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(char);
         break;
     case INT:
-        ptr0s = (char*) data.image[IDin].array.I;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.I;
         ptr1 = (char*) data.image[IDout].array.I;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(int);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(int);
         break;
     case FLOAT:
-        ptr0s = (char*) data.image[IDin].array.F;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.F;
         ptr1 = (char*) data.image[IDout].array.F;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(float);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(float);
         break;
     case DOUBLE:
-        ptr0s = (char*) data.image[IDin].array.D;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.D;
         ptr1 = (char*) data.image[IDout].array.D;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(double);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(double);
         break;
     case USHORT:
-        ptr0s = (char*) data.image[IDin].array.U;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.U;
         ptr1 = (char*) data.image[IDout].array.U;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(unsigned short);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(unsigned short);
         break;
     case LONG:
-        ptr0s = (char*) data.image[IDin].array.L;
+        ptr0s = (char*) data.image[IDin[cubeindex]].array.L;
         ptr1 = (char*) data.image[IDout].array.L;
-        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(long);
+        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(long);
         break;
     }
 
 
-    twait1 = usperiod;
-    kk = 0;
-    while(1)
-    {
+
+  
 		clock_gettime(CLOCK_REALTIME, &t0);
 		
         ptr0 = ptr0s + kk*framesize;
@@ -4834,7 +4928,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 		
         kk++;
-        if(kk==data.image[IDin].md[0].size[2])
+        if(kk==data.image[IDin[0]].md[0].size[2])
             kk = 0;
 
        
@@ -4857,9 +4951,14 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
 
     }
+	
+	free(IDin);
 
     return(IDout);
 }
+
+
+
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore

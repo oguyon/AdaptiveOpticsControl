@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% May 29, 2017
+% June 18, 2017
 
 
 
@@ -185,129 +185,129 @@ The available commands are listed in the table below. Running the command with t
 ------------------------------ -----------------------------------------------------------
 Script                         Description
 ------------------------------ -----------------------------------------------------------
-                ./mkHpoke       Compute real-time WFS residual image
-
-       ./aolMeasureTiming       Measure loop timing
-
-      ./aolCleanLOrespmat       Measure zonal resp matrix
-
-  ./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
-
-                 ./aolmon       Display AO loop stats
-
-              ./acquRespM       Acquire response matrix
+       ./mkDMslaveActprox       Create DM slaved actuators map
 
                  ./aolctr       AO control process
 
-            ./listrunproc       List running AOloop processes
-
-         ./MeasDMmodesRec       Measure AO loop DM modes recovery
-
-           ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
-
-               ./aolRM2CM       Align Pyramid camera
-
-       ./aolCleanZrespmat       Cleans zonal resp matrix
-
-       ./mkDMslaveActprox       Create DM slaved actuators map
-
-                 ./xptest       Compute cross-product of a data cube
+      ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -> DM MAP
 
         ./aolInspectDMmap       Inspect DM map
 
-      ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
+              ./acquRespM       Acquire response matrix
 
-      ./aolCleanZrespmat2       Cleans zonal resp matrix
+             ./waitonfile       Wait for file to disappear
 
-           ./mkDMslaveAct       Create DM slaved actuators map
-
-        ./aolReadConfFile       AOloop load file to stream
-
-              ./aolLinSim       AO Linear Simulator
-
-           ./aolApplyARPF       Apply AR linear predictive filter
-
-                ./aolARPF       AO find optimal AR linear predictive filter
-
-          ./aolSetmcLimit       Compute real-time WFS residual image
-
-       ./aolautotunegains       Automatic gain tuning
-
-             ./aolmkMasks       Create AO wfs and DM masks
-
-            ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
+               ./aolRM2CM       Align Pyramid camera
 
     ./aolMeasureLOrespmat       Acquire modal response matrix
 
-             ./waitonfile       Wait for file to appear
-
-        ./predFiltApplyRT       Apply predictive filter to stream
-
-         ./aoloffloadloop       DM offload loop
-
-            ./aolmkWFSres       Compute real-time WFS residual image
-
-   ./aolWFSresoffloadloop       Compute real-time WFS residual image
-
-         ./aollindm2wfsim       Convert DM stream to WFS image stream
-
-      ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
-
-       ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -> DM MAP
-
-             ./aolmkmodes       Create modes for AO loop
-
-    ./aolMeasureZrespmat2       Acquire zonal response matrix
-
-   ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
-
-            ./aolzploopon       WFS zero point offset loop 
-
          ./aollinsimDelay       Introduce DM delay
-
-              ./shmimzero       Set shared memory image stream to zero
-
-            ./aolmkmodes2       Create modes for AO loop
-
-             ./alignPyrTT       Align Pyramid TT
-
-        ./aolgetshmimsize       Get shared memory image size
-
-     ./aolMeasureZrespmat       Acquire zonal response matrix
-
-                ./xp2test       Compute cross-product of two data cubes
-
-           ./waitforfilek       Wait for file to appear and then remove it
-
-        ./aolmkLO_DMmodes       Create LO DM modes for AO loop
-
-            ./aolscangain       AO scan gain for optimal value
-
-             ./aol_dmCave       dmC temporal averaging
-
-              ./alignPcam       Align Pyramid camera
-
-   ./aolMeasureLOrespmat2       Acquire modal response matrix
-
-         ./MeasureLatency       Measure AO system response latency
-
-       ./aolARPFautoApply       Apply real-time AR linear predictive filter
-
-      ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -> DM MAP
-
-        ./modesextractwfs       Extract mode values from WFS images
-
-               ./Fits2shm       Copy FITS files to shared memor
-
-          ./aolblockstats       Extract mode values from WFS images, sort per block
 
                  ./aolrun       Run AO control loop
 
+     ./aolMeasureZrespmat       Acquire zonal response matrix
+
+              ./shmimzero       Set shared memory image stream to zero
+
+              ./aolLinSim       AO Linear Simulator
+
+       ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -> DM MAP
+
+         ./MeasDMmodesRec       Measure AO loop DM modes recovery
+
+                ./xp2test       Compute cross-product of two data cubes
+
+        ./aolmkLO_DMmodes       Create LO DM modes for AO loop
+
+                 ./xptest       Compute cross-product of a data cube
+
+          ./aolblockstats       Extract mode values from WFS images, sort per block
+
           ./aolMergeRMmat       Merge HO and LO resp matrices
+
+            ./aolscangain       AO scan gain for optimal value
+
+      ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
+
+   ./aolMeasureLOrespmat2       Acquire modal response matrix
+
+        ./aolgetshmimsize       Get shared memory image size
+
+   ./aolWFSresoffloadloop       Compute real-time WFS residual image
+
+             ./alignPyrTT       Align Pyramid TT
+
+            ./aolmkmodes2       Create modes for AO loop
+
+             ./aolmkMasks       Create AO wfs and DM masks
+
+        ./modesextractwfs       Extract mode values from WFS images
+
+       ./aolARPFautoApply       Apply real-time AR linear predictive filter
+
+                 ./aolmon       Display AO loop stats
+
+  ./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
+
+                ./mkHpoke       Compute real-time WFS residual image
+
+         ./aoloffloadloop       DM offload loop
+
+               ./Fits2shm       Copy FITS files to shared memor
+
+    ./aolMeasureZrespmat2       Acquire zonal response matrix
+
+           ./aolApplyARPF       Apply AR linear predictive filter
 
   ./selectLatestTelemetry       Compute real-time WFS residual image
 
+        ./aolReadConfFile       AOloop load file to stream
+
+        ./predFiltApplyRT       Apply predictive filter to stream
+
+      ./aolCleanZrespmat2       Cleans zonal resp matrix
+
+   ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
+
+            ./listrunproc       List running AOloop processes
+
+            ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
+
+       ./aolCleanZrespmat       Cleans zonal resp matrix
+
+           ./waitforfilek       Wait for file to appear and then remove it
+
+       ./aolMeasureTiming       Measure loop timing
+
+          ./aolSetmcLimit       Compute real-time WFS residual image
+
+              ./alignPcam       Align Pyramid camera
+
+            ./aolmkWFSres       Compute real-time WFS residual image
+
+         ./MeasureLatency       Measure AO system response latency
+
+         ./aollindm2wfsim       Convert DM stream to WFS image stream
+
+      ./aolCleanLOrespmat       Measure zonal resp matrix
+
+           ./mkDMslaveAct       Create DM slaved actuators map
+
+       ./aolautotunegains       Automatic gain tuning
+
+                ./aolARPF       AO find optimal AR linear predictive filter
+
+            ./aolzploopon       WFS zero point offset loop 
+
+      ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
+
+             ./aolmkmodes       Create modes for AO loop
+
+           ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
+
        ./MeasLoopModeResp       Measure AO loop temporal response
+
+             ./aol_dmCave       dmC temporal averaging
 ------------------------------ -----------------------------------------------------------
 
 
@@ -366,6 +366,8 @@ The user runs a loop that updates the wavefront sensor image when the DM input c
 
 The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.
 
+Method 2 simulates incoming atmospheric WFs, a pyramid WFS based loop feeding a DM, a coronagraphic LOWFS and coronagraphic PSFs.
+
 ### Running Method 2
 
 Launch the simulator with the following steps:
@@ -396,6 +398,43 @@ Important notes:
 - Parameters for the simulation can be changed by editing the `.conf` files in the `aohardsim` directory
 
 - You may need to kill and relaunch the main script twice after changing parameters
+
+
+### Method 2 output streams
+
+
+------------------------ -----------------------------------------------------------------------
+Stream                   Description
+------------------------ -----------------------------------------------------------------------
+**wf0opd**               Atmospheric WF OPD
+
+**wf0amp**               Atmospheric WF amplitude
+
+**wf1opd**               Wavefront OPD after correction [um] ( = wf0opd - 2 x dm05dispmap )
+
+**dm05disp**             DM actuators positions
+
+**dm05dispmap**          DM OPD map
+
+**WFSinst**              Instantaneous WFS intensity
+
+**pWFSint**              WFS intensity frame, time averaged to WFS frame rate and sampled to WFS camera pixels
+
+**aosim_foc0_amp**       First focal plane (before coronagraph), amplitude
+
+**aosim_foc0_pha**       First focal plane (before coronagraph), phase
+
+**aosim_foc1_amp**       First focal plane (after coronagraph), amplitude
+
+**aosim_foc1_pha**       First focal plane (after coronagraph), phase
+
+**aosim_foc2_amp**       Post-coronagraphic focal plane, amplitude
+
+**aosim_foc2_pha**       Post-coronagraphic focal plane, phase
+------------------ -----------------------------------------------------------------------
+
+
+
 
 
 

@@ -210,6 +210,8 @@ echo "Executing aosimPyrWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./$srcdir/aosimPyrWFS" C-M
 
+
+
 tmuxname="aosimcoroLOWFS"
 echo "Executing aosimcoroLOWFS in tmux session $tmuxname"
 tmux new -d -s $tmuxname

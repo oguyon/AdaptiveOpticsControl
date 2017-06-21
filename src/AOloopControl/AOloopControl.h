@@ -26,7 +26,7 @@
 
 
 /**
- * @brief Main AOloopControl structure. 
+ * Main AOloopControl structure. 
  *
  * Holds key parameters for the AO engine
  */
@@ -34,22 +34,22 @@ typedef struct
 {
 	
     /* =============================================================================================== */
-	/** @name TIMING 
+	/** @name AOLOOPCONTROL_CONF: TIMING 
 	 * LOOP Timing info
 	 */
 	///@{  
 
 	float loopfrequ;                /**< Loop frequency [Hz] */
 
-	/// Hardware latency = time from DM command issued to WFS response changed 
+	// Hardware latency = time from DM command issued to WFS response changed 
 	float hardwlatency;            /**< hardware latency between DM command and WFS response [sec] */ 
 	float hardwlatency_frame;      /**< hardware latency between DM command and WFS response */
 
-	/// computation time for direct WFS->DM mode through single matrix multiplication
+	// Computation time for direct WFS->DM mode through single matrix multiplication
 	float complatency;             /**< Computation latency */
 	float complatency_frame;       /**< Computation latency (main loop) from WFS image reception to DM command output */
 
-	/// computation time for full computation including open loop computation
+	// Computation time for full computation including open loop computation
 	float wfsmextrlatency;         /**< WFS mode extraction latency [sec] */ 
 	float wfsmextrlatency_frame;   /**< WFS mode extraction latency [frame] */
 
@@ -66,7 +66,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name SETUP & INITIALIZATION STATE 
+	/** @name AOLOOPCONTROL_CONF: SETUP & INITIALIZATION STATE 
 	 * 
 	 */
 	///@{  
@@ -89,7 +89,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name WFS CAMERA
+	/** @name AOLOOPCONTROL_CONF: WFS CAMERA
 	 * 
 	 */
 	///@{  
@@ -112,7 +112,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name DEFORMABLE MIRROR
+	/** @name AOLOOPCONTROL_CONF: DEFORMABLE MIRROR
 	 * 
 	 */
 	///@{  
@@ -122,15 +122,15 @@ typedef struct
     uint_fast32_t sizexDM;
     uint_fast32_t sizeyDM;
     uint_fast32_t sizeDM;
-    uint_fast32_t activeDMcnt; // number of active actuators
-    uint_fast32_t sizeDM_active; // only takes into account DM actuators that are active/in use
+    uint_fast32_t activeDMcnt;    /**< number of active actuators */
+    uint_fast32_t sizeDM_active;  /**< only takes into account DM actuators that are active/in use */
     ///@}
     /* =============================================================================================== */
 
 
 
 	/* =============================================================================================== */
-	/** @name CONTROL MODES 
+	/** @name AOLOOPCONTROL_CONF: CONTROL MODES 
 	 * 
 	 */
 	///@{  
@@ -153,7 +153,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
-	/** @name LOOP CONTROL
+	/** @name AOLOOPCONTROL_CONF: LOOP CONTROL
 	 * 
 	 */
 	///@{  	
@@ -179,7 +179,7 @@ typedef struct
  
  
 	/* =============================================================================================== */
-	/** @name PREDICTICE CONTROL
+	/** @name AOLOOPCONTROL_CONF: PREDICTIVE CONTROL
 	 * 
 	 */
 	///@{  	
@@ -191,7 +191,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
- 	/** @name COMPUTATION MODE 
+ 	/** @name AOLOOPCONTROL_CONF: COMPUTATION MODE 
 	 * 
 	 */
 	///@{  	
@@ -207,7 +207,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
- 	/** @name  LOOP TELEMETRY AND PERFORMANCE
+ 	/** @name AOLOOPCONTROL_CONF: LOOP TELEMETRY AND PERFORMANCE
 	 * 
 	 */
 	///@{  	
@@ -287,7 +287,6 @@ typedef struct
  * 
  * Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging
  * 
- * @verbatim like this@endverbatim
  * 
  * At the beginning of each function, insert this code:
  * @code
@@ -302,10 +301,11 @@ typedef struct
  * #endif
  * @endcode
  * 
- * @param logfuncMODE Log mode, 0:entering function, 1:exiting function
- * @param FunctionName Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
- * @param line Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
- * @return This function does not return anything.
+ * @param logfuncMODE       Log mode, 0:entering function, 1:exiting function
+ * @param FunctionName      Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
+ * @param line              Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
+ *
+ * @return void
  * 
  * @note Carefully set depth value to avoid large output file.
  * @warning May slow down code. Only use for debugging. Output file may grow very quickly.
@@ -334,7 +334,9 @@ int_fast8_t init_AOloopControl();
 
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level);
 
-// initialize memory - function called within C code only (no CLI call)
+/**
+ * @brief Initialize memory - function called within C code only (no CLI call)
+ */
 static int_fast8_t AOloopControl_InitializeMemory();
 
 ///@}
@@ -427,17 +429,52 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/**
+ * @brief Acquire WFS response to a series of DM pattern.
+ *
+ * 
+ * @param loop            Loop index
+ * @param delayfr         Integer delay [frame]
+ * @param delayRM1us      Fractional delay [us]
+ * @param NBave           Number of frames averaged per DM state
+ * @param NBexcl          Number of frames excluded
+ * @param IDpokeC_name    Poke pattern
+ * @param IDoutC_name     Output cube
+ * @param normalize       Normalize flag
+ * @param AOinitMode      AO structure initialization flag
+ * @param NBcycle         Number of cycles averaged
+ * 
+ * AOinitMode = 0:  create AO shared mem struct
+ * AOinitMode = 1:  connect only to AO shared mem struct
+ * 
+ * INPUT : DMpoke_name : set of DM patterns
+ * OUTPUT : WFSmap_name : WFS response maps
+ * 
+ * USR1 signal will stop acquisition immediately
+ * USR2 signal completes current cycles and stops acquisition
+ * 
+ * @return IDoutC
+ * 
+ */
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
+
 
 long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDrespC_name, const char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle);
 
+
 long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *zrespm_name, const char *WFSref_name, const char *WFSmap_name, const char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle);
 
+
 int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
+
 
 long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_name, const char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, const char *outname);
 
 ///@}
+
+
+
+
 
 /* =============================================================================================== */
 /* =============================================================================================== */

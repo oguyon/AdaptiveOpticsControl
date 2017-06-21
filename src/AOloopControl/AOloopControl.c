@@ -10,7 +10,7 @@
  * 
  * @bug No known bugs.
  * 
- * @see http://www.
+ * @see http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html
  */
 
 
@@ -4090,21 +4090,6 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 /* =============================================================================================== */
 
 
-/** 
- * @brief Measures WFS image response to a series of DM patterns
- *
- * AOinitMode = 0:  create AO shared mem struct
- * AOinitMode = 1:  connect only to AO shared mem struct
- *  
- * 
- * INPUT : DMpoke_name : set of DM patterns
- * OUTPUT : WFSmap_name : WFS response maps
- * 
- * USR1 signal will stop acquisition immediately
- * USR2 signal completes current cycles and stops acquisition
- * 
- * 
- * */
 
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle)
 {
