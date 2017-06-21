@@ -55,4 +55,4 @@ Edit and execute the main script "runturb"
 
 
 ## Credits
-This software was developed with support from the National Science Foundation (award #1006063), NASA and NAOJ/Subaru Telescope.
+This software was developed with support from the National Science Foundation (award #1006063), NINS / NAOJ / Subaru Telescope, NINS / Astrobiology Centerand the Japanese Society for the Promotion of Science (JSPS).
