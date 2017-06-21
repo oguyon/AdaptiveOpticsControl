@@ -1,4 +1,4 @@
-# Adaptive Optics control 
+# Adaptive Optics Control Computation Engine (AOCCE)
 
 
 
