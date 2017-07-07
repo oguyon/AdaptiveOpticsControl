@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% June 18, 2017
+% Jul 5, 2017
 
 
 
@@ -542,36 +542,6 @@ DMTIMECST                0.0001            # DM time constant
 File `aosimPyrWFS.conf.default` :
 
 ~~~~ {.numberLines}
-
-LAMBDANM          800             # wavelength [nm]
-
-# ============== INPUT TYPE (OPD unit = um) ====================
-INMODE                   0                 # 0:stream, 1:file system (FITS)
-INSTREAMNAMEOPD          wf1opd            # input OPD stream
-INSTREAMNAMEAMP          wf1amp            # input AMP stream
-INSEMCHAN                5                 # input semaphore channel (using OPD input)
-INFITSFILENAMEOPD        inwfopd.fits      # input FITS file name (OPD)
-INFITSFILENAMEAMP        inwfamp.fits      # input FITS file name (AMP)
-INTRIGGERFILE            inwf.txt          # input trigger file
-
-# ============== OUTPUT TYPE ===================================
-OUTMODE                  0                 # 0: stream, 1: file system
-OUTSTREAMNAME            pWFSim            # output image stream name 
-OUTINSTSTREAMNAME        WFSinst           # output instantaneous image stream name 
-OUTFITSFILENAME          PyrWFS_im.fits    # FITS file name output (intensity)
-OUTTRIGGERFILE           outpyr.txt        # output trigger file
-
-# ============== FREQUENCY, GEOMETRY =============================
-ARRAYSIZE                256               # array size for computations
-PYRMODMODE               1                 # 0: no modulation, 1: modulation
-PYRMODAMP                4.0               # Modulation radius [l/D]
-PYRMODNBPT               8                 # number of pyramid modulation points
-PYRAPERTURE              50.0              # spatial filter aperture [l/D]
-PUPPIXDIAM               100.0             # pupil diameter [pix] - used to compute l/D scale
-PYRPUPSEP                1.2               # separation between pupil imagees (relative to pup diam)
-OUTBINFACT               2                 # output binning factor
-OUTARRAYSIZE             120               # output array size
-
 ~~~~
 
 
@@ -724,8 +694,26 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]
 
 The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS) but does not capture non-linear effects.
 
+### Setup
 
 
+- Create directory LHScalib:
+
+~~~~
+mkdir LHScalib
+~~~~
+
+- Download response matrix and reference
+
+- Start GUI
+
+~~~~
+./aolconf -L 5 -N simLHS
+~~~~
+
+- Go to `TEST MODE` GUI
+
+- Enter linear simulation zonal response matrix and linear simulation WFS reference (`zrespMlinsim` and `wfsref0linsim` selections at top of screen). 
 
 
 
@@ -1675,6 +1663,19 @@ File                          Description
 **aolARPFblock**              AO find optimal AR linear predictive filter 
 ----------------------------- -----------------------------------------------------------
 
+## Data flow
+
+Predictive control is set up by blocks of modes. A block is configured through the aolconf predictive control sub-panel, which writes to configuration files `conf/conf_PFblock_XXX.txt`, where XXX is the block number (000, 001, 002 etc...). Configuration files specify the modes within each block (index min to index max), the predictive filter order, time lag and and averaging gain.
+
+For each block, there are 3 main processes involved in running the predictive control:
+
+- **Watching input telemetry** this process listens to the input telemetry stream and periodically writes data to be used to compute a filter. This runs function `long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)` in `AOloopControl.c`.
+
+- **Computing filter**. Runs CLI command `mkARpfilt`, which runs function `LINARFILTERPRED_Build_LinPredictor` in `linARfilterPred.c`.
+
+- **Prediction engine** (= apply filter). Runs script `./auxscripts/predFiltApplyRT`.
+
+All 3 processes work in a chain, and can be turned on/off from the GUI.
 
 
 

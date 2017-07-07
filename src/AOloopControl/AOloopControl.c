@@ -1242,7 +1242,7 @@ int_fast8_t init_AOloopControl()
 
 /* =============================================================================================== */
 /*                                                                                                 */
-/*  6. REAL TIME COMPUTING ROUTINES                                                                 */
+/*  6. REAL TIME COMPUTING ROUTINES                                                                */
 /*                                                                                                 */
 /* =============================================================================================== */
 
@@ -13002,6 +13002,9 @@ double AOloopControl_testPredictiveFilter(const char *IDtrace_name, long modeout
 
 
 
+
+
+
 long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 {
 	long IDinb0;
@@ -13049,7 +13052,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	
 	
 	// read PF block parameters
-	sprintf(fname, "conf/conf_PFblock_%ld.txt", PFblock);
+	sprintf(fname, "conf/conf_PFblock_%03ld.txt", PFblock);
 	if((fp = fopen(fname, "r"))==NULL)
 		{
 			printf("ERROR: File \"%s\" NOT FOUND\n", fname);

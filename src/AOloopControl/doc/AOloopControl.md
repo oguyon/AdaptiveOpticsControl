@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% June 18, 2017
+% Jul 5, 2017
 
 
 
@@ -589,7 +589,30 @@ File `aosimcoroLOWFS.conf.default`:
 
 The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS) but does not capture non-linear effects.
 
+### Setup
 
+
+- Create directory LHScalib:
+
+~~~~
+mkdir LHScalib
+~~~~
+
+- Download response matrix and reference
+
+- Start GUI, loop 5, name simLHS
+
+~~~~
+./aolconf -L 5 -N simLHS
+~~~~
+
+- Start DM: index 04, 50 x 50; Auto-configure: main DM (no link); (re-)START DM comb process
+
+- Go to `TEST MODE` GUI
+
+- Enter linear simulation zonal response matrix and linear simulation WFS reference (`zrespMlinsim` and `wfsref0linsim` selections at top of screen). 
+
+- **Start linear simulator** (`lsimon` selection). The simulator reacts to changes in aol5_dmdisp (= dm04disp)
 
 
 
@@ -1191,6 +1214,19 @@ File                          Description
 **aolARPFblock**              AO find optimal AR linear predictive filter 
 ----------------------------- -----------------------------------------------------------
 
+## Data flow
+
+Predictive control is set up by blocks of modes. A block is configured through the aolconf predictive control sub-panel, which writes to configuration files `conf/conf_PFblock_XXX.txt`, where XXX is the block number (000, 001, 002 etc...). Configuration files specify the modes within each block (index min to index max), the predictive filter order, time lag and and averaging gain.
+
+For each block, there are 3 main processes involved in running the predictive control:
+
+- **Watching input telemetry** this process listens to the input telemetry stream and periodically writes data to be used to compute a filter. This runs function `long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)` in `AOloopControl.c`.
+
+- **Computing filter**. Runs CLI command `mkARpfilt`, which runs function `LINARFILTERPRED_Build_LinPredictor` in `linARfilterPred.c`.
+
+- **Prediction engine** (= apply filter). Runs script `./auxscripts/predFiltApplyRT`.
+
+All 3 processes work in a chain, and can be turned on/off from the GUI.
 
 
 

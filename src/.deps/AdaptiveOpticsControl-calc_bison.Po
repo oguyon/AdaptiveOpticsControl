@@ -59,7 +59,8 @@ AdaptiveOpticsControl-calc_bison.o: calc_bison.c \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h 00CORE/00CORE.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+ /usr/local/include/ImageStruct.h 00CORE/00CORE.h \
  COREMOD_memory/COREMOD_memory.h COREMOD_iofits/COREMOD_iofits.h \
  COREMOD_arith/COREMOD_arith.h info/info.h
 
@@ -228,6 +229,8 @@ CLIcore.h:
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/local/include/ImageStruct.h:
 
 00CORE/00CORE.h:
 

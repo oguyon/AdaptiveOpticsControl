@@ -50,7 +50,8 @@ AdaptiveOpticsControl-CLIcore.o: CLIcore.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h /usr/include/malloc.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+ /usr/local/include/ImageStruct.h /usr/include/malloc.h \
  /usr/include/pthread.h /usr/include/sched.h \
  /usr/include/x86_64-linux-gnu/bits/sched.h \
  /usr/include/x86_64-linux-gnu/bits/timex.h \
@@ -244,6 +245,8 @@ CLIcore.h:
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/local/include/ImageStruct.h:
 
 /usr/include/malloc.h:
 

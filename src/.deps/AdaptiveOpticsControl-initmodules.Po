@@ -48,7 +48,8 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h cudacomp/cudacomp.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+ /usr/local/include/ImageStruct.h cudacomp/cudacomp.h \
  AtmosphericTurbulence/AtmosphericTurbulence.h \
  AtmosphereModel/AtmosphereModel.h psf/psf.h \
  AOloopControl/AOloopControl.h AOsystSim/AOsystSim.h \
@@ -200,6 +201,8 @@ CLIcore.h:
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/local/include/ImageStruct.h:
 
 cudacomp/cudacomp.h:
 

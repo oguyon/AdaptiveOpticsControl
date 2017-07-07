@@ -1,3 +1,19 @@
+/**
+ * @file    cudacomp.c
+ * @brief   CUDA functions wrapper
+ * 
+ * Also uses MAGMA library
+ *  
+ * @author  O. Guyon
+ * @date    3 Jul 2017
+ *
+ * 
+ * @bug MAGMA execution can hang on dsyevd routine. This seems to be a MAGMA issue.
+ * 
+ */
+
+
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -180,7 +196,19 @@ static magma_int_t *magma_iwork;
 // 5: string 
 //
 
+
+
 #ifdef HAVE_CUDA
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 int_fast8_t CUDACOMP_test_cli()
 {
@@ -189,6 +217,70 @@ int_fast8_t CUDACOMP_test_cli()
     else
         return 1;
 }
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW-LEVEL MATRIX VECTOR MULTIPLICATION FUNCTIONS                                             */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. SINGULAR VALUE DECOMPOSITION, PSEUDO-INVERSE                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+int_fast8_t CUDACOMP_MatMatMult_testPseudoInverse_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+        CUDACOMP_MatMatMult_testPseudoInverse(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+    else
+        return 1;
+}
+
+
+int_fast8_t CUDACOMP_magma_compute_SVDpseudoInverse_SVD_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
+        CUDACOMP_magma_compute_SVDpseudoInverse_SVD(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
+    else
+        return 1;
+}
+
+
+int_fast8_t CUDACOMP_magma_compute_SVDpseudoInverse_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
+        CUDACOMP_magma_compute_SVDpseudoInverse(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, 0);
+    else
+        return 1;
+}
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. HIGH LEVEL FUNCTIONS                                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 int_fast8_t CUDACOMP_Coeff2Map_Loop_cli()
 {
@@ -210,12 +302,34 @@ int_fast8_t CUDACOMP_Coeff2Map_offset_Loop_cli()
 
 int_fast8_t CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,5)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,5)+CLI_checkarg(5,5)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
         CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
     else
         return 1;
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 
@@ -232,6 +346,16 @@ int_fast8_t init_cudacomp()
     strcpy(data.module[data.NBmodule].name,__FILE__);
     strcpy(data.module[data.NBmodule].info,"CUDA wrapper for AO loop");
     data.NBmodule++;
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 #ifdef HAVE_CUDA
@@ -252,6 +376,51 @@ int_fast8_t init_cudacomp()
     strcpy(data.cmd[data.NBcmd].example,"cudacomptest 1000 20 1000 1");
     strcpy(data.cmd[data.NBcmd].Ccall,"int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
     data.NBcmd++;
+        
+
+
+        
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW-LEVEL MATRIX VECTOR MULTIPLICATION FUNCTIONS                                             */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. SINGULAR VALUE DECOMPOSITION, PSEUDO-INVERSE                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+    RegisterCLIcommand("cudatestpsinv", __FILE__, CUDACOMP_MatMatMult_testPseudoInverse_cli, "test pseudo inverse", "<matA> <matAinv> <matOut>", "cudatestpsinv matA matAinv matOut", "long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name)");
+
+    RegisterCLIcommand("cudacomppsinvSVD", __FILE__, CUDACOMP_magma_compute_SVDpseudoInverse_SVD_cli, "compute pseudo inverse with direct SVD", "<input matrix [string]> <output pseudoinv [string]> <eps [float]> <NBmodes [long]> <VTmat [string]>", "cudacomppsinvSVD matA matAinv 0.01 100 VTmat", "int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name);");
+        
+    RegisterCLIcommand("cudacomppsinv", __FILE__, CUDACOMP_magma_compute_SVDpseudoInverse_cli, "compute pseudo inverse", "<input matrix [string]> <output pseudoinv [string]> <eps [float]> <NBmodes [long]> <VTmat [string]>", "cudacomppsinv matA matAinv 0.01 100 VTmat", "int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode)");
+    
+        
+        
+    
+    
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. HIGH LEVEL FUNCTIONS                                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+        
         
     strcpy(data.cmd[data.NBcmd].key,"cudacoeff2map");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -297,6 +466,7 @@ int_fast8_t init_cudacomp()
 
 
 #ifdef HAVE_CUDA
+
 int_fast8_t CUDACOMP_init()
 {
     int device;
@@ -321,6 +491,143 @@ int_fast8_t CUDACOMP_init()
         printf("\n");
     }
 
+    return((int_fast8_t) deviceCount);
+}
+
+
+
+
+
+int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
+{
+    long ID_contrM;
+    long ID_WFS;
+    long ID_cmd_modes;
+    long *cmsize;
+    long *wfssize;
+    long *cmdmodessize;
+    int_fast8_t status;
+    int_fast8_t GPUstatus[100];
+    long iter;
+    long NBiter = 50000;
+    double time1sec, time2sec;
+    struct timespec tnow;
+    int *GPUdevices;
+    int k;
+    double SVDeps = 0.1;
+
+    long n, m;
+    long *arraysizetmp;
+    long ID, ID_R, ID_C;
+    long ii, jj;
+    float val;
+
+    if(1==1)
+    {
+    //printf("Testing SVD on CPU\n");
+      // linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
+    
+        create_2Dimage_ID("Rmat", WFSsize, WFSsize);
+    
+       printf("Testing SVD on GPU\n");
+       GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
+        list_image_ID();
+        printf("DONE ... ");
+        fflush(stdout);
+        
+        
+       // CHECK RESULT
+     /*   arraysizetmp = (long*) malloc(sizeof(long)*3);
+        ID_R = image_ID("Rmat");
+        ID_C = image_ID("Cmat");
+
+        if(data.image[ID_R].md[0].naxis==3)
+        {
+            m = data.image[ID_R].md[0].size[0]*data.image[ID_R].md[0].size[1];
+            n = data.image[ID_R].md[0].size[2];
+            printf("3D image -> %ld %ld\n", m, n);
+            fflush(stdout);
+        }
+        else
+        {
+            m = data.image[ID_R].md[0].size[0];
+            n = data.image[ID_R].md[0].size[1];
+            printf("2D image -> %ld %ld\n", m, n);
+            fflush(stdout);
+        }
+        
+     
+        printf("CHECKING RESULT ... ");
+        fflush(stdout);
+        
+        ID = create_2Dimage_ID("SVDcheck", n, n);
+        for(ii=0;ii<n;ii++)
+            for(jj=0;jj<n;jj++)
+                {
+                    val = 0.0;
+                    for(k=0;k<m;k++)
+                        val += data.image[ID_C].array.F[ii*m+k] * data.image[ID_R].array.F[jj*m+k];
+                    data.image[ID].array.F[jj*n+ii] = val;
+                }
+        save_fits("SVDcheck", "!SVDcheck.fits");
+        printf("DONE\n");
+        fflush(stdout);*/
+    }
+    else
+    {
+        printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
+
+
+        GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
+        for(k=0; k<GPUcnt; k++)
+            GPUdevices[k] = k+8;
+
+        //    GPUstatus = (int*) malloc(sizeof(int)*100);
+
+        cmsize = (long*) malloc(sizeof(long)*3);
+        cmsize[0] = WFSsize;
+        cmsize[1] = WFSsize;
+        cmsize[2] = NBmodes;
+        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
+
+        wfssize = (long*) malloc(sizeof(long)*2);
+        wfssize[0] = WFSsize;
+        wfssize[1] = WFSsize;
+        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
+
+        cmdmodessize = (long*) malloc(sizeof(long)*2);
+        cmdmodessize[0] = NBmodes;
+        cmdmodessize[1] = 1;
+        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
+
+        GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
+
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+        for(iter=0; iter<NBiter; iter++)
+        {
+            status = 0;
+            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
+        }
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+        printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
+
+        printf("done\n");
+        fflush(stdout);
+
+        delete_image_ID("cudatestcm");
+        delete_image_ID("cudatestwfs");
+        delete_image_ID("cudatestcmd");
+
+        free(cmsize);
+        free(wfssize);
+        free(cmdmodessize);
+        free(GPUdevices);
+    }
+
     return(0);
 }
 
@@ -334,16 +641,19 @@ int_fast8_t CUDACOMP_init()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. LOW-LEVEL MATRIX VECTOR MULTIPLICATION FUNCTIONS                                             */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-//! Compute reference data set matrix multiply on CPU
-//! dmVec = cMat * wfsVec
-////////////////////////////////////////////////////////////////////////////////
 
 
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N)
@@ -389,6 +699,310 @@ void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N)
 
 
 
+
+/* 
+ *
+ * sequence of events :
+ * 
+ * wait semptr1              (wait for input image data)
+ * transfer input CPU -> GPU  
+ * post semptr2
+ * COMPUTE
+ * post semptr3
+ * wait semptr4
+ * 
+ * 
+ * 
+ *  
+ */
+
+
+void *compute_function( void *ptr )
+{
+    THDATA *thdata;
+    int device;
+    int n, m;
+    int index;
+    const char *ptr0; // source
+    const char *ptr1; // dest
+    float *ptr0f; // test
+    int *ptrstat;
+    long IDtest;
+    int k;
+    int kmax = 10;
+    char fname[200];
+    long long iter;
+    long long itermax = 1;
+    float imtot;
+    float alphatmp;
+    float betatmp;
+    int semval;
+    long cnt;
+    FILE *fptest;
+    long ii;
+
+    float alpharef, betaref;
+
+    thdata = (THDATA*) ptr;
+    device = thdata->thread_no;
+    index = thdata->cindex;
+
+    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
+
+    *ptrstat = 1;
+
+
+	
+	
+	
+    ptr0 = (char*) gpumatmultconf[index].wfsVec;
+    ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
+    ptr0f = (float*) ptr0;
+
+    if((index==0)||(index==2))
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
+
+    cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
+
+
+
+    if(gpumatmultconf[index].sem==1)
+        itermax = -1;
+    else
+        itermax = 1;
+
+    iter = 0;
+    while(iter != itermax)
+    {
+		//printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+		//fflush(stdout);
+		
+		
+        // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
+        error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
+        if (error != cudaSuccess)
+        {
+            printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+            fflush(stdout);
+            exit(EXIT_FAILURE);
+        }
+
+        *ptrstat = 2; // wait for image
+        if(gpumatmultconf[index].sem==1)
+        {
+            sem_wait(gpumatmultconf[index].semptr1[device]);
+
+            if(FORCESEMINIT==1)
+            {
+                sem_getvalue(gpumatmultconf[index].semptr1[device], &semval);
+                for(cnt=0; cnt<semval; cnt++)
+                    sem_trywait(gpumatmultconf[index].semptr1[device]);
+            }
+        }
+
+        *ptrstat = 3; // transfer: prt0 -> d_wfsVec
+        stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), (float*) ptr0, 1, gpumatmultconf[index].d_wfsVec[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)
+        {
+            fprintf(stderr, "!!!! device access error (read C)\n");
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+            exit(EXIT_FAILURE);
+        }
+
+
+        if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
+        {
+            *ptrstat = 4; // compute
+
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr2[device]);
+
+
+          //  printf("%d  device %d (GPU %d): compute reference product\n", index, device, gpumatmultconf[index].GPUdevice[device]);
+          //  fflush(stdout);
+
+            //            alphatmp = cublasSgemv_alpha;
+            //            betatmp = cublasSgemv_beta;
+
+            // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
+            //        cublasSgemv_alpha = 1.0;
+            //        cublasSgemv_beta = 0.0;
+            alpharef = 1.0;
+            betaref = 0.0;
+            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpharef, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &betaref, gpumatmultconf[index].d_dmRef[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+
+                printf("device %d of index %d\n", device, index);
+                printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
+                printf("alpha                               = %f\n", alpharef);
+                printf("alpha                               = %f\n", betaref);
+                printf("gpumatmultconf[index].M             = %d\n", (int) gpumatmultconf[index].M);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
+                fflush(stdout);
+                exit(EXIT_FAILURE);
+            }
+            //          cublasSgemv_alpha = alphatmp;
+            //          cublasSgemv_beta = betatmp;
+
+            gpumatmultconf[index].refWFSinit[device] = 1;
+
+
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr3[device]);
+
+            *ptrstat = 5; // transfer result
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                sem_wait(gpumatmultconf[index].semptr4[device]);
+                if(FORCESEMINIT==1)
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
+            }
+
+
+            // copy d_dmRef -> dmRef_part
+            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
+
+            // TEST
+
+        /*    sprintf(fname, "gputest%d.txt", device);
+            if((fptest = fopen(fname, "w"))==NULL)
+            {
+                printf("ERROR: cannot create file \"%s\"\n", fname);
+                exit(0);
+            }
+            printf("Writing test file \"%s\"\n", fname);
+            fflush(stdout);
+            for(ii=0; ii<gpumatmultconf[index].M; ii++)
+                fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
+            fclose(fptest);
+*/
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr5[device]);
+
+            *ptrstat = 6;
+        }
+        else
+        {
+            *ptrstat = 4; // compute
+
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr2[device]);
+
+            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
+
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+
+                printf("device %d of index %d\n", device, index);
+                printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("alpha = %f\n", cublasSgemv_alpha);
+                printf("alpha = %f\n", cublasSgemv_beta);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
+                fflush(stdout);
+
+                exit(EXIT_FAILURE);
+            }
+
+
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr3[device]);
+
+            *ptrstat = 5; // transfer result
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                sem_wait(gpumatmultconf[index].semptr4[device]);
+                if(FORCESEMINIT==1)
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
+            }
+
+            // result is on gpumatmultconf[index].d_dmVec[device]
+            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(gpumatmultconf[index].sem==1)
+            sem_post(gpumatmultconf[index].semptr5[device]);
+
+        *ptrstat = 6;
+
+        // START MODE VALUES COMPUTATION HERE
+
+
+
+        iter++;
+    }
+
+
+    pthread_exit(0);
+}
+
+
+
+
+
+
+
+
+
 int GPUloadCmat(int index)
 {
     int device;
@@ -398,15 +1012,6 @@ int GPUloadCmat(int index)
     
     printf("LOADING MATRIX TO GPU ... ");
     fflush(stdout);
-
-    // TEST
-  //  ID = create_2Dimage_ID("mgputest", gpumatmultconf[index].N, gpumatmultconf[index].M);
-   // for(n=0;n<gpumatmultconf[index].N;n++)
-    //    for(m=0;m<gpumatmultconf[index].M;m++)
-     //       data.image[ID].array.F[m*gpumatmultconf[index].N+n] = gpumatmultconf[index].cMat[m*gpumatmultconf[index].N+n];
-    //save_fits("mgputest","!MgpuTest.fits");
-    //delete_image_ID("mgputest");
-    
 
     for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
     {
@@ -1154,304 +1759,6 @@ int GPU_loop_MultMat_free(int index)
 
 
 
-/* 
- *
- * sequence of events :
- * 
- * wait semptr1              (wait for input image data)
- * transfer input CPU -> GPU  
- * post semptr2
- * COMPUTE
- * post semptr3
- * wait semptr4
- * 
- * 
- * 
- *  
- */
-
-
-void *compute_function( void *ptr )
-{
-    THDATA *thdata;
-    int device;
-    int n, m;
-    int index;
-    const char *ptr0; // source
-    const char *ptr1; // dest
-    float *ptr0f; // test
-    int *ptrstat;
-    long IDtest;
-    int k;
-    int kmax = 10;
-    char fname[200];
-    long long iter;
-    long long itermax = 1;
-    float imtot;
-    float alphatmp;
-    float betatmp;
-    int semval;
-    long cnt;
-    FILE *fptest;
-    long ii;
-
-    float alpharef, betaref;
-
-    thdata = (THDATA*) ptr;
-    device = thdata->thread_no;
-    index = thdata->cindex;
-
-    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
-
-    *ptrstat = 1;
-
-
-	
-	
-	
-    ptr0 = (char*) gpumatmultconf[index].wfsVec;
-    ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
-    ptr0f = (float*) ptr0;
-
-    if((index==0)||(index==2))
-        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
-
-    cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
-
-
-
-    if(gpumatmultconf[index].sem==1)
-        itermax = -1;
-    else
-        itermax = 1;
-
-    iter = 0;
-    while(iter != itermax)
-    {
-		//printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
-		//fflush(stdout);
-		
-		
-        // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
-        error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
-        if (error != cudaSuccess)
-        {
-            printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
-            fflush(stdout);
-            exit(EXIT_FAILURE);
-        }
-
-        *ptrstat = 2; // wait for image
-        if(gpumatmultconf[index].sem==1)
-        {
-            sem_wait(gpumatmultconf[index].semptr1[device]);
-
-            if(FORCESEMINIT==1)
-            {
-                sem_getvalue(gpumatmultconf[index].semptr1[device], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr1[device]);
-            }
-        }
-
-        *ptrstat = 3; // transfer: prt0 -> d_wfsVec
-        stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), (float*) ptr0, 1, gpumatmultconf[index].d_wfsVec[device], 1);
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            fprintf(stderr, "!!!! device access error (read C)\n");
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-            exit(EXIT_FAILURE);
-        }
-
-
-        if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
-        {
-            *ptrstat = 4; // compute
-
-            if(gpumatmultconf[index].sem==1)
-                sem_post(gpumatmultconf[index].semptr2[device]);
-
-
-          //  printf("%d  device %d (GPU %d): compute reference product\n", index, device, gpumatmultconf[index].GPUdevice[device]);
-          //  fflush(stdout);
-
-            //            alphatmp = cublasSgemv_alpha;
-            //            betatmp = cublasSgemv_beta;
-
-            // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
-            //        cublasSgemv_alpha = 1.0;
-            //        cublasSgemv_beta = 0.0;
-            alpharef = 1.0;
-            betaref = 0.0;
-            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpharef, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &betaref, gpumatmultconf[index].d_dmRef[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                fflush(stdout);
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-
-                printf("device %d of index %d\n", device, index);
-                printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
-
-                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
-                printf("alpha                               = %f\n", alpharef);
-                printf("alpha                               = %f\n", betaref);
-                printf("gpumatmultconf[index].M             = %d\n", (int) gpumatmultconf[index].M);
-                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
-                fflush(stdout);
-                exit(EXIT_FAILURE);
-            }
-            //          cublasSgemv_alpha = alphatmp;
-            //          cublasSgemv_beta = betatmp;
-
-            gpumatmultconf[index].refWFSinit[device] = 1;
-
-
-            if(gpumatmultconf[index].sem==1)
-                sem_post(gpumatmultconf[index].semptr3[device]);
-
-            *ptrstat = 5; // transfer result
-
-            if(gpumatmultconf[index].sem==1)
-            {
-                sem_wait(gpumatmultconf[index].semptr4[device]);
-                if(FORCESEMINIT==1)
-                {
-                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                    for(cnt=0; cnt<semval; cnt++)
-                        sem_trywait(gpumatmultconf[index].semptr4[device]);
-                }
-            }
-
-
-            // copy d_dmRef -> dmRef_part
-            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                fprintf(stderr, "!!!! device access error (read C)\n");
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-                exit(EXIT_FAILURE);
-            }
-
-            // TEST
-
-        /*    sprintf(fname, "gputest%d.txt", device);
-            if((fptest = fopen(fname, "w"))==NULL)
-            {
-                printf("ERROR: cannot create file \"%s\"\n", fname);
-                exit(0);
-            }
-            printf("Writing test file \"%s\"\n", fname);
-            fflush(stdout);
-            for(ii=0; ii<gpumatmultconf[index].M; ii++)
-                fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
-            fclose(fptest);
-*/
-            if(gpumatmultconf[index].sem==1)
-                sem_post(gpumatmultconf[index].semptr5[device]);
-
-            *ptrstat = 6;
-        }
-        else
-        {
-            *ptrstat = 4; // compute
-
-            if(gpumatmultconf[index].sem==1)
-                sem_post(gpumatmultconf[index].semptr2[device]);
-
-            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
-
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                fflush(stdout);
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-
-                printf("device %d of index %d\n", device, index);
-                printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
-
-                printf("alpha = %f\n", cublasSgemv_alpha);
-                printf("alpha = %f\n", cublasSgemv_beta);
-                printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
-                fflush(stdout);
-
-                exit(EXIT_FAILURE);
-            }
-
-
-            if(gpumatmultconf[index].sem==1)
-                sem_post(gpumatmultconf[index].semptr3[device]);
-
-            *ptrstat = 5; // transfer result
-
-            if(gpumatmultconf[index].sem==1)
-            {
-                sem_wait(gpumatmultconf[index].semptr4[device]);
-                if(FORCESEMINIT==1)
-                {
-                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                    for(cnt=0; cnt<semval; cnt++)
-                        sem_trywait(gpumatmultconf[index].semptr4[device]);
-                }
-            }
-
-            // result is on gpumatmultconf[index].d_dmVec[device]
-            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                fprintf(stderr, "!!!! device access error (read C)\n");
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-                exit(EXIT_FAILURE);
-            }
-        }
-        if(gpumatmultconf[index].sem==1)
-            sem_post(gpumatmultconf[index].semptr5[device]);
-
-        *ptrstat = 6;
-
-        // START MODE VALUES COMPUTATION HERE
-
-
-
-        iter++;
-    }
-
-
-    pthread_exit(0);
-}
-
-
-
-
 
 
 #ifdef HAVE_MAGMA
@@ -1530,13 +1837,155 @@ void *compute_function( void *ptr )
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. SINGULAR VALUE DECOMPOSITION, PSEUDO-INVERSE                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+/** @brief Test pseudo inverse
+ * 
+ */
+ 
+long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name)
+{
+	long IDmatA, IDmatAinv;
+	long IDmatOut;
+	
+	long ii;
+	float *magmaf_d_AinvA;
+	float *magmaf_h_AinvA;
+
+	long *arraysizetmp;
+	int atype;
+	magma_int_t M, N;
+	
+
+	/**
+	 * 
+	 * IDmatA is an image loaded as a M x N matrix
+	 * IDmatAinv is an image loaded as a M x M matrix, representing the transpose of the pseudo inverse of IDmatA
+	 * 
+	 * The input matrices can be 2D or a 3D images
+	 * 
+	 * If 2D image :
+	 *   IDmatA    M = xsize
+	 *   IDmatA    N = ysize
+	 * 
+	 * If 3D image :
+	 *   IDmatA M = xsize*ysize
+	 *   IDmatA N = ysize
+	 * 
+	 * 
+	 */
+
+	///
+	/// MAGMA uses column-major matrices. For matrix A with dimension (M,N), element A(i,j) is A[ j*M + i]
+	/// i = 0 ... M
+	/// j = 0 ... N
+	///
+	
+	
+	arraysizetmp = (long*) malloc(sizeof(long)*3);
+
+    IDmatA = image_ID(IDmatA_name);
+    IDmatAinv = image_ID(IDmatAinv_name);
+    atype = data.image[IDmatA].md[0].atype;
+
+    if(data.image[IDmatA].md[0].naxis==3)
+    {
+		/// each column (N=cst) of A is a z=cst slice of image Rmatrix
+        M = data.image[IDmatA].md[0].size[0]*data.image[IDmatA].md[0].size[1];
+        N = data.image[IDmatA].md[0].size[2];
+    }
+    else
+    {
+		/// each column (N=cst) of A is a line (y=cst) of Rmatrix (90 deg rotation)
+        M = data.image[IDmatA].md[0].size[0];
+        N = data.image[IDmatA].md[0].size[1];
+    }
+
+
+	/// Initialize MAGAM if needed
+    if(INIT_MAGMA==0)
+    {
+        magma_init();
+        magma_print_environment();
+
+        INIT_MAGMA = 1;
+    }
+	magma_queue_create(0, &magmaqueue);
+
+    TESTING_MALLOC_CPU( magmaf_h_A, float, M*N);
+    TESTING_MALLOC_DEV( magmaf_d_A, float, M*N);
+
+    TESTING_MALLOC_CPU( magmaf_h_Ainv, float, M*N);
+    TESTING_MALLOC_DEV( magmaf_d_Ainv, float, M*N);
+
+    TESTING_MALLOC_CPU( magmaf_h_AinvA, float, N*N);
+    TESTING_MALLOC_DEV( magmaf_d_AinvA, float, N*N);
+
+
+	/// load matA in h_A -> d_A
+    for(ii=0; ii<M*N; ii++)
+        magmaf_h_A[ii] =  data.image[IDmatA].array.F[ii];	
+    magma_ssetmatrix( M, N, magmaf_h_A, M, magmaf_d_A, M, magmaqueue);
+
+	/// load matAinv in h_Ainv -> d_Ainv
+    for(ii=0; ii<M*N; ii++)
+        magmaf_h_Ainv[ii] =  data.image[IDmatAinv].array.F[ii];	
+    magma_ssetmatrix( M, N, magmaf_h_Ainv, M, magmaf_d_Ainv, M, magmaqueue);
+
+
+	magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_Ainv, M, magmaf_d_A, M, 0.0,  magmaf_d_AinvA, N, magmaqueue);
+
+	magma_sgetmatrix( N, N, magmaf_d_AinvA, N, magmaf_h_AinvA, N, magmaqueue);
+
+	
+	arraysizetmp[0] = N;
+	arraysizetmp[1] = N;
+	IDmatOut = create_image_ID(IDmatOut_name, 2, arraysizetmp, FLOAT, 0, 0);
+       
+
+    for(ii=0; ii<N*N; ii++)
+         data.image[IDmatOut].array.F[ii] = magmaf_h_AinvA[ii];
+
+
+
+    TESTING_FREE_CPU( magmaf_h_AinvA );
+    TESTING_FREE_DEV( magmaf_d_AinvA );
+
+    TESTING_FREE_DEV( magmaf_d_A );
+    TESTING_FREE_CPU( magmaf_h_A );
+
+    TESTING_FREE_DEV( magmaf_d_Ainv );
+    TESTING_FREE_CPU( magmaf_h_Ainv );
+
+
+	free(arraysizetmp);
+	
+    magma_queue_destroy( magmaqueue );
+    magma_finalize ();                               //  finalize  Magma
+
+
+
+	return IDmatOut;
+}
+
+
+
+
 
 //
 // Computes control matrix
 // Conventions:
 //   m: number of actuators 
 //   n: number of sensors  
-int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name) /* works for m != n */
+int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name) 
 {
 	long *arraysizetmp;
 	magma_int_t M, N, min_mn;
@@ -1618,8 +2067,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
 
 
 
-	
-	
 	
 	// write input h_R matrix
 	 if(atype==FLOAT)
@@ -1711,13 +2158,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
 
    // compute pseudo-inverse
    // M+ = V Sig^-1 UT
-  /* for(ii=0;ii<M;ii++)
+   for(ii=0;ii<M;ii++)
 		for(jj=0;jj<N;jj++)
 			for(mode=0;mode<MaxNBmodes1-1;mode++)
 				{
 					data.image[ID_Cmatrix].array.F[jj*M+ii] += VT[jj*N+mode]*U[mode*M+ii]/S1[mode];
 				}
-   */
+   
      
             
     magma_free_cpu(a);                                        // free  host  memory
@@ -1748,24 +2195,84 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
 
 
 
-//
-// Computes control matrix
-// Conventions:
-//   m: number of actuators
-//   n: number of sensors
-//	assumes n>m
-//
-// NOTE: NUMERICALLY STABLE FOR SVDeps >1e-3
-//
-// use LOOPmode = 1 for computing the same size SVD, same input and output location
-//
-int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode) /* works for m != n */
+/** 
+ *  @brief Computes matrix pseudo-inverse (AT A)^-1 AT, using eigenvector/eigenvalue decomposition of AT A
+ * 
+ * 
+ * Computes pseuso inverse of M x N matrix
+ * 
+ * When used with AOloopControl module:
+ *    N: number of actuators 
+ *    M: number of sensors 
+ * 	assumes M>N
+ * 
+ * 
+ *  use LOOPmode = 1 for computing the same size SVD, same input and output location
+ * 
+ * Notations: 
+ * 	AT is transpose of A 
+ * 	A+ is pseudo inverse of A
+ * 
+ *  Computes pseudo-inverse : A+ = (AT A)^-1 AT
+ *  Inverse of AT A is computed by SVD
+ * 
+ * SVD:   A = U S V^T
+ *   U are eigenvectors of A A^T
+ *   V are eigenvectors of A^T A, computed at step 4 below
+ * 
+ * Linear algebra reminder: equivalence between (AT A)^-1 AT and V S^-1 UT
+ * 
+ * Definition of pseudoinverse:
+ * A+ = (AT A)^-1 AT   
+ * singular value decomposition of A = U S VT 
+ * A+ = ( V S UT U S VT )^-1 V S UT
+ * Since U is unitary, UT U = Id ->
+ * A+ = ( V S^2 VT )^-1 V S UT
+ * A+ = VT^-1 S^-2 V^-1 V S UT
+ * A+ = V S^-1 UT
+ * 
+ *  Main steps:
+ * 
+ *  STEP 1 :   Fill input data into magmaf_h_A on host   
+ * 
+ *  STEP 2 :   Copy input data to GPU                                 -> magmaf_d_A        (MxN matrix on device) 
+ * 
+ *  STEP 3 :   Compute  trans(A) x A   : magmaf_d_A x magmaf_d_A      -> magmaf_d_AtA      (NxN matrix on device)
+ * 
+ *  STEP 4 :   Compute eigenvalues and eigenvectors of A^T A          -> magmaf_d_AtA      (NxN matrix on device)
+ *     Calls magma_ssyevd_gpu :
+ *     Compute the eigenvalues and optionally eigenvectors of a symmetric real matrix in single precision, GPU interface, big matrix.
+ *     This function computes in single precision all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A defined on the device.  
+ *     The  first parameter can take the values MagmaVec,'V' or MagmaNoVec,'N' and answers the question whether the eigenvectors are desired.  
+ *     If the eigenvectors are desired, it uses a divide and conquer algorithm.  The symmetric matrix A can be stored in lower (MagmaLower,'L') 
+ *     or upper  (MagmaUpper,'U') mode. If the eigenvectors are desired, then on exit A contains orthonormal eigenvectors.  
+ *     The eigenvalues are stored in an array w
+ * 
+ *  STEP 5 :   Set eigenvalue limit
+ * 
+ *  STEP 6 :   Write eigenvectors to V^T matrix
+ * 
+ *  STEP 7 :   Write eigenvectors/eigenvalue to magma_h_VT1 if eigenvalue > limit
+ *           Copy to magma_d_VT1
+ * 
+ *  STEP 8 :   Compute M2 = VT1 VT. M2 is (AT A)^-1
+ * 
+ *  STEP 9 :   Compute Ainv = M2 A. This is the pseudo inverse
+ * 
+ * @note SVDeps^2 is applied as a limit to the eigenvectors of AT A, which are equal to the squares of the singular values of A, so this is equivalent to applying SVDeps as a limit on the singular values of A
+ * @note When used to compute AO control matrix, N=number of actuators/modes, M=number of WFS elements
+ * @note EIGENVALUES are good to about 1e-6 of peak eigenvalue in single precision, much better with double precision
+ * @note 2.5x faster in single precision
+ */
+
+
+int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode) 
 {
     long ID_Rmatrix;
     int atype;
     long *arraysizetmp;
     int size; // variable for memory allocations
-    long n, m, N, M;
+    long N, M;
     long ii, jj, k;
     magma_int_t info;
 
@@ -1774,11 +2281,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     long ID_A, ID_AtA, ID_VT, ID_Ainv;
 
-    // Timing
-    int testmode = 0;
-    int timing = 1;
-    struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
-    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;
+    /// Timing tests
+    int timing = 1;                                                        /**< 1 if timing test ON, 0 otherwise */
+    struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;                /**< Timers                           */
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;     /**< Times in sec                     */
     struct timespec tdiff;
 
 
@@ -1792,9 +2298,18 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     long ID_Cmatrix;
 
+	// TESTING FLAGS
+	int VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse = 1;
+    int testmode = 0;
 
 
-    int MAGMAfloat = 0; // 1 if single precision
+    int MAGMAfloat = 1;		                                               /**< 1 if single precision, 0 if double precision */
+
+
+	int magmaXmode = 0; // expert mode, uses magma_ssyevdx_gpu
+	// this does not speed up computation
+	magma_int_t mout;
+
 
 
 
@@ -1802,52 +2317,85 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         clock_gettime(CLOCK_REALTIME, &t0);
 
 
+	/**
+	 * 
+	 * The input matrix can be a 2D or a 3D image
+	 * 
+	 * If 2D image :
+	 *   M = xsize
+	 *   N = ysize
+	 * 
+	 * If 3D image :
+	 *   M = xsize*ysize
+	 *   N = ysize
+	 * 
+	 * Note that a tall input matrix (M>N) will appear short if viewed as an image.
+	 * There is a 90 deg rotation between image and matrix
+	 * 
+	 */
 
+
+
+	///
+	/// MAGMA uses column-major matrices. For matrix A with dimension (M,N), element A(i,j) is A[ j*M + i]
+	/// i = 0 ... M
+	/// j = 0 ... N
+	///
+	
+	
     arraysizetmp = (long*) malloc(sizeof(long)*3);
-
-
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
     atype = data.image[ID_Rmatrix].md[0].atype;
 
-
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
-        n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
-        m = data.image[ID_Rmatrix].md[0].size[2];
-       // printf("3D image -> %ld %ld\n", n, m);
-       // fflush(stdout);
+        /// each column (N=cst) of A is a z=cst slice of image Rmatrix
+        M = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        
+        N = data.image[ID_Rmatrix].md[0].size[2];
+        
+        if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+        {
+			printf("3D image -> %ld %ld\n", M, N);
+			fflush(stdout);
+		}
     }
     else
     {
-        n = data.image[ID_Rmatrix].md[0].size[0];
-        m = data.image[ID_Rmatrix].md[0].size[1];
-      //  printf("2D image -> %ld %ld\n", n, m);
-       // fflush(stdout);
+		/// each column (N=cst) of A is a line (y=cst) of Rmatrix (90 deg rotation)
+        M = data.image[ID_Rmatrix].md[0].size[0];
+
+        N = data.image[ID_Rmatrix].md[0].size[1];
+
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("2D image -> %ld %ld\n", M, N);
+			fflush(stdout);
+		}
     }
 
-    M = n;
-    N = m;
-    /*	if(M<N)
-    		{
-    			printf("ERROR: this routine needs M > N\n");
-    			exit(0);
-    		}
-    	*/
-
-    /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
 
-   // printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-  //  fflush(stdout);
 
 
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+		fflush(stdout);
+	}
+
+
+	/// Initialize MAGMA if needed
     if(INIT_MAGMA==0)
     {
-        printf("INITIALIZE MAGMA\n");
-        fflush(stdout);
-        magma_init(); // initialize Magma
-        //flops_init();
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("INITIALIZE MAGMA\n");
+			fflush(stdout);
+        }
+        magma_init();
         magma_print_environment();
 
         INIT_MAGMA = 1;
@@ -1855,7 +2403,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(MAGMAloop_iter == 0)
+
+
+    if(MAGMAloop_iter == 0) /// memory is only allocated on first pass
     {
         if(MAGMAfloat==0)
         {
@@ -1886,27 +2436,31 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    //printf("MAGMA READY\n");
-    //fflush(stdout);
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA READY\n");
+		fflush(stdout);
+	}
 
 
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t1);
 
 
-
-
-    // write input h_A matrix
+	// ****************************************************
+	// STEP 1 :   Fill input data into magmaf_h_A on host   
+	// ****************************************************
+	
     if(atype==FLOAT)
     {
         if(MAGMAfloat==1)
         {
-            for(ii=0; ii<n*m; ii++)
+            for(ii=0; ii<M*N; ii++)
                 magmaf_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
         }
         else
         {
-            for(ii=0; ii<n*m; ii++)
+            for(ii=0; ii<M*N; ii++)
                 magma_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
         }
     }
@@ -1914,12 +2468,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     {
         if(MAGMAfloat==1)
         {
-            for(ii=0; ii<n*m; ii++)
+            for(ii=0; ii<M*N; ii++)
                 magmaf_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
         }
         else
         {
-            for(ii=0; ii<n*m; ii++)
+            for(ii=0; ii<M*N; ii++)
                 magma_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
         }
     }
@@ -1937,23 +2491,37 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             for(ii=0; ii<M*N; ii++)
                 data.image[ID_A].array.F[ii] = magma_h_A[ii];
         }
-
+        
         save_fits("mA", "!test_mA.fits");
         delete_image_ID("mA");
     }
 
 
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: CREATE QUEUE\n");
+		fflush(stdout);
+	}
+	
+
+
+
+
+	// ****************************************************
+	// STEP 2 :   Copy input data from CPU to GPU   
+	// ****************************************************
+	
     if(MAGMAloop_iter == 0)
         magma_queue_create(0, &magmaqueue);
-
-
+	
     if(MAGMAfloat==1)
         magma_ssetmatrix( M, N, magmaf_h_A, M, magmaf_d_A, M, magmaqueue);
     else
         magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
 
 
-    if(LOOPmode==0)
+    if(LOOPmode==0) /// if pseudo-inverse is only computed once, these arrays can be freed
     {
         if(MAGMAfloat==1)
             TESTING_FREE_CPU( magmaf_h_A );
@@ -1964,7 +2532,19 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t2);
 
-    // COMPUTE trans(A) x A
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: COMPUTE trans(A) x A\n");
+		fflush(stdout);
+    }
+    
+    
+	// ****************************************************    
+    // STEP 3 :   Compute trans(A) x A    : magmaf_d_A x magmaf_d_A      -> magmaf_d_AtA      (NxN matrix on device)
+	// ****************************************************
+	
+	    
     if(MAGMAfloat==1)
         magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_A, M, magmaf_d_A, M, 0.0,  magmaf_d_AtA, N, magmaqueue);
     else
@@ -1999,14 +2579,34 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t3);
 
-    // COMPUTE eigenvalues and eigenvectors of trans(A) x A
 
+	// ****************************************************    
+	// STEP 4 :   Compute eigenvalues and eigenvectors of AT A   -> magmaf_d_AtA      (NxN matrix on device)
+	//
+	// SVD of AT A = V S^2 VT
+	// calls function magma_ssyevd_gpu
+	// 
+	//
+	// ****************************************************    
+
+
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("COMPUTE eigenvalues and eigenvectors of AT A\n");
+		fflush(stdout);
+	}
+	
     if(MAGMAloop_iter==0)
     {
         // get workspace size
         if(MAGMAfloat==1)
         {
-            magma_ssyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, auxf_work,  -1, magma_aux_iwork, -1, &info );
+			if(magmaXmode==1)
+				magma_ssyevdx_gpu( MagmaVec, MagmaRangeI, MagmaLower, N, NULL, N, 0.0, 1.0, N-MaxNBmodes, N, NULL, NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
+			else
+				magma_ssyevd_gpu(  MagmaVec,              MagmaLower, N, NULL, N,                       NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
+            
             magma_lwork  = (magma_int_t) MAGMA_S_REAL( auxf_work[0] );
         }
         else
@@ -2016,8 +2616,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
 
         magma_liwork = magma_aux_iwork[0];
-
-      //  printf("workspace size : %ld  %ld\n", (long) magma_lwork, (long) magma_liwork);
     }
 
 
@@ -2025,8 +2623,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t4);
 
-
-    // allocate & compute
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: allocate & compute\n");
+		fflush(stdout);
+    }
+    
+    
     if(MAGMAloop_iter == 0)
     {
         if(MAGMAfloat==1)
@@ -2046,12 +2649,49 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
 
-
-    // THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
+   
+    
+    
+    
     if(MAGMAfloat==1)
-        magma_ssyevd_gpu( MagmaVec, MagmaLower, N, magmaf_d_AtA, N, magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_ssyevd_gpu -> ");
+			fflush(stdout);
+		}
+		
+		// SSYEVD computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A
+		if(magmaXmode==1)
+			magma_ssyevdx_gpu( MagmaVec, MagmaRangeI, MagmaLower, N, magmaf_d_AtA, N, 0.0, 1.0, N-MaxNBmodes, N, &mout, magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+		else
+			magma_ssyevd_gpu( MagmaVec,               MagmaLower, N, magmaf_d_AtA, N,                        magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+				
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" DONE\n");
+			fflush(stdout);
+		}
+	}
     else
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dsyevd_gpu -> ");  
+			fflush(stdout);
+        }
+        // CODE CAN HANG HERE - THIS HAPPENS ONCE OUT OF multiple 1000s EXECUTIONS WHEN RUNNING IN A LOOP.. SEEMS TO BE A MAGMA ISSUE
+        
+        // SSYEVD computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A
         magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" DONE\n");
+			fflush(stdout);
+		}
+	}
 
     if(LOOPmode == 0)
     {
@@ -2075,8 +2715,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         clock_gettime(CLOCK_REALTIME, &t5);
 
 
-
-    // Write eigenvalues
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("Write eigenvalues to file\n");
+		fflush(stdout);
+    }
+    
     sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
     {
@@ -2085,56 +2729,74 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
     if(MAGMAfloat==1)
     {
-        for(k=0; k<m; k++)
-            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magmaf_w1[m-k-1], magmaf_w1[m-k-1]/magmaf_w1[m-1], SVDeps*SVDeps);
+        for(k=0; k<N; k++)
+            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magmaf_w1[N-k-1], magmaf_w1[N-k-1]/magmaf_w1[N-1], SVDeps*SVDeps);
     }
     else
     {
-        for(k=0; k<m; k++)
-            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magma_w1[m-k-1], magma_w1[m-k-1]/magma_w1[m-1], SVDeps*SVDeps);
+        for(k=0; k<N; k++)
+            fprintf(fp,"%5ld %20.8g  %20.8f  %20.8f\n", k, magma_w1[N-k-1], magma_w1[N-k-1]/magma_w1[N-1], SVDeps*SVDeps);
     }
     fclose(fp);
 
 
+	/// w1 values are the EIGENVALUES of AT A
+	/// Note: w1 values are the SQUARE of the singular values of A 
+
+
+	// ****************************************************    
+	// STEP 5 :   Set eigenvalue limit
+	// ****************************************************    
 	
 	if(MAGMAfloat==1)
-		egvlim = SVDeps*SVDeps* magmaf_w1[m-1];
+		egvlim = SVDeps*SVDeps* magmaf_w1[N-1];
     else
-    	egvlim = SVDeps*SVDeps* magma_w1[m-1];
+    	egvlim = SVDeps*SVDeps* magma_w1[N-1];
     
     MaxNBmodes1 = MaxNBmodes;
-    if(MaxNBmodes1>m)
-        MaxNBmodes1 = m;
-    if(MaxNBmodes1>n)
-        MaxNBmodes1 = n;
+    if(MaxNBmodes1>N)
+        MaxNBmodes1 = N;
+    if(MaxNBmodes1>M)
+        MaxNBmodes1 = M;
     mode = 0;
     
     if(MAGMAfloat==1)
     {
-		while( (mode<MaxNBmodes1) && (magmaf_w1[m-mode-1]>egvlim) )
+		while( (mode<MaxNBmodes1) && (magmaf_w1[N-mode-1]>egvlim) )
 			mode++;
     }
     else
     {
-		while( (mode<MaxNBmodes1) && (magma_w1[m-mode-1]>egvlim) )
+		while( (mode<MaxNBmodes1) && (magma_w1[N-mode-1]>egvlim) )
 			mode++;
 	}
 	
-//    printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
+		fflush(stdout);
+	}
+	
     fp = fopen("SVDmodes.log", "w");
     fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
     fclose(fp);
     MaxNBmodes1 = mode;
     //printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
+
+	// ****************************************************    
+	// STEP 6 :   Write eigenvectors to VT matrix
+	// ****************************************************    
+	
+	// eigenvectors are in magma_d_AtA (device), copy them to magma_h_AtA (host)
+
     if(MAGMAfloat==1)
         magma_sgetmatrix( N, N, magmaf_d_AtA, N, magmaf_h_AtA, N, magmaqueue);
     else
         magma_dgetmatrix( N, N, magma_d_AtA, N, magma_h_AtA, N, magmaqueue);
 
-    //if(testmode == 1)
-    //{
+
+	// copy eigenvectors from magma_h_AtA to VT
     ID_VT = create_2Dimage_ID(ID_VTmatrix_name, N, N);
 
     if(MAGMAfloat==1)
@@ -2150,6 +2812,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
                 data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
     }
 
+
+	// ****************************************************    
+	// STEP 7 :   Write eigenvectors/eigenvalue to magma_h_VT1 if eigenvalue > limit
+	//          Copy to magma_d_VT1
+	// ****************************************************   
 
     if(MAGMAfloat==1)
     {
@@ -2198,11 +2865,50 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t6);
 
-    // compute M2 = VT1 VT
+
+	// ****************************************************    
+	// STEP 8 :   Compute M2 = VT1 VT = (AT A)^-1
+	// ****************************************************    
+
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+    {
+		printf("compute M2 = VT1 VT\n");
+		fflush(stdout);
+    }
+    
     if(MAGMAfloat==1)
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_sgemm ");
+			fflush(stdout);
+        }
+        
         magma_sgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magmaf_d_VT1, N, magmaf_d_AtA, N, 0.0,  magmaf_d_M2, N, magmaqueue);
+
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+    }
     else
-        magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dgemm ");
+			fflush(stdout);
+        }
+        
+	    magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
+
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+	}
 
     if(testmode == 1)
     {
@@ -2250,10 +2956,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
-    // d_A d_M2
-    //  w1
+ 
 
-    // compute M3 = M2 A
+
+	// ****************************************************    
+	// STEP 9 :   Compute Ainv = M2 A = (AT A)^-1 A 
+	// ****************************************************    
+
+
+    // compute Ainv = M2 A
     if(MAGMAloop_iter==0)
     {
         if(MAGMAfloat==1)
@@ -2267,42 +2978,69 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
     if(MAGMAfloat==1)
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_sgemm ");
+			fflush(stdout);
+        }
+        
         magma_sgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magmaf_d_A, M, magmaf_d_M2, N, 0.0, magmaf_d_Ainv, M, magmaqueue);
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+    }
     else
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dgemm ");
+			fflush(stdout);
+        }
+        
         magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magma_d_A, M, magma_d_M2, N, 0.0, magma_d_Ainv, M, magmaqueue);
-
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);	
+		}
+	}
 
     if(LOOPmode==0)
     {
         if(MAGMAfloat==1)
-        {
 			TESTING_FREE_DEV( magmaf_d_A);
-		}
         else
-        {
             TESTING_FREE_DEV( magma_d_A);
-		}
 	}
 
 
     if(MAGMAloop_iter==0)
     {
         if(MAGMAfloat==1)
-        {
-		    TESTING_MALLOC_CPU( magmaf_h_Ainv, float, N*M);
-        }
+		{
+			TESTING_MALLOC_CPU( magmaf_h_Ainv, float, N*M);
+		}
         else
-        {
-		    TESTING_MALLOC_CPU( magma_h_Ainv, double, N*M);
+		{
+			TESTING_MALLOC_CPU( magma_h_Ainv, double, N*M);
 		}
     }
 
     if(LOOPmode==0)
     {
         if(MAGMAfloat==1)
-            TESTING_FREE_DEV( magmaf_d_M2 );
+         {
+		   TESTING_FREE_DEV( magmaf_d_M2 );
+        }
         else
-            TESTING_FREE_DEV( magma_d_M2 );
+        {    
+			TESTING_FREE_DEV( magma_d_M2 );
+		}
     }
 
 
@@ -2315,7 +3053,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_sgetmatrix( M, N, magmaf_d_Ainv, M, magmaf_h_Ainv, M, magmaqueue);
     else
         magma_dgetmatrix( M, N, magma_d_Ainv, M, magma_h_Ainv, M, magmaqueue);
-
 
 
     if(testmode == 1)
@@ -2346,12 +3083,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         {
             arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
             arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
-            arraysizetmp[2] = m;
+            arraysizetmp[2] = N;
         }
         else
         {
-            arraysizetmp[0] = n;
-            arraysizetmp[1] = m;
+            arraysizetmp[0] = M;
+            arraysizetmp[1] = N;
         }
 
         if(atype==FLOAT)
@@ -2362,9 +3099,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     else
         ID_Cmatrix = image_ID(ID_Cmatrix_name);
 
-    /* write result */
-    // 	M = n;
-    //	N = m;
+	
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("write result\n");
+		fflush(stdout);
+    }
+
     if(atype==FLOAT)
     {
         if(MAGMAfloat==1)
@@ -2458,25 +3199,30 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         tdiff = info_time_diff(t0, t9);
         t09d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-
-      //  printf("%6ld  Timing info: \n", MAGMAloop_iter);
-      //  printf("  0-1	%12.3f ms\n", t01d*1000.0);
-      //  printf("  1-2	%12.3f ms\n", t12d*1000.0);
-      //  printf("  2-3	%12.3f ms\n", t23d*1000.0);
-      //  printf("  3-4	%12.3f ms\n", t34d*1000.0);
-      //  printf("  4-5	%12.3f ms\n", t45d*1000.0);
-      //  printf("  5-6	%12.3f ms\n", t56d*1000.0);
-      //  printf("  6-7	%12.3f ms\n", t67d*1000.0);
-      //  printf("  7-8	%12.3f ms\n", t78d*1000.0);
-      //  printf("  8-9	%12.3f ms\n", t89d*1000.0);
-      //  printf("\n");
-      //  printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+      printf("%6ld  Timing info: \n", MAGMAloop_iter);
+      printf("  0-1	%12.3f ms\n", t01d*1000.0);
+      printf("  1-2	%12.3f ms\n", t12d*1000.0);
+      printf("  2-3	%12.3f ms\n", t23d*1000.0);
+      printf("  3-4	%12.3f ms\n", t34d*1000.0);
+      printf("  4-5	%12.3f ms\n", t45d*1000.0);
+      printf("  5-6	%12.3f ms\n", t56d*1000.0);
+      printf("  6-7	%12.3f ms\n", t67d*1000.0);
+      printf("  7-8	%12.3f ms\n", t78d*1000.0);
+      printf("  8-9	%12.3f ms\n", t89d*1000.0);
+      printf("\n");
+      printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+		fflush(stdout);
+    }
     }
 
 
-
-   // printf("\n\n");
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("\n\n");
+		fflush(stdout);
+	}
 
     if(LOOPmode == 1)
         MAGMAloop_iter++;
@@ -2911,6 +3657,27 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
 
 
 
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. HIGH LEVEL FUNCTIONS                                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+
+
 //
 // single GPU
 // semaphore input = 3
@@ -3209,29 +3976,9 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
 
 
 
-//
-// extract mode coefficients from data stream
-// modes need to be orthogonal
-// single GPU computation
-//
-// in_stream                  input stream
-// intot_strem   [optional]   input normalization stream
-// IDmodes_name               Modes
-// IDrefin_name               input reference  - to be subtracted
-// IDrefout_name [optional]   output reference - to be added
-// IDmodes_val_name           ouput
-// GPUindex                   GPU index
-// PROCESS                    1 if postprocessing
-// TRACEMODE                  1 if writing trace
-// MODENORM                   1 if input modes should be normalized
-// insem                      input semaphore index
-// axmode                     0 for normal mode extraction, 1 for expansion
-// twait					  if >0, insert time wait [us] at each iteration
-//
-// IMPORTANT: if IDmodes_val_name exits, use it and do not compute it
-//
-// if IDrefout_name exists, match output image size to IDrefout_name
-//
+/** @brief extract mode coefficients from data stream
+ * 
+ */ 
 
 int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, const char *IDmodes_name, const char *IDrefin_name, const char *IDrefout_name, const char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode, long twait)
 {
@@ -3358,13 +4105,17 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     else
     {
         ID = image_ID(IDmodes_name);
-        printf("ID = %ld\n", ID);
+        printf("Modes: ID = %ld   %s\n", ID, IDmodes_name);
         fflush(stdout);
 
         NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
         n = NBmodes;
         printf("NBmodes = %ld\n", NBmodes);
         fflush(stdout);
+
+        printf("creating _tmpmodes  %ld %ld %ld\n", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
+        fflush(stdout);
+
 
         IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
 
@@ -3396,6 +4147,8 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
 
 
+
+
     modevalarray = (float*) malloc(sizeof(float)*n);
     modevalarrayref = (float*) malloc(sizeof(float)*n);
 
@@ -3415,6 +4168,9 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     }
 
 
+
+
+
     ID_modeval = image_ID(IDmodes_val_name);
     if(ID_modeval==-1) // CREATE IT
     {
@@ -3430,6 +4186,10 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     }
 
     free(arraytmp);
+
+
+
+
 
     if(MODEVALCOMPUTE == 1)
     {
@@ -3542,6 +4302,8 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
 
 
+
+
     if(TRACEMODE==1)
     {
         sizearraytmp = (long*) malloc(sizeof(long)*2);
@@ -3565,6 +4327,8 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
         COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
         free(sizearraytmp);
     }
+
+
 
 
 
@@ -3615,6 +4379,10 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
 
     initref = 0;
+
+
+
+
 
 
 	twait1 = twait;
@@ -4168,140 +4936,6 @@ int CUDACOMP_createModesLoop(const char *DMmodeval_stream, const char *DMmodes, 
 
 
  
-
-
-int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
-{
-    long ID_contrM;
-    long ID_WFS;
-    long ID_cmd_modes;
-    long *cmsize;
-    long *wfssize;
-    long *cmdmodessize;
-    int_fast8_t status;
-    int_fast8_t GPUstatus[100];
-    long iter;
-    long NBiter = 50000;
-    double time1sec, time2sec;
-    struct timespec tnow;
-    int *GPUdevices;
-    int k;
-    double SVDeps = 0.1;
-
-    long n, m;
-    long *arraysizetmp;
-    long ID, ID_R, ID_C;
-    long ii, jj;
-    float val;
-
-    if(1==1)
-    {
-    //printf("Testing SVD on CPU\n");
-      // linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
-    
-        create_2Dimage_ID("Rmat", WFSsize, WFSsize);
-    
-       printf("Testing SVD on GPU\n");
-       GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
-        list_image_ID();
-        printf("DONE ... ");
-        fflush(stdout);
-        
-        
-       // CHECK RESULT
-     /*   arraysizetmp = (long*) malloc(sizeof(long)*3);
-        ID_R = image_ID("Rmat");
-        ID_C = image_ID("Cmat");
-
-        if(data.image[ID_R].md[0].naxis==3)
-        {
-            m = data.image[ID_R].md[0].size[0]*data.image[ID_R].md[0].size[1];
-            n = data.image[ID_R].md[0].size[2];
-            printf("3D image -> %ld %ld\n", m, n);
-            fflush(stdout);
-        }
-        else
-        {
-            m = data.image[ID_R].md[0].size[0];
-            n = data.image[ID_R].md[0].size[1];
-            printf("2D image -> %ld %ld\n", m, n);
-            fflush(stdout);
-        }
-        
-     
-        printf("CHECKING RESULT ... ");
-        fflush(stdout);
-        
-        ID = create_2Dimage_ID("SVDcheck", n, n);
-        for(ii=0;ii<n;ii++)
-            for(jj=0;jj<n;jj++)
-                {
-                    val = 0.0;
-                    for(k=0;k<m;k++)
-                        val += data.image[ID_C].array.F[ii*m+k] * data.image[ID_R].array.F[jj*m+k];
-                    data.image[ID].array.F[jj*n+ii] = val;
-                }
-        save_fits("SVDcheck", "!SVDcheck.fits");
-        printf("DONE\n");
-        fflush(stdout);*/
-    }
-    else
-    {
-        printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
-
-
-        GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
-        for(k=0; k<GPUcnt; k++)
-            GPUdevices[k] = k+8;
-
-        //    GPUstatus = (int*) malloc(sizeof(int)*100);
-
-        cmsize = (long*) malloc(sizeof(long)*3);
-        cmsize[0] = WFSsize;
-        cmsize[1] = WFSsize;
-        cmsize[2] = NBmodes;
-        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
-
-        wfssize = (long*) malloc(sizeof(long)*2);
-        wfssize[0] = WFSsize;
-        wfssize[1] = WFSsize;
-        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
-
-        cmdmodessize = (long*) malloc(sizeof(long)*2);
-        cmdmodessize[0] = NBmodes;
-        cmdmodessize[1] = 1;
-        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
-
-        GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
-
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
-
-        for(iter=0; iter<NBiter; iter++)
-        {
-            status = 0;
-            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
-        }
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
-
-        printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
-
-        printf("done\n");
-        fflush(stdout);
-
-        delete_image_ID("cudatestcm");
-        delete_image_ID("cudatestwfs");
-        delete_image_ID("cudatestcmd");
-
-        free(cmsize);
-        free(wfssize);
-        free(cmdmodessize);
-        free(GPUdevices);
-    }
-
-    return(0);
-}
 
 
 
