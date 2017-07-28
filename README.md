@@ -27,7 +27,7 @@ You can clone this repository, or download the latest .tar.gz distribution.
 
 ## Libraries
 
-The following libraries are used:
+The following standard libraries are used:
 
 - readline, for reading the command line input
 - flex, for parsing the command line input
@@ -38,6 +38,10 @@ The following libraries are used:
 Install above libraries (centOS):
 
 		sudo yum install readline-devel flex bison-devel fftw3-devel gsl-devel
+
+Install above libraries (Ubuntu):
+
+		sudo apt-get install libcfitsio3 libcfitsio3-dev libreadline6-dev libncurses5-dev libfftw3-dev libgsl0-dev flex bison
 
 
 
@@ -54,10 +58,21 @@ Install above libraries (centOS):
 
 ## Compilation from git clone
 
+### Additional libraries
+
+#### CentOS
+
 Install Development tools, use the command bellow. This will search the yum repositories, and install the tools from the closest repo.
 
 		sudo yum groupinstall "Development tools"
-		
+
+#### Ubuntu
+
+		sudo apt-get install autoconf libtool git
+
+
+### Compilation
+
 The source code follows the standard GNU build process:
 
 		autoreconf -vif
