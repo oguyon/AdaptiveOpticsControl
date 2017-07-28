@@ -16,6 +16,8 @@
 #define _IMAGECREATE_H
 
 
+int_fast8_t init_ImageStreamIO();
+
 
 int ImageStreamIO_createSem(IMAGE *image, long NBsem);
 
