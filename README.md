@@ -36,6 +36,7 @@ The following libraries are used:
 - gsl, for math functions and tools
 
 Install above libraries (centOS):
+
 		sudo yum install readline-devel flex bison-devel fftw3-devel gsl-devel
 
 
@@ -44,6 +45,7 @@ Install above libraries (centOS):
 	Visit https://heasarc.gsfc.nasa.gov/fitsio/fitsio.html and download the file Unix .tar file cfitsio3410.tar.gz
 	Extract it , README , install it 
 	There is the fitsio.h in it. Move it to usr :
+
 		./configure --prefix=/usr
 		make 
 		sudo make install 
@@ -53,9 +55,11 @@ Install above libraries (centOS):
 ## Compilation from git clone
 
 Install Development tools, use the command bellow. This will search the yum repositories, and install the tools from the closest repo.
+
 		sudo yum groupinstall "Development tools"
 		
 The source code follows the standard GNU build process:
+
 		autoreconf -vif
 		./configure
 		make
@@ -66,6 +70,7 @@ The source code follows the standard GNU build process:
 
 
 Unpack
+
 		gunzip <package>.tar.gz
 		tar -xvf <package>.tar
 
