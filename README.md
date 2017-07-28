@@ -7,7 +7,6 @@
 # Adaptive Optics Computation Engine (AOCCE)
 
 
-
 Adaptive Optics Wavefront control tools for high contrast imaging
 
 Uses shared memory for fast low-latency communication to hardware
@@ -17,16 +16,17 @@ Includes a simulator of hardware (DM, Camera): the same code can be tested on ac
 Supports multiple simultaneously running control loops and data logging.
 
 
+[online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/) 
 
 
 
-## Downloading source code
-You can clone this repository, or download the latest .tar.gz distribution.
+
+## Downloading and compiling
+
+See [Downloading and compiling instructions]( doc/DownloadCompile.md )
 
 
 ## Libraries 
-
-Note: please consult [online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/) for detailed instructions.
 
 - readline, for reading the command line input
 - flex, for parsing the command line input
@@ -34,13 +34,7 @@ Note: please consult [online documentation]( http://oguyon.github.io/AdaptiveOpt
 - fftw, for performing Fourier Transforms
 - gsl, for math functions and tools
 - fitsio
-- CUDA/CuBLAS and MAGMA for GPU acceleration
-
-
-
-## Detailed documentation 
-
-Please consult the [online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/).
+- CUDA/CuBLAS and MAGMA for GPU acceleration (optional)
 
 
 
