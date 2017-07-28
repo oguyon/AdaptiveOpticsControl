@@ -22,33 +22,64 @@ Supports multiple simultaneously running control loops and data logging.
 
 
 ## Downloading source code
-Latest distribution is on [github](
-https://github.com/oguyon/AdaptiveOpticsControl).
-You can clone the repository, or download the latest .tar.gz distribution.
+You can clone this repository, or download the latest .tar.gz distribution.
 
 
-## Compilation
+## Libraries
+
+The following libraries are used:
+
+- readline, for reading the command line input
+- flex, for parsing the command line input
+- bison, to interpret the command line input
+- fftw, for performing Fourier Transforms
+- gsl, for math functions and tools
+
+Install above libraries (centOS):
+		sudo yum install readline-devel flex bison-devel fftw3-devel gsl-devel
+
+
+
+- fitsio, for reading and writing FITS image files : 
+	Visit https://heasarc.gsfc.nasa.gov/fitsio/fitsio.html and download the file Unix .tar file cfitsio3410.tar.gz
+	Extract it , README , install it 
+	There is the fitsio.h in it. Move it to usr :
+		./configure --prefix=/usr
+		make 
+		sudo make install 
+
+
+
+## Compilation from git clone
+
+Install Development tools, use the command bellow. This will search the yum repositories, and install the tools from the closest repo.
+		sudo yum groupinstall "Development tools"
+		
+The source code follows the standard GNU build process:
+		autoreconf -vif
+		./configure
+		make
+		make install
+
+
+## Compilation from tarball
+
+
+Unpack
+		gunzip <package>.tar.gz
+		tar -xvf <package>.tar
+
 The source code follows the standard GNU build process:
 
-./configure
-
-make
-
-make install
+		./configure
+		make
+		sudo make install
 
 
 ## Documentation 
 Please consult the [online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/).
 
 
-## Libraries
-The following libraries are used:
-- readline, for reading the command line input
-- flex, for parsing the command line input
-- bison, to interpret the command line input
-- fftw, for performing Fourier Transforms
-- gsl, for math functions and tools
-- fitsio, for reading and writing FITS image files
 
 ## Source Code Architecture 
 Written in C.
