@@ -70,6 +70,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 int_fast8_t init_ImageStreamIO()
 {
+	// any initialization needed ?
 	
 	return 0;
 }
