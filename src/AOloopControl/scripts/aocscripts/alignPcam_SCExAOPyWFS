@@ -25,7 +25,7 @@ readshmim aol${loopnb}_wfs
 readshmim aol${loopnb}_wfsdark
 cp aol${loopnb}_wfsdark wfsdark
 readshmim aol${loopnb}_wfsref0
-imref=aol${loopnb}_wfsref0
+imref=0+aol${loopnb}_wfsref0
 scexaopywfscamalign aol${loopnb}_wfsim
 imdiff=imwfs-imref
 savefits imdiff "!./tmp/imdiff.fits"

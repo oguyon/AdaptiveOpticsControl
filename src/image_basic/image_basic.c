@@ -1,3 +1,20 @@
+/**
+ * @file    image_basic.c
+ * @brief   basic image functions
+ * 
+ * Simple image routines
+ *   
+ * @author  O. Guyon
+ * @date    10 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
+
+
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
@@ -567,14 +584,14 @@ long basic_add(const char *ID_name1, const char *ID_name2, const char *ID_name_o
 
     atypeOK = 0;
 
-    if((atype1==FLOAT)&&(atype2==FLOAT))
+    if((atype1==_DATATYPE_FLOAT)&&(atype2==_DATATYPE_FLOAT))
     {
-        atype = FLOAT;
+        atype = _DATATYPE_FLOAT;
         atypeOK = 1;
     }
-    if((atype1==DOUBLE)&&(atype2==DOUBLE))
+    if((atype1==_DATATYPE_DOUBLE)&&(atype2==_DATATYPE_DOUBLE))
     {
-        atype = DOUBLE;
+        atype = _DATATYPE_DOUBLE;
         atypeOK = 1;
     }
 
@@ -596,7 +613,7 @@ long basic_add(const char *ID_name1, const char *ID_name2, const char *ID_name_o
     if ((naxes2[1]+off2)>naxes1[1]) ymax = (naxes2[1]+off2);
 
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         create_2Dimage_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
         ID_out = image_ID(ID_name_out);
@@ -619,7 +636,7 @@ long basic_add(const char *ID_name1, const char *ID_name2, const char *ID_name_o
             }
     }
 
-    if(atype==DOUBLE)
+    if(atype==_DATATYPE_DOUBLE)
     {
         create_2Dimage_ID_double(ID_name_out,(xmax-xmin),(ymax-ymin));
         ID_out = image_ID(ID_name_out);
@@ -673,14 +690,14 @@ long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name
 
     atypeOK = 0;
 
-    if((atype1==FLOAT)&&(atype2==FLOAT))
+    if((atype1==_DATATYPE_FLOAT)&&(atype2==_DATATYPE_FLOAT))
     {
-        atype = FLOAT;
+        atype = _DATATYPE_FLOAT;
         atypeOK = 1;
     }
-    if((atype1==DOUBLE)&&(atype2==DOUBLE))
+    if((atype1==_DATATYPE_DOUBLE)&&(atype2==_DATATYPE_DOUBLE))
     {
-        atype = DOUBLE;
+        atype = _DATATYPE_DOUBLE;
         atypeOK = 1;
     }
 
@@ -712,7 +729,7 @@ long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name
 
 	
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         create_3Dimage_ID(ID_name_out,(xmax-xmin),(ymax-ymin),(zmax-zmin));
         ID_out = image_ID(ID_name_out);
@@ -741,7 +758,7 @@ long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name
             }
     }
 
-    if(atype==DOUBLE)
+    if(atype==_DATATYPE_DOUBLE)
     {
         create_3Dimage_ID_double(ID_name_out,(xmax-xmin),(ymax-ymin),(zmax-zmin));
         ID_out = image_ID(ID_name_out);
@@ -1028,8 +1045,8 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
     long ID;
     long ID_out; /* ID for the output image */
     long ii,jj,kk;
-    long naxes[3];
-    long *naxes_out;
+    uint32_t naxes[3];
+    uint32_t *naxes_out;
     int i,j,k;
     int atype;
 
@@ -1039,7 +1056,7 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
     naxes[1] = data.image[ID].md[0].size[1];
     naxes[2] = data.image[ID].md[0].size[2];
 
-    naxes_out = (long*) malloc(sizeof(long)*3);
+    naxes_out = (uint32_t*) malloc(sizeof(uint32_t)*3);
     naxes_out[0] = naxes[0] / n1;
     naxes_out[1] = naxes[1] / n2;
     naxes_out[2] = naxes[2] / n3;
@@ -1049,14 +1066,14 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
         create_2Dimage_ID(ID_name_out,naxes_out[0],naxes_out[1]);
     else
     {
-        printf("(%ld x %ld x %ld)  ->  (%ld x %ld x %ld)\n",naxes[0],naxes[1],naxes[2],naxes_out[0],naxes_out[1],naxes_out[2]);
+        printf("(%ld x %ld x %ld)  ->  (%ld x %ld x %ld)\n", (long) naxes[0], (long) naxes[1], (long) naxes[2], (long) naxes_out[0], (long) naxes_out[1], (long) naxes_out[2]);
         create_image_ID(ID_name_out, 3, naxes_out, atype, 0, 0);
     }
 
     ID_out = image_ID(ID_name_out);
 
     switch(atype) {
-    case FLOAT :
+    case _DATATYPE_FLOAT :
         for (jj = 0; jj < naxes_out[1]; jj++)
             for (ii = 0; ii < naxes_out[0]; ii++)
                 for (kk = 0; kk < naxes_out[2]; kk++)
@@ -1065,7 +1082,7 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
                             for (k = 0; k < n3; k++)
                                 data.image[ID_out].array.F[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii] += data.image[ID].array.F[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i];
         break;
-    case DOUBLE :
+    case _DATATYPE_DOUBLE :
         for (jj = 0; jj < naxes_out[1]; jj++)
             for (ii = 0; ii < naxes_out[0]; ii++)
                 for (kk = 0; kk < naxes_out[2]; kk++)
@@ -1074,7 +1091,7 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
                             for (k = 0; k < n3; k++)
                                 data.image[ID_out].array.D[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii] += data.image[ID].array.D[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i];
         break;
-    case COMPLEX_FLOAT :
+    case _DATATYPE_COMPLEX_FLOAT :
         for (jj = 0; jj < naxes_out[1]; jj++)
             for (ii = 0; ii < naxes_out[0]; ii++)
                 for (kk = 0; kk < naxes_out[2]; kk++)
@@ -1086,7 +1103,7 @@ long basic_contract3D(const char *ID_name, const char *ID_name_out, int n1, int 
                                 data.image[ID_out].array.CF[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii].im += data.image[ID].array.CF[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i].im;
                             }
         break;
-    case COMPLEX_DOUBLE :
+    case _DATATYPE_COMPLEX_DOUBLE :
         for (jj = 0; jj < naxes_out[1]; jj++)
             for (ii = 0; ii < naxes_out[0]; ii++)
                 for (kk = 0; kk < naxes_out[2]; kk++)
@@ -2959,8 +2976,8 @@ long basic_resizeim(const char *imname_in, const char *imname_out, long xsizeout
 {
     long ID, IDout;
     long naxis = 2;
-    long naxes[2];
-    long naxesout[2];
+    uint32_t naxes[2];
+    uint32_t naxesout[2];
     float xf,yf,xf1,yf1,uf,tf,v00f,v01f,v10f,v11f;
     double xd,yd,xd1,yd1,ud,td,v00d,v01d,v10d,v11d;
     int atype;
@@ -2975,7 +2992,7 @@ long basic_resizeim(const char *imname_in, const char *imname_out, long xsizeout
     naxesout[1] = ysizeout;
 
 
-    if(atype == FLOAT)
+    if(atype == _DATATYPE_FLOAT)
     {
         IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
         for(ii=0; ii<naxesout[0]; ii++)
@@ -2999,7 +3016,7 @@ long basic_resizeim(const char *imname_in, const char *imname_out, long xsizeout
                 }
             }
     }
-    else if(atype == DOUBLE)
+    else if(atype == _DATATYPE_DOUBLE)
     {
         IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
         for(ii=0; ii<naxesout[0]-1; ii++)
@@ -3929,7 +3946,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     long k;
     long xsize, ysize;
     long IDcube;
-    long *imsize;
+    uint32_t *imsize;
     int atype;
     char *ptrv;
     char *ptrcv;
@@ -3953,7 +3970,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     xysize = xsize*ysize;
 
 
-    imsize = (long*) malloc(sizeof(long)*3);
+    imsize = (uint32_t*) malloc(sizeof(uint32_t)*3);
     imsize[0] = xsize;
     imsize[1] = ysize;
     imsize[2] = NBcoadd;
@@ -3985,7 +4002,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
 
-    if(data.image[ID].sem>0) // drive semaphore to zero
+    if(data.image[ID].md[0].sem>0) // drive semaphore to zero
         while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
 
     printf("\n\n");
@@ -3995,7 +4012,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     {
         printf("\r image number %8ld     ", k);
         fflush(stdout);
-        if(data.image[ID].sem==0)
+        if(data.image[ID].md[0].sem==0)
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
@@ -4018,36 +4035,36 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
         offset = k*xysize;
 
         switch( atype ) {
-        case CHAR:
-            ptrv = (char*) data.image[ID].array.C;
+        case _DATATYPE_UINT8:
+            ptrv = (char*) data.image[ID].array.UI8;
             ptrv += sizeof(char)*k1*xysize;
-            ptrcv = (char*) data.image[IDcube].array.C;
+            ptrcv = (char*) data.image[IDcube].array.UI8;
             ptrcv += sizeof(char)*k*xysize;
             memcpy (ptrcv, ptrv, sizeof(char)*xysize);
 
             if(mode>0)
             {
                 for(ii=0; ii<xysize; ii++)
-                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.C[offset+ii]*data.image[IDcube].array.C[offset+ii];
+                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.UI8[offset+ii]*data.image[IDcube].array.UI8[offset+ii];
             }
             for(ii=0; ii<xysize; ii++)
-                data.image[IDout].array.F[ii] += data.image[IDcube].array.C[offset+ii];
+                data.image[IDout].array.F[ii] += data.image[IDcube].array.UI8[offset+ii];
             break;
-        case INT:
-            ptrv = (char*) data.image[ID].array.I;
+        case _DATATYPE_INT32:
+            ptrv = (char*) data.image[ID].array.SI32;
             ptrv += sizeof(int)*k1*xysize;
-            ptrcv = (char*) data.image[IDcube].array.I;
+            ptrcv = (char*) data.image[IDcube].array.SI32;
             ptrcv += sizeof(int)*k*xysize;
             memcpy (ptrcv, ptrv, sizeof(int)*xysize);
             if(mode>0)
             {
                 for(ii=0; ii<xysize; ii++)
-                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.I[offset+ii]*data.image[IDcube].array.I[offset+ii];
+                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.SI32[offset+ii]*data.image[IDcube].array.SI32[offset+ii];
             }
             for(ii=0; ii<xysize; ii++)
-                data.image[IDout].array.F[ii] += data.image[IDcube].array.I[offset+ii];
+                data.image[IDout].array.F[ii] += data.image[IDcube].array.SI32[offset+ii];
             break;
-        case FLOAT:
+        case _DATATYPE_FLOAT:
             ptrv = (char*) data.image[ID].array.F;
             ptrv += sizeof(float)*k1*xysize;
             ptrcv = (char*) data.image[IDcube].array.F;
@@ -4062,7 +4079,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.F[offset+ii];
             break;
-        case DOUBLE:
+        case _DATATYPE_DOUBLE:
             ptrv = (char*) data.image[ID].array.D;
             ptrv += sizeof(double)*k1*xysize;
             ptrcv = (char*) data.image[IDcube].array.D;
@@ -4075,18 +4092,18 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.D[offset+ii];
             break;
-        case USHORT:
-            ptrv = (char*) data.image[ID].array.U;
-            ptrv += sizeof(unsigned short)*k1*xysize;
-            ptrcv = (char*) data.image[IDcube].array.U;
-            ptrcv += sizeof(unsigned short)*k*xysize;
-            memcpy (ptrcv, ptrv, sizeof(unsigned short)*xysize);
+        case _DATATYPE_UINT16:
+            ptrv = (char*) data.image[ID].array.UI16;
+            ptrv += sizeof(uint16_t)*k1*xysize;
+            ptrcv = (char*) data.image[IDcube].array.UI16;
+            ptrcv += sizeof(uint16_t)*k*xysize;
+            memcpy (ptrcv, ptrv, sizeof(uint16_t)*xysize);
             if(mode>0)
             {   for(ii=0; ii<xysize; ii++)
-                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.U[offset+ii]*data.image[IDcube].array.U[offset+ii];
+                    data.image[IDrms].array.F[ii] += data.image[IDcube].array.UI16[offset+ii]*data.image[IDcube].array.UI16[offset+ii];
             }
             for(ii=0; ii<xysize; ii++)
-                data.image[IDout].array.F[ii] += data.image[IDcube].array.U[offset+ii];
+                data.image[IDout].array.F[ii] += data.image[IDcube].array.UI16[offset+ii];
             break;
         default :
             printf("ERROR: Data type not supported for function IMAGE_BASIC_streamaverage\n");
@@ -4253,7 +4270,7 @@ long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float fr
     data.image[IDs].md[0].write = 1;
     for(ii=0;ii<xysize;ii++)
         data.image[IDs].array.F[ii] = 0.0;
-    if(data.image[IDs].sem > 0)
+    if(data.image[IDs].md[0].sem > 0)
         {
             sem_getvalue(data.image[IDs].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)

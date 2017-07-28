@@ -33,4 +33,5 @@ Makefile
 */*/*/Makefile
 src/fft/config/*
 src/*/data/*
+src/*/.libs/*
 

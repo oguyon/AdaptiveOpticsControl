@@ -1,3 +1,19 @@
+/**
+ * @file    WFpropagate.c
+ * @brief   Wavefront propagation
+ * 
+ * Fresnel propagation of wavefronts
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
+
 #include <stdint.h> 
 #include <string.h>
 #include <stdio.h>
@@ -103,7 +119,7 @@ int Fresnel_propagate_wavefront(const char *in, const char *out, double PUPIL_SC
 
 //	printf("coeff = %g     co1 = %g\n", coeff, co1);
 
-    if(atype == COMPLEX_FLOAT)
+    if(atype == _DATATYPE_COMPLEX_FLOAT)
     {
         for(jj=0; jj<naxes[1]; jj++)
         {
@@ -297,7 +313,7 @@ int Fresnel_propagate_wavefront1(const char *in, const char *out, const char *Ci
 
     IDref = image_ID(Cin);
 
-    if(atype == COMPLEX_FLOAT)
+    if(atype == _DATATYPE_COMPLEX_FLOAT)
     {
         for(ii=0; ii<nbelem; ii++)
         {
@@ -352,7 +368,7 @@ long Fresnel_propagate_cube(const char *IDcin_name, const char *IDout_name_amp, 
     ysize = data.image[IDcin].md[0].size[1];
     atype = data.image[IDcin].md[0].atype;
 
-    if(atype == COMPLEX_FLOAT)
+    if(atype == _DATATYPE_COMPLEX_FLOAT)
     {
         IDouta = create_3Dimage_ID(IDout_name_amp,xsize,ysize,NBzpts);
         IDoutp = create_3Dimage_ID(IDout_name_pha,xsize,ysize,NBzpts);
@@ -369,7 +385,7 @@ long Fresnel_propagate_cube(const char *IDcin_name, const char *IDout_name_amp, 
         printf("[%ld] propagating by %f m\n",kk,zprop);
         Fresnel_propagate_wavefront(IDcin_name, "_propim", PUPIL_SCALE, zprop, lambda);
         IDtmp = image_ID("_propim");
-        if(atype == COMPLEX_FLOAT)
+        if(atype == _DATATYPE_COMPLEX_FLOAT)
         {
             for(ii=0; ii<xsize; ii++)
                 for(jj=0; jj<ysize; jj++)

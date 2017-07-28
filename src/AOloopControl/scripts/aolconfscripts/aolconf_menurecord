@@ -21,7 +21,9 @@ NBframes="$1"
    	mkdir -p ./rec
   	tmuxname="aol${LOOPNUMBER}-ctr"
 	rm ./rec/imWFS0rec.fits
+	sleep 0.2
 	tmux new-session -d -s $tmuxname
+	sleep 0.2
   	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 	tmux send-keys -t $tmuxname "$execname -n aolrec" C-m
@@ -245,7 +247,7 @@ else
 echo "0" > $file
 logmultfbstat="0"
 fi
-if [ "${logmultfstat}" = "0" ];
+if [ "${logmultfbstat}" = "0" ];
 then
 menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb                 Block mult factor" )
 else
@@ -980,7 +982,9 @@ taveC1)
 file="./status/stat_taveC_ON.txt"
 echo "1" > $file
 tmuxname="aol${LOOPNUMBER}dmCave"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t ${tmuxname} "./auxscripts/aol_dmCave ${dmCavecoeff}" C-m
 menurecord_default="taveC0"
 ;;

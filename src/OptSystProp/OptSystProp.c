@@ -1,3 +1,18 @@
+/**
+ * @file    OptSystProp.c
+ * @brief   Optical system propagation
+ * 
+ * Propagate beam through optical systsm
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -69,7 +84,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp
     long IDin_amp, IDin_pha;
     long IDc_in, IDc_out;
     long IDout_amp, IDout_pha;
-    long *imsizearray;
+    uint32_t *imsizearray;
     double amp, pha, re, im;
 
 
@@ -84,7 +99,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp
 
 
    
-    imsizearray = (long*) malloc(sizeof(long)*3);
+    imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
     imsizearray[0] = size;
     imsizearray[1] = size;
     imsizearray[2] = optsyst[index].nblambda;
@@ -92,12 +107,12 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp
     IDout_amp = image_ID(IDout_amp_name);
 
     if(IDout_amp==-1)
-            IDout_amp = create_image_ID(IDout_amp_name, 3, imsizearray, FLOAT, sharedmem, 0);
+            IDout_amp = create_image_ID(IDout_amp_name, 3, imsizearray, _DATATYPE_FLOAT, sharedmem, 0);
             
     
     IDout_pha = image_ID(IDout_pha_name);
     if(IDout_pha==-1)
-        IDout_pha = create_image_ID(IDout_pha_name, 3, imsizearray, FLOAT, sharedmem, 0);
+        IDout_pha = create_image_ID(IDout_pha_name, 3, imsizearray, _DATATYPE_FLOAT, sharedmem, 0);
 
 
     data.image[IDout_amp].md[0].write = 1;
@@ -203,14 +218,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     double n0, n1; // refractive indices
     int r;
 
-    long *imsizearray;
+    uint32_t *imsizearray;
 
     // number of pixels in one side of each square data array
     size = optsyst[index].size;
     size2 = size*size; // area = total number of pixels
     nblambda = optsyst[index].nblambda;
 
-    imsizearray = (long*) malloc(sizeof(long)*3);
+    imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
     // create base complex amplitude output arrays
     
@@ -224,7 +239,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     IDa = image_ID(imname);
     if(IDa==-1)
     {
-        IDa = create_image_ID(imname, 3, imsizearray, FLOAT, sharedmem, 0);
+        IDa = create_image_ID(imname, 3, imsizearray, _DATATYPE_FLOAT, sharedmem, 0);
     //    create_3Dimage_ID(imname, size, size, nblambda);
     }
     // WFpha is the standard output of the wave front complex phase
@@ -232,7 +247,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     IDp = image_ID(imname);
     if(IDp==-1)
     {
-        IDp = create_image_ID(imname, 3, imsizearray, FLOAT, sharedmem, 0);
+        IDp = create_image_ID(imname, 3, imsizearray, _DATATYPE_FLOAT, sharedmem, 0);
         //create_3Dimage_ID(imname, size, size, nblambda);
     }
     // initialize wavefront amplitude to 1

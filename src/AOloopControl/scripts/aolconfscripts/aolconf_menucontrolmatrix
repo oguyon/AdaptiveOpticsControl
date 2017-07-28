@@ -129,7 +129,7 @@ menuitems+=( "zRM" "$menustring" )
 
 
 
-menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]" )
+menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]  (./conf_staged/aol${LOOPNUMBER}_zrespM.fits -> ./conf_staged/conf_contrM_name.txt)" )
 
 
 
@@ -184,7 +184,7 @@ fi
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
-menuitems+=( "confUp" "\Z1 Configuration Update (ALL) \Zn" )
+menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \Zn" )
 
 
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
@@ -513,7 +513,9 @@ aoconflogext "set SDVlimall ${SVDlimall}"
 
 RM2CMm)
 tmuxname="aol${LOOPNUMBER}mkmodesM"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 logRunningProcess "aolmkmodesM" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
 mkdir -p DMmodes
 mkdir -p respM
@@ -581,14 +583,23 @@ menucontrolmatrix_default="zRM"
 
 
 	RM2CM)
+#
+# INPUT
+#   ./conf_staged/wfsmask.fits
+#   ./conf_staged/zrespM.fits
+# OUTPUT
+#   ./zcontrM/zcontrM_<date>.fits
+#   ./conf/conf_contrM_name.txt
+# -> 
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
-echo "zcontrM/zcontrM_${datestr}.fits" > ./conf/conf_contrM_name.txt
+echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/conf_contrM_name.txt
+cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
-ReadConfFile "contrM"
-getshmimsize aol${LOOPNUMBER}_contrM
+#ReadConfFile "contrM"
+#getshmimsize aol${LOOPNUMBER}_contrM
 
 CMMODE="ZONAL"
 echo "$CMMODE" > $CMMODEfile
@@ -654,7 +665,7 @@ cp conf_staged/*.txt ./conf/
 
 
 SMloadCM)
-function_SharedMemLoadCM
+function_SharedMemLoadCM # funtion in aolconfcontrolmatrix_funcs
 menucontrolmatrix_default="SMloadCM"
 ;;
 

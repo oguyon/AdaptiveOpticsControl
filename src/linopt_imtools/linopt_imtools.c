@@ -5,7 +5,7 @@
  * CPU-based lineal algebra tools: decomposition, SVD etc...
  *  
  * @author  O. Guyon
- * @date    05 Jul 2017
+ * @date    7 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -458,7 +458,7 @@ long linopt_imtools_mask_to_pixtable(const char *IDmask_name, const char *IDpixi
     long size;
     float eps = 1.0e-8;
     long k;
-    long *sizearray;
+    uint32_t *sizearray;
     long IDpixindex, IDpixmult;
 
     ID = image_ID(IDmask_name);
@@ -471,17 +471,17 @@ long linopt_imtools_mask_to_pixtable(const char *IDmask_name, const char *IDpixi
         if(data.image[ID].array.F[ii]>eps)
             NBpix++;
 
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = NBpix;
     sizearray[1] = 1;
-    IDpixindex = create_image_ID(IDpixindex_name, 2, sizearray, LONG, 0, 0);
-    IDpixmult = create_image_ID(IDpixmult_name, 2, sizearray, FLOAT, 0, 0);
+    IDpixindex = create_image_ID(IDpixindex_name, 2, sizearray, _DATATYPE_INT64, 0, 0);
+    IDpixmult = create_image_ID(IDpixmult_name, 2, sizearray, _DATATYPE_FLOAT, 0, 0);
 
     k = 0;
     for(ii=0; ii<size; ii++)
         if(data.image[ID].array.F[ii]>eps)
         {
-            data.image[IDpixindex].array.L[k] = ii;
+            data.image[IDpixindex].array.SI64[k] = ii;
             data.image[IDpixmult].array.F[k] = data.image[ID].array.F[ii];
             k++;
         }
@@ -521,26 +521,26 @@ long linopt_imtools_Image_to_vec(const char *ID_name, const char *IDpixindex_nam
     {
         IDvec = create_2Dimage_ID(IDvec_name, NBpix, 1);
         for(k=0; k<NBpix; k++)
-            data.image[IDvec].array.F[k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.F[data.image[IDpixindex].array.L[k]];
+            data.image[IDvec].array.F[k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.F[data.image[IDpixindex].array.SI64[k]];
     }
     else
     {
         sizexy = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
-        if(atype==FLOAT)
+        if(atype==_DATATYPE_FLOAT)
         {
             IDvec = create_2Dimage_ID(IDvec_name, NBpix, data.image[ID].md[0].size[2]);
             for(kk=0; kk<data.image[ID].md[0].size[2]; kk++)
                 for(k=0; k<NBpix; k++)
-                    data.image[IDvec].array.F[kk*NBpix+k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.F[kk*sizexy+data.image[IDpixindex].array.L[k]];
+                    data.image[IDvec].array.F[kk*NBpix+k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.F[kk*sizexy+data.image[IDpixindex].array.SI64[k]];
         }
-        if(atype==COMPLEX_FLOAT)
+        if(atype==_DATATYPE_COMPLEX_FLOAT)
         {
             IDvec = create_2Dimage_ID(IDvec_name, NBpix*2, data.image[ID].md[0].size[2]);
             for(kk=0; kk<data.image[ID].md[0].size[2]; kk++)
                 for(k=0; k<NBpix; k++)
                 {
-                    data.image[IDvec].array.F[kk*NBpix*2+2*k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.CF[kk*sizexy+data.image[IDpixindex].array.L[k]].re;
-                    data.image[IDvec].array.F[kk*NBpix*2+2*k+1] = data.image[IDpixmult].array.F[k] * data.image[ID].array.CF[kk*sizexy+data.image[IDpixindex].array.L[k]].im;
+                    data.image[IDvec].array.F[kk*NBpix*2+2*k] = data.image[IDpixmult].array.F[k] * data.image[ID].array.CF[kk*sizexy+data.image[IDpixindex].array.SI64[k]].re;
+                    data.image[IDvec].array.F[kk*NBpix*2+2*k+1] = data.image[IDpixmult].array.F[k] * data.image[ID].array.CF[kk*sizexy+data.image[IDpixindex].array.SI64[k]].im;
                 }
         }
 
@@ -567,7 +567,7 @@ long linopt_imtools_vec_to_2DImage(const char *IDvec_name, const char *IDpixinde
     ID = create_2Dimage_ID(ID_name, xsize, ysize);
 
     for(k=0; k<NBpix; k++)
-        data.image[ID].array.F[data.image[IDpixindex].array.L[k]] = data.image[IDvec].array.F[k]/data.image[IDpixmult].array.F[k];
+        data.image[ID].array.F[data.image[IDpixindex].array.SI64[k]] = data.image[IDvec].array.F[k]/data.image[IDpixmult].array.F[k];
 
     return (ID);
 }
@@ -970,7 +970,7 @@ long linopt_imtools_image_construct(const char *IDmodes_name, const char *IDcoef
 
 
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
         ID = create_2Dimage_ID(ID_name, xsize, ysize);
     else
         ID = create_2Dimage_ID_double(ID_name, xsize, ysize);
@@ -978,7 +978,7 @@ long linopt_imtools_image_construct(const char *IDmodes_name, const char *IDcoef
     IDcoeff = image_ID(IDcoeff_name);
 
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         for(kk=0; kk<zsize; kk++)
             for(ii=0; ii<sizexy; ii++)
@@ -1041,7 +1041,7 @@ long linopt_imtools_image_construct_stream(const char *IDmodes_name, const char 
 
     while(1==1)
     {
-        if((data.image[IDcoeff].sem==0)||(NOSEM==1))
+        if((data.image[IDcoeff].md[0].sem==0)||(NOSEM==1))
         {
             while(cnt==data.image[IDcoeff].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -1091,7 +1091,7 @@ long linopt_compute_SVDdecomp(const char *IDin_name, const char *IDout_name, con
 
     long m;
     long n;
-    long *arraysizetmp;
+    uint32_t *arraysizetmp;
 
     long IDmodes, IDeigenmodes;
     long xsize_modes, ysize_modes, zsize_modes;
@@ -1102,7 +1102,7 @@ long linopt_compute_SVDdecomp(const char *IDin_name, const char *IDout_name, con
     char command[200];
     long ID_VTmatrix;
 
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
   
   
     printf("[SVD start]");
@@ -1157,7 +1157,7 @@ long linopt_compute_SVDdecomp(const char *IDin_name, const char *IDout_name, con
     ID_VTmatrix = image_ID("SVD_VTm");
     if(ID_VTmatrix!=-1)
         delete_image_ID("SVD_VTm");
-    ID_VTmatrix = create_image_ID("SVD_VTm", 2, arraysizetmp, FLOAT, 0, 0);
+    ID_VTmatrix = create_image_ID("SVD_VTm", 2, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
     for(ii=0; ii<m; ii++) // modes
         for(k=0; k<m; k++) // modes
             data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
@@ -1225,7 +1225,7 @@ int linopt_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_
     long m;
     long n;
     long ID_Rmatrix, ID_Cmatrix, ID_VTmatrix;
-    long *arraysizetmp;
+    uint32_t *arraysizetmp;
     double egvlim;
     long nbmodesremoved;
 
@@ -1253,7 +1253,7 @@ int linopt_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_
 		clock_gettime(CLOCK_REALTIME, &t0);
 		
 
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -1296,7 +1296,7 @@ int linopt_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_
 
 
     /* write matrix_D */
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         for(k=0; k<m; k++)
             for(ii=0; ii<n; ii++)
@@ -1384,16 +1384,16 @@ int linopt_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_
     // Write rotation matrix 
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
-        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, FLOAT, 0, 0);
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
         for(ii=0; ii<m; ii++) // modes
             for(k=0; k<m; k++) // modes
                 data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
     }
     else
     {
-        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, DOUBLE, 0, 0);
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, _DATATYPE_DOUBLE, 0, 0);
         for(ii=0; ii<m; ii++) // modes
             for(k=0; k<m; k++) // modes
                 data.image[ID_VTmatrix].array.D[k*m+ii] = gsl_matrix_get( matrix_DtraD_evec, k, ii);
@@ -1461,17 +1461,17 @@ int linopt_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_
         arraysizetmp[1] = m;
     }
 
-    if(atype==FLOAT)
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    if(atype==_DATATYPE_FLOAT)
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
     else
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_DOUBLE, 0, 0);
 
 
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t6);
 
     /* write result */
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         for(ii=0; ii<n; ii++) // sensors
             for(k=0; k<m; k++) // actuator modes
@@ -2174,7 +2174,7 @@ long linopt_compute_linRM_from_inout(const char *IDinput_name, const char *IDinm
 	long IDout1;
 	double alpha = 0.001;
 	
-	long *sizearray;
+	uint32_t *sizearray;
 	long IDpokeM; // poke matrix (input)
 	long IDoutM; // outputX
 	double SVDeps = 1.0e-4;
@@ -2235,7 +2235,7 @@ long linopt_compute_linRM_from_inout(const char *IDinput_name, const char *IDinm
 	
 	
 	
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	
 	sizearray[0] = NBact;
 	sizearray[1] = insize; // number of measurements

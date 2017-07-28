@@ -50,7 +50,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Jul 5, 2017</h3>
+<h3 class="date">Jul 10, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -1053,13 +1053,15 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </ul>
 <pre><code>mkdir LHScalib</code></pre>
 <ul>
-<li><p>Download response matrix and reference</p></li>
-<li><p>Start GUI</p></li>
+<li><p>Download response matrix and reference, place them in directory <code>LHScalib</code>.</p></li>
+<li><p>Start GUI, loop 5, name simLHS</p></li>
 </ul>
 <pre><code>./aolconf -L 5 -N simLHS</code></pre>
 <ul>
+<li><p>Start DM: index 04, 50 x 50; Auto-configure: main DM (no link); STOP -&gt; (re-)START DM comb process</p></li>
 <li><p>Go to <code>TEST MODE</code> GUI</p></li>
 <li><p>Enter linear simulation zonal response matrix and linear simulation WFS reference (<code>zrespMlinsim</code> and <code>wfsref0linsim</code> selections at top of screen).</p></li>
+<li><p><strong>Start linear simulator</strong> (<code>lsimon</code> selection). The simulator reacts to changes in aol5_dmdisp (= dm04disp)</p></li>
 </ul>
 </div>
 </div>

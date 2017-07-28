@@ -1,3 +1,17 @@
+/**
+ * @file    AtmosphericTurbulence.c
+ * @brief   Atmopsheric turbulence
+ * 
+ * Create atmospheric turbulence wavefronts
+ * 
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * @bug No known bugs. 
+ * 
+ */
+ 
+ 
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -798,7 +812,7 @@ int make_master_turbulence_screen(const char *ID_name1, const char *ID_name2, lo
 
     value = 0.0;
     cnt = 0;
-    if(data.image[ID].md[0].atype == FLOAT)
+    if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
     {
         for(ii = 1; ii<Dlim; ii++)
             for(jj = 1; jj<Dlim; jj++)
@@ -827,7 +841,7 @@ int make_master_turbulence_screen(const char *ID_name1, const char *ID_name2, lo
     ID = image_ID("strf");
     value = 0.0;
     cnt = 0;
-    if(data.image[ID].md[0].atype == FLOAT)
+    if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
     {
         for(ii=1; ii<Dlim; ii++)
             for(jj=1; jj<Dlim; jj++)
@@ -1514,8 +1528,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     double *LAYER_LWIND;
     int stop;
 
-    long *naxes;
-    long *naxesout;
+    uint32_t *naxes;
+    uint32_t *naxesout;
     double *xpos;
     double *ypos;
     double *xpos0;
@@ -1636,8 +1650,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     SLAMBDA = 1.0e-6*slambdaum;
 
 
-    naxes = (long*) malloc(sizeof(long)*3);
-    naxesout = (long*) malloc(sizeof(long)*3);
+    naxes = (uint32_t*) malloc(sizeof(uint32_t)*3);
+    naxesout = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 
 
@@ -2455,13 +2469,13 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     {
         if(WFprecision == 0)
         {
-            IDshmpha = create_image_ID("atmwfpha", 2, naxesout, FLOAT, 1, 0);
-            IDshmamp = create_image_ID("atmwfamp", 2, naxesout, FLOAT, 1, 0);
+            IDshmpha = create_image_ID("atmwfpha", 2, naxesout, _DATATYPE_FLOAT, 1, 0);
+            IDshmamp = create_image_ID("atmwfamp", 2, naxesout, _DATATYPE_FLOAT, 1, 0);
         }
         else
         {
-            IDshmpha = create_image_ID("atmwfpha", 2, naxesout, DOUBLE, 1, 0);
-            IDshmamp = create_image_ID("atmwfamp", 2, naxesout, DOUBLE, 1, 0);
+            IDshmpha = create_image_ID("atmwfpha", 2, naxesout, _DATATYPE_DOUBLE, 1, 0);
+            IDshmamp = create_image_ID("atmwfamp", 2, naxesout, _DATATYPE_DOUBLE, 1, 0);
         }
     }
 
@@ -2470,15 +2484,15 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     {
         sprintf(fname, "%spha", CONF_SHM_SPREFIX);
         if(WFprecision == 0)
-            IDshmspha = create_image_ID(fname, 2, naxesout, FLOAT, 1, 0);
+            IDshmspha = create_image_ID(fname, 2, naxesout, _DATATYPE_FLOAT, 1, 0);
         else
-            IDshmspha = create_image_ID(fname, 2, naxesout, DOUBLE, 1, 0);
+            IDshmspha = create_image_ID(fname, 2, naxesout, _DATATYPE_DOUBLE, 1, 0);
 
         sprintf(fname, "%samp", CONF_SHM_SPREFIX);
         if(WFprecision == 0)
-            IDshmsamp = create_image_ID(fname, 2, naxesout, FLOAT, 1, 0);
+            IDshmsamp = create_image_ID(fname, 2, naxesout, _DATATYPE_FLOAT, 1, 0);
         else
-            IDshmsamp = create_image_ID(fname, 2, naxesout, DOUBLE, 1, 0);
+            IDshmsamp = create_image_ID(fname, 2, naxesout, _DATATYPE_DOUBLE, 1, 0);
 
         kw = 0;
         strcpy(data.image[IDshmspha].kw[kw].name, "TIME");

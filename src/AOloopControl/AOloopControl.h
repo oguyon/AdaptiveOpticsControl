@@ -376,6 +376,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
 
 long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem);
 
+/** @brief Re-arrange a 3D cube into an array of images into a single 2D frame
+ */
 long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem);
 ///@}
 
@@ -410,7 +412,7 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
 
 int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
 

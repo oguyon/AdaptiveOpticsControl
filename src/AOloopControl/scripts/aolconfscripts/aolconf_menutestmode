@@ -15,7 +15,9 @@ mrecONstat=" ON"
 tmuxname="aol${LOOPNUMBER}mrec"
 echo " ON" > ./status/stat_mrecON.txt
 logRunningProcess "MeasDMmodesRec" "$tmuxname" "Measure DM modes AO loop recovery"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 aoconflog "Test Mode Recovery"
 tmux send-keys -t $tmuxname "./auxscripts/MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}" C-m
 tmux send-keys -t $tmuxname "rm runproc/MeasDMmodesRec.runproc" C-m
@@ -35,17 +37,29 @@ rm runproc/MeasDMmodesRec.runproc
 
 
 
+
+#########################################################################################
+##          MEASURE LOOP RESPONSE  ON                                                  ##
+#########################################################################################
+
 function function_dmmtr_on {
 dmmtrONstat=" ON"
 tmuxname="aol${LOOPNUMBER}dmmtr"
 echo " ON" > ./status/stat_dmmtrON.txt
 logRunningProcess "MeasLoopModeResp" "$tmuxname" "Measure AO loop temporal response"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 aoconflog "Measure AO loop temporal response"
 tmux send-keys -t $tmuxname "./auxscripts/MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
 tmux send-keys -t $tmuxname "rm runproc/MeasLoopModeResp.runproc" C-m
 tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_dmmtrON.txt" C-m
 }
+
+
+#########################################################################################
+##          MEASURE LOOP RESPONSE OFF                                                  ##
+#########################################################################################
 	
 function function_dmmtr_off {
 dmmtrONstat="OFF"
@@ -54,6 +68,7 @@ echo "OFF" > ./status/stat_dmmtrON.txt
 tmux kill-session -t ${tmuxname}
 rm runproc/MeasLoopModeResp.runproc
 }
+
 
 
 
@@ -73,8 +88,11 @@ tmuxnameD="aol${LOOPNUMBER}linsimD"
 echo " ON" > ./status/stat_lsimON.txt
 logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
 logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
+sleep 0.2
 tmux new-session -d -s ${tmuxnameD}
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 aoconflog "Start linear WFS simulator"
 tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
 tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
@@ -728,12 +746,14 @@ menutestmode_default="DMt2f"
 echo "SON" > ./status/testdm${DMindex}turbstatus.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t $tmuxname "loadfits \"wfturbC.fits\" wfc" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp10" C-m
-tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
+tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint} 1 0 0 null 0 0" C-m
 menutestmode_default="DMtf2sOFF"
 ;;
 
@@ -988,7 +1008,9 @@ EOF
     inj0)
 tmuxname="aol${LOOPNUMBER}modeinj0"
 aoconflog "inject mode from fmodes0all basis"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 modenb=$( printf "%05ld" ${testModeNb} )
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj0" C-m
 if [ "$CPUconfRT" -eq "1" ];then
@@ -1007,7 +1029,9 @@ tmux send-keys -t $tmuxname "exit" C-m
 tmuxname="aol${LOOPNUMBER}modeinj0p"
 echo " ON" > ./status/stat_inj0pON.txt
 aoconflog "START periodic inject mode from fmodes0all basis"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 modenb=$( printf "%05ld" ${testModeNb} )
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj0" C-m
 tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
@@ -1042,7 +1066,9 @@ menutestmode_default="inj0pON"
     inj)
 tmuxname="aol${LOOPNUMBER}modeinj"
 aoconflog "inject mode"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 modenb=$( printf "%05ld" ${testModeNb} )
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj" C-m
 if [ "$CPUconfRT" -eq "1" ];then
@@ -1074,7 +1100,9 @@ menutestmode_default="mrec_on"
     clr)
 tmuxname="aol${LOOPNUMBER}modeclr"
 aoconflog "clear DM channel"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeclr" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -1163,7 +1191,9 @@ menutestmode_default="spmsamp"
 	spmsON)
 echo " ON" > ./status/stat_testDMperM.txt
 tmuxname="aol${LOOPNUMBER}testpms"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
 tmux send-keys -t $tmuxname "nbfr=1000000/${testDMperMdt}/${testDMperMfr}" C-m
 tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq nbfr ${testDMperMn}" C-m

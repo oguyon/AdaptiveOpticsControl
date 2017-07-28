@@ -12,12 +12,15 @@ echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Copy FITS files to shared memory $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Copy FITS file to shared memory"
+echo "  Writes into ./loadedSM/ what has been loaded"
+echo "  unless -f option, will not re-load unchanged files"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <FITS file> <shared memory stream name>"
+echo "     $0 [-hf] <FITS file> <shared memory stream name>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-f$(tput sgr0)          force load (even if unchanged file)"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "   <FITS file>    filesystem FITS file"
@@ -49,7 +52,8 @@ singlelinehelp=1;
 done
 
 
-while getopts :h FLAG; do
+FORCE=1
+while getopts :hf FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -59,6 +63,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    f)
+    FORCE="1"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -83,8 +90,65 @@ printHELP
 fi
 
 
+mkdir -p loadedSM
+
+LOADfile="0"
+
+# has the file changed since last request ?
+
+cp ./loadedSM/$2.SMloaded ./loadedSM/$2.SMloaded.old
+stat -L --format "%n %s %y" $1 > ./loadedSM/$2.SMloaded
+
+str1=$(cat ./loadedSM/$2.SMloaded.old)
+str2=$(cat ./loadedSM/$2.SMloaded)
+if [ "$str1" = "$str2" ]; then
+touch ./loadedSM/$2.same
+rm ./loadedSM/$2.new &> /dev/null
+NEW="0"
+else
+rm ./loadedSM/$2.same &> /dev/null
+touch ./loadedSM/$2.new
+NEW="1"
+LOADfile="1"
+fi
+rm ./loadedSM/$2.SMloaded.old &> /dev/null
 
 
+# has shared memory changed since last request ?
+
+cp ./loadedSM/$2.SMcontent ./loadedSM/$2.SMcontent.old
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
+str1=$(cat ./loadedSM/$2.SMcontent.old)
+str2=$(cat ./loadedSM/$2.SMcontent)
+
+if [ "$str1" = "$str2" ]; then
+touch ./loadedSM/$2.sm.same
+rm ./loadedSM/$2.sm.new &> /dev/null
+NEW_SM="0"
+else
+rm ./loadedSM/$2.sm.same &> /dev/null
+touch ./loadedSM/$2.sm.new
+NEW_SM="1"
+LOADfile="1"
+fi
+rm ./loadedSM/$2.SMcontent.old &> /dev/null
+
+
+
+if [ ! -f "/tmp/$2.im.shm" ]; then
+touch ./loadedSM/$2.missing
+LOADfile="1"
+else
+rm ./loadedSM/$2.missing &> /dev/null
+fi
+
+
+if [ "$FORCE" = "1" ]; then
+LOADfile="1"
+fi
+
+
+if [ "$LOADfile" = "1" ]; then
 
 ./AOloopControl -n pname << EOF
 loadfits "$1" im
@@ -92,5 +156,17 @@ readshmim "$2"
 cpsh im "$2"
 exitCLI
 EOF
+
+# write SM stat AFTER it has been updated
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
+rm ./loadedSM/$2.kept &> /dev/null
+touch ./loadedSM/$2.changed
+
+else
+
+touch ./loadedSM/$2.kept
+rm ./loadedSM/$2.changed &> /dev/null
+
+fi
 
 

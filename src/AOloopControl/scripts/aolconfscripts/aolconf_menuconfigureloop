@@ -854,7 +854,9 @@ state="menuconfigureloop"
 aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
+sleep 0.2
 tmux new-session -d -s adark${LOOPNUMBER}
+sleep 0.2
 tmux send-keys -t adark${LOOPNUMBER} "./aocscripts/takedark_${LOOPNAME}" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
@@ -961,7 +963,7 @@ menucontrolloop_default="sACmrmN"
 
 nAUTOC)
 RMCalibReuseMasks=0
-function_nAUTOC
+function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
 
 
@@ -1296,7 +1298,9 @@ menucontrolloop_default="WFSNon"
 
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrespMc"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm}  ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
 echo "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" >> aolcmd.txt
 mkdir -p zrespM
@@ -1460,7 +1464,9 @@ function_SMloadzrm_tmux ${tmuxname}
 
 
 	zrmcust)
+sleep 0.2
 tmux new-session -d -s aol${LOOPNUMBER}zrmcust
+sleep 0.2
 aoconflogext "make custom RM"
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "./aolRMmkMasks zrespmat.fits" C-m
 echo "./aolRMmkMasks zrespmat.fits" >> aolcmd.txt
@@ -1641,7 +1647,9 @@ state="menuconfigureloop"
 acquwfsref0stat=" ON"
 echo " ON" > ./status/stat_acquwfsref0.txt
 tmuxsname="aol${LOOPNUMBER}awfsref0"
+sleep 0.2
 tmux new-session -d -s $tmuxsname
+sleep 0.2
 tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
@@ -1767,7 +1775,9 @@ menucontrolloop_default="LOrespoff"
 
 	LOrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}LOrepMc"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
 echo "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" >> aolcmd.txt
 mkdir -p LOrespM

@@ -1793,7 +1793,9 @@ menucontrolloop_default="PFb3GPU9"
 
 	PFb0wON)
 tmuxname="aol${LOOPNUMBER}PFb0watchin"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1823,7 +1825,9 @@ menupred_default="PFb0wON"
 
 	PFb1wON)
 tmuxname="aol${LOOPNUMBER}PFb1watchin"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1852,7 +1856,9 @@ menupred_default="PFb1wON"
 
 	PFb2wON)
 tmuxname="aol${LOOPNUMBER}PFb2watchin"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1879,7 +1885,9 @@ menupred_default="PFb2wON"
 
 	PFb3wON)
 tmuxname="aol${LOOPNUMBER}PFb3watchin"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1915,7 +1923,9 @@ menupred_default="PFb3wON"
 
 	PFb0cON)
 tmuxname="aol${LOOPNUMBER}PFb0comp"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1944,7 +1954,9 @@ menupred_default="PFb0cON"
 
 	PFb1cON)
 tmuxname="aol${LOOPNUMBER}PFb1comp"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1972,7 +1984,9 @@ menupred_default="PFb1cON"
 
 	PFb2cON)
 tmuxname="aol${LOOPNUMBER}PFb2comp"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -1999,7 +2013,9 @@ menupred_default="PFb2cON"
 
 	PFb3cON)
 tmuxname="aol${LOOPNUMBER}PFb3comp"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "AOloopControl" C-m
@@ -2035,7 +2051,9 @@ menupred_default="PFb3cON"
 cp PredictiveControl/inmaskPF0.fits inmask0.fits
 cp PredictiveControl/outmaskPF0.fits outmask0.fits
 tmuxname="aol${LOOPNUMBER}PFb0apply"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 
@@ -2064,7 +2082,9 @@ menupred_default="PFb0aON"
 
 	PFb1aON)
 tmuxname="aol${LOOPNUMBER}PFb1apply"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 ./predFiltApplyRT -s -n 1000  accposPF accposP
@@ -2099,7 +2119,9 @@ menupred_default="PFb1aON"
 cp PredictiveControl/inmaskPF0.fits inmask0.fits
 cp PredictiveControl/outmaskPF0.fits outmask0.fits
 tmuxname="aol${LOOPNUMBER}PFb2apply"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 
@@ -2128,7 +2150,9 @@ menupred_default="PFb2aON"
 
 	PFb3aON)
 tmuxname="aol${LOOPNUMBER}PFb3apply"
+sleep 0.2
 tmux new-session -d -s ${tmuxname}
+sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 ./predFiltApplyRT -s -n 1000  accposPF accposP

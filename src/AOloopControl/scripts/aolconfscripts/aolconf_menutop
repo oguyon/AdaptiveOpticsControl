@@ -708,7 +708,12 @@ tmuxnameC00="aol${LOOPNUMBER}calib00"
 
 RMCalibReuseMasks=1
 
+echo "Start session ${tmuxnameC00}"
+echo " command: tmux new-session -d -s ${tmuxnameC00}"
+sleep 0.2
 tmux new-session -d -s ${tmuxnameC00}
+sleep 0.2
+echo " tmux ls | grep aol0cal"
 tmux send-keys -t ${tmuxnameC00} " " C-c
 tmux send-keys -t ${tmuxnameC00} "" C-m
 logRunningProcess "FUNCTION_C00" "$tmuxnameC00" "==== CALIBRATION ===="
@@ -727,7 +732,7 @@ menutop_default="stopRM"
 C01)
 # COMPUTE CM
 mkModesMODE=0; # full computation
-function_computeModesCM
+function_computeModesCM # in aolconf_controlmatrix_funcs
 ;;
 
 
@@ -741,7 +746,9 @@ touch FUNCTION_SharedMemLoadCM.block
 fi
 
 tmuxnameC0="aol${LOOPNUMBER}caliball"
+sleep 0.2
 tmux new-session -d -s ${tmuxnameC0}
+sleep 0.2
 tmux send-keys -t ${tmuxnameC0} " " C-c
 tmux send-keys -t ${tmuxnameC0} "" C-m
 logRunningProcess "FUNCTION_C0" "$tmuxnameC0" "==== CALIBRATION ===="
@@ -889,6 +896,7 @@ fi
 
 	M)
 AOloadMem 1
+# AOloadMem is in ./aolconf
 ;;
 
 

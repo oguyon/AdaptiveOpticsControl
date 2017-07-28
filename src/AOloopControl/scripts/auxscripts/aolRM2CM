@@ -20,6 +20,9 @@ echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : COMPUTE CONTROL MATRIX $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Compute constrol matrix from response matrix"
+echo "  Reads :"
+echo "    ./conf_staged/wfsmask.fits"
+echo "    ./conf_staged/zrespM.fits" 
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <SVDlim> <outCMfname>"
@@ -100,8 +103,8 @@ loopnb=$(cat LOOPNUMBER)
 
 
 ./AOloopControl -n $pname << EOF
-loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
-loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
+loadfits "./conf_staged/wfsmask.fits" wfsmask
+loadfits "./conf_staged/zrespM.fits" zrespM
 zrespMm=zrespM*wfsmask
 aolRM2CM zrespMm contrM $1
 savefits contrM "!$2"

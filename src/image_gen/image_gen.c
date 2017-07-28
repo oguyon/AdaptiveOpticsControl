@@ -1,3 +1,20 @@
+/**
+ * @file    image_gen.c
+ * @brief   Generate frequently used image(s)
+ * 
+ * Creates images for misc applications
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
+
+
 #include <stdint.h>
 #include <string.h>
 #include <malloc.h>
@@ -337,6 +354,9 @@ long make_double_star(const char *ID_name, long l1, long l2, double intensity_1,
   return(ID);
 }
 
+
+
+
 long make_disk(const char *ID_name, long l1, long l2, double x_center, double y_center, double radius) /* creates a disk */
 {
   long ID;
@@ -353,7 +373,7 @@ long make_disk(const char *ID_name, long l1, long l2, double x_center, double y_
     double x,y;
   */
 
-  create_2Dimage_ID(ID_name,l1,l2);
+  create_2Dimage_ID(ID_name, l1, l2);
   ID = image_ID(ID_name);
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1]; 
@@ -1231,6 +1251,7 @@ long IMAGE_gen_segments2WFmodes(const char *prefix, long ndigit, const char *IDo
 }
 
 
+
 long make_hexsegpupil(const char *IDname, long size, double radius, double gap, double step)
 {
     long ID,ID1,IDp;
@@ -1421,7 +1442,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
                         jj = (long) (0.5*size1 + y2*(0.5*size1/radius)*mapscalefactor);
                         index = 0;
                         if(IDmap1 != -1)
-                            index = data.image[IDmap1].array.U[jj*size1+ii];
+                            index = data.image[IDmap1].array.UI16[jj*size1+ii];
 
 
                       //  fprintf(fp, "# hex%03ld     index%03ld   [ %f %f ] -> [ %f %f ]     [%4ld %4ld] %f\n", SEGcnt, index, x2, y2, 0.5*size+x2, 0.5*size+y2, ii, jj, radius);
@@ -1496,7 +1517,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
                         jj = (long) (0.5*size1 + y2*(0.5*size1/radius)*mapscalefactor);
                         index = 0;
                         if(IDmap1 != -1)
-                            index = data.image[IDmap1].array.U[jj*size1+ii];
+                            index = data.image[IDmap1].array.UI16[jj*size1+ii];
 
 
                        // fprintf(fp, "# hex%03ld     index%03ld   [ %f %f ] -> [ %f %f ]   [%4ld %4ld] %f\n", SEGcnt, index, x2, y2, 0.5*size+x2, 0.5*size+y2, ii, jj, radius);

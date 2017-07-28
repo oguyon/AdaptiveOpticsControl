@@ -1,3 +1,16 @@
+/**
+ * @file    CLIcore.h
+ * @brief   Command line interface 
+ * 
+ * Command line interface (CLI) definitions and function prototypes
+ * 
+ * @author  O. Guyon
+ * @date    9 Jul 2017
+ *
+ * @bug No known bugs. 
+ * 
+ */
+
 #define _GNU_SOURCE
 
 
@@ -129,7 +142,7 @@ int CLI_checkarg_noerrmsg(int argnum, int argtype);
 
 
 
-extern int TYPESIZE[9];
+extern uint8_t TYPESIZE[32];
 
 
 

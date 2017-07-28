@@ -211,8 +211,9 @@ fi
 function function_computeModesCM 
 {
 tmuxnameMCM="aol${LOOPNUMBER}mkmodes"
-
+sleep 0.2
 tmux new-session -s ${tmuxnameMCM} -d
+sleep 0.2
 tmux send-keys -t ${tmuxnameMCM} "" C-c
 tmux send-keys -t ${tmuxnameMCM} "" C-m
 tmux send-keys -t ${tmuxnameMCM} "./auxscripts/waitonfile FUNCTION_computeModesCM.block" C-m
@@ -289,7 +290,9 @@ function function_SharedMemLoadCM {
 tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
 echo "tmux new-session -s ${tmuxnameSMlCM} -d"
 echo "CREATING SESSION : ${tmuxnameSMlCM}"
+sleep 0.2
 tmux new-session -s ${tmuxnameSMlCM} -d
+sleep 0.2
 tmux ls | grep ${tmuxnameSMlCM}
 tmux send-keys -t ${tmuxnameSMlCM} "" C-c
 tmux send-keys -t ${tmuxnameSMlCM} " " C-m

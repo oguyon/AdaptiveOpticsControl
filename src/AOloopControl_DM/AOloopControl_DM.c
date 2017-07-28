@@ -1,3 +1,18 @@
+/**
+ * @file    AOloopControl_DM.c
+ * @brief   DM control
+ * 
+ * To be used for AOloopControl module
+ *  
+ * @author  O. Guyon
+ * @date    10 Jul 2017
+ *
+ *
+ * 
+ */
+
+
+
 #include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -903,12 +918,12 @@ int AOloopControl_DM_disp2V(long DMindex)
 					volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
 					if(volt>dmdispcombconf[DMindex].MAXVOLT)
 						volt = dmdispcombconf[DMindex].MAXVOLT;
-					data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+					data.image[dmdispcombconf[DMindex].IDvolt].array.UI16[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
 				}
 		}
 	else
 		for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
-			data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = 0;
+			data.image[dmdispcombconf[DMindex].IDvolt].array.UI16[ii] = 0;
 			
 
 	data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
@@ -963,7 +978,7 @@ int AOloopControl_DM_disp2V(long DMindex)
 int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, const char *dm2dm_DMmodes, const char *dm2dm_outdisp, int wfsrefmode, const char *wfsref_WFSRespMat, const char *wfsref_out, int voltmode, const char *IDvolt_name, float DClevel, float maxvolt)
 {
     long naxis = 2;
-    long *size;
+    uint32_t *size;
     long ch;
     char name[200];
     long cnt = 0;
@@ -1056,7 +1071,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     printf("maxvolt = %f\n", maxvolt);
 
 
-    size = (long*) malloc(sizeof(long)*naxis);
+    size = (uint32_t*) malloc(sizeof(uint32_t)*naxis);
     size[0] = xsize;
     size[1] = ysize;
     sizexy = xsize*ysize;
@@ -1152,18 +1167,18 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     {
         sprintf(name, "dm%02lddisp%02ld", DMindex, ch);
         printf("Channel %ld \n", ch);
-        dmdispcombconf[DMindex].dmdispID[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
+        dmdispcombconf[DMindex].dmdispID[ch] = create_image_ID(name, naxis, size, _DATATYPE_FLOAT, 1, 10);
         COREMOD_MEMORY_image_set_createsem(name, 10);
         dmdispptr_array[ch] = data.image[dmdispcombconf[DMindex].dmdispID[ch]].array.F;
     }
 
 
     sprintf(name, "dm%02lddisp", DMindex);
-    dmdispcombconf[DMindex].IDdisp = create_image_ID(name, naxis, size, FLOAT, 1, 10);
+    dmdispcombconf[DMindex].IDdisp = create_image_ID(name, naxis, size, _DATATYPE_FLOAT, 1, 10);
     COREMOD_MEMORY_image_set_createsem(name, 10);
     
     sprintf(name, "dm%02lddispt", DMindex);
-    IDdispt = create_image_ID(name, naxis, size, FLOAT, 0, 0);
+    IDdispt = create_image_ID(name, naxis, size, _DATATYPE_FLOAT, 0, 0);
     dmdispptr = data.image[IDdispt].array.F;
 
     if(dmdispcombconf[DMindex].voltmode==1)
@@ -1173,7 +1188,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         vOK = 0;
         if(IDvolt!=-1)
             {
-                if((data.image[IDvolt].md[0].atype==USHORT)&&(data.image[IDvolt].md[0].naxis==2)&&(data.image[IDvolt].md[0].size[0]==xsize)&&(data.image[IDvolt].md[0].size[1]==ysize))
+                if((data.image[IDvolt].md[0].atype==_DATATYPE_UINT16)&&(data.image[IDvolt].md[0].naxis==2)&&(data.image[IDvolt].md[0].size[0]==xsize)&&(data.image[IDvolt].md[0].size[1]==ysize))
                         vOK = 1;
                 else
                     delete_image_ID(dmdispcombconf[DMindex].voltname);
@@ -1182,7 +1197,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         printf("vOK = %d\n", vOK);
         if(vOK==0)
         {
-            dmdispcombconf[DMindex].IDvolt = create_image_ID(dmdispcombconf[DMindex].voltname, naxis, size, USHORT, 1, 10);
+            dmdispcombconf[DMindex].IDvolt = create_image_ID(dmdispcombconf[DMindex].voltname, naxis, size, _DATATYPE_UINT16, 1, 10);
             COREMOD_MEMORY_image_set_createsem(dmdispcombconf[DMindex].voltname, 10);
          }
          else
@@ -1197,7 +1212,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     sprintf(name, "dm%02lddisp", DMindex);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
-    if(data.image[dmdispcombconf[DMindex].IDdisp].sem<2)
+    if(data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem<2)
     {
         printf("ERROR: image %s semaphore %d missing\n", data.image[dmdispcombconf[DMindex].IDdisp].name, 1);
         exit(0);
@@ -1336,7 +1351,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].cnt0++;
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].write = 0;            
  
-            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].sem;semnb++)
+            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem;semnb++)
                {
                    sem_getvalue(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb], &semval);
                    if(semval<SEMAPHORE_MAXVAL)
@@ -2063,7 +2078,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
     }
     
 
-    printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
+    printf("ARRAY SIZE = %ld %ld\n", (long) data.image[IDs1].md[0].size[0], (long) data.image[IDs1].md[0].size[1]);
     size_sx = data.image[IDs1].md[0].size[0];
     size_sy = data.image[IDs1].md[0].size[1];
 

@@ -16,7 +16,9 @@ mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
 echo "tmuxname = $tmuxname"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname 
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n dmturbrun" C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -25,7 +27,9 @@ tmux send-keys -t $tmuxname "aoloopcontroldmturb ${DMindex}" C-m
 sleep 1
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turbctrl"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n dmturbctr" C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -66,8 +70,9 @@ function DMturb_WriteToFile {
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}mkturb"
 logRunningProcess "dmmkturb2file" "$tmuxname" "Creating DM turbulence sequence"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
-
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
 tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m

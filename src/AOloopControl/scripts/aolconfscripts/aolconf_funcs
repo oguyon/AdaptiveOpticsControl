@@ -83,6 +83,10 @@ line=$1
 
 
 function getshmimsize {
+	
+if [ -f "./loadedSM/$1.kept" ] && [ -f "./loadedSM/$1.imsize" ]; then  # don't re-measure size if unchanged
+cp ./loadedSM/$1.imsize conf/conf_imsize_$1.txt
+else
 echo "$execname" > execname.txt
 $execname << EOF
 readshmimsize $1 _size.txt
@@ -91,7 +95,9 @@ EOF
 sizestring=$( cat _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
 echo "$sizestring" > conf/conf_imsize_$1.txt
+echo "$sizestring" > loadedSM/$1.imsize
 rm -f _size.txt
+fi
 }
 
 

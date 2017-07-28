@@ -40,57 +40,67 @@ int init_00CORE()
 
 int printRED(char *string)
 {
-  printf("%c[%d;%dm %s %c[%d;m\n", (char) 27, 1, 31, string, (char) 27, 0);
+    printf("%c[%d;%dm %s %c[%d;m\n", (char) 27, 1, 31, string, (char) 27, 0);
 
-  return(0);
+    return(0);
 }
+
+
+
 
 
 int printWARNING(const char *file, const char *func, int line, char *warnmessage)
 {
-  char buff[256];
+    char buff[256];
 
-  fprintf(stderr,"%c[%d;%dm WARNING [ FILE: %s   FUNCTION: %s  LINE: %d ]  %c[%d;m\n", (char) 27, 1, 35, file, func, line, (char) 27, 0);
-  if(C_ERRNO != 0)
+    fprintf(stderr,"%c[%d;%dm WARNING [ FILE: %s   FUNCTION: %s  LINE: %d ]  %c[%d;m\n", (char) 27, 1, 35, file, func, line, (char) 27, 0);
+    if(C_ERRNO != 0)
     {
-      if( strerror_r( errno, buff, 256 ) == 0 ) {
-	fprintf(stderr,"C Error: %s\n", buff );
-      }
-      else
-	fprintf(stderr,"Unknown C Error\n");
+        if( strerror_r( errno, buff, 256 ) == 0 ) {
+            fprintf(stderr,"C Error: %s\n", buff );
+        }
+        else
+            fprintf(stderr,"Unknown C Error\n");
     }
-  else
-    fprintf(stderr,"No C error (errno = 0)\n");
+    else
+        fprintf(stderr,"No C error (errno = 0)\n");
 
-  fprintf(stderr,"%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 35, warnmessage, (char) 27, 0);
-  C_ERRNO = 0;
+    fprintf(stderr,"%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 35, warnmessage, (char) 27, 0);
+    C_ERRNO = 0;
 
-  return(0);
+    return(0);
 }
+
+
+
+
 
 
 int printERROR(const char *file, const char *func, int line, char *errmessage)
 {
-  char buff[256];
+    char buff[256];
 
-  fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, file, func, line, (char) 27, 0);
-  if(C_ERRNO != 0)
+    fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, file, func, line, (char) 27, 0);
+    if(C_ERRNO != 0)
     {
-      if( strerror_r( errno, buff, 256 ) == 0 ) {
-	fprintf(stderr,"C Error: %s\n", buff );
-      }
-      else
-	fprintf(stderr,"Unknown C Error\n");
+        if( strerror_r( errno, buff, 256 ) == 0 ) {
+            fprintf(stderr,"C Error: %s\n", buff );
+        }
+        else
+            fprintf(stderr,"Unknown C Error\n");
     }
-  else
-    fprintf(stderr,"No C error (errno = 0)\n");
-   
-  fprintf(stderr,"%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 31, errmessage, (char) 27, 0);
+    else
+        fprintf(stderr,"No C error (errno = 0)\n");
 
-  C_ERRNO = 0;
-  
-  return(0);
+    fprintf(stderr,"%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 31, errmessage, (char) 27, 0);
+
+    C_ERRNO = 0;
+
+    return(0);
 }
+
+
+
 
 int set_precision(int vp)
 {

@@ -1,3 +1,17 @@
+/**
+ * @file    info.c
+ * @brief   Information about images
+ * 
+ * Computes information about images
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
 #define _GNU_SOURCE
 
 #include <stdint.h>
@@ -246,6 +260,8 @@ int print_header(const char *str, char c)
 }
 
 
+
+
 int printstatus(long ID)
 {
     struct timespec tnow;
@@ -282,26 +298,44 @@ int printstatus(long ID)
     printw("%s  ", data.image[ID].name);
 
     atype = data.image[ID].md[0].atype;
-    if(atype==CHAR)
-        printw("type:  CHAR               ");
-    if(atype==INT)
-        printw("type:  INT               ");
-    if(atype==FLOAT)
-        printw("type:  FLOAT              ");
-    if(atype==DOUBLE)
-        printw("type:  DOUBLE             ");
-    if(atype==COMPLEX_FLOAT)
-        printw("type:  COMPLEX_FLOAT      ");
-    if(atype==COMPLEX_DOUBLE)
-        printw("type:  COMPLEX_DOUBLE     ");
-    if(atype==USHORT)
-        printw("type:  USHORT             ");
 
-    sprintf(str, "[ %6ld",data.image[ID].md[0].size[0]);
+    if(atype==_DATATYPE_UINT8)
+        printw("type:  UINT8             ");
+    if(atype==_DATATYPE_INT8)
+        printw("type:  INT8              ");
+
+    if(atype==_DATATYPE_UINT16)
+        printw("type:  UINT16            ");
+    if(atype==_DATATYPE_INT16)
+        printw("type:  INT16             ");
+
+    if(atype==_DATATYPE_UINT32)
+        printw("type:  UINT32            ");
+    if(atype==_DATATYPE_INT32)
+        printw("type:  INT32             ");
+
+    if(atype==_DATATYPE_UINT64)
+        printw("type:  UINT64            ");
+    if(atype==_DATATYPE_INT64)
+        printw("type:  INT64             ");
+
+    if(atype==_DATATYPE_FLOAT)
+        printw("type:  FLOAT              ");
+
+    if(atype==_DATATYPE_DOUBLE)
+        printw("type:  DOUBLE             ");
+
+    if(atype==_DATATYPE_COMPLEX_FLOAT)
+        printw("type:  COMPLEX_FLOAT      ");
+
+    if(atype==_DATATYPE_COMPLEX_DOUBLE)
+        printw("type:  COMPLEX_DOUBLE     ");
+
+    sprintf(str, "[ %6ld", (long) data.image[ID].md[0].size[0]);
 
     for(j=1; j<data.image[ID].md[0].naxis; j++)
     {
-        sprintf(str, "%s x %6ld", str, data.image[ID].md[0].size[j]);
+        sprintf(str, "%s x %6ld", str, (long) data.image[ID].md[0].size[j]);
     }
     sprintf(str, "%s]", str);
 
@@ -332,8 +366,8 @@ int printstatus(long ID)
     printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
    // printw("[logstatus %2d] ", data.image[ID].logstatus[0]);
  
-    printw("[%ld sems ", data.image[ID].sem);
-   for(s=0;s<data.image[ID].sem;s++)
+    printw("[%ld sems ", data.image[ID].md[0].sem);
+   for(s=0;s<data.image[ID].md[0].sem;s++)
     {
         sem_getvalue(data.image[ID].semptr[s], &semval);
         printw(" % 3d ", semval);
@@ -347,7 +381,7 @@ int printstatus(long ID)
             printw(" [semlog = %5d]", semval);
         }*/
     printw("\n");
-/*    if(data.image[ID].sem==1)
+/*    if(data.image[ID].md[0].sem==1)
     {
         sem_getvalue(data.image[ID].semptr1, &semval);
         printw("[Semaphore 1 %3d] ", semval);
@@ -432,7 +466,10 @@ int printstatus(long ID)
 
     vcnt = (long*) malloc(sizeof(long)*NBhistopt);
 
-    if(atype==FLOAT)
+
+
+
+    if(atype==_DATATYPE_FLOAT)
     {
         minPV = data.image[ID].array.F[0];
         maxPV = minPV;
@@ -453,22 +490,22 @@ int printstatus(long ID)
         }
     }
 
-    if(atype==USHORT)
+    if(atype==_DATATYPE_UINT16)
     {
-        minPV = data.image[ID].array.U[0];
+        minPV = data.image[ID].array.UI16[0];
         maxPV = minPV;
 
         for(h=0; h<NBhistopt; h++)
             vcnt[h] = 0;
         for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
         {
-            if(data.image[ID].array.U[ii]<minPV)
-                minPV = data.image[ID].array.U[ii];
-            if(data.image[ID].array.U[ii]>maxPV)
-                maxPV = data.image[ID].array.U[ii];
-            tmp = (1.0*data.image[ID].array.U[ii]-average);
+            if(data.image[ID].array.UI16[ii]<minPV)
+                minPV = data.image[ID].array.UI16[ii];
+            if(data.image[ID].array.UI16[ii]>maxPV)
+                maxPV = data.image[ID].array.UI16[ii];
+            tmp = (1.0*data.image[ID].array.UI16[ii]-average);
             RMS += tmp*tmp;
-            h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.U[ii]-minPV))/(maxPV-minPV));
+            h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.UI16[ii]-minPV))/(maxPV-minPV));
             if((h>-1)&&(h<NBhistopt))
                 vcnt[h]++;
         }
@@ -516,7 +553,7 @@ int printstatus(long ID)
     }
     else
     {
-        if(data.image[ID].md[0].atype == FLOAT)
+        if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
         {
             for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
             {
@@ -524,11 +561,11 @@ int printstatus(long ID)
             }
         }
 
-        if(data.image[ID].md[0].atype == USHORT)
+        if(data.image[ID].md[0].atype == _DATATYPE_UINT16)
         {
             for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
             {
-                printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
+                printw("%3ld  %5u\n", ii, data.image[ID].array.UI16[ii]);
             }
         }
 
@@ -547,7 +584,7 @@ int info_pixelstats_smallImage(long ID, long NBpix)
 {
     long ii;
 
-    if(data.image[ID].md[0].atype == FLOAT)
+    if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
     {
         for(ii=0; ii<NBpix; ii++)
         {
@@ -555,11 +592,11 @@ int info_pixelstats_smallImage(long ID, long NBpix)
         }
     }
 
-    if(data.image[ID].md[0].atype == USHORT)
+    if(data.image[ID].md[0].atype == _DATATYPE_UINT16)
     {
         for(ii=0; ii<NBpix; ii++)
         {
-            printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
+            printw("%3ld  %5u\n", ii, data.image[ID].array.UI16[ii]);
         }
     }
 
@@ -763,9 +800,9 @@ double img_percentile(const char *ID_name, double p)
     ID = image_ID(ID_name);
     atype = data.image[ID].md[0].atype;
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
         value = (double) img_percentile_float(ID_name, (float) p);
-    if(atype==DOUBLE)
+    if(atype==_DATATYPE_DOUBLE)
         value = img_percentile_double(ID_name, p);
 
     return value;
@@ -962,14 +999,14 @@ int info_image_stats(const char *ID_name, const char *options)
         tmp_long = data.image[ID].md[0].nelement*TYPESIZE[atype];
         printf("\n");
         printf("Image size (->imsize0...):     [");
-        printf("% ld",data.image[ID].md[0].size[0]);
+        printf("% ld", (long) data.image[ID].md[0].size[0]);
         j = 0;
         sprintf(vname,"imsize%ld",j);
 
         create_variable_ID(vname,1.0*data.image[ID].md[0].size[j]);
         for(j=1; j<data.image[ID].md[0].naxis; j++)
         {
-            printf(" %ld",data.image[ID].md[0].size[j]);
+            printf(" %ld", (long) data.image[ID].md[0].size[j]);
             sprintf(vname,"imsize%ld",j);
             create_variable_ID(vname,1.0*data.image[ID].md[0].size[j]);
         }
@@ -978,17 +1015,17 @@ int info_image_stats(const char *ID_name, const char *options)
         printf("write = %d   cnt0 = %ld   cnt1 = %ld\n", data.image[ID].md[0].write, data.image[ID].md[0].cnt0, data.image[ID].md[0].cnt1);
 
 
-        if(atype==CHAR)
+        if(atype==_DATATYPE_UINT8)
             sprintf(type,"CHAR");
-        if(atype==INT)
+        if(atype==_DATATYPE_INT32)
             sprintf(type,"INT");
-        if(atype==FLOAT)
+        if(atype==_DATATYPE_FLOAT)
             sprintf(type,"FLOAT");
-        if(atype==DOUBLE)
+        if(atype==_DATATYPE_DOUBLE)
             sprintf(type,"DOUBLE");
-        if(atype==COMPLEX_FLOAT)
+        if(atype==_DATATYPE_COMPLEX_FLOAT)
             sprintf(type,"CFLOAT");
-        if(atype==COMPLEX_DOUBLE)
+        if(atype==_DATATYPE_COMPLEX_DOUBLE)
             sprintf(type,"CDOUBLE");
         printf("type:            %s\n",type);
         printf("Memory size:     %ld Kb\n",(long) tmp_long/1024);
@@ -1677,7 +1714,7 @@ int fft_structure_function(const char *ID_in, const char *ID_out)
 	nelement = data.image[ID].md[0].nelement;
 	
 	atype = data.image[ID].md[0].atype;
-	if(atype==FLOAT)
+	if(atype==_DATATYPE_FLOAT)
 		value = -data.image[ID].array.F[0];
 	else
 		value = -data.image[ID].array.D[0];

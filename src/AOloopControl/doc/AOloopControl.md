@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Jul 5, 2017
+% Jul 10, 2017
 
 
 
@@ -598,7 +598,7 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 mkdir LHScalib
 ~~~~
 
-- Download response matrix and reference
+- Download response matrix and reference, place them in directory `LHScalib`.
 
 - Start GUI, loop 5, name simLHS
 
@@ -606,7 +606,7 @@ mkdir LHScalib
 ./aolconf -L 5 -N simLHS
 ~~~~
 
-- Start DM: index 04, 50 x 50; Auto-configure: main DM (no link); (re-)START DM comb process
+- Start DM: index 04, 50 x 50; Auto-configure: main DM (no link); STOP -> (re-)START DM comb process
 
 - Go to `TEST MODE` GUI
 

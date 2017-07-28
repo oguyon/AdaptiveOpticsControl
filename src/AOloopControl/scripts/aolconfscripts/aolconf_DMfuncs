@@ -47,7 +47,9 @@ function initDMfunc {
     echo "tmux session :  $tmuxname"
     sleep 1
     tmux kill-session -t $tmuxname
+    sleep 0.2
     tmux new-session -d -s $tmuxname
+	sleep 0.2
     tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comb" C-m
     if [ "$CPUconfRT" -eq "1" ]; then
     tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -111,7 +113,9 @@ function stopDMfunc {
     aoconflog "stop initDM ${DMindex}"
     tmuxname="aol${LOOPNUMBER}dm${DMindex}comboff"
     tmux kill-session -t $tmuxname
+    sleep 0.2
     tmux new-session -d -s $tmuxname
+    sleep 0.2
     tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comboff" C-m
     tmux send-keys -t $tmuxname "aoloopcontroldmcomboff ${DMindex}" C-m
     tmux send-keys -t $tmuxname "exit" C-m

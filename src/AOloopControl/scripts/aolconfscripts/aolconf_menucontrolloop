@@ -1193,7 +1193,9 @@ aoconflogext "aolstep $loopNBstep"
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
 echo " ON" > $file
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1 6" C-m
 
 echo "WFS" > ./status/stat_zploopON6.txt
@@ -2066,7 +2068,9 @@ SelectValue01 100 1001 50
 zpmultcoeff=${value}
 echo "${zpmultcoeff}" > ./conf/conf_zpmultcoeff.txt
 tmuxname="aol${LOOPNUMBER}zpmult"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n ${tmuxname}" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -2187,7 +2191,9 @@ aoconflogext "stop zero-point offset loop 7"
 ampl="0.03"
 modenb="00030"
 tmuxname="aol${LOOPNUMBER}zpinject3"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -2204,7 +2210,9 @@ aoconflogext "inject fourier mode to zero-point"
 
 	zpz)
 tmuxname="aol${LOOPNUMBER}zpzero3"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -2231,13 +2239,15 @@ echo " ON" > ./status/stat_GPUzploopON0.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 0"
 tmuxname="aol${LOOPNUMBER}GPUzploop0"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2253,7 +2263,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop0z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo0" C-m
@@ -2271,13 +2283,15 @@ echo " ON" > ./status/stat_GPUzploopON1.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 1"
 tmuxname="aol${LOOPNUMBER}GPUzploop1"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop1" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP1 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP1 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2293,7 +2307,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop1z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo1" C-m
@@ -2310,13 +2326,15 @@ echo " ON" > ./status/stat_GPUzploopON2.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 2"
 tmuxname="aol${LOOPNUMBER}GPUzploop2"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop2" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP2 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo2 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP2 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo2 0 bogusname" C-m
 menucontrolloop_default="GPUzploff2"
 ;;
 
@@ -2332,7 +2350,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop2z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo2" C-m
@@ -2349,13 +2369,15 @@ echo " ON" > ./status/stat_GPUzploopON3.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 3"
 tmuxname="aol${LOOPNUMBER}GPUzploop3"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop3" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP3 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP3 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
 menucontrolloop_default="GPUzploff3"
 ;;
 
@@ -2371,7 +2393,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop3z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo3" C-m
@@ -2388,13 +2412,15 @@ echo " ON" > ./status/stat_GPUzploopON4.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 4"
 tmuxname="aol${LOOPNUMBER}GPUzploop4"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop4" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2410,7 +2436,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop4z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo4" C-m
@@ -2427,13 +2455,15 @@ echo " ON" > ./status/stat_GPUzploopON5.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 5"
 tmuxname="aol${LOOPNUMBER}GPUzploop0"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop5" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP5 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo5 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP5 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo5 0 bogusname" C-m
 menucontrolloop_default="GPUzploff5"
 ;;
 
@@ -2449,7 +2479,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop5z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo5" C-m
@@ -2466,13 +2498,15 @@ echo " ON" > ./status/stat_GPUzploopON6.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 6"
 tmuxname="aol${LOOPNUMBER}GPUzploop6"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop6" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP6 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo6 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP6 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo6 0 bogusname" C-m
 menucontrolloop_default="GPUzploff6"
 ;;
 
@@ -2488,8 +2522,11 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop6z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+sleep 0.2
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo6" C-m
 tmux send-keys -t $tmuxname "exit" C-m
@@ -2505,13 +2542,15 @@ echo " ON" > ./status/stat_GPUzploopON7.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 7"
 tmuxname="aol${LOOPNUMBER}GPUzploop7"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop7" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP7 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo7 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP7 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo7 0 bogusname" C-m
 menucontrolloop_default="GPUzploff7"
 ;;
 
@@ -2527,7 +2566,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop7z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo7" C-m
@@ -2564,7 +2605,9 @@ echo "1" > $file
 wfrefO=$( cat conf/conf_dmwrefO_name.txt )
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfrefRM" C-m
@@ -2588,7 +2631,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim $wfrefO" C-m
 tmux send-keys -t $tmuxname "imzero $wfrefO" C-m
@@ -2610,7 +2655,9 @@ file="./conf/conf_GPUdm2wfsrefZ.txt"
 echo "1" > $file
 tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${LOOPNUMBER}disp07" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
@@ -2633,7 +2680,9 @@ tmux kill-session -t $tmuxname
 
 tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo3" C-m

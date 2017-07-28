@@ -62,10 +62,13 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #include <fitsio.h>
 
 #include "initmodules.h"
+
+#include "ImageCreate/ImageCreate.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
+
 
 
 #include "calc.h"
@@ -100,7 +103,7 @@ uid_t euid_real;
 uid_t euid_called;
 uid_t suid;
 
-int TYPESIZE[9];
+uint8_t TYPESIZE[32];
 
 int C_ERRNO;
 
@@ -262,18 +265,23 @@ static int_fast8_t printInfo()
         printf("Default precision upon startup : float\n");
     if(data.precision==1)
         printf("Default precision upon startup : double\n");
-	printf("sizeof(short int)     = %3ld bit\n", sizeof(short int)*8);
-	printf("sizeof(int)           = %3ld bit\n", sizeof(int)*8);
-	printf("sizeof(long)          = %3ld bit\n", sizeof(long)*8);
-	printf("sizeof(long long)     = %3ld bit\n", sizeof(long long)*8);
-	printf("sizeof(int_fast8_t)   = %3ld bit\n", sizeof(int_fast8_t)*8);
-	printf("sizeof(int_fast16_t)  = %3ld bit\n", sizeof(int_fast16_t)*8);
-	printf("sizeof(int_fast32_t)  = %3ld bit\n", sizeof(int_fast32_t)*8);
-	printf("sizeof(int_fast64_t)  = %3ld bit\n", sizeof(int_fast64_t)*8);
-	printf("sizeof(uint_fast8_t)  = %3ld bit\n", sizeof(uint_fast8_t)*8);
-	printf("sizeof(uint_fast16_t) = %3ld bit\n", sizeof(uint_fast16_t)*8);
-	printf("sizeof(uint_fast32_t) = %3ld bit\n", sizeof(uint_fast32_t)*8);
-	printf("sizeof(uint_fast64_t) = %3ld bit\n", sizeof(uint_fast64_t)*8);
+	printf("sizeof(short int)              = %4ld bit\n", sizeof(short int)*8);
+	printf("sizeof(int)                    = %4ld bit\n", sizeof(int)*8);
+	printf("sizeof(long)                   = %4ld bit\n", sizeof(long)*8);
+	printf("sizeof(long long)              = %4ld bit\n", sizeof(long long)*8);
+	printf("sizeof(int_fast8_t)            = %4ld bit\n", sizeof(int_fast8_t)*8);
+	printf("sizeof(int_fast16_t)           = %4ld bit\n", sizeof(int_fast16_t)*8);
+	printf("sizeof(int_fast32_t)           = %4ld bit\n", sizeof(int_fast32_t)*8);
+	printf("sizeof(int_fast64_t)           = %4ld bit\n", sizeof(int_fast64_t)*8);
+	printf("sizeof(uint_fast8_t)           = %4ld bit\n", sizeof(uint_fast8_t)*8);
+	printf("sizeof(uint_fast16_t)          = %4ld bit\n", sizeof(uint_fast16_t)*8);
+	printf("sizeof(uint_fast32_t)          = %4ld bit\n", sizeof(uint_fast32_t)*8);
+	printf("sizeof(uint_fast64_t)          = %4ld bit\n", sizeof(uint_fast64_t)*8);
+	printf("sizeof(EVENT_UI8_UI8_UI16_UI8) = %4ld bit\n", sizeof(EVENT_UI8_UI8_UI16_UI8)*8);
+	printf("sizeof(IMAGE_KEYWORD)          = %4ld bit\n", sizeof(IMAGE_KEYWORD)*8);
+	printf("sizeof(TIMESPECFIXED)          = %4ld bit\n", sizeof(TIMESPECFIXED)*8);
+	printf("sizeof(IMAGE_METADATA)         = %4ld bit\n", sizeof(IMAGE_METADATA)*8);
+	printf("sizeof(IMAGE)                  = %4ld bit\n", sizeof(IMAGE)*8);
     printf("\n");
     printf("--------------- LIBRARIES --------------------\n");
     printf("READLINE : version %x\n",RL_READLINE_VERSION);
@@ -641,15 +649,24 @@ int_fast8_t main(int argc, char *argv[])
     strcpy(data.processname, argv[0]);
 
 
-    TYPESIZE[0] = 0;
-    TYPESIZE[1] = sizeof(char);
-    TYPESIZE[2] = sizeof(int);
-    TYPESIZE[3] = sizeof(float);
-    TYPESIZE[4] = sizeof(double);
-    TYPESIZE[5] = 2*sizeof(float);
-    TYPESIZE[6] = 2*sizeof(double);
-    TYPESIZE[7] = sizeof(unsigned short);
-    TYPESIZE[8] = sizeof(long);
+	
+
+
+    TYPESIZE[_DATATYPE_UINT8] = SIZEOF_DATATYPE_UINT8;
+    TYPESIZE[_DATATYPE_INT8] = SIZEOF_DATATYPE_INT8;
+    TYPESIZE[_DATATYPE_UINT16] = SIZEOF_DATATYPE_UINT16;
+    TYPESIZE[_DATATYPE_INT16] = SIZEOF_DATATYPE_INT16;
+    TYPESIZE[_DATATYPE_UINT32] = SIZEOF_DATATYPE_UINT32;
+    TYPESIZE[_DATATYPE_INT32] = SIZEOF_DATATYPE_INT32;
+    TYPESIZE[_DATATYPE_UINT64] = SIZEOF_DATATYPE_UINT64;
+    TYPESIZE[_DATATYPE_INT64] = SIZEOF_DATATYPE_INT64;
+    TYPESIZE[_DATATYPE_FLOAT] = SIZEOF_DATATYPE_FLOAT;
+    TYPESIZE[_DATATYPE_DOUBLE] = SIZEOF_DATATYPE_DOUBLE;
+    TYPESIZE[_DATATYPE_COMPLEX_FLOAT] = SIZEOF_DATATYPE_COMPLEX_FLOAT;
+    TYPESIZE[_DATATYPE_COMPLEX_DOUBLE] = SIZEOF_DATATYPE_COMPLEX_DOUBLE;
+    TYPESIZE[_DATATYPE_EVENT_UI8_UI8_UI16_UI8] = SIZEOF_DATATYPE_EVENT_UI8_UI8_UI16_UI8;
+    
+
 
     atexit(fnExit1);
 

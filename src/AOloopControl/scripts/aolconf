@@ -423,8 +423,9 @@ echo "csetpmove aol0RT" >> script_aol${LOOPNUMBER}test
 fi
 echo "AOsystsim ${AOsystsimsync} ${DMindex} ${AOsystsimWFSdelayus}" >> script_aol${LOOPNUMBER}test 
 chmod +x script_aol${LOOPNUMBER}test 
-
+sleep 0.2
 tmux new-session -d -s aol${LOOPNUMBER}test
+sleep 0.2
 echo " ON" > ./status/testloopstatus.txt
 tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
 
@@ -458,16 +459,15 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 
-
-# =================== READ CONFIGURATION====================================
-
 # =================== READ CONFIGURATION====================================
 
 
 function AOloadMem {
-# hardware I/O [shared memory]
+
+# Custom hardware I/O functions [shared memory]
+
 ReaddmCname
-getshmimsize aol${LOOPNUMBER}_dmC
+getshmimsize aol${LOOPNUMBER}_dmC   # function in aolconf_funcs
 
 ReaddmOname
 getshmimsize aol${LOOPNUMBER}_dmO
@@ -497,7 +497,6 @@ ReaddmZP7name
 getshmimsize aol${LOOPNUMBER}_dmZP7
 
 
-
 Readdmdispname
 getshmimsize aol${LOOPNUMBER}_dmdisp
 
@@ -507,15 +506,16 @@ getshmimsize aol${LOOPNUMBER}_dmRM
 Readwfsimcamname
 getshmimsize aol${LOOPNUMBER}_wfsim
 
-ReadWFSdarkfname
+
+
+
+# LOAD SYSTEM CALIBRATION (./conf/ -> shared mem)
+
+# ReadConfFile in aolconf_readconf
+
+
+ReadConfFile "wfsdark"
 getshmimsize aol${LOOPNUMBER}_wfsdark
-
-
-
-
-# SYSTEM CALIBRATION
-
-
 
 ReadConfFile "wfsmap"
 getshmimsize aol${LOOPNUMBER}_wfsmask
