@@ -48,9 +48,8 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /usr/local/include/ImageStruct.h cudacomp/cudacomp.h \
- AtmosphericTurbulence/AtmosphericTurbulence.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h ImageStruct.h \
+ cudacomp/cudacomp.h AtmosphericTurbulence/AtmosphericTurbulence.h \
  AtmosphereModel/AtmosphereModel.h psf/psf.h \
  AOloopControl/AOloopControl.h AOsystSim/AOsystSim.h \
  AOloopControl_DM/AOloopControl_DM.h OptSystProp/OptSystProp.h \
@@ -60,7 +59,8 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  linopt_imtools/linopt_imtools.h statistic/statistic.h fft/fft.h \
  info/info.h COREMOD_arith/COREMOD_arith.h \
  COREMOD_iofits/COREMOD_iofits.h COREMOD_memory/COREMOD_memory.h \
- COREMOD_tools/COREMOD_tools.h 00CORE/00CORE.h
+ COREMOD_tools/COREMOD_tools.h ImageStreamIO/ImageStreamIO.h \
+ 00CORE/00CORE.h
 
 /usr/include/stdc-predef.h:
 
@@ -202,7 +202,7 @@ CLIcore.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigthread.h:
 
-/usr/local/include/ImageStruct.h:
+ImageStruct.h:
 
 cudacomp/cudacomp.h:
 
@@ -249,5 +249,7 @@ COREMOD_iofits/COREMOD_iofits.h:
 COREMOD_memory/COREMOD_memory.h:
 
 COREMOD_tools/COREMOD_tools.h:
+
+ImageStreamIO/ImageStreamIO.h:
 
 00CORE/00CORE.h:

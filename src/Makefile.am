@@ -108,6 +108,10 @@ SUBDIRS += COREMOD_tools
 AdaptiveOpticsControl_LDADD += COREMOD_tools/libcoremodtools.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_tools
 
+SUBDIRS += ImageStreamIO
+AdaptiveOpticsControl_LDADD += ImageStreamIO/libimagestreamio.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/ImageStreamIO
+
 SUBDIRS += 00CORE
 AdaptiveOpticsControl_LDADD += 00CORE/lib00core.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/00CORE

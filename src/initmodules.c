@@ -23,6 +23,7 @@
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_tools/COREMOD_tools.h"
+#include "ImageStreamIO/ImageStreamIO.h"
 #include "00CORE/00CORE.h"
 
 
@@ -53,6 +54,7 @@ int init_modules()
   init_COREMOD_iofits();
   init_COREMOD_memory();
   init_COREMOD_tools();
+  init_ImageStreamIO();
   init_00CORE();
 
 return 0;

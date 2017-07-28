@@ -125,7 +125,8 @@ AdaptiveOpticsControl_DEPENDENCIES = cudacomp/libcudacomp.la \
 	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
-	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
+	COREMOD_tools/libcoremodtools.la \
+	ImageStreamIO/libimagestreamio.la 00CORE/lib00core.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -402,6 +403,7 @@ AdaptiveOpticsControl_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-I@abs_top_srcdir@/src/COREMOD_iofits \
 	-I@abs_top_srcdir@/src/COREMOD_memory \
 	-I@abs_top_srcdir@/src/COREMOD_tools \
+	-I@abs_top_srcdir@/src/ImageStreamIO \
 	-I@abs_top_srcdir@/src/00CORE
 ACLOCAL_AMFLAGS = -I m4
 AM_YFLAGS = -d
@@ -413,7 +415,7 @@ SUBDIRS = cudacomp AtmosphericTurbulence AtmosphereModel psf \
 	OpticsMaterials ZernikePolyn WFpropagate image_basic \
 	image_filter kdtree image_gen linopt_imtools statistic fft \
 	info COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
-	00CORE
+	ImageStreamIO 00CORE
 AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
 	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
@@ -428,7 +430,8 @@ AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
 	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
-	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
+	COREMOD_tools/libcoremodtools.la \
+	ImageStreamIO/libimagestreamio.la 00CORE/lib00core.la
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

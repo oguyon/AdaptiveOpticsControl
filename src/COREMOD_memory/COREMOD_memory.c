@@ -68,7 +68,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #include <fitsio.h>
 
 #include "ImageStruct.h"
-#include "ImageCreate/ImageCreate.h"
+#include "ImageStreamIO/ImageStreamIO.h"
 #include "CLIcore.h"
 #include "info/info.h"
 #include "00CORE/00CORE.h"
@@ -2096,7 +2096,7 @@ long read_sharedmem_image(const char *name)
 	ID = next_avail_image_ID();
 	
 	image = &data.image[ID];
-	if(read_sharedmem_image_toIMAGE(name, image)==-1)
+	if(ImageStreamIO_read_sharedmem_image_toIMAGE(name, image)==-1)
 		ID = -1;
 
     if(MEM_MONITOR == 1)
@@ -2154,7 +2154,7 @@ long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype
     if(image_ID(name) == -1)
     {
         ID = next_avail_image_ID();
-        ImageCreate(&data.image[ID], name, naxis, size, atype, shared, NBkw);
+        ImageStreamIO_createIm(&data.image[ID], name, naxis, size, atype, shared, NBkw);
     }
     else
     {
@@ -4121,7 +4121,7 @@ long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)
     ID = image_ID(IDname);
 
 	if(ID != -1)
-		ImageCreateSem(&data.image[ID], NBsem);
+		ImageStreamIO_createSem(&data.image[ID], NBsem);
 
     return(ID);
 }

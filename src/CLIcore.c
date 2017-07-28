@@ -1,3 +1,12 @@
+
+/**
+ * @file CLIcore.c
+ * @author Olivier Guyon
+ * @date 2017
+ */
+
+
+
 #define _GNU_SOURCE
 
 #include <stdint.h>
@@ -63,7 +72,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 #include "initmodules.h"
 
-#include "ImageCreate/ImageCreate.h"
+#include "ImageStreamIO/ImageStreamIO.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -80,12 +89,6 @@ extern int yy_scan_string(const char *);
 extern int yylex_destroy (void );
 
 
-
-/**
- * @file CLIcore.c
- * @author Olivier Guyon
- * @date 2015
- */
 
 
 /*-----------------------------------------
