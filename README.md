@@ -4,8 +4,7 @@
 
 
 
-# Adaptive Optics Control Computation Engine (AOCCE)
-
+# Adaptive Optics Computation Engine (AOCCE)
 
 
 
@@ -25,9 +24,11 @@ Supports multiple simultaneously running control loops and data logging.
 You can clone this repository, or download the latest .tar.gz distribution.
 
 
-## Libraries
+## Libraries 
 
-The following standard libraries are used:
+Note: please consult [online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/) for detailed instructions.
+
+### Standard libraries
 
 - readline, for reading the command line input
 - flex, for parsing the command line input
@@ -44,19 +45,27 @@ Install above libraries (Ubuntu):
 		sudo apt-get install libcfitsio3 libcfitsio3-dev libreadline6-dev libncurses5-dev libfftw3-dev libgsl0-dev flex bison
 
 
+### FITSIO
 
-- fitsio, for reading and writing FITS image files : 
-	Visit https://heasarc.gsfc.nasa.gov/fitsio/fitsio.html and download the file Unix .tar file cfitsio3410.tar.gz
-	Extract it , README , install it 
-	There is the fitsio.h in it. Move it to usr :
+For reading and writing FITS image files
+
+- Visit https://heasarc.gsfc.nasa.gov/fitsio/fitsio.html and download the file Unix .tar file cfitsio3410.tar.gz
+- Extract it , README , install it 
+There is the fitsio.h in it. Move it to usr :
 
 		./configure --prefix=/usr
 		make 
 		sudo make install 
 
+### GPU acceleration (optional, but highly recommended)
+
+- install NVIDIA driver
+- install CUDA
+- install MAGMA
 
 
-## Compilation from git clone
+
+## Compilation from git clone (recommended for developers)
 
 ### Additional libraries
 
@@ -81,7 +90,7 @@ The source code follows the standard GNU build process:
 		make install
 
 
-## Compilation from tarball
+## Compilation from tarball (recommended for users)
 
 
 Unpack
@@ -96,19 +105,19 @@ The source code follows the standard GNU build process:
 		sudo make install
 
 
-## Documentation 
+## Detailed documentation 
+
 Please consult the [online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/).
 
 
 
-## Source Code Architecture 
-Written in C.
-The main is a command line interface (CLI). Source code is in CLIcore.c and CLIcore.h.
-Key data structures (such as the image data structure) are declared in CLIcore.h.
 
-## How to run the turbulence simulator
-Copy scripts from ./src/AtmosphericTurbulence/scripts directory to working directory.
-Edit and execute the main script "runturb"
+## Getting Started
+
+All functions are accessible from the command line interface (CLI). Enter the CLI and type "help" for instructions.
+
+		./bin/AdaptiveOpticsControl
+
 
 
 ## Credits
