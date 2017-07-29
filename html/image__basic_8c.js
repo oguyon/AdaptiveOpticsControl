@@ -1,8 +1,5 @@
 var image__basic_8c =
 [
-    [ "M_PI", "image__basic_8c.html#ae71449b1cc6e6250b91f539153a7a0d3", null ],
-    [ "SBUFFERSIZE", "image__basic_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
-    [ "SWAP", "image__basic_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "basic_2Dextrapolate_nearestpixel", "image__basic_8c.html#a76909b2088a7057ffc9d1527d0e96e1a", null ],
     [ "basic_add", "image__basic_8c.html#a6daadbc8a95ff1803f44ca1d7dbff12d", null ],
     [ "basic_add3D", "image__basic_8c.html#a829bbc24f5f97993ef36fea65090e874", null ],

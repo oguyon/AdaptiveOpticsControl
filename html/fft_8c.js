@@ -1,12 +1,8 @@
 var fft_8c =
 [
-    [ "CSWAP", "fft_8c.html#a18cf66b4ff69fd69cf3b8291c629e80b", null ],
-    [ "FFTWOPTMODE", "fft_8c.html#a1c59fbcd70b859f0821a9aa93a141b00", null ],
-    [ "PI", "fft_8c.html#a598a3330b3c21701223ee0ca14316eca", null ],
-    [ "SBUFFERSIZE", "fft_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
-    [ "SWAP", "fft_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "array_index", "fft_8c.html#aef49f9202a140629a5d2986860de2a9a", null ],
     [ "autocorrelation", "fft_8c.html#a7b65ada4e8370e4de4b98f1c8bde6696", null ],
+    [ "clock_gettime", "fft_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6", null ],
     [ "do1dfft", "fft_8c.html#a2bc141309a8903857841ca1dc454f8f8", null ],
     [ "do1dffti", "fft_8c.html#a87ff60d883bcc2e0524fd40d15af3190", null ],
     [ "do1drfft", "fft_8c.html#ad892b9162f1187ee0bd67ab99b1c306d", null ],

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/CLIcore.c File Reference</title>
+<title>cfitsTK: src/CLIcore.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -104,52 +104,17 @@ $(document).ready(function(){initNavTree('CLIcore_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">CLIcore.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;pthread.h&gt;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &lt;sys/time.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;errno.h&gt;</code><br />
-<code>#include &lt;sys/types.h&gt;</code><br />
-<code>#include &lt;getopt.h&gt;</code><br />
-<code>#include &lt;ncurses.h&gt;</code><br />
-<code>#include &lt;sys/stat.h&gt;</code><br />
-<code>#include &lt;fcntl.h&gt;</code><br />
-<code>#include &lt;stdbool.h&gt;</code><br />
-<code>#include &lt;sys/prctl.h&gt;</code><br />
-<code>#include &lt;sched.h&gt;</code><br />
-<code>#include &lt;signal.h&gt;</code><br />
-<code>#include &lt;readline/readline.h&gt;</code><br />
-<code>#include &lt;readline/history.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_rng.h&gt;</code><br />
-<code>#include &lt;fitsio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="initmodules_8h_source.html">initmodules.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__arith_8h_source.html">COREMOD_arith/COREMOD_arith.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="calc_8h_source.html">calc.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="calc__bison_8h_source.html">calc_bison.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a369266c24eacffb87046522897a570d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a369266c24eacffb87046522897a570d5">_GNU_SOURCE</a></td></tr>
-<tr class="separator:a369266c24eacffb87046522897a570d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
+<tr class="separator:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2456979d39ad6205343f328542fbd437"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a2456979d39ad6205343f328542fbd437">yy_scan_string</a> (const char *)</td></tr>
 <tr class="separator:a2456979d39ad6205343f328542fbd437"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab596ae57cdabfb4b298edf3dde7cdf04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#ab596ae57cdabfb4b298edf3dde7cdf04">yylex_destroy</a> (void)</td></tr>
@@ -243,8 +208,8 @@ Variables</h2></td></tr>
 <tr class="separator:a8a11142864e6c378d6c8268335b965ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4013b1078f89c6a61f5572b3691ce817"><td class="memItemLeft" align="right" valign="top">uid_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a4013b1078f89c6a61f5572b3691ce817">suid</a></td></tr>
 <tr class="separator:a4013b1078f89c6a61f5572b3691ce817"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadfaed58c87f621d2863f9f598db072e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#aadfaed58c87f621d2863f9f598db072e">TYPESIZE</a> [9]</td></tr>
-<tr class="separator:aadfaed58c87f621d2863f9f598db072e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3550f8e47f5206735dad064e5b00a0b8"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a3550f8e47f5206735dad064e5b00a0b8">TYPESIZE</a> [32]</td></tr>
+<tr class="separator:a3550f8e47f5206735dad064e5b00a0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a500d20c5951f1462377328ae5305f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a9a500d20c5951f1462377328ae5305f5">C_ERRNO</a></td></tr>
 <tr class="separator:a9a500d20c5951f1462377328ae5305f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f627d7054b1abbffa2c6ea19bf05db"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db">Verbose</a> = 0</td></tr>
@@ -252,6 +217,7 @@ Variables</h2></td></tr>
 <tr class="memitem:ae5371cd7e46f19a56efdff432345b508"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#ae5371cd7e46f19a56efdff432345b508">Listimfile</a> = 0</td></tr>
 <tr class="separator:ae5371cd7e46f19a56efdff432345b508"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9842752e03b4de9b4593f1a3b34364ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDATA.html">DATA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a></td></tr>
+<tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8adb30f4f6669f927fd9232f686c637b"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a></td></tr>
 <tr class="separator:a8adb30f4f6669f927fd9232f686c637b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -268,21 +234,8 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Olivier Guyon </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2015 </dd></dl>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a369266c24eacffb87046522897a570d5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define _GNU_SOURCE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
+<dl class="section date"><dt>Date</dt><dd>2017 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="aa8c8cd420981d3b426cf2dd01d1df40b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -467,6 +420,40 @@ Variables</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a65786e09c3bd4c1f8f8f311e91c672c6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int clock_gettime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>clk_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct mach_timespec *&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1135,6 +1122,9 @@ parsing done with bison and flex </p>
       </table>
 </div><div class="memdoc">
 
+<p>System includes. </p>
+<p>External libraries </p>
+
 </div>
 </div>
 <a class="anchor" id="a1eb488f2804d57c2fe61590f6e9c77f7"></a>
@@ -1233,12 +1223,12 @@ parsing done with bison and flex </p>
 
 </div>
 </div>
-<a class="anchor" id="aadfaed58c87f621d2863f9f598db072e"></a>
+<a class="anchor" id="a3550f8e47f5206735dad064e5b00a0b8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int TYPESIZE[9]</td>
+          <td class="memname">uint8_t TYPESIZE[32]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1263,7 +1253,7 @@ parsing done with bison and flex </p>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="CLIcore_8c.html">CLIcore.c</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:23 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

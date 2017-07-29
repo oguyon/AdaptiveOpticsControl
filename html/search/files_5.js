@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['kdtree_2ec',['kdtree.c',['../kdtree_8c.html',1,'']]],
-  ['kdtree_2eh',['kdtree.h',['../kdtree_8h.html',1,'']]]
+  ['helpreadline_2emd',['helpreadline.md',['../helpreadline_8md.html',1,'']]]
 ];

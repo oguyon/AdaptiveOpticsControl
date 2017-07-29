@@ -44,7 +44,6 @@ var searchData=
   ['basic_5ftrunc_5fcirc',['basic_trunc_circ',['../image__basic_8c.html#a6d2a75725fce496bdd7aea6fc23e6fb0',1,'basic_trunc_circ(const char *ID_name, float f1):&#160;image_basic.c'],['../image__basic_8h.html#a6d2a75725fce496bdd7aea6fc23e6fb0',1,'basic_trunc_circ(const char *ID_name, float f1):&#160;image_basic.c']]],
   ['basic_5fzoom2',['basic_zoom2',['../image__basic_8c.html#acbc7f09f878af1cb3e7506c7b9dde631',1,'basic_zoom2(const char *ID_name, const char *ID_name_out):&#160;image_basic.c'],['../image__basic_8h.html#acbc7f09f878af1cb3e7506c7b9dde631',1,'basic_zoom2(const char *ID_name, const char *ID_name_out):&#160;image_basic.c']]],
   ['beamrad',['beamrad',['../structOPTSYST.html#a10d097a25c01cbe9263690707182f0c8',1,'OPTSYST']]],
-  ['begin',['BEGIN',['../calc__flex_8c.html#ab766bbbee08d04b67e3fe599d6900873',1,'calc_flex.c']]],
   ['betaawfs',['betaaWFS',['../structEXAOSIMCONF.html#a1be7256a5034292a196225478b734013',1,'EXAOSIMCONF']]],
   ['betaawfssci',['betaaWFSsci',['../structEXAOSIMCONF.html#ae821f59157867bc0f8ebf0a1ec9483ac',1,'EXAOSIMCONF']]],
   ['betapwfs',['betapWFS',['../structEXAOSIMCONF.html#ae9c939b0019da0aaa7d7871a434efeba',1,'EXAOSIMCONF']]],

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/AOsystSim/AOsystSim.c File Reference</title>
+<title>cfitsTK: src/AOsystSim/AOsystSim.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -110,30 +110,10 @@ $(document).ready(function(){initNavTree('AOsystSim_8c.html','');});
 <div class="title">AOsystSim.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_math.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_multimin.h&gt;</code><br />
-<code>#include &lt;fitsio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__filter_8h_source.html">image_filter/image_filter.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="fft_8h_source.html">fft/fft.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="info_8h_source.html">info/info.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="statistic_8h_source.html">statistic/statistic.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="OpticsMaterials_8h_source.html">OpticsMaterials/OpticsMaterials.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__gen_8h_source.html">image_gen/image_gen.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="OptSystProp_8h_source.html">OptSystProp/OptSystProp.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="AOsystSim_8h_source.html">AOsystSim/AOsystSim.h</a>&quot;</code><br />
-</div><table class="memberdecls">
+
+<p>Adaptive Optics system simulator.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a3742ea08885cb871bfbd336d82e02be4"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a3742ea08885cb871bfbd336d82e02be4">AOsystSim_simpleAOfilter_cli</a> ()</td></tr>
@@ -155,29 +135,37 @@ Functions</h2></td></tr>
 <tr class="memitem:af2494be4c27e14d322c2dda078a685f8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#af2494be4c27e14d322c2dda078a685f8">AOsystSim_FPWFS_sensitivityAnalysis_cli</a> ()</td></tr>
 <tr class="separator:af2494be4c27e14d322c2dda078a685f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad63110c83cfc65f22a044cb57709d6f6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ad63110c83cfc65f22a044cb57709d6f6">init_AOsystSim</a> ()</td></tr>
+<tr class="memdesc:ad63110c83cfc65f22a044cb57709d6f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Module initialization.  <a href="#ad63110c83cfc65f22a044cb57709d6f6">More...</a><br /></td></tr>
 <tr class="separator:ad63110c83cfc65f22a044cb57709d6f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a602b8f63eacba36388b4ec66ecb6c595"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a602b8f63eacba36388b4ec66ecb6c595">AOsystSim_run</a> (int syncmode, long DMindex, long delayus)</td></tr>
+<tr class="memdesc:a602b8f63eacba36388b4ec66ecb6c595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run AO system simulation.  <a href="#a602b8f63eacba36388b4ec66ecb6c595">More...</a><br /></td></tr>
+<tr class="separator:a602b8f63eacba36388b4ec66ecb6c595"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4934bd82ffb85ec84e81bab0f5c00a44"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a4934bd82ffb85ec84e81bab0f5c00a44">AOsystSim_simpleAOfilter</a> (const char *IDin_name, const char *IDout_name)</td></tr>
 <tr class="memdesc:a4934bd82ffb85ec84e81bab0f5c00a44"><td class="mdescLeft">&#160;</td><td class="mdescRight">simple AO filtering model using Fourier analysis simulates WFS integration, delay, noise (as a function of spatial frequency)  <a href="#a4934bd82ffb85ec84e81bab0f5c00a44">More...</a><br /></td></tr>
 <tr class="separator:a4934bd82ffb85ec84e81bab0f5c00a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96d33e61136514cdedc72bd6563ee0c1"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a96d33e61136514cdedc72bd6563ee0c1">AOsystSim_extremeAO_contrast_sim</a> ()</td></tr>
+<tr class="separator:a96d33e61136514cdedc72bd6563ee0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed282f5a668edf3bf4ac76d966767f33"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#aed282f5a668edf3bf4ac76d966767f33">AOsystSim_mkTelPupDM</a> (const char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx)</td></tr>
+<tr class="memdesc:aed282f5a668edf3bf4ac76d966767f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make telescope pupil.  <a href="#aed282f5a668edf3bf4ac76d966767f33">More...</a><br /></td></tr>
 <tr class="separator:aed282f5a668edf3bf4ac76d966767f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af83c21abbaf3c863accfcc80604658e5"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#af83c21abbaf3c863accfcc80604658e5">AOsystSim_fitTelPup</a> (const char *ID_name, const char *IDtelpup_name)</td></tr>
+<tr class="memdesc:af83c21abbaf3c863accfcc80604658e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fit measured DM response to telescope pupil.  <a href="#af83c21abbaf3c863accfcc80604658e5">More...</a><br /></td></tr>
 <tr class="separator:af83c21abbaf3c863accfcc80604658e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a882582d2580db4afc7b3c5a7c3dddaa5">AOsystSim_DMshape</a> (const char *IDdmctrl_name, const char *IDdmifc_name, const char *IDdm_name)</td></tr>
-<tr class="memdesc:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">DM control signals to DMshape.  <a href="#a882582d2580db4afc7b3c5a7c3dddaa5">More...</a><br /></td></tr>
-<tr class="separator:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae451e58b11014bd0f8423e109d10dbbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ae451e58b11014bd0f8423e109d10dbbe">AOsystSim_WFSsim_Pyramid</a> (const char *inWFc_name, const char *outWFSim_name, double modampl, long modnbpts)</td></tr>
-<tr class="separator:ae451e58b11014bd0f8423e109d10dbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4231c8497b7b40bbb54d4633283fb354"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a4231c8497b7b40bbb54d4633283fb354">AOsystSim_runWFS</a> (long index, const char *IDout_name)</td></tr>
-<tr class="separator:a4231c8497b7b40bbb54d4633283fb354"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa18bd406dff124e968a99ad30deb43e3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#aa18bd406dff124e968a99ad30deb43e3">AOsystSim_mkWF_mkCONF</a> (const char *fname)</td></tr>
 <tr class="separator:aa18bd406dff124e968a99ad30deb43e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6bc45116137435cb906545b14ffc1de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#aa6bc45116137435cb906545b14ffc1de">AOsystSim_mkWF</a> (const char *CONF_FNAME)</td></tr>
 <tr class="separator:aa6bc45116137435cb906545b14ffc1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae451e58b11014bd0f8423e109d10dbbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ae451e58b11014bd0f8423e109d10dbbe">AOsystSim_WFSsim_Pyramid</a> (const char *inWFc_name, const char *outWFSim_name, double modampl, long modnbpts)</td></tr>
+<tr class="separator:ae451e58b11014bd0f8423e109d10dbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4231c8497b7b40bbb54d4633283fb354"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a4231c8497b7b40bbb54d4633283fb354">AOsystSim_runWFS</a> (long index, const char *IDout_name)</td></tr>
+<tr class="separator:a4231c8497b7b40bbb54d4633283fb354"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade94ff87b681ffa0c5ef8c045d24bcdc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ade94ff87b681ffa0c5ef8c045d24bcdc">AOsystSim_PyrWFS_mkCONF</a> (const char *fname)</td></tr>
 <tr class="separator:ade94ff87b681ffa0c5ef8c045d24bcdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a312b792157eff60bbf98e706f512bd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a1a312b792157eff60bbf98e706f512bd">AOsystSim_PyrWFS</a> (const char *CONF_FNAME)</td></tr>
 <tr class="separator:a1a312b792157eff60bbf98e706f512bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a882582d2580db4afc7b3c5a7c3dddaa5">AOsystSim_DMshape</a> (const char *IDdmctrl_name, const char *IDdmifc_name, const char *IDdm_name)</td></tr>
+<tr class="memdesc:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">DM control signals to DMshape.  <a href="#a882582d2580db4afc7b3c5a7c3dddaa5">More...</a><br /></td></tr>
+<tr class="separator:a882582d2580db4afc7b3c5a7c3dddaa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66e5fab9272dac2dc8dcd83bfdcd5e99"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a66e5fab9272dac2dc8dcd83bfdcd5e99">AOsystSim_DM_mkCONF</a> (const char *fname)</td></tr>
 <tr class="separator:a66e5fab9272dac2dc8dcd83bfdcd5e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e635cdc1dce5cb7efd449ba6f6b3f5f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a7e635cdc1dce5cb7efd449ba6f6b3f5f">AOsystSim_DM</a> (const char *CONF_FNAME)</td></tr>
@@ -186,11 +174,6 @@ Functions</h2></td></tr>
 <tr class="separator:a5c00367886ba498e7dc6eae02260108d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f7037e55c2ce431e7c890642a10acd6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a7f7037e55c2ce431e7c890642a10acd6">AOsystSim_coroLOWFS</a> (const char *CONF_FNAME)</td></tr>
 <tr class="separator:a7f7037e55c2ce431e7c890642a10acd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a602b8f63eacba36388b4ec66ecb6c595"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a602b8f63eacba36388b4ec66ecb6c595">AOsystSim_run</a> (int syncmode, long DMindex, long delayus)</td></tr>
-<tr class="memdesc:a602b8f63eacba36388b4ec66ecb6c595"><td class="mdescLeft">&#160;</td><td class="mdescRight">simplified AO system simulator (DM command -&gt; WFS image part)  <a href="#a602b8f63eacba36388b4ec66ecb6c595">More...</a><br /></td></tr>
-<tr class="separator:a602b8f63eacba36388b4ec66ecb6c595"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96d33e61136514cdedc72bd6563ee0c1"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a96d33e61136514cdedc72bd6563ee0c1">AOsystSim_extremeAO_contrast_sim</a> ()</td></tr>
-<tr class="separator:a96d33e61136514cdedc72bd6563ee0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f6e7f9133dafaa17057d85b30c4c0b4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a7f6e7f9133dafaa17057d85b30c4c0b4">f_eval</a> (const gsl_vector *v, void *params)</td></tr>
 <tr class="separator:a7f6e7f9133dafaa17057d85b30c4c0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6dc6cd8e2fdcd45a52d0fe270ff7ad9"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ad6dc6cd8e2fdcd45a52d0fe270ff7ad9">AOsystSim_FPWFS_imsimul</a> (double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor)</td></tr>
@@ -203,7 +186,16 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a9842752e03b4de9b4593f1a3b34364ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDATA.html">DATA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a></td></tr>
+<tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6b4c7df63ddec28c52eaf33e8bee2ec"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#aa6b4c7df63ddec28c52eaf33e8bee2ec">AOSYSTSIM_logfunc_level</a> = 0</td></tr>
+<tr class="separator:aa6b4c7df63ddec28c52eaf33e8bee2ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3b100269f3e4fd97d3f93a3380a793a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ad3b100269f3e4fd97d3f93a3380a793a">AOSYSTSIM_logfunc_level_max</a> = 2</td></tr>
+<tr class="separator:ad3b100269f3e4fd97d3f93a3380a793a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae05d8f7d34c0011c91a36a5f03438e75"><td class="memItemLeft" align="right" valign="top">static char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ae05d8f7d34c0011c91a36a5f03438e75">AOSYSTSIM_logfunc_fname</a> [] = &quot;AOsystSim.fcall.log&quot;</td></tr>
+<tr class="separator:ae05d8f7d34c0011c91a36a5f03438e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf62be8fade5b52943c9ee593a5414c7"><td class="memItemLeft" align="right" valign="top">static char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#aaf62be8fade5b52943c9ee593a5414c7">flogcomment</a> [200]</td></tr>
+<tr class="separator:aaf62be8fade5b52943c9ee593a5414c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae40c8188d01ca1b2accece98300e61c8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#ae40c8188d01ca1b2accece98300e61c8">WDIR_INIT</a> = 0</td></tr>
 <tr class="separator:ae40c8188d01ca1b2accece98300e61c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32b0fe28ec3ebc643862464c759485bf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#a32b0fe28ec3ebc643862464c759485bf">DMifpixarray_init</a> = 0</td></tr>
@@ -253,7 +245,14 @@ Variables</h2></td></tr>
 <tr class="memitem:acde65e62970671cd323e4c409a5dcd41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structOPTSYST.html">OPTSYST</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8c.html#acde65e62970671cd323e4c409a5dcd41">optsystsim</a></td></tr>
 <tr class="separator:acde65e62970671cd323e4c409a5dcd41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Adaptive Optics system simulator. </p>
+<p>Optical simulation for AO system - useful for testing</p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>18 Jun 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000003">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html">http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html</a> </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a7f7037e55c2ce431e7c890642a10acd6"></a>
 <div class="memitem">
 <div class="memproto">
@@ -420,6 +419,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Fit measured DM response to telescope pupil. </p>
 <p>fits DM illumination to pupil geometry </p>
 <p>compensate for illumination gradient</p>
 <p>set percentiles</p>
@@ -672,7 +673,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>yc</em>, </td>
+          <td class="paramname"><em>xy</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -723,6 +724,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Make telescope pupil. </p>
 
 </div>
 </div>
@@ -786,6 +789,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>&lt; WFS wavelength</p>
+<p>&lt; WFS flux [ph/frame]</p>
+<p>&lt; WFS camera RON [e-] </p>
 
 </div>
 </div>
@@ -850,9 +856,24 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>simplified AO system simulator (DM command -&gt; WFS image part) </p>
-<p>creates a DM map(s) and a WF error input When either DM map or WF error input changes, compute intensity outputs (images)</p>
-<p>syncmode: 0: sync to turbulence 1: sync to DM 2: sync to both default: use delayus </p>
+<p>Run AO system simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">syncmode</td><td></td></tr>
+    <tr><td class="paramname">DMindex</td><td></td></tr>
+    <tr><td class="paramname">delayussimplified</td><td>AO system simulator (DM command -&gt; WFS image part)</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Creates a DM map(s) and a WF error input When either DM map or WF error input changes, compute intensity outputs (images)</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">syncmode</td><td>Synchronization mode. 0: sync to turbulence. 1: sync to DM. 2: sync to both, &gt;2, use delayus </td></tr>
+    <tr><td class="paramname">DMindex</td><td>DM used for simulation </td></tr>
+    <tr><td class="paramname">delayus</td><td>Delay between loop iterations if syncmode&gt;2 </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1030,9 +1051,72 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Module initialization. </p>
+<p>Registers command line interface commands </p>
+
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="ae05d8f7d34c0011c91a36a5f03438e75"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char AOSYSTSIM_logfunc_fname[] = &quot;AOsystSim.fcall.log&quot;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aa6b4c7df63ddec28c52eaf33e8bee2ec"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOSYSTSIM_logfunc_level = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad3b100269f3e4fd97d3f93a3380a793a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOSYSTSIM_logfunc_level_max = 2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="af14eb086255437560f7f5c4904b7afbd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1066,6 +1150,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>System includes. </p>
+<p>External libraries </p>
 
 </div>
 </div>
@@ -1173,6 +1260,26 @@ Variables</h2></td></tr>
           <td class="memname">float* DMifpixarray_val</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aaf62be8fade5b52943c9ee593a5414c7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char flogcomment[200]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1347,7 +1454,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_758db70e79e57b1f35df8001f3b0baef.html">AOsystSim</a></li><li class="navelem"><a class="el" href="AOsystSim_8c.html">AOsystSim.c</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:23 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

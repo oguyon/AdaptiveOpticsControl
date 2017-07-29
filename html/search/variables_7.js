@@ -1,9 +1,19 @@
 var searchData=
 [
-  ['hardwlatency',['hardwlatency',['../structAOLOOPCONTROL__CONF.html#a1d40ece00af0d1437375d02ee683f55e',1,'AOLOOPCONTROL_CONF']]],
-  ['hardwlatency_5fframe',['hardwlatency_frame',['../structAOLOOPCONTROL__CONF.html#a55a0525bf200253c672802bdcd6675b4',1,'AOLOOPCONTROL_CONF']]],
-  ['hf',['hf',['../structEXAOSIMCONF.html#afc65db33f61ab85e6b9f3355dc39a345',1,'EXAOSIMCONF']]],
-  ['hfc',['hfc',['../structEXAOSIMCONF.html#ae9dff79d201f0b7c659cf7425bbbd330',1,'EXAOSIMCONF']]],
-  ['hfca',['hfca',['../structEXAOSIMCONF.html#a868444d8c98d1c531a87f850c54277d5',1,'EXAOSIMCONF']]],
-  ['hfcb',['hfcb',['../structEXAOSIMCONF.html#a5360d3e503f7585204ea44222b2a9ee1',1,'EXAOSIMCONF']]]
+  ['g_5flat',['g_lat',['../structnrlmsise__input.html#ae3919a79645584e3cf537a82a958b734',1,'nrlmsise_input']]],
+  ['g_5flong',['g_long',['../structnrlmsise__input.html#a7bd53a112c70d2ccbab37096541dd4bc',1,'nrlmsise_input']]],
+  ['gain',['gain',['../structAOLOOPCONTROL__CONF.html#acf3d0a55c37a60451e4eff487c94bdf7',1,'AOLOOPCONTROL_CONF']]],
+  ['gpu',['GPU',['../structAOLOOPCONTROL__CONF.html#a42b4f661c63f7441f0f8a4af89b1b216',1,'AOLOOPCONTROL_CONF']]],
+  ['gpu_5falpha',['GPU_alpha',['../AOloopControl_8c.html#afcbc023bf4c4478e38fee7db5c162246',1,'AOloopControl.c']]],
+  ['gpu_5fbeta',['GPU_beta',['../AOloopControl_8c.html#afc9f2873ba7bc77842930922d0805681',1,'AOloopControl.c']]],
+  ['gpuall',['GPUall',['../structAOLOOPCONTROL__CONF.html#a65f4ffb63a04738926b536991745b909',1,'AOLOOPCONTROL_CONF']]],
+  ['gpucntmax',['GPUcntMax',['../AOloopControl_8c.html#a6fca5afadc5536deb3a4b2f75df736fd',1,'AOloopControl.c']]],
+  ['gpudevice',['GPUdevice',['../structGPUMATMULTCONF.html#af46435d16015959a15f0b157c9d4bdb6',1,'GPUMATMULTCONF']]],
+  ['gpuinit',['gpuinit',['../structGPUMATMULTCONF.html#a6ea3e8d83269d0910b4228fa433532d9',1,'GPUMATMULTCONF']]],
+  ['gpumatmultconf',['gpumatmultconf',['../cudacomp_8c.html#a94d486cdc838f866f7a80cc61bbd74fb',1,'cudacomp.c']]],
+  ['gpuset0',['GPUset0',['../AOloopControl_8c.html#a8d6591f2da280333780b8696cb955f27',1,'AOloopControl.c']]],
+  ['gpuset1',['GPUset1',['../AOloopControl_8c.html#a9df3e67dd2be74654d7ac98d8308cf2e',1,'AOloopControl.c']]],
+  ['gpustatus',['GPUstatus',['../structAOLOOPCONTROL__CONF.html#a9cc9387bcd4e897006b66003ed9fcc53',1,'AOLOOPCONTROL_CONF']]],
+  ['gpuusesem',['GPUusesem',['../structAOLOOPCONTROL__CONF.html#a98cd30703d34047c9741abe330e9be89',1,'AOLOOPCONTROL_CONF']]],
+  ['gsurf',['gsurf',['../AtmosphereModel_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;nrlmsise-00.c']]]
 ];

@@ -1,7 +1,5 @@
 var COREMOD__arith_8c =
 [
-    [ "M_PI", "COREMOD__arith_8c.html#ae71449b1cc6e6250b91f539153a7a0d3", null ],
-    [ "SBUFFERSIZE", "COREMOD__arith_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "arith_image_acos", "COREMOD__arith_8c.html#a378d285225cef59907673ed50ae70ab9", null ],
     [ "arith_image_acos_byID", "COREMOD__arith_8c.html#af448fbbf3a4c409b5907ba0d9b4e0a4e", null ],
     [ "arith_image_acos_inplace", "COREMOD__arith_8c.html#a3b79d991433a97594cb6fec2356cf595", null ],

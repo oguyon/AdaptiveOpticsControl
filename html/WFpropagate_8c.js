@@ -1,6 +1,5 @@
 var WFpropagate_8c =
 [
-    [ "SBUFFERSIZE", "WFpropagate_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "Fresnel_propagate_cube", "WFpropagate_8c.html#a58b46a0a5ff7db49b64dd2f0fd166edb", null ],
     [ "Fresnel_propagate_wavefront", "WFpropagate_8c.html#a4dd932be9868dbaca7c8d9f0c4f11442", null ],
     [ "Fresnel_propagate_wavefront1", "WFpropagate_8c.html#a4f9a9029479de3419cfe00a9113945e6", null ],

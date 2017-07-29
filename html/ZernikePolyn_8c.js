@@ -1,7 +1,5 @@
 var ZernikePolyn_8c =
 [
-    [ "PI", "ZernikePolyn_8c.html#a598a3330b3c21701223ee0ca14316eca", null ],
-    [ "SWAP", "ZernikePolyn_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "fact", "ZernikePolyn_8c.html#af7524858a2e89eb535d1afe4a573fc48", null ],
     [ "fit_zer", "ZernikePolyn_8c.html#a31a371141d2828faf05365e7eaee52a5", null ],
     [ "get_zer", "ZernikePolyn_8c.html#a7cf12aeb4b9f9f6cdea6a61ddf110720", null ],

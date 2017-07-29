@@ -1,9 +1,8 @@
 var info_8c =
 [
-    [ "_GNU_SOURCE", "info_8c.html#a369266c24eacffb87046522897a570d5", null ],
-    [ "SWAP", "info_8c.html#aac9153aee4bdb92701df902e06a74eb3", null ],
     [ "background_photon_noise", "info_8c.html#ad3be3dc812a758c20124d83094785232", null ],
     [ "brighter", "info_8c.html#af1ad3fd57f62decf7ee1952a35e70bea", null ],
+    [ "clock_gettime", "info_8c.html#aa8f51c708a501884e32f9c62b96b55cd", null ],
     [ "fft_structure_function", "info_8c.html#a5437731cf2d331ff77efba193d2d9377", null ],
     [ "full_structure_function", "info_8c.html#ac02cdc06d81f15987e62b17f1acb31f7", null ],
     [ "img_histoc_double", "info_8c.html#a3a01ab464bbae9daef1ee5dffd23bcc1", null ],

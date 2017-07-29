@@ -1,7 +1,7 @@
 var COREMOD__tools_8c =
 [
-    [ "SBUFFERSIZE", "COREMOD__tools_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "bubble_sort", "COREMOD__tools_8c.html#a26167af6113dc8e86cdca4ee4cc237c1", null ],
+    [ "clock_gettime", "COREMOD__tools_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6", null ],
     [ "COREMOD_TOOLS_imgdisplay3D", "COREMOD__tools_8c.html#aadce3c8dde88e975c3e553c7419ecf00", null ],
     [ "COREMOD_TOOLS_imgdisplay3D_cli", "COREMOD__tools_8c.html#a718f95db58b5790c6bb469a925b48856", null ],
     [ "COREMOD_TOOLS_mvProcCPUset", "COREMOD__tools_8c.html#a96c00530ad95330fef928a19c0367e32", null ],

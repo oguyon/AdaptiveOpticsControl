@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['omp_5fnelement_5flimit',['OMP_NELEMENT_LIMIT',['../image__gen_8c.html#a2a847307a407427b42689ebaa39aacad',1,'image_gen.c']]],
   ['on',['ON',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#aa0df7b4f1998c78e3b160ee62a473d7f',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::ON()'],['../structAOLOOPCONTROL__CONF.html#aae0614696c6b57d88dca70938d74fde1',1,'AOLOOPCONTROL_CONF::on()'],['../structAOLOOPCONTROL__DMTURBCONF.html#afbceca5bf5d55347cabaf44b9e3fc834',1,'AOLOOPCONTROL_DMTURBCONF::on()'],['../structLOGSHIM__CONF.html#a399b782abca4a24ae8e5a3c11ac9bc48',1,'LOGSHIM_CONF::on()']]],
   ['open_5ffile_5fr',['open_file_r',['../COREMOD__tools_8c.html#ae726276b59abb39bfcfe60b8966a3351',1,'open_file_r(const char *filename):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#ae726276b59abb39bfcfe60b8966a3351',1,'open_file_r(const char *filename):&#160;COREMOD_tools.c']]],
   ['open_5ffile_5fw',['open_file_w',['../COREMOD__tools_8c.html#a59ef7b963abdd93cf2785e809ddb9518',1,'open_file_w(const char *filename):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#a59ef7b963abdd93cf2785e809ddb9518',1,'open_file_w(const char *filename):&#160;COREMOD_tools.c']]],
@@ -16,5 +15,8 @@ var searchData=
   ['optsystprop_5fpropagatecube',['OptSystProp_propagateCube',['../OptSystProp_8c.html#a57447b62915b0ccfcb16276c92e7ffe2',1,'OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp_name, const char *IDin_pha_name, const char *IDout_amp_name, const char *IDout_pha_name, double zprop, int sharedmem):&#160;OptSystProp.c'],['../OptSystProp_8h.html#a57447b62915b0ccfcb16276c92e7ffe2',1,'OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp_name, const char *IDin_pha_name, const char *IDout_amp_name, const char *IDout_pha_name, double zprop, int sharedmem):&#160;OptSystProp.c']]],
   ['optsystprop_5frun',['OptSystProp_run',['../OptSystProp_8c.html#a2a88f918cdbc5abff31130c01dde8e1a',1,'OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, const char *savedir, int sharedmem):&#160;OptSystProp.c'],['../OptSystProp_8h.html#a2a88f918cdbc5abff31130c01dde8e1a',1,'OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, const char *savedir, int sharedmem):&#160;OptSystProp.c']]],
   ['optsystsim',['optsystsim',['../AOsystSim_8c.html#acde65e62970671cd323e4c409a5dcd41',1,'AOsystSim.c']]],
-  ['overwrite',['overwrite',['../structDATA.html#a600cb8c85d463a76ca1dfe9d0097c8f3',1,'DATA']]]
+  ['orientation',['orientation',['../structGPUMATMULTCONF.html#a8f02a724d8da4661da6e3462e7c37f77',1,'GPUMATMULTCONF']]],
+  ['overview_2emd',['overview.md',['../overview_8md.html',1,'']]],
+  ['overwrite',['overwrite',['../structDATA.html#a600cb8c85d463a76ca1dfe9d0097c8f3',1,'DATA']]],
+  ['overview',['Overview',['../page_overview.html',1,'index']]]
 ];

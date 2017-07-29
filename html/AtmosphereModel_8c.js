@@ -1,7 +1,5 @@
 var AtmosphereModel_8c =
 [
-    [ "PI", "AtmosphereModel_8c.html#a598a3330b3c21701223ee0ca14316eca", null ],
-    [ "SWAP", "AtmosphereModel_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "AirMixture_N", "AtmosphereModel_8c.html#a1cc05adab144b38cea8c948002f26610", null ],
     [ "AtmosphereModel_build_stdAtmModel", "AtmosphereModel_8c.html#ad3dc4490d98cfb74b03a94a6d848813f", null ],
     [ "AtmosphereModel_Create_from_CONF", "AtmosphereModel_8c.html#a4d97c63ac032ba6bd8882ba253353264", null ],

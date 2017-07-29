@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/COREMOD_tools/COREMOD_tools.c File Reference</title>
+<title>cfitsTK: src/COREMOD_tools/COREMOD_tools.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -104,33 +104,17 @@ $(document).ready(function(){initNavTree('COREMOD__tools_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">COREMOD_tools.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;sched.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="info_8h_source.html">info/info.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a856e9c763f542a6a0b78587b2989c159"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a856e9c763f542a6a0b78587b2989c159">SBUFFERSIZE</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="separator:a856e9c763f542a6a0b78587b2989c159"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
+<tr class="separator:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af29b6a5988ec5e09c82d7bd9b80cdb3c"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#af29b6a5988ec5e09c82d7bd9b80cdb3c">COREMOD_TOOLS_mvProcCPUset_cli</a> ()</td></tr>
 <tr class="separator:af29b6a5988ec5e09c82d7bd9b80cdb3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b63992861852582ae8fac50f2c6e02b"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a1b63992861852582ae8fac50f2c6e02b">write_flot_file_cli</a> ()</td></tr>
@@ -227,25 +211,13 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a9842752e03b4de9b4593f1a3b34364ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDATA.html">DATA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a></td></tr>
+<tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d8f2e60f7f536436d04e2f6e5b4d207"><td class="memItemLeft" align="right" valign="top">static char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207">errormessage</a> [<a class="el" href="WFpropagate_8c.html#a856e9c763f542a6a0b78587b2989c159">SBUFFERSIZE</a>]</td></tr>
+<tr class="memitem:a5d8f2e60f7f536436d04e2f6e5b4d207"><td class="memItemLeft" align="right" valign="top">static char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207">errormessage</a> [SBUFFERSIZE]</td></tr>
 <tr class="separator:a5d8f2e60f7f536436d04e2f6e5b4d207"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a9031c756cc5a1da42cffc862eb783a"><td class="memItemLeft" align="right" valign="top">static FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a7a9031c756cc5a1da42cffc862eb783a">fpgnuplot</a></td></tr>
 <tr class="separator:a7a9031c756cc5a1da42cffc862eb783a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a856e9c763f542a6a0b78587b2989c159"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SBUFFERSIZE&#160;&#160;&#160;1000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a26167af6113dc8e86cdca4ee4cc237c1"></a>
 <div class="memitem">
@@ -269,6 +241,40 @@ Variables</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a65786e09c3bd4c1f8f8f311e91c672c6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int clock_gettime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>clk_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct mach_timespec *&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1573,6 +1579,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>System includes. </p>
+<p>External libraries </p>
+
 </div>
 </div>
 <a class="anchor" id="a5d8f2e60f7f536436d04e2f6e5b4d207"></a>
@@ -1583,7 +1592,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">char errormessage[<a class="el" href="WFpropagate_8c.html#a856e9c763f542a6a0b78587b2989c159">SBUFFERSIZE</a>]</td>
+          <td class="memname">char errormessage[SBUFFERSIZE]</td>
         </tr>
       </table>
   </td>
@@ -1621,7 +1630,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5162902b44091c7331edbe97a61fdb6.html">COREMOD_tools</a></li><li class="navelem"><a class="el" href="COREMOD__tools_8c.html">COREMOD_tools.c</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:24 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

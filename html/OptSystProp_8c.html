@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/OptSystProp/OptSystProp.c File Reference</title>
+<title>cfitsTK: src/OptSystProp/OptSystProp.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -104,38 +104,16 @@ $(document).ready(function(){initNavTree('OptSystProp_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">OptSystProp.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;ctype.h&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;fitsio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__arith_8h_source.html">COREMOD_arith/COREMOD_arith.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="fft_8h_source.html">fft/fft.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__gen_8h_source.html">image_gen/image_gen.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="WFpropagate_8h_source.html">WFpropagate/WFpropagate.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="statistic_8h_source.html">statistic/statistic.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="linopt__imtools_8h_source.html">linopt_imtools/linopt_imtools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="OpticsMaterials_8h_source.html">OpticsMaterials/OpticsMaterials.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="OptSystProp_8h_source.html">OptSystProp/OptSystProp.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a856e9c763f542a6a0b78587b2989c159"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="OptSystProp_8c.html#a856e9c763f542a6a0b78587b2989c159">SBUFFERSIZE</a>&#160;&#160;&#160;2000</td></tr>
-<tr class="separator:a856e9c763f542a6a0b78587b2989c159"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+
+<p>Optical system propagation.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a92625d19a196cdfcef6a7ec976e4f873"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="OptSystProp_8c.html#a92625d19a196cdfcef6a7ec976e4f873">init_OptSystProp</a> ()</td></tr>
@@ -148,22 +126,16 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a9842752e03b4de9b4593f1a3b34364ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDATA.html">DATA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="OptSystProp_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a></td></tr>
+<tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a856e9c763f542a6a0b78587b2989c159"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SBUFFERSIZE&#160;&#160;&#160;2000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Optical system propagation. </p>
+<p>Propagate beam through optical systsm</p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>7 Jul 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000022">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a92625d19a196cdfcef6a7ec976e4f873"></a>
 <div class="memitem">
 <div class="memproto">
@@ -314,6 +286,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>System includes. </p>
+<p>External libraries </p>
+
 </div>
 </div>
 </div><!-- contents -->
@@ -322,7 +297,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_329feb2adc0787cbcf47a87f6fc2e340.html">OptSystProp</a></li><li class="navelem"><a class="el" href="OptSystProp_8c.html">OptSystProp.c</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:24 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

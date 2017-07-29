@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: AOloopControl</title>
+<title>cfitsTK: AOloopControl</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_doc_AOloopControl
 <div class="title">AOloopControl </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>% AOloopControl % Olivier Guyon % May 29, 2017</p>
+<div class="textblock"><p>% AOloopControl % Olivier Guyon % Jul 27, 2017</p>
 <h1><a class="anchor" id="AOloopControl_UserGuide"></a>
 Initial Setup</h1>
 <h2>Scope</h2>
@@ -206,90 +206,76 @@ lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -&gt; /home/olivier/s
 </pre><p>The available commands are listed in the table below. Running the command with the <code>-h</code> option prints a short help.</p>
 <hr/>
 <p> Script Description </p><hr/>
-<p> ./mkHpoke Compute real-time WFS residual image</p>
-<p>./aolMeasureTiming Measure loop timing</p>
-<p>./aolCleanLOrespmat Measure zonal resp matrix</p>
-<p>./aolRMmeas_sensitivity Measure photon sensitivity of zonal response matrix </p><pre class="fragment">           ./aolmon       Display AO loop stats
+<p> ./mkDMslaveActprox Create DM slaved actuators map </p><pre class="fragment">      ./aolctr       AO control process
+</pre><p>./aolPFcoeffs2dmmap GPU-based predictive filter coeffs -&gt; DM MAP</p>
+<p>./aolInspectDMmap Inspect DM map </p><pre class="fragment">  ./acquRespM       Acquire response matrix
 
-        ./acquRespM       Acquire response matrix
+ ./waitonfile       Wait for file to disappear
 
-           ./aolctr       AO control process
+   ./aolRM2CM       Align Pyramid camera
+</pre><p>./aolMeasureLOrespmat Acquire modal response matrix </p><pre class="fragment"> ./aollinsimDelay       Introduce DM delay
 
-      ./listrunproc       List running AOloop processes
+         ./aolrun       Run AO control loop
+</pre><p>./aolMeasureZrespmat Acquire zonal response matrix </p><pre class="fragment">     ./shmimzero       Set shared memory image stream to zero
 
-   ./MeasDMmodesRec       Measure AO loop DM modes recovery
-
-     ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
-
-         ./aolRM2CM       Align Pyramid camera
-
- ./aolCleanZrespmat       Cleans zonal resp matrix
-
- ./mkDMslaveActprox       Create DM slaved actuators map
-
-           ./xptest       Compute cross-product of a data cube
-
-  ./aolInspectDMmap       Inspect DM map
-
-./aolARPFautoUpdate       Automatic update of AR linear predictive filter
-
-./aolCleanZrespmat2       Cleans zonal resp matrix
-
-     ./mkDMslaveAct       Create DM slaved actuators map
-
-  ./aolReadConfFile       AOloop load file to stream
-
-        ./aolLinSim       AO Linear Simulator
-
-     ./aolApplyARPF       Apply AR linear predictive filter
-
-          ./aolARPF       AO find optimal AR linear predictive filter
-
-    ./aolSetmcLimit       Compute real-time WFS residual image
-
- ./aolautotunegains       Automatic gain tuning
-
-       ./aolmkMasks       Create AO wfs and DM masks
-
-      ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
-</pre><p>./aolMeasureLOrespmat Acquire modal response matrix </p><pre class="fragment">     ./waitonfile       Wait for file to appear
-
-./predFiltApplyRT       Apply predictive filter to stream
-
- ./aoloffloadloop       DM offload loop
-
-    ./aolmkWFSres       Compute real-time WFS residual image
-</pre><p>./aolWFSresoffloadloop Compute real-time WFS residual image </p><pre class="fragment">  ./aollindm2wfsim       Convert DM stream to WFS image stream
-</pre><p>./aolApplyARPFblock Apply AR linear predictive filter (single block)</p>
-<p>./aolmcoeffs2dmmap GPU-based MODE COEFFS -&gt; DM MAP </p><pre class="fragment">  ./aolmkmodes       Create modes for AO loop
-</pre><p>./aolMeasureZrespmat2 Acquire zonal response matrix</p>
-<p>./processTelemetryPSDs Process telemetry: create open and closed loop PSDs </p><pre class="fragment">     ./aolzploopon       WFS zero point offset loop 
-
-  ./aollinsimDelay       Introduce DM delay
-
-       ./shmimzero       Set shared memory image stream to zero
+     ./aolLinSim       AO Linear Simulator
+</pre><p>./aolmcoeffs2dmmap GPU-based MODE COEFFS -&gt; DM MAP</p>
+<p>./MeasDMmodesRec Measure AO loop DM modes recovery </p><pre class="fragment">   ./xp2test       Compute cross-product of two data cubes
+</pre><p>./aolmkLO_DMmodes Create LO DM modes for AO loop </p><pre class="fragment">     ./xptest       Compute cross-product of a data cube
+</pre><p>./aolblockstats Extract mode values from WFS images, sort per block</p>
+<p>./aolMergeRMmat Merge HO and LO resp matrices</p>
+<p>./aolscangain AO scan gain for optimal value</p>
+<p>./aolARPFautoUpdate Automatic update of AR linear predictive filter</p>
+<p>./aolMeasureLOrespmat2 Acquire modal response matrix </p><pre class="fragment"> ./aolgetshmimsize       Get shared memory image size
+</pre><p>./aolWFSresoffloadloop Compute real-time WFS residual image </p><pre class="fragment">      ./alignPyrTT       Align Pyramid TT
 
      ./aolmkmodes2       Create modes for AO loop
 
-      ./alignPyrTT       Align Pyramid TT
+      ./aolmkMasks       Create AO wfs and DM masks
 
- ./aolgetshmimsize       Get shared memory image size
-</pre><p>./aolMeasureZrespmat Acquire zonal response matrix </p><pre class="fragment">       ./xp2test       Compute cross-product of two data cubes
-
-  ./waitforfilek       Wait for file to appear and then remove it
-</pre><p>./aolmkLO_DMmodes Create LO DM modes for AO loop </p><pre class="fragment">./aolscangain       AO scan gain for optimal value
-
- ./aol_dmCave       dmC temporal averaging
-
-  ./alignPcam       Align Pyramid camera
-</pre><p>./aolMeasureLOrespmat2 Acquire modal response matrix </p><pre class="fragment">  ./MeasureLatency       Measure AO system response latency
+ ./modesextractwfs       Extract mode values from WFS images
 
 ./aolARPFautoApply       Apply real-time AR linear predictive filter
-</pre><p>./aolPFcoeffs2dmmap GPU-based predictive filter coeffs -&gt; DM MAP</p>
-<p>./modesextractwfs Extract mode values from WFS images </p><pre class="fragment">   ./Fits2shm       Copy FITS files to shared memor
-</pre><p>./aolblockstats Extract mode values from WFS images, sort per block </p><pre class="fragment">   ./aolrun       Run AO control loop
-</pre><p>./aolMergeRMmat Merge HO and LO resp matrices</p>
-<p>./selectLatestTelemetry Compute real-time WFS residual image </p><pre class="fragment"> ./MeasLoopModeResp       Measure AO loop temporal response
+
+          ./aolmon       Display AO loop stats
+</pre><p>./aolRMmeas_sensitivity Measure photon sensitivity of zonal response matrix </p><pre class="fragment">          ./mkHpoke       Compute real-time WFS residual image
+
+   ./aoloffloadloop       DM offload loop
+
+         ./Fits2shm       Copy FITS files to shared memor
+</pre><p>./aolMeasureZrespmat2 Acquire zonal response matrix </p><pre class="fragment">   ./aolApplyARPF       Apply AR linear predictive filter
+</pre><p>./selectLatestTelemetry Compute real-time WFS residual image </p><pre class="fragment">  ./aolReadConfFile       AOloop load file to stream
+
+  ./predFiltApplyRT       Apply predictive filter to stream
+
+./aolCleanZrespmat2       Cleans zonal resp matrix
+</pre><p>./processTelemetryPSDs Process telemetry: create open and closed loop PSDs </p><pre class="fragment">     ./listrunproc       List running AOloop processes
+
+     ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
+
+./aolCleanZrespmat       Cleans zonal resp matrix
+
+    ./waitforfilek       Wait for file to appear and then remove it
+
+./aolMeasureTiming       Measure loop timing
+
+   ./aolSetmcLimit       Compute real-time WFS residual image
+
+       ./alignPcam       Align Pyramid camera
+
+     ./aolmkWFSres       Compute real-time WFS residual image
+
+  ./MeasureLatency       Measure AO system response latency
+
+  ./aollindm2wfsim       Convert DM stream to WFS image stream
+</pre><p>./aolCleanLOrespmat Measure zonal resp matrix </p><pre class="fragment"> ./mkDMslaveAct       Create DM slaved actuators map
+</pre><p>./aolautotunegains Automatic gain tuning </p><pre class="fragment">     ./aolARPF       AO find optimal AR linear predictive filter
+
+ ./aolzploopon       WFS zero point offset loop 
+</pre><p>./aolApplyARPFblock Apply AR linear predictive filter (single block) </p><pre class="fragment">   ./aolmkmodes       Create modes for AO loop
+
+ ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
+</pre><p>./MeasLoopModeResp Measure AO loop temporal response </p><pre class="fragment">  ./aol_dmCave       dmC temporal averaging
 </pre> <hr/>
 <h2>Hardware simulation scripts</h2>
 <p>Scripts in the <code>aohardsim</code> directory are called to simulate hardware for testing / simulations.</p>
@@ -311,6 +297,7 @@ lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -&gt; /home/olivier/s
 <p>The user runs a loop that updates the wavefront sensor image when the DM input changes. Both the DM and WFS are represented as shared memory image streams. When a new DM shape is written, the DM stream semaphores are posted by the user, triggering the WFS image computation. When the WFS image is computed, its semaphores are posted.</p>
 <h2>METHOD 2: Physical hardware simulation</h2>
 <p>The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.</p>
+<p>Method 2 simulates incoming atmospheric WFs, a pyramid WFS based loop feeding a DM, a coronagraphic LOWFS and coronagraphic PSFs.</p>
 <h3>Running Method 2</h3>
 <p>Launch the simulator with the following steps:</p>
 <ul>
@@ -329,6 +316,22 @@ Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]
 <li>Parameters for the simulation can be changed by editing the <code>.conf</code> files in the <code>aohardsim</code> directory</li>
 <li>You may need to kill and relaunch the main script twice after changing parameters</li>
 </ul>
+<h3>Method 2 output streams</h3>
+<hr/>
+<p> Stream Description </p><hr/>
+<p> <b>wf0opd</b> Atmospheric WF OPD</p>
+<p><b>wf0amp</b> Atmospheric WF amplitude</p>
+<p><b>wf1opd</b> Wavefront OPD after correction [um] ( = wf0opd - 2 x dm05dispmap )</p>
+<p><b>dm05disp</b> DM actuators positions</p>
+<p><b>dm05dispmap</b> DM OPD map</p>
+<p><b>WFSinst</b> Instantaneous WFS intensity</p>
+<p><b>pWFSint</b> WFS intensity frame, time averaged to WFS frame rate and sampled to WFS camera pixels</p>
+<p><b>aosim_foc0_amp</b> First focal plane (before coronagraph), amplitude</p>
+<p><b>aosim_foc0_pha</b> First focal plane (before coronagraph), phase</p>
+<p><b>aosim_foc1_amp</b> First focal plane (after coronagraph), amplitude</p>
+<p><b>aosim_foc1_pha</b> First focal plane (after coronagraph), phase</p>
+<p><b>aosim_foc2_amp</b> Post-coronagraphic focal plane, amplitude</p>
+<p><b>aosim_foc2_pha</b> Post-coronagraphic focal plane, phase </p><hr/>
 <h3>Processes and scripts details</h3>
 <h4>Process <code>aosimmkWF</code></h4>
 <p><code>aosimmkWF</code> reads precomputed wavefronts and formats them for the simulation parameters (pixel scale, temporal sampling).</p>
@@ -393,6 +396,22 @@ Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]
 <h2>METHOD 3: Linear Hardware Simulation</h2>
 <h3>Overview</h3>
 <p>The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS) but does not capture non-linear effects.</p>
+<h3>Setup</h3>
+<ul>
+<li>Create directory LHScalib:</li>
+</ul>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;mkdir LHScalib</div>
+</div><!-- fragment --><ul>
+<li>Download response matrix and reference, place them in directory <code>LHScalib</code>.</li>
+<li>Start GUI, loop 5, name simLHS</li>
+</ul>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;./aolconf -L 5 -N simLHS</div>
+</div><!-- fragment --><ul>
+<li>Start DM: index 04, 50 x 50; Auto-configure: main DM (no link); STOP -&gt; (re-)START DM comb process</li>
+<li>Go to <code>TEST MODE</code> GUI</li>
+<li>Enter linear simulation zonal response matrix and linear simulation WFS reference (<code>zrespMlinsim</code> and <code>wfsref0linsim</code> selections at top of screen).</li>
+<li><b>Start linear simulator</b> (<code>lsimon</code> selection). The simulator reacts to changes in aol5_dmdisp (= dm04disp)</li>
+</ul>
 <h1>AOloopControl setup and overview</h1>
 <h2>GUI description</h2>
 <p>The script <code>aolconf</code> starts the main GUI, from which all setup and control can be done. The GUI consists of several main screens, as shown below.</p>
@@ -705,6 +724,15 @@ Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]
 <p> File Description </p><hr/>
 <p> <b>aolARPF</b> find auto-regressive predictive filter</p>
 <p><b>aolARPFblock</b> AO find optimal AR linear predictive filter </p><hr/>
+<h2>Data flow</h2>
+<p>Predictive control is set up by blocks of modes. A block is configured through the aolconf predictive control sub-panel, which writes to configuration files <code>conf/conf_PFblock_XXX.txt</code>, where XXX is the block number (000, 001, 002 etc...). Configuration files specify the modes within each block (index min to index max), the predictive filter order, time lag and and averaging gain.</p>
+<p>For each block, there are 3 main processes involved in running the predictive control:</p>
+<ul>
+<li><b>Watching input telemetry</b> this process listens to the input telemetry stream and periodically writes data to be used to compute a filter. This runs function <code>long <a class="el" href="AOloopControl_8h.html#acdad903dbd67f4e4fb2af1adfacd49bd">AOloopControl_builPFloop_WatchInput(long loop, long PFblock)</a></code> in <code><a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a></code>.</li>
+<li><b>Computing filter</b>. Runs CLI command <code>mkARpfilt</code>, which runs function <code>LINARFILTERPRED_Build_LinPredictor</code> in <code><a class="el" href="linARfilterPred_8c.html">linARfilterPred.c</a></code>.</li>
+<li><b>Prediction engine</b> (= apply filter). Runs script <code>./auxscripts/predFiltApplyRT</code>.</li>
+</ul>
+<p>All 3 processes work in a chain, and can be turned on/off from the GUI.</p>
 <h1>REFERENCE, ADDITIONAL PAGES</h1>
 <ul>
 <li>Page <a class="el" href="streams_semaphores.html">List of shared memory streams and semaphores</a></li>
@@ -716,7 +744,7 @@ Layer  1/ 7, Frame   42/ 100, File      2/100000000  [TIME =     0.2420 s]
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:24 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

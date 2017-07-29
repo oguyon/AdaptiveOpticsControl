@@ -1,6 +1,5 @@
 var AOloopControl__DM_8c =
 [
-    [ "DMSTROKE100", "AOloopControl__DM_8c.html#aaea5d76f4f649e59810aa4b88e44e8ad", null ],
     [ "AOloopControl_DM_chan_setgain", "AOloopControl__DM_8c.html#a2d84b19a6c3085fa15e64aa18d7587ec", null ],
     [ "AOloopControl_DM_chan_setgain_cli", "AOloopControl__DM_8c.html#a1d5c5afb05b89f466ebacecfcd1a8517", null ],
     [ "AOloopControl_DM_CombineChannels", "AOloopControl__DM_8c.html#ad70cbe6e8c1af80f890e560f0a0e7a0b", null ],
@@ -51,6 +50,7 @@ var AOloopControl__DM_8c =
     [ "AOloopControl_mkDM_TT_circle_cli", "AOloopControl__DM_8c.html#a9357280a4bcbab55bccd31ce144b08db", null ],
     [ "AOloopControl_printDMconf", "AOloopControl__DM_8c.html#ad5deb546c15a3d4cd7dea8db66a30fd2", null ],
     [ "AOloopControl_printDMturbconf", "AOloopControl__DM_8c.html#a785634c9c05b2dd28876dc7270eb53d9", null ],
+    [ "clock_gettime", "AOloopControl__DM_8c.html#a4686db64ee8970c84b269e0425519dec", null ],
     [ "init_AOloopControl_DM", "AOloopControl__DM_8c.html#a59c2210415bf5dcf30636d77230bcef5", null ],
     [ "make_master_turbulence_screen_local", "AOloopControl__DM_8c.html#a4959224d82ce7eda5ad3d05a5218a3e8", null ],
     [ "time_diff", "AOloopControl__DM_8c.html#a2d6bf0841f5747a9a04d0b75b6df7f9e", null ],

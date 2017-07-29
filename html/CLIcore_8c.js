@@ -1,6 +1,5 @@
 var CLIcore_8c =
 [
-    [ "_GNU_SOURCE", "CLIcore_8c.html#a369266c24eacffb87046522897a570d5", null ],
     [ "cfits_usleep_cli", "CLIcore_8c.html#aa8c8cd420981d3b426cf2dd01d1df40b", null ],
     [ "CLI_checkarg", "CLIcore_8c.html#acfa3a12412c06fe66437c5f77f066fa0", null ],
     [ "CLI_checkarg0", "CLIcore_8c.html#ab547559fc45f1fdbdd9d61c41ea621b1", null ],
@@ -8,6 +7,7 @@ var CLIcore_8c =
     [ "CLI_completion", "CLIcore_8c.html#abdbce5b31d8dee481297ecec70cb210b", null ],
     [ "CLI_execute_line", "CLIcore_8c.html#a96110e28a48d1faed4d2623a9c61be2f", null ],
     [ "CLI_generator", "CLIcore_8c.html#a000ddfcf96caf86a1900c586fbeb0b1c", null ],
+    [ "clock_gettime", "CLIcore_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6", null ],
     [ "command_line", "CLIcore_8c.html#a08a15eb6d82a4967d50502a18fe5f205", null ],
     [ "dupstr", "CLIcore_8c.html#aaa38e8336f9b0dabd89fba19867a6e88", null ],
     [ "exitCLI", "CLIcore_8c.html#a59af8cdd8ef607fb9221fb3a6a3185bb", null ],
@@ -51,6 +51,6 @@ var CLIcore_8c =
     [ "rlquit", "CLIcore_8c.html#a4f8be0aef5b7a6c4f308f99f92370d74", null ],
     [ "SrcDir", "CLIcore_8c.html#aedb03ab482b6c7291fc929f4e7ff3f33", null ],
     [ "suid", "CLIcore_8c.html#a4013b1078f89c6a61f5572b3691ce817", null ],
-    [ "TYPESIZE", "CLIcore_8c.html#aadfaed58c87f621d2863f9f598db072e", null ],
+    [ "TYPESIZE", "CLIcore_8c.html#a3550f8e47f5206735dad064e5b00a0b8", null ],
     [ "Verbose", "CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db", null ]
 ];

@@ -1,8 +1,5 @@
 var image__gen_8c =
 [
-    [ "OMP_NELEMENT_LIMIT", "image__gen_8c.html#a2a847307a407427b42689ebaa39aacad", null ],
-    [ "PI", "image__gen_8c.html#a598a3330b3c21701223ee0ca14316eca", null ],
-    [ "SWAP", "image__gen_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "gen_image_EZdisk", "image__gen_8c.html#a6a2b22cae1bd271048f56a39204ce79b", null ],
     [ "image_gen_im2coord", "image__gen_8c.html#ac0a5235f8b33e87d7abd86dcfea4a535", null ],
     [ "image_gen_im2coord_cli", "image__gen_8c.html#a8be6fff205ac68c2fc622deb6e3772dc", null ],

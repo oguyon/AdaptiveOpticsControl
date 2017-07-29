@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['readline_20input_20keys',['Readline Input Keys',['../page_readlinekeys.html',1,'page_userinput']]],
   ['r0',['r0',['../structEXAOSIMCONF.html#a96bf4d887eae00160cbdf7b7d5be8533',1,'EXAOSIMCONF']]],
   ['r_5farray',['R_array',['../structZERNIKE.html#ab54550ba1f67c3f7d31c9079dace1aa8',1,'ZERNIKE']]],
   ['ran1',['ran1',['../statistic_8c.html#a0048e34c54d2da14cb96301fc8df1c0e',1,'ran1():&#160;statistic.c'],['../statistic_8h.html#a0048e34c54d2da14cb96301fc8df1c0e',1,'ran1():&#160;statistic.c']]],
@@ -20,10 +21,9 @@ var searchData=
   ['read_5fsharedmem_5fimage_5fsize',['read_sharedmem_image_size',['../COREMOD__memory_8c.html#a98cd70b4acfd1b31d2399985bb8e7a99',1,'read_sharedmem_image_size(const char *name, const char *fname):&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#a98cd70b4acfd1b31d2399985bb8e7a99',1,'read_sharedmem_image_size(const char *name, const char *fname):&#160;COREMOD_memory.c']]],
   ['read_5fsharedmem_5fimage_5fsize_5fcli',['read_sharedmem_image_size_cli',['../COREMOD__memory_8c.html#a982579a26c8cc27d68b63d68c2c5e7a9',1,'COREMOD_memory.c']]],
   ['readme_2emd',['README.md',['../README_8md.html',1,'']]],
-  ['readme_2emd',['README.md',['../src_2AOloopControl_2README_8md.html',1,'']]],
   ['rect',['rect',['../structkdtree.html#aad2df600bbe8cf682fe61ac6847f5e18',1,'kdtree']]],
+  ['refwfsinit',['refWFSinit',['../structGPUMATMULTCONF.html#a7b47c71769f2b07d492f7d4b13ce7c8b',1,'GPUMATMULTCONF']]],
   ['registerclicommand',['RegisterCLIcommand',['../CLIcore_8c.html#a097efcf1913161adeffaf98921d0f5a5',1,'RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t(*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall):&#160;CLIcore.c'],['../CLIcore_8h.html#a097efcf1913161adeffaf98921d0f5a5',1,'RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t(*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall):&#160;CLIcore.c']]],
-  ['reject',['REJECT',['../calc__flex_8c.html#a835f10dd1ab4bf9a80c4cd80ee6e3058',1,'calc_flex.c']]],
   ['remove_5fttf',['remove_TTF',['../ZernikePolyn_8c.html#aa1781de65942d370f0aadfc429c27209',1,'remove_TTF(const char *ID_name, const char *ID_name_out, double radius):&#160;ZernikePolyn.c'],['../ZernikePolyn_8h.html#aa1781de65942d370f0aadfc429c27209',1,'remove_TTF(const char *ID_name, const char *ID_name_out, double radius):&#160;ZernikePolyn.c']]],
   ['remove_5fzerns',['remove_zerns',['../ZernikePolyn_8c.html#aa507e40039561612a2ad2228c4ece264',1,'remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, double radius):&#160;ZernikePolyn.c'],['../ZernikePolyn_8h.html#aa507e40039561612a2ad2228c4ece264',1,'remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, double radius):&#160;ZernikePolyn.c']]],
   ['replace_5fchar',['replace_char',['../COREMOD__tools_8c.html#ae647a10dfc3314cf3fae8c0d35c24356',1,'replace_char(char *content, char cin, char cout):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#ae647a10dfc3314cf3fae8c0d35c24356',1,'replace_char(char *content, char cin, char cout):&#160;COREMOD_tools.c']]],

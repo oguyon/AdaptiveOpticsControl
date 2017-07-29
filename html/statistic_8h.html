@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/statistic/statistic.h File Reference</title>
+<title>cfitsTK: src/statistic/statistic.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -110,6 +110,9 @@ $(document).ready(function(){initNavTree('statistic_8h.html','');});
 </div><!--header-->
 <div class="contents">
 
+<p>Function prototypes for statistic module.  
+<a href="#details">More...</a></p>
+
 <p><a href="statistic_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -117,25 +120,39 @@ Functions</h2></td></tr>
 <tr class="memitem:a9c83a0d35322da145d178da2f9ec4889"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a9c83a0d35322da145d178da2f9ec4889">init_statistic</a> ()</td></tr>
 <tr class="separator:a9c83a0d35322da145d178da2f9ec4889"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0048e34c54d2da14cb96301fc8df1c0e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a0048e34c54d2da14cb96301fc8df1c0e">ran1</a> ()</td></tr>
+<tr class="memdesc:a0048e34c54d2da14cb96301fc8df1c0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uniform distribution from 0 to 1.  <a href="#a0048e34c54d2da14cb96301fc8df1c0e">More...</a><br /></td></tr>
 <tr class="separator:a0048e34c54d2da14cb96301fc8df1c0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61ccd72f7e2d2f65912807eda4c8643c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a61ccd72f7e2d2f65912807eda4c8643c">gauss</a> ()</td></tr>
+<tr class="memdesc:a61ccd72f7e2d2f65912807eda4c8643c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normal distribution, mean=0, sigma=1.  <a href="#a61ccd72f7e2d2f65912807eda4c8643c">More...</a><br /></td></tr>
 <tr class="separator:a61ccd72f7e2d2f65912807eda4c8643c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37fe6b362a86eaa232c07dd86b3c21cf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a37fe6b362a86eaa232c07dd86b3c21cf">gauss_trc</a> ()</td></tr>
+<tr class="memdesc:a37fe6b362a86eaa232c07dd86b3c21cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">truncated (-1/+1) sigma = 1 mean = 0 gaussian probability  <a href="#a37fe6b362a86eaa232c07dd86b3c21cf">More...</a><br /></td></tr>
 <tr class="separator:a37fe6b362a86eaa232c07dd86b3c21cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17397c70ca495597e8232ffa61c9e605"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a17397c70ca495597e8232ffa61c9e605">poisson</a> (double mu)</td></tr>
+<tr class="memdesc:a17397c70ca495597e8232ffa61c9e605"><td class="mdescLeft">&#160;</td><td class="mdescRight">Poisson distribution.  <a href="#a17397c70ca495597e8232ffa61c9e605">More...</a><br /></td></tr>
 <tr class="separator:a17397c70ca495597e8232ffa61c9e605"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73469985ca65317217867ea002b4f189"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a73469985ca65317217867ea002b4f189">gammaln</a> (double xx)</td></tr>
+<tr class="memdesc:a73469985ca65317217867ea002b4f189"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gamma function.  <a href="#a73469985ca65317217867ea002b4f189">More...</a><br /></td></tr>
 <tr class="separator:a73469985ca65317217867ea002b4f189"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a617f9bb1c07595bb869077d862cf4c73"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a617f9bb1c07595bb869077d862cf4c73">better_poisson</a> (double mu)</td></tr>
 <tr class="separator:a617f9bb1c07595bb869077d862cf4c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7ac1e1d30224f2ad6b02a2bbc575153"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#ab7ac1e1d30224f2ad6b02a2bbc575153">fast_poisson</a> (double mu)</td></tr>
 <tr class="separator:ab7ac1e1d30224f2ad6b02a2bbc575153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad84dae9cad55950b3f92d17f748be1e8"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#ad84dae9cad55950b3f92d17f748be1e8">put_poisson_noise</a> (const char *ID_in_name, const char *ID_out_name)</td></tr>
+<tr class="memdesc:ad84dae9cad55950b3f92d17f748be1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply Poisson noise to image.  <a href="#ad84dae9cad55950b3f92d17f748be1e8">More...</a><br /></td></tr>
 <tr class="separator:ad84dae9cad55950b3f92d17f748be1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3985b53584d8525bec06d55f152f6cf3"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="statistic_8h.html#a3985b53584d8525bec06d55f152f6cf3">put_gauss_noise</a> (const char *ID_in_name, const char *ID_out_name, double ampl)</td></tr>
+<tr class="memdesc:a3985b53584d8525bec06d55f152f6cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply Gaussian noise to image.  <a href="#a3985b53584d8525bec06d55f152f6cf3">More...</a><br /></td></tr>
 <tr class="separator:a3985b53584d8525bec06d55f152f6cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Function prototypes for statistic module. </p>
+<p>Functions provide statistical tools</p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>19 Jun 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000023">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="https://github.com/oguyon/Cfits">https://github.com/oguyon/Cfits</a> </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a617f9bb1c07595bb869077d862cf4c73"></a>
 <div class="memitem">
 <div class="memproto">
@@ -182,6 +199,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gamma function. </p>
+
 </div>
 </div>
 <a class="anchor" id="a61ccd72f7e2d2f65912807eda4c8643c"></a>
@@ -197,6 +216,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Normal distribution, mean=0, sigma=1. </p>
+
 </div>
 </div>
 <a class="anchor" id="a37fe6b362a86eaa232c07dd86b3c21cf"></a>
@@ -211,6 +232,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>truncated (-1/+1) sigma = 1 mean = 0 gaussian probability </p>
 
 </div>
 </div>
@@ -242,6 +265,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Poisson distribution. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mu</td><td>Distribution mean </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -275,6 +306,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Apply Gaussian noise to image. </p>
+
 </div>
 </div>
 <a class="anchor" id="ad84dae9cad55950b3f92d17f748be1e8"></a>
@@ -301,6 +334,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Apply Poisson noise to image. </p>
+
 </div>
 </div>
 <a class="anchor" id="a0048e34c54d2da14cb96301fc8df1c0e"></a>
@@ -316,6 +351,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Uniform distribution from 0 to 1. </p>
+
 </div>
 </div>
 </div><!-- contents -->
@@ -324,7 +361,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_545a73c80b83e1c7812a6808fc9654f7.html">statistic</a></li><li class="navelem"><a class="el" href="statistic_8h.html">statistic.h</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:24 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

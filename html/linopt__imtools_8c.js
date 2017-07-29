@@ -1,5 +1,6 @@
 var linopt__imtools_8c =
 [
+    [ "clock_gettime", "linopt__imtools_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6", null ],
     [ "init_linopt_imtools", "linopt__imtools_8c.html#afc117916939017260e807f28af155892", null ],
     [ "linopt_compute_1Dfit", "linopt__imtools_8c.html#aeed040346b9c664de625ba1a04fed869", null ],
     [ "linopt_compute_1Dfit_cli", "linopt__imtools_8c.html#ac90d4b6933126f3eeae771cac88fced2", null ],
@@ -8,6 +9,7 @@ var linopt__imtools_8c =
     [ "linopt_compute_SVDdecomp", "linopt__imtools_8c.html#af333dc23263f00e0326f3bde719d1627", null ],
     [ "linopt_compute_SVDdecomp_cli", "linopt__imtools_8c.html#abba8776c2ad45f606893b0f3f797c5ca", null ],
     [ "linopt_compute_SVDpseudoInverse", "linopt__imtools_8c.html#a94d6b25fcfb460b2363109268210cc31", null ],
+    [ "linopt_compute_SVDpseudoInverse_cli", "linopt__imtools_8c.html#a9f0aba5de9b203a50e74ecd79233cd3c", null ],
     [ "linopt_imtools_image_construct", "linopt__imtools_8c.html#af390daa8d42ed3a46884cf54b91acfa1", null ],
     [ "linopt_imtools_image_construct_cli", "linopt__imtools_8c.html#a9e1b9bcbe3ffe524e2eac86b4f8d8561", null ],
     [ "linopt_imtools_image_construct_stream", "linopt__imtools_8c.html#a8ebbb8cb02d8a7b19abe1dbdcf1bd4af", null ],

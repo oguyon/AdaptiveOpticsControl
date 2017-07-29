@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/AtmosphereModel/AtmosphereModel.c File Reference</title>
+<title>cfitsTK: src/AtmosphereModel/AtmosphereModel.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -104,32 +104,13 @@ $(document).ready(function(){initNavTree('AtmosphereModel_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">AtmosphereModel.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;ctype.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="AtmosphereModel_8h_source.html">AtmosphereModel/AtmosphereModel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="OpticsMaterials_8h_source.html">OpticsMaterials/OpticsMaterials.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">SWAP</a>(x,  y)&#160;&#160;&#160;temp=(x);x=(y);y=temp;</td></tr>
-<tr class="separator:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a598a3330b3c21701223ee0ca14316eca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a598a3330b3c21701223ee0ca14316eca">PI</a>&#160;&#160;&#160;3.14159265358979323846264338328</td></tr>
-<tr class="separator:a598a3330b3c21701223ee0ca14316eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a815578ea94b583041505e91f777eb7b4"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a815578ea94b583041505e91f777eb7b4">AtmosphereModel_Create_from_CONF_cli</a> ()</td></tr>
@@ -158,17 +139,17 @@ Functions</h2></td></tr>
 <tr class="separator:a219484a4d3318d5361a52365d97cddc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2e73ba3832c389e53954019ceb47ded"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#ae2e73ba3832c389e53954019ceb47ded">spline</a> (double *x, double *y, int n, double yp1, double ypn, double *y2)</td></tr>
 <tr class="separator:ae2e73ba3832c389e53954019ceb47ded"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fec2cce97c98dff8ba8bc5cb3011af1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1">zeta</a> (double zz, double zl)</td></tr>
+<tr class="memitem:a2fec2cce97c98dff8ba8bc5cb3011af1"><td class="memItemLeft" align="right" valign="top">__inline_double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1">zeta</a> (double zz, double zl)</td></tr>
 <tr class="separator:a2fec2cce97c98dff8ba8bc5cb3011af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a444802ef41a0aa4a3fa7a63456ba5eeb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a444802ef41a0aa4a3fa7a63456ba5eeb">densm</a> (double alt, double d0, double xm, double *tz, int mn3, double *zn3, double *tn3, double *tgn3, int mn2, double *zn2, double *tn2, double *tgn2)</td></tr>
 <tr class="separator:a444802ef41a0aa4a3fa7a63456ba5eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf308b81d9ca237baf0e2ecce89c8d5b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#acf308b81d9ca237baf0e2ecce89c8d5b">densu</a> (double alt, double dlb, double tinf, double tlb, double xm, double alpha, double *tz, double zlb, double s2, int mn1, double *zn1, double *tn1, double *tgn1)</td></tr>
 <tr class="separator:acf308b81d9ca237baf0e2ecce89c8d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb43b07f5b513c1fc160ad8e49e91468"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#adb43b07f5b513c1fc160ad8e49e91468">g0</a> (double a, double *p)</td></tr>
+<tr class="memitem:adb43b07f5b513c1fc160ad8e49e91468"><td class="memItemLeft" align="right" valign="top">__inline_double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#adb43b07f5b513c1fc160ad8e49e91468">g0</a> (double a, double *p)</td></tr>
 <tr class="separator:adb43b07f5b513c1fc160ad8e49e91468"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac607590e0e6c779fc4a6cbb1261975c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">sumex</a> (double ex)</td></tr>
+<tr class="memitem:ac607590e0e6c779fc4a6cbb1261975c6"><td class="memItemLeft" align="right" valign="top">__inline_double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">sumex</a> (double ex)</td></tr>
 <tr class="separator:ac607590e0e6c779fc4a6cbb1261975c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f68e5f9adad978d8d875e5e927802e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a7f68e5f9adad978d8d875e5e927802e2">sg0</a> (double ex, double *p, double *ap)</td></tr>
+<tr class="memitem:a7f68e5f9adad978d8d875e5e927802e2"><td class="memItemLeft" align="right" valign="top">__inline_double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a7f68e5f9adad978d8d875e5e927802e2">sg0</a> (double ex, double *p, double *ap)</td></tr>
 <tr class="separator:a7f68e5f9adad978d8d875e5e927802e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4b2621b2a2cb25659563dbc6cd081c4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#ac4b2621b2a2cb25659563dbc6cd081c4">globe7</a> (double *p, struct <a class="el" href="structnrlmsise__input.html">nrlmsise_input</a> *<a class="el" href="calc__flex_8c.html#a171692544b8e065853e387755849a433">input</a>, struct <a class="el" href="structnrlmsise__flags.html">nrlmsise_flags</a> *flags)</td></tr>
 <tr class="separator:ac4b2621b2a2cb25659563dbc6cd081c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,6 +184,7 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a9842752e03b4de9b4593f1a3b34364ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structDATA.html">DATA</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a></td></tr>
+<tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58f391202e2e3ae1de02f60930370e29"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#a58f391202e2e3ae1de02f60930370e29">ZenithAngle</a></td></tr>
 <tr class="separator:a58f391202e2e3ae1de02f60930370e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -535,45 +517,6 @@ Variables</h2></td></tr>
 <tr class="memitem:ae2e227d16dce2a7b3989c8f5bcd6cf08"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AtmosphereModel_8c.html#ae2e227d16dce2a7b3989c8f5bcd6cf08">apt</a> [4]</td></tr>
 <tr class="separator:ae2e227d16dce2a7b3989c8f5bcd6cf08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a598a3330b3c21701223ee0ca14316eca"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PI&#160;&#160;&#160;3.14159265358979323846264338328</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a5d9d454d4b9f2ff8106d5199ac0d0186"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SWAP</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">y&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;temp=(x);x=(y);y=temp;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a1cc05adab144b38cea8c948002f26610"></a>
 <div class="memitem">
@@ -1216,7 +1159,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a> g0 </td>
+          <td class="memname">__inline_double g0 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -1519,7 +1462,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a> sg0 </td>
+          <td class="memname">__inline_double sg0 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>ex</em>, </td>
@@ -1701,7 +1644,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a> sumex </td>
+          <td class="memname">__inline_double sumex </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>ex</em></td><td>)</td>
@@ -1733,7 +1676,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="nrlmsise-00_8h.html#ad38d2e3fa313d97ec413ff90989d9fdd">__inline_double</a> zeta </td>
+          <td class="memname">__inline_double zeta </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>zz</em>, </td>
@@ -1944,6 +1887,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>System includes. </p>
+<p>External libraries </p>
 
 </div>
 </div>
@@ -3293,10 +3239,10 @@ Variables</h2></td></tr>
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
 <div class="line">    {   2.45600E+07, 6.71072E-06, 1.00000E+02, 0.00000E+00, 1.10000E+02,</div>
 <div class="line">        1.00000E+01, 0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00</div>
-<div class="line">    },</div>
+<div class="line">    },\</div>
 <div class="line">    {   8.59400E+10, 1.00000E+00, 1.05000E+02,-8.00000E+00, 1.10000E+02,</div>
 <div class="line">        1.00000E+01, 9.00000E+01, 2.00000E+00, 0.00000E+00, 0.00000E+00</div>
-<div class="line">    },</div>
+<div class="line">    },\</div>
 <div class="line">    {   2.81000E+11, 0.00000E+00, 1.05000E+02, 2.80000E+01, 2.89500E+01,</div>
 <div class="line">        0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00, 0.00000E+00</div>
 <div class="line">    },</div>
@@ -5063,7 +5009,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_1c87cb8f51632dd952a89d3630337cd5.html">AtmosphereModel</a></li><li class="navelem"><a class="el" href="AtmosphereModel_8c.html">AtmosphereModel.c</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:23 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

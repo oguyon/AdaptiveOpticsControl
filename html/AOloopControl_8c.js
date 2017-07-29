@@ -1,9 +1,5 @@
 var AOloopControl_8c =
 [
-    [ "_GNU_SOURCE", "AOloopControl_8c.html#a369266c24eacffb87046522897a570d5", null ],
-    [ "AOconfname", "AOloopControl_8c.html#a3d4ac22ab7ffd78896c076c09870ff9c", null ],
-    [ "MAX_MBLOCK", "AOloopControl_8c.html#a74ab1a4f2b0dd3db2eb5408bb3c5f721", null ],
-    [ "NB_AOloopcontrol", "AOloopControl_8c.html#a6c5d5a91e62278861bc96ab43c9c44d9", null ],
     [ "AOcompute", "AOloopControl_8c.html#a19a66458a8453e9f5e6ec19a93c3e70a", null ],
     [ "AOcontrolLoop_TestDMSpeed", "AOloopControl_8c.html#ac3f68a9b79e43a57e11d85517a9627d1", null ],
     [ "AOcontrolLoop_TestDMSpeed_cli", "AOloopControl_8c.html#a3ac98f26c3ae9144afd92dbfdfa89785", null ],
@@ -28,7 +24,7 @@ var AOloopControl_8c =
     [ "AOloopControl_blockstats_cli", "AOloopControl_8c.html#a5ada4708881d6865de29a50fa65e055c", null ],
     [ "AOloopControl_builPFloop_WatchInput", "AOloopControl_8c.html#acdad903dbd67f4e4fb2af1adfacd49bd", null ],
     [ "AOloopControl_builPFloop_WatchInput_cli", "AOloopControl_8c.html#ac97c11c7bd587ba284bd94007f945f84", null ],
-    [ "AOloopControl_camimage_extract2D_sharedmem_loop", "AOloopControl_8c.html#a341495b61e5c8647d214853b082a35de", null ],
+    [ "AOloopControl_camimage_extract2D_sharedmem_loop", "AOloopControl_8c.html#a05543d5f38cc51a9724330c750452891", null ],
     [ "AOloopControl_camimage_extract2D_sharedmem_loop_cli", "AOloopControl_8c.html#a0f322578f9f18e499eda05d2a8b6905b", null ],
     [ "AOloopControl_CompModes_loop", "AOloopControl_8c.html#a54911dd0bffb3bbe82beeba4b1499344", null ],
     [ "AOloopControl_CompModes_loop_cli", "AOloopControl_8c.html#a52b22c93f62ff7212d1bd3be773d1512", null ],
@@ -176,6 +172,7 @@ var AOloopControl_8c =
     [ "AOloopControl_WFSzeropoint_sum_update_loop_cli", "AOloopControl_8c.html#acf0d54fe2b296eb78b4c90e2418d6cff", null ],
     [ "AOloopControl_WFSzpupdate_loop", "AOloopControl_8c.html#a002e9ae8ce1c79e6a4ef371e9b814a9a", null ],
     [ "AOloopControl_WFSzpupdate_loop_cli", "AOloopControl_8c.html#af2848476386966c635f0ce8b8897314b", null ],
+    [ "clock_gettime", "AOloopControl_8c.html#a4686db64ee8970c84b269e0425519dec", null ],
     [ "compute_CombinedControlMatrix", "AOloopControl_8c.html#ab38b851c264f398e041901b46fe0379c", null ],
     [ "compute_ControlMatrix", "AOloopControl_8c.html#a8cf3900737760125925db90d50a3792a", null ],
     [ "compute_function_dark_subtract", "AOloopControl_8c.html#a08adf8f45f2ea29016a5afc556a4de37", null ],
@@ -271,7 +268,7 @@ var AOloopControl_8c =
     [ "tnow", "AOloopControl_8c.html#a59d2ab140fff2f63a38f4704a76fc2ec", null ],
     [ "wcol", "AOloopControl_8c.html#ae6916da9363f105e747ab3cb5af8a4e7", null ],
     [ "WFS_active_map", "AOloopControl_8c.html#abb7ca190f28831881358f1d0a7ee0529", null ],
-    [ "WFSatype", "AOloopControl_8c.html#a1b20bcdb35ebf0fcae912ddac30c1be5", null ],
+    [ "WFSatype", "AOloopControl_8c.html#ae7fa9238d412594f41ef9f6d5c4206c4", null ],
     [ "wfsrefcnt0", "AOloopControl_8c.html#a50daf580553415a9fa4fe7f3fcb85e28", null ],
     [ "wrow", "AOloopControl_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5", null ]
 ];

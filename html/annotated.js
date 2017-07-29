@@ -1,5 +1,6 @@
 var annotated =
 [
+    [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
     [ "AOLOOPCONTROL_CONF", "structAOLOOPCONTROL__CONF.html", "structAOLOOPCONTROL__CONF" ],
     [ "AOLOOPCONTROL_DM_DISPCOMB_CONF", "structAOLOOPCONTROL__DM__DISPCOMB__CONF.html", "structAOLOOPCONTROL__DM__DISPCOMB__CONF" ],
     [ "AOLOOPCONTROL_DMTURBCONF", "structAOLOOPCONTROL__DMTURBCONF.html", "structAOLOOPCONTROL__DMTURBCONF" ],
@@ -14,9 +15,7 @@ var annotated =
     [ "DM_SIM", "structDM__SIM.html", "structDM__SIM" ],
     [ "EXAOSIMCONF", "structEXAOSIMCONF.html", "structEXAOSIMCONF" ],
     [ "FOCMASK", "structFOCMASK.html", "structFOCMASK" ],
-    [ "IMAGE", "structIMAGE.html", "structIMAGE" ],
-    [ "IMAGE_KEYWORD", "structIMAGE__KEYWORD.html", "structIMAGE__KEYWORD" ],
-    [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
+    [ "GPUMATMULTCONF", "structGPUMATMULTCONF.html", "structGPUMATMULTCONF" ],
     [ "kdhyperrect", "structkdhyperrect.html", "structkdhyperrect" ],
     [ "kdnode", "structkdnode.html", "structkdnode" ],
     [ "kdres", "structkdres.html", "structkdres" ],
@@ -32,7 +31,9 @@ var annotated =
     [ "savethreadmsg", "structsavethreadmsg.html", "structsavethreadmsg" ],
     [ "symrec", "structsymrec.html", "structsymrec" ],
     [ "TCP_BUFFER_METADATA", "structTCP__BUFFER__METADATA.html", "structTCP__BUFFER__METADATA" ],
+    [ "THDATA", "structTHDATA.html", "structTHDATA" ],
     [ "THDATA_IMTOTAL", "structTHDATA__IMTOTAL.html", "structTHDATA__IMTOTAL" ],
+    [ "TIMESPECFIXED", "structTIMESPECFIXED.html", "structTIMESPECFIXED" ],
     [ "VARIABLE", "structVARIABLE.html", "structVARIABLE" ],
     [ "yy_buffer_state", "structyy__buffer__state.html", "structyy__buffer__state" ],
     [ "yy_trans_info", "structyy__trans__info.html", "structyy__trans__info" ],

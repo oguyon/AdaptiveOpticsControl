@@ -2,9 +2,6 @@ var AOloopControl__DM_8h =
 [
     [ "AOLOOPCONTROL_DM_DISPCOMB_CONF", "structAOLOOPCONTROL__DM__DISPCOMB__CONF.html", "structAOLOOPCONTROL__DM__DISPCOMB__CONF" ],
     [ "AOLOOPCONTROL_DMTURBCONF", "structAOLOOPCONTROL__DMTURBCONF.html", "structAOLOOPCONTROL__DMTURBCONF" ],
-    [ "DISPCOMB_FILENAME_CONF", "AOloopControl__DM_8h.html#a3a582ea1ddd59cc7730a495c0d0d110d", null ],
-    [ "DM_NUMBER_CHANMAX", "AOloopControl__DM_8h.html#a9a7706e372afbef5fa4868ea819455e6", null ],
-    [ "DMTURBCONF_FILENAME", "AOloopControl__DM_8h.html#ade5d421b07d86c3588490f79d0416243", null ],
     [ "AOloopControl_DM_chan_setgain", "AOloopControl__DM_8h.html#a2d84b19a6c3085fa15e64aa18d7587ec", null ],
     [ "AOloopControl_DM_CombineChannels", "AOloopControl__DM_8h.html#ad70cbe6e8c1af80f890e560f0a0e7a0b", null ],
     [ "AOloopControl_DM_createconf", "AOloopControl__DM_8h.html#ae45b5a023f5925091f6a9b6c742b6004", null ],

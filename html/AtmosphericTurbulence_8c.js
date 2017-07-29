@@ -1,7 +1,5 @@
 var AtmosphericTurbulence_8c =
 [
-    [ "PI", "AtmosphericTurbulence_8c.html#a598a3330b3c21701223ee0ca14316eca", null ],
-    [ "SWAP", "AtmosphericTurbulence_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186", null ],
     [ "AtmosphericTurbulence_Apply_LinPredictor_Full", "AtmosphericTurbulence_8c.html#ac114ca0c670e678a518c2ca9f0636fdd", null ],
     [ "AtmosphericTurbulence_Apply_LinPredictor_Full_cli", "AtmosphericTurbulence_8c.html#a3e1be7bc7c93ae03598a8b7f7fd76551", null ],
     [ "AtmosphericTurbulence_Build_LinPredictor", "AtmosphericTurbulence_8c.html#ac221c14c2278f601bb3e3b34cb04e21f", null ],
@@ -26,6 +24,7 @@ var AtmosphericTurbulence_8c =
     [ "AtmosphericTurbulence_Test_LinPredictor", "AtmosphericTurbulence_8c.html#acfd7873f592cb9863dd9c694a1cff30d", null ],
     [ "AtmosphericTurbulence_Test_LinPredictor_cli", "AtmosphericTurbulence_8c.html#ad8bfdfb634ad1c8a7171d1bbe01fe089", null ],
     [ "AtmosphericTurbulence_WFprocess", "AtmosphericTurbulence_8c.html#a9ae58073a69fd25d766c7c9b7e77fc46", null ],
+    [ "clock_gettime", "AtmosphericTurbulence_8c.html#aa8f51c708a501884e32f9c62b96b55cd", null ],
     [ "contract_wavefront_cube", "AtmosphericTurbulence_8c.html#ac248994159d02100f42e0dc73f4c7e98", null ],
     [ "contract_wavefront_cube_phaseonly", "AtmosphericTurbulence_8c.html#a57a6abcef4a7825b7e557b4580883bfc", null ],
     [ "contract_wavefront_series", "AtmosphericTurbulence_8c.html#a6804af340f1e060bf999c9c1a8af6123", null ],

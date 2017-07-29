@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>AdaptiveOpticsControl: src/calc_bison.h Source File</title>
+<title>cfitsTK: src/calc_bison.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -31,7 +31,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">AdaptiveOpticsControl
+   <div id="projectname">cfitsTK
    </div>
   </td>
  </tr>
@@ -143,46 +143,46 @@ $(document).ready(function(){initNavTree('calc__bison_8h_source.html','');});
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor"># define YY_YY_CALC_BISON_H_INCLUDED</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">/* Debug traces.  */</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#ifndef YYDEBUG</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a853b3bfad6d2b2ff693dce81182e0c2e">   37</a></span>&#160;<span class="preprocessor"># define YYDEBUG 0</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor"># define YYDEBUG 0</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#if YYDEBUG</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">extern</span> <span class="keywordtype">int</span> yydebug;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="calc__bison_8h.html#ab138aa8e11f58bcdcc7134adf240ea8c">yydebug</a>;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">/* Token type.  */</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#ifndef YYTOKENTYPE</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a69ca0fbcc6d7aa5e8f47b11fc0048208">   45</a></span>&#160;<span class="preprocessor"># define YYTOKENTYPE</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor"># define YYTOKENTYPE</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9">   46</a></span>&#160;  <span class="keyword">enum</span> <a class="code" href="calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9">yytokentype</a></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  {</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07">   48</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a301c3c230589aafa70bae0f866e8af53">TKNUMl</a> = 258,</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db">   49</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a53e8b6e2630b33ed83cf4638d74fc545">TKNUMf</a> = 259,</div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9acccbda596e605918cbf39a103082350d">   50</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a200d80544b5aabeb70c3064a6a45dad8">TKNUMd</a> = 260,</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a76bd8a213f492d6234b4c5f431c0d6da">   51</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a712c85f9ad28338b601446486b173544">TKVAR</a> = 261,</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a51412363ace6ecc7f0459b537dc39386">   52</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a152e7ea3d794ca2d5b0c85a7fe7c0e3f">TKNVAR</a> = 262,</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af92ae8130574543b80d6449fecce3e12">   53</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a945ecd5b735dd84cf493acc38a3d99cd">TKIMAGE</a> = 263,</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb">   54</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a6251f3df19efa1db5e7998120e020b2b">TKCOMMAND</a> = 264,</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a">   55</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a4876e1d25d068eb6b34516434fd391bc">TKFUNC_d_d</a> = 265,</div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a40134fbb340e062eada115eaf8dba735">   56</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a1660a48b7bf3296882490d993f9bc4d6">TKFUNC_dd_d</a> = 266,</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ab19b8d3b02ef04969cc90e92c9d58eac">   57</a></span>&#160;    <a class="code" href="calc__bison_8h.html#af23d5d1a47f310335ac4e3a541d4d523">TKFUNC_ddd_d</a> = 267,</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ada400b26a63d80646288849886f63a4e">   58</a></span>&#160;    <a class="code" href="calc__bison_8h.html#abe9b14e40cf1d1777ce6615337fe73e0">TKFUNC_im_d</a> = 268,</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0">   59</a></span>&#160;    <a class="code" href="calc__bison_8h.html#ad8ea8d26a0e1421fd8f80423a9b93523">TKFUNC_imd_d</a> = 269,</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3">   60</a></span>&#160;    <a class="code" href="calc__bison_8h.html#aa27c29fc6f203aac29fb3632a0bafda5">NEG</a> = 270</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07">   48</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07">TKNUMl</a> = 258,</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db">   49</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db">TKNUMf</a> = 259,</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9acccbda596e605918cbf39a103082350d">   50</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9acccbda596e605918cbf39a103082350d">TKNUMd</a> = 260,</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a76bd8a213f492d6234b4c5f431c0d6da">   51</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a76bd8a213f492d6234b4c5f431c0d6da">TKVAR</a> = 261,</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a51412363ace6ecc7f0459b537dc39386">   52</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a51412363ace6ecc7f0459b537dc39386">TKNVAR</a> = 262,</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af92ae8130574543b80d6449fecce3e12">   53</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af92ae8130574543b80d6449fecce3e12">TKIMAGE</a> = 263,</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb">   54</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb">TKCOMMAND</a> = 264,</div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a">   55</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a">TKFUNC_d_d</a> = 265,</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a40134fbb340e062eada115eaf8dba735">   56</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a40134fbb340e062eada115eaf8dba735">TKFUNC_dd_d</a> = 266,</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ab19b8d3b02ef04969cc90e92c9d58eac">   57</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ab19b8d3b02ef04969cc90e92c9d58eac">TKFUNC_ddd_d</a> = 267,</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ada400b26a63d80646288849886f63a4e">   58</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ada400b26a63d80646288849886f63a4e">TKFUNC_im_d</a> = 268,</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0">   59</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0">TKFUNC_imd_d</a> = 269,</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3">   60</a></span>&#160;    <a class="code" href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3">NEG</a> = 270</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  };</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">/* Tokens.  */</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a301c3c230589aafa70bae0f866e8af53">   64</a></span>&#160;<span class="preprocessor">#define TKNUMl 258</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a53e8b6e2630b33ed83cf4638d74fc545">   65</a></span>&#160;<span class="preprocessor">#define TKNUMf 259</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a200d80544b5aabeb70c3064a6a45dad8">   66</a></span>&#160;<span class="preprocessor">#define TKNUMd 260</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a712c85f9ad28338b601446486b173544">   67</a></span>&#160;<span class="preprocessor">#define TKVAR 261</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a152e7ea3d794ca2d5b0c85a7fe7c0e3f">   68</a></span>&#160;<span class="preprocessor">#define TKNVAR 262</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a945ecd5b735dd84cf493acc38a3d99cd">   69</a></span>&#160;<span class="preprocessor">#define TKIMAGE 263</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a6251f3df19efa1db5e7998120e020b2b">   70</a></span>&#160;<span class="preprocessor">#define TKCOMMAND 264</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a4876e1d25d068eb6b34516434fd391bc">   71</a></span>&#160;<span class="preprocessor">#define TKFUNC_d_d 265</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a1660a48b7bf3296882490d993f9bc4d6">   72</a></span>&#160;<span class="preprocessor">#define TKFUNC_dd_d 266</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#af23d5d1a47f310335ac4e3a541d4d523">   73</a></span>&#160;<span class="preprocessor">#define TKFUNC_ddd_d 267</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#abe9b14e40cf1d1777ce6615337fe73e0">   74</a></span>&#160;<span class="preprocessor">#define TKFUNC_im_d 268</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#ad8ea8d26a0e1421fd8f80423a9b93523">   75</a></span>&#160;<span class="preprocessor">#define TKFUNC_imd_d 269</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#aa27c29fc6f203aac29fb3632a0bafda5">   76</a></span>&#160;<span class="preprocessor">#define NEG 270</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#define TKNUMl 258</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#define TKNUMf 259</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#define TKNUMd 260</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#define TKVAR 261</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#define TKNVAR 262</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#define TKIMAGE 263</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#define TKCOMMAND 264</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#define TKFUNC_d_d 265</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#define TKFUNC_dd_d 266</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">#define TKFUNC_ddd_d 267</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor">#define TKFUNC_im_d 268</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#define TKFUNC_imd_d 269</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#define NEG 270</span></div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">/* Value type.  */</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#if ! defined YYSTYPE &amp;&amp; ! defined YYSTYPE_IS_DECLARED</span></div>
@@ -199,8 +199,8 @@ $(document).ready(function(){initNavTree('calc__bison_8h_source.html','');});
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#line 92 &quot;calc_bison.h&quot; </span><span class="comment">/* yacc.c:1909  */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;};</div>
-<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#a2e3dbf169c5ee24cf6af37c61cf3995d">   93</a></span>&#160;<span class="preprocessor"># define YYSTYPE_IS_TRIVIAL 1</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="calc__bison_8h.html#af0232d21120b2cfc5e5f82f0fbadab3c">   94</a></span>&#160;<span class="preprocessor"># define YYSTYPE_IS_DECLARED 1</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor"># define YYSTYPE_IS_TRIVIAL 1</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor"># define YYSTYPE_IS_DECLARED 1</span></div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
@@ -209,35 +209,36 @@ $(document).ready(function(){initNavTree('calc__bison_8h_source.html','');});
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keywordtype">int</span> <a class="code" href="calc__bison_8h.html#a847a2de5c1c28c9d7055a2b89ed7dad7">yyparse</a> (<span class="keywordtype">void</span>);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* !YY_YY_CALC_BISON_H_INCLUDED  */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="calc__bison_8h_html_a200d80544b5aabeb70c3064a6a45dad8"><div class="ttname"><a href="calc__bison_8h.html#a200d80544b5aabeb70c3064a6a45dad8">TKNUMd</a></div><div class="ttdeci">#define TKNUMd</div><div class="ttdef"><b>Definition:</b> calc_bison.h:66</div></div>
-<div class="ttc" id="calc__bison_8h_html_a301c3c230589aafa70bae0f866e8af53"><div class="ttname"><a href="calc__bison_8h.html#a301c3c230589aafa70bae0f866e8af53">TKNUMl</a></div><div class="ttdeci">#define TKNUMl</div><div class="ttdef"><b>Definition:</b> calc_bison.h:64</div></div>
-<div class="ttc" id="calc__bison_8h_html_af23d5d1a47f310335ac4e3a541d4d523"><div class="ttname"><a href="calc__bison_8h.html#af23d5d1a47f310335ac4e3a541d4d523">TKFUNC_ddd_d</a></div><div class="ttdeci">#define TKFUNC_ddd_d</div><div class="ttdef"><b>Definition:</b> calc_bison.h:73</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9a40134fbb340e062eada115eaf8dba735"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a40134fbb340e062eada115eaf8dba735">TKFUNC_dd_d</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:56</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a">TKFUNC_d_d</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:55</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07">TKNUMl</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:48</div></div>
+<div class="ttc" id="calc__bison_8h_html_ab138aa8e11f58bcdcc7134adf240ea8c"><div class="ttname"><a href="calc__bison_8h.html#ab138aa8e11f58bcdcc7134adf240ea8c">yydebug</a></div><div class="ttdeci">int yydebug</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9af92ae8130574543b80d6449fecce3e12"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af92ae8130574543b80d6449fecce3e12">TKIMAGE</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:53</div></div>
 <div class="ttc" id="calc__bison_8h_html_a847a2de5c1c28c9d7055a2b89ed7dad7"><div class="ttname"><a href="calc__bison_8h.html#a847a2de5c1c28c9d7055a2b89ed7dad7">yyparse</a></div><div class="ttdeci">int yyparse(void)</div><div class="ttdef"><b>Definition:</b> calc_bison.c:1238</div></div>
-<div class="ttc" id="calc__bison_8h_html_abe9b14e40cf1d1777ce6615337fe73e0"><div class="ttname"><a href="calc__bison_8h.html#abe9b14e40cf1d1777ce6615337fe73e0">TKFUNC_im_d</a></div><div class="ttdeci">#define TKFUNC_im_d</div><div class="ttdef"><b>Definition:</b> calc_bison.h:74</div></div>
-<div class="ttc" id="calc__bison_8h_html_a4876e1d25d068eb6b34516434fd391bc"><div class="ttname"><a href="calc__bison_8h.html#a4876e1d25d068eb6b34516434fd391bc">TKFUNC_d_d</a></div><div class="ttdeci">#define TKFUNC_d_d</div><div class="ttdef"><b>Definition:</b> calc_bison.h:71</div></div>
-<div class="ttc" id="calc__bison_8h_html_a1660a48b7bf3296882490d993f9bc4d6"><div class="ttname"><a href="calc__bison_8h.html#a1660a48b7bf3296882490d993f9bc4d6">TKFUNC_dd_d</a></div><div class="ttdeci">#define TKFUNC_dd_d</div><div class="ttdef"><b>Definition:</b> calc_bison.h:72</div></div>
 <div class="ttc" id="unionYYSTYPE_html_a81f209066080f5ffa329c1772b8b70c5"><div class="ttname"><a href="unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5">YYSTYPE::val_l</a></div><div class="ttdeci">long val_l</div><div class="ttdef"><b>Definition:</b> calc_bison.c:168</div></div>
-<div class="ttc" id="calc__bison_8h_html_a152e7ea3d794ca2d5b0c85a7fe7c0e3f"><div class="ttname"><a href="calc__bison_8h.html#a152e7ea3d794ca2d5b0c85a7fe7c0e3f">TKNVAR</a></div><div class="ttdeci">#define TKNVAR</div><div class="ttdef"><b>Definition:</b> calc_bison.h:68</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9ada400b26a63d80646288849886f63a4e"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ada400b26a63d80646288849886f63a4e">TKFUNC_im_d</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:58</div></div>
 <div class="ttc" id="unionYYSTYPE_html_a0138efb4387041e915681aff6dfd68ff"><div class="ttname"><a href="unionYYSTYPE.html#a0138efb4387041e915681aff6dfd68ff">YYSTYPE::string</a></div><div class="ttdeci">char * string</div><div class="ttdef"><b>Definition:</b> calc_bison.c:171</div></div>
-<div class="ttc" id="calc__bison_8h_html_a53e8b6e2630b33ed83cf4638d74fc545"><div class="ttname"><a href="calc__bison_8h.html#a53e8b6e2630b33ed83cf4638d74fc545">TKNUMf</a></div><div class="ttdeci">#define TKNUMf</div><div class="ttdef"><b>Definition:</b> calc_bison.h:65</div></div>
-<div class="ttc" id="calc__bison_8h_html_a945ecd5b735dd84cf493acc38a3d99cd"><div class="ttname"><a href="calc__bison_8h.html#a945ecd5b735dd84cf493acc38a3d99cd">TKIMAGE</a></div><div class="ttdeci">#define TKIMAGE</div><div class="ttdef"><b>Definition:</b> calc_bison.h:69</div></div>
-<div class="ttc" id="calc__bison_8h_html_a712c85f9ad28338b601446486b173544"><div class="ttname"><a href="calc__bison_8h.html#a712c85f9ad28338b601446486b173544">TKVAR</a></div><div class="ttdeci">#define TKVAR</div><div class="ttdef"><b>Definition:</b> calc_bison.h:67</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db">TKNUMf</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:49</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3">NEG</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:60</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb">TKCOMMAND</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:54</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9acccbda596e605918cbf39a103082350d"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9acccbda596e605918cbf39a103082350d">TKNUMd</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:50</div></div>
 <div class="ttc" id="unionYYSTYPE_html_a6f4050b34641ae09204f63c853cb4c92"><div class="ttname"><a href="unionYYSTYPE.html#a6f4050b34641ae09204f63c853cb4c92">YYSTYPE::val_f</a></div><div class="ttdeci">float val_f</div><div class="ttdef"><b>Definition:</b> calc_bison.c:169</div></div>
 <div class="ttc" id="unionYYSTYPE_html_a61bc717a8d5bde0979541eb670984140"><div class="ttname"><a href="unionYYSTYPE.html#a61bc717a8d5bde0979541eb670984140">YYSTYPE::val_d</a></div><div class="ttdeci">double val_d</div><div class="ttdef"><b>Definition:</b> calc_bison.c:170</div></div>
 <div class="ttc" id="unionYYSTYPE_html"><div class="ttname"><a href="unionYYSTYPE.html">YYSTYPE</a></div><div class="ttdef"><b>Definition:</b> calc_bison.c:164</div></div>
-<div class="ttc" id="calc__bison_8h_html_a6251f3df19efa1db5e7998120e020b2b"><div class="ttname"><a href="calc__bison_8h.html#a6251f3df19efa1db5e7998120e020b2b">TKCOMMAND</a></div><div class="ttdeci">#define TKCOMMAND</div><div class="ttdef"><b>Definition:</b> calc_bison.h:70</div></div>
-<div class="ttc" id="calc__bison_8h_html_aa27c29fc6f203aac29fb3632a0bafda5"><div class="ttname"><a href="calc__bison_8h.html#aa27c29fc6f203aac29fb3632a0bafda5">NEG</a></div><div class="ttdeci">#define NEG</div><div class="ttdef"><b>Definition:</b> calc_bison.h:76</div></div>
-<div class="ttc" id="calc__bison_8h_html_ad8ea8d26a0e1421fd8f80423a9b93523"><div class="ttname"><a href="calc__bison_8h.html#ad8ea8d26a0e1421fd8f80423a9b93523">TKFUNC_imd_d</a></div><div class="ttdeci">#define TKFUNC_imd_d</div><div class="ttdef"><b>Definition:</b> calc_bison.h:75</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9a76bd8a213f492d6234b4c5f431c0d6da"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a76bd8a213f492d6234b4c5f431c0d6da">TKVAR</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:51</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9ab19b8d3b02ef04969cc90e92c9d58eac"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9ab19b8d3b02ef04969cc90e92c9d58eac">TKFUNC_ddd_d</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:57</div></div>
 <div class="ttc" id="calc__bison_8c_html_a15c9f7bd2f0e9686df5d9df4f3314aa9"><div class="ttname"><a href="calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9">yytokentype</a></div><div class="ttdeci">yytokentype</div><div class="ttdef"><b>Definition:</b> calc_bison.c:129</div></div>
 <div class="ttc" id="calc__bison_8h_html_a539b86ee4bb46824a194f22eb69903d9"><div class="ttname"><a href="calc__bison_8h.html#a539b86ee4bb46824a194f22eb69903d9">yylval</a></div><div class="ttdeci">YYSTYPE yylval</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9a51412363ace6ecc7f0459b537dc39386"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a51412363ace6ecc7f0459b537dc39386">TKNVAR</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:52</div></div>
 <div class="ttc" id="unionYYSTYPE_html_a2ede02959c9774fe63cc959095e4a50f"><div class="ttname"><a href="unionYYSTYPE.html#a2ede02959c9774fe63cc959095e4a50f">YYSTYPE::fnctptr</a></div><div class="ttdeci">double(* fnctptr)()</div><div class="ttdef"><b>Definition:</b> calc_bison.c:172</div></div>
+<div class="ttc" id="calc__bison_8h_html_a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0"><div class="ttname"><a href="calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0">TKFUNC_imd_d</a></div><div class="ttdef"><b>Definition:</b> calc_bison.h:59</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="calc__bison_8h.html">calc_bison.h</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 05:15:23 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Sat Jul 29 2017 11:06:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

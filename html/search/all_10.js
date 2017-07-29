@@ -2,6 +2,7 @@ var searchData=
 [
   ['pacos',['Pacos',['../COREMOD__arith_8c.html#abbc0c6a10142c07dc34d9fffdcd1b177',1,'COREMOD_arith.c']]],
   ['padd',['Padd',['../COREMOD__arith_8c.html#aa6349eff12f2596bf41a2621c56f27bc',1,'COREMOD_arith.c']]],
+  ['pages_2edox',['pages.dox',['../pages_8dox.html',1,'']]],
   ['parseerror',['parseerror',['../structDATA.html#a04c14ba8ea1844e3f68888dca0fe3519',1,'DATA']]],
   ['partial',['partial',['../structsavethreadmsg.html#a67b95feb0e172459de37d4e23fab693b',1,'savethreadmsg']]],
   ['pasin',['Pasin',['../COREMOD__arith_8c.html#a7ef5b5f4043605229d876ca041823386',1,'COREMOD_arith.c']]],
@@ -20,7 +21,6 @@ var searchData=
   ['pfabs',['Pfabs',['../COREMOD__arith_8c.html#a127b1e824792e0a97c0d1d237c4ac792',1,'COREMOD_arith.c']]],
   ['pfloor',['Pfloor',['../COREMOD__arith_8c.html#a7d0a88428d8d684feb8fc9aa1c31749b',1,'COREMOD_arith.c']]],
   ['pfmod',['Pfmod',['../COREMOD__arith_8c.html#a48f35d5c684b77d75565f34c7182fb5c',1,'COREMOD_arith.c']]],
-  ['pi',['PI',['../AtmosphereModel_8c.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;AtmosphereModel.c'],['../AtmosphericTurbulence_8c.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;AtmosphericTurbulence.c'],['../CLIcore_8h.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;CLIcore.h'],['../fft_8c.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;fft.c'],['../image__gen_8c.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;image_gen.c'],['../ZernikePolyn_8c.html#a598a3330b3c21701223ee0ca14316eca',1,'PI():&#160;ZernikePolyn.c']]],
   ['pitch',['pitch',['../structDM__SIM.html#ade1c585e1ec4dff6446ba9e8349082d0',1,'DM_SIM']]],
   ['pixscale',['pixscale',['../structDM__SIM.html#a88f9258d3a795e433186d8ae4b77a418',1,'DM_SIM::pixscale()'],['../structOPTSYST.html#aa64373d953735e7fc898f664706ae434',1,'OPTSYST::pixscale()']]],
   ['pixstream_5fnbslices',['PIXSTREAM_NBSLICES',['../AOloopControl_8c.html#a9c9de7324774fada9c33ac97e3f551c7',1,'AOloopControl.c']]],
