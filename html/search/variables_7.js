@@ -8,12 +8,12 @@ var searchData=
   ['gpu_5fbeta',['GPU_beta',['../AOloopControl_8c.html#afc9f2873ba7bc77842930922d0805681',1,'AOloopControl.c']]],
   ['gpuall',['GPUall',['../structAOLOOPCONTROL__CONF.html#a65f4ffb63a04738926b536991745b909',1,'AOLOOPCONTROL_CONF']]],
   ['gpucntmax',['GPUcntMax',['../AOloopControl_8c.html#a6fca5afadc5536deb3a4b2f75df736fd',1,'AOloopControl.c']]],
-  ['gpudevice',['GPUdevice',['../structGPUMATMULTCONF.html#af46435d16015959a15f0b157c9d4bdb6',1,'GPUMATMULTCONF']]],
+  ['gpudevice',['GPUdevice',['../structGPUMATMULTCONF.html#aace1d395e8b672a4ade7b9b8b9bf0024',1,'GPUMATMULTCONF']]],
   ['gpuinit',['gpuinit',['../structGPUMATMULTCONF.html#a6ea3e8d83269d0910b4228fa433532d9',1,'GPUMATMULTCONF']]],
-  ['gpumatmultconf',['gpumatmultconf',['../cudacomp_8c.html#a94d486cdc838f866f7a80cc61bbd74fb',1,'cudacomp.c']]],
+  ['gpumatmultconf',['gpumatmultconf',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a94d486cdc838f866f7a80cc61bbd74fb',1,'gpumatmultconf():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a94d486cdc838f866f7a80cc61bbd74fb',1,'gpumatmultconf():&#160;cudacomp.c']]],
   ['gpuset0',['GPUset0',['../AOloopControl_8c.html#a8d6591f2da280333780b8696cb955f27',1,'AOloopControl.c']]],
   ['gpuset1',['GPUset1',['../AOloopControl_8c.html#a9df3e67dd2be74654d7ac98d8308cf2e',1,'AOloopControl.c']]],
   ['gpustatus',['GPUstatus',['../structAOLOOPCONTROL__CONF.html#a9cc9387bcd4e897006b66003ed9fcc53',1,'AOLOOPCONTROL_CONF']]],
   ['gpuusesem',['GPUusesem',['../structAOLOOPCONTROL__CONF.html#a98cd30703d34047c9741abe330e9be89',1,'AOLOOPCONTROL_CONF']]],
-  ['gsurf',['gsurf',['../AtmosphereModel_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;nrlmsise-00.c']]]
+  ['gsurf',['gsurf',['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphereModel_2AtmosphereModel_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;AtmosphereModel.c'],['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphericTurbulence_2nrlmsise-00_820131225_2nrlmsise-00_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;nrlmsise-00.c'],['../src_2AtmosphereModel_2AtmosphereModel_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;AtmosphereModel.c'],['../src_2AtmosphericTurbulence_2nrlmsise-00_820131225_2nrlmsise-00_8c.html#a9a778fbd1234a0e028c01268c7052111',1,'gsurf():&#160;nrlmsise-00.c']]]
 ];

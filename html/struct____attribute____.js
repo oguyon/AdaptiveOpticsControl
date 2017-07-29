@@ -1,8 +1,8 @@
 var struct____attribute____ =
 [
     [ "__pad0__", "struct____attribute____.html#a8fe4a8a30a23bbc843fc90e63fee45bd", null ],
-    [ "array", "struct____attribute____.html#ae75a8c09b78d55fc927f65bd8e28a071", null ],
-    [ "atime", "struct____attribute____.html#a4f0dac59efbb7c18b9f0bde628bfd8ad", null ],
+    [ "array", "struct____attribute____.html#a4124a2c5a32ac55434e8cf319672d473", null ],
+    [ "atime", "struct____attribute____.html#af1d7c5ec8d3bdeb7e7cd6c4d64587c3f", null ],
     [ "atype", "struct____attribute____.html#a0ae804df69b605597e7ab91470ee453e", null ],
     [ "CD", "struct____attribute____.html#ab46a7555df8bb559fe997c53344c7fd3", null ],
     [ "CF", "struct____attribute____.html#a161a3d9ac2ae02405811955a9ff2a910", null ],
@@ -47,7 +47,7 @@ var struct____attribute____ =
     [ "UI8", "struct____attribute____.html#ab61a2a3e43da44507005c7b9214adb55", null ],
     [ "used", "struct____attribute____.html#ad55a17b62aa31a7bf048d44c91dcb255", null ],
     [ "valstr", "struct____attribute____.html#a1aabca3f48169935bbbd61596a255cfe", null ],
-    [ "value", "struct____attribute____.html#acd2442d5a343ff65e0988a36c309b2a3", null ],
+    [ "value", "struct____attribute____.html#adf567a4d4754d98800070ba5286da3fd", null ],
     [ "write", "struct____attribute____.html#af77fd346c02cc583ef273212920f3e85", null ],
     [ "xpix", "struct____attribute____.html#a3234cfbbb06fd0ccde0b82e4d5acdcae", null ],
     [ "ypix", "struct____attribute____.html#a2307ff611d1fd723cb696c3ba8aa2c5b", null ]

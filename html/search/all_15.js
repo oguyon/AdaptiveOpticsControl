@@ -7,6 +7,6 @@ var searchData=
   ['ui8',['UI8',['../struct____attribute____.html#ab61a2a3e43da44507005c7b9214adb55',1,'__attribute__']]],
   ['updatecnt',['updatecnt',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a0eb7c648b544dbe4e15f5932be0f5043',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['used',['used',['../structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290',1,'VARIABLE::used()'],['../struct____attribute____.html#ad55a17b62aa31a7bf048d44c91dcb255',1,'__attribute__::used()']]],
-  ['user_5ffunction',['user_function',['../CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'CLIcore.c']]],
+  ['user_5ffunction',['user_function',['../AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'user_function():&#160;CLIcore.c'],['../src_2CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'user_function():&#160;CLIcore.c']]],
   ['userinput_2emd',['UserInput.md',['../UserInput_8md.html',1,'']]]
 ];

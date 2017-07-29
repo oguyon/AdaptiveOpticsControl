@@ -1,11 +1,8 @@
 var NAVTREE =
 [
-  [ "cfitsTK", "index.html", [
+  [ "AdaptiveOpticsControl", "index.html", [
     [ "AOCCE user's Guide", "index.html", "index" ],
     [ "Installation", "md_index.html", null ],
-    [ "aolmkmodes", "md_src_AOloopControl_doc_aolmkmodes.html", null ],
-    [ "AOloopControl", "md_src_AOloopControl_doc_AOloopControl.html", "md_src_AOloopControl_doc_AOloopControl" ],
-    [ "AOloopControl_ProgGuide", "md_src_AOloopControl_doc_AOloopControl_ProgGuide.html", null ],
     [ "AO loop control", "AOloopControl.html", null ],
     [ "Command Line Interface (CLI)", "md_src_CLIcore.html", null ],
     [ "Bug List", "bug.html", null ],
@@ -36,18 +33,21 @@ var NAVTREEINDEX =
 "00CORE_8c.html",
 "AOloopControl_8c.html#ad4cd06e7d489f4d41d0ec01e996889f9",
 "AOloopControl__DM_8h.html#ad70cbe6e8c1af80f890e560f0a0e7a0b",
-"AtmosphereModel_8c.html#ad3dc4490d98cfb74b03a94a6d848813f",
-"COREMOD__arith_8c.html#a14410f7ff38e33de2a46f06979c4544f",
-"COREMOD__arith_8h.html#a3f8c08c80ce47978f9c3ee047d5b1314",
-"COREMOD__memory_8c.html#a90efa5a10c5baa2b8048922b3af4b3b8",
-"COREMOD__tools_8h.html#afe5cd16046ebb47a351af77e98643730",
-"calc__flex_8c.html#a70f82d43d4797bb2a50f7678ddbfbda5",
-"functions_s.html",
-"image__filter_8c.html#a5e2252a9a69be324c4fb06960dea291b",
-"kdtree_8h.html#ae2d5802f669e14e245fc8ee6b8a3ff16",
-"statistic_8c.html#a41dac042e765e1314159a6258ccd9ec8",
-"structEXAOSIMCONF.html#a0dc85f4164f7ce71dbfc6e8befe1b0e5",
-"structnrlmsise__flags.html#ad7c32ffaeaafb702cb59d024e26c0105"
+"AdaptiveOpticsControl-1_86_814_2src_2AtmosphereModel_2AtmosphereModel_8c.html#ad3dc4490d98cfb74b03a94a6d848813f",
+"AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8c.html#a4013b1078f89c6a61f5572b3691ce817",
+"AdaptiveOpticsControl-1_86_814_2src_2calc__flex_8c.html#a599b60cd059cf60e89cc49953dc708d0",
+"COREMOD__arith_8c.html#a3bf6bd7a42ddff0d66cd90c7c2f65082",
+"COREMOD__arith_8h.html#a82313e778fad60a3225d8130b6c3025c",
+"COREMOD__memory_8c.html#acd0b696820720d3aef9be9ce7e4a3bf5",
+"OpticsMaterials_8h.html#a5d6945fa6383f9ab81ba228440be7879",
+"globals_func_q.html",
+"image__gen_8c.html#ac0a5235f8b33e87d7abd86dcfea4a535",
+"linopt__imtools_8c.html#acdd05675c00002d528cf3527e43d1739",
+"src_2AtmosphereModel_2AtmosphereModel_8h.html#a16e40cdc863af563487a36afba800185",
+"src_2CLIcore_8c.html#af4fffe0e84f7322cbfec7208f4d79a0e",
+"src_2calc__flex_8c.html#ae2c4c4681bb3d385b213511d0b3b59fd",
+"structAOLOOPCONTROL__CONF.html#acf3d0a55c37a60451e4eff487c94bdf7",
+"structGPUMATMULTCONF.html#ad63ce32e7e0fbfdb3230d05f88c5eb76"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

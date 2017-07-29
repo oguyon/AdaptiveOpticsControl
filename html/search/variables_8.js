@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['handle',['handle',['../structGPUMATMULTCONF.html#aeae4a4b26450255556ea3fb0175cd56e',1,'GPUMATMULTCONF']]],
+  ['handle',['handle',['../structGPUMATMULTCONF.html#a5e065dbbb5b47c01328e4ddd183563be',1,'GPUMATMULTCONF']]],
   ['hardwlatency',['hardwlatency',['../structAOLOOPCONTROL__CONF.html#a1d40ece00af0d1437375d02ee683f55e',1,'AOLOOPCONTROL_CONF']]],
   ['hardwlatency_5fframe',['hardwlatency_frame',['../structAOLOOPCONTROL__CONF.html#a55a0525bf200253c672802bdcd6675b4',1,'AOLOOPCONTROL_CONF']]],
   ['hf',['hf',['../structEXAOSIMCONF.html#afc65db33f61ab85e6b9f3355dc39a345',1,'EXAOSIMCONF']]],
