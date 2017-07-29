@@ -1,4 +1,4 @@
-# Installation
+# Installation {#page_installation}
 
 
 ## Downloading source code

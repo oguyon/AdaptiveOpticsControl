@@ -3,7 +3,7 @@
 #
 
 m4_define([PROGNAME], AdaptiveOpticsControl)
-m4_define([PVERSION], 1.6.13)
+m4_define([PVERSION], 1.6.14)
 
 AC_INIT([PROGNAME], [PVERSION], [oliv.guyon@gmail.com], [PROGNAME])
 
