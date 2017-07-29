@@ -995,8 +995,10 @@ int_fast8_t COREMOD_MEMORY_logshim_set_logexit_cli()
 
 int_fast8_t COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
-    //sprintf(data.cmdargtoken[4].val.string, "null");
-    CLI_checkarg(4,3);
+
+    if(CLI_checkarg_noerrmsg(4,3)!=0)
+		sprintf(data.cmdargtoken[4].val.string, "null");
+		
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
         COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
@@ -1239,7 +1241,7 @@ int_fast8_t init_COREMOD_memory()
 /* =============================================================================================== */
 
 
-    RegisterCLIcommand("shmimstreamlog", __FILE__, COREMOD_MEMORY_sharedMem_2Dim_log_cli, "logs shared memory stream (run in current directory)", "<shm image> <cubesize [long]> <logdir>", "shmimstreamlog wfscamim 10000 /media/data", "long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, char *logdir)");
+    RegisterCLIcommand("shmimstreamlog", __FILE__, COREMOD_MEMORY_sharedMem_2Dim_log_cli, "logs shared memory stream (run in current directory)", "<shm image> <cubesize [long]> <logdir>", "shmimstreamlog wfscamim 10000 /media/data", "long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const char *logdir, const char *IDlogdata_name)");
     
     RegisterCLIcommand("shmimslogstat", __FILE__, COREMOD_MEMORY_logshim_printstatus_cli, "print log shared memory stream status", "<shm image>", "shmimslogstat wfscamim", "int COREMOD_MEMORY_logshim_printstatus(const char *IDname)");
     
@@ -6386,9 +6388,11 @@ LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(const char *logshimname)
     sharedsize = sizeof(LOGSHIM_CONF);
 
     sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, logshimname);
+    
     SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-
     if (SM_fd == -1) {
+		printf("File \"%s\"\n", SM_fname);
+		fflush(stdout);
         perror("Error opening file for writing");
         exit(0);
     }

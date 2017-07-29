@@ -369,7 +369,7 @@ int printstatus(long ID)
     printw("[%ld sems ", data.image[ID].md[0].sem);
    for(s=0;s<data.image[ID].md[0].sem;s++)
     {
-        sem_getvalue(data.image[ID].semptr[s], &semval);
+        sem_getvalue(data.image[ID].semptr[s], &semval);   
         printw(" % 3d ", semval);
     }
     printw("]");
