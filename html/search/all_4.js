@@ -62,8 +62,7 @@ var searchData=
   ['clicore_2ec',['CLIcore.c',['../src_2CLIcore_8c.html',1,'']]],
   ['clicore_2eh',['CLIcore.h',['../src_2CLIcore_8h.html',1,'']]],
   ['clicore_2eh',['CLIcore.h',['../AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8h.html',1,'']]],
-  ['clicore_2emd',['CLIcore.md',['../doc_2CLIcore_8md.html',1,'']]],
-  ['clicore_2emd',['CLIcore.md',['../src_2CLIcore_8md.html',1,'']]],
+  ['clicore_2emd',['CLIcore.md',['../CLIcore_8md.html',1,'']]],
   ['cliexecutecmdready',['CLIexecuteCMDready',['../AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8c.html#a9e041e5e654d85941bd71358b0ef40f5',1,'CLIexecuteCMDready():&#160;CLIcore.c'],['../src_2CLIcore_8c.html#a9e041e5e654d85941bd71358b0ef40f5',1,'CLIexecuteCMDready():&#160;CLIcore.c']]],
   ['cliinfoprint',['CLIinfoPrint',['../00CORE_8c.html#ae838278c08c0e2a86eaabaa30a51ed1c',1,'00CORE.c']]],
   ['clilogname',['CLIlogname',['../structDATA.html#a5399f7bda3b78d8c09915d8bb16e4236',1,'DATA']]],
@@ -262,8 +261,8 @@ var searchData=
   ['cubesize',['cubesize',['../structsavethreadmsg.html#aabe32dc91c33ab3536ad6d2b6730159f',1,'savethreadmsg']]],
   ['cublassgemv_5falpha',['cublasSgemv_alpha',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a3355a068ce93212db76ca4c5b254ee53',1,'cublasSgemv_alpha():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a3355a068ce93212db76ca4c5b254ee53',1,'cublasSgemv_alpha():&#160;cudacomp.c']]],
   ['cublassgemv_5fbeta',['cublasSgemv_beta',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a21e3e5d23dc38473b93c97c079dd9e2f',1,'cublasSgemv_beta():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a21e3e5d23dc38473b93c97c079dd9e2f',1,'cublasSgemv_beta():&#160;cudacomp.c']]],
-  ['cudacomp_2ec',['cudacomp.c',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html',1,'']]],
   ['cudacomp_2ec',['cudacomp.c',['../src_2cudacomp_2cudacomp_8c.html',1,'']]],
+  ['cudacomp_2ec',['cudacomp.c',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html',1,'']]],
   ['cudacomp_2eh',['cudacomp.h',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8h.html',1,'']]],
   ['cudacomp_2eh',['cudacomp.h',['../src_2cudacomp_2cudacomp_8h.html',1,'']]],
   ['cudacomp_5fcoeff2map_5floop',['CUDACOMP_Coeff2Map_Loop',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a5db894f96230f0ab904cf66eb847a40b',1,'CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name):&#160;cudacomp.c'],['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8h.html#a5db894f96230f0ab904cf66eb847a40b',1,'CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name):&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a5db894f96230f0ab904cf66eb847a40b',1,'CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name):&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8h.html#a5db894f96230f0ab904cf66eb847a40b',1,'CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, int GPUindex, const char *IDoutmap_name, int offsetmode, const char *IDoffset_name):&#160;cudacomp.c']]],
@@ -279,6 +278,5 @@ var searchData=
   ['cudacomp_5fmatmatmult_5ftestpseudoinverse',['CUDACOMP_MatMatMult_testPseudoInverse',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c'],['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8h.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8h.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c']]],
   ['cudacomp_5fmatmatmult_5ftestpseudoinverse_5fcli',['CUDACOMP_MatMatMult_testPseudoInverse_cli',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#a452a6f095dd28bf63a83be60fdccda6a',1,'CUDACOMP_MatMatMult_testPseudoInverse_cli():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#a452a6f095dd28bf63a83be60fdccda6a',1,'CUDACOMP_MatMatMult_testPseudoInverse_cli():&#160;cudacomp.c']]],
   ['cudacomp_5ftest_5fcli',['CUDACOMP_test_cli',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#ad81526b0b3c245b0f134a3bae42e0d24',1,'CUDACOMP_test_cli():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#ad81526b0b3c245b0f134a3bae42e0d24',1,'CUDACOMP_test_cli():&#160;cudacomp.c']]],
-  ['command_20line_20interface_20_28cli_29',['Command Line Interface (CLI)',['../md_src_CLIcore.html',1,'']]],
   ['command_20line_20interface_20_28cli_29',['Command Line Interface (CLI)',['../page_command_line_interface.html',1,'page_userinput']]]
 ];

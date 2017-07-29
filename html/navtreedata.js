@@ -2,9 +2,7 @@ var NAVTREE =
 [
   [ "AdaptiveOpticsControl", "index.html", [
     [ "AOCCE user's Guide", "index.html", "index" ],
-    [ "Installation", "md_index.html", null ],
     [ "AO loop control", "AOloopControl.html", null ],
-    [ "Command Line Interface (CLI)", "md_src_CLIcore.html", null ],
     [ "Bug List", "bug.html", null ],
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
@@ -43,11 +41,11 @@ var NAVTREEINDEX =
 "globals_func_q.html",
 "image__gen_8c.html#ac0a5235f8b33e87d7abd86dcfea4a535",
 "linopt__imtools_8c.html#acdd05675c00002d528cf3527e43d1739",
-"src_2AtmosphereModel_2AtmosphereModel_8h.html#a16e40cdc863af563487a36afba800185",
-"src_2CLIcore_8c.html#af4fffe0e84f7322cbfec7208f4d79a0e",
-"src_2calc__flex_8c.html#ae2c4c4681bb3d385b213511d0b3b59fd",
-"structAOLOOPCONTROL__CONF.html#acf3d0a55c37a60451e4eff487c94bdf7",
-"structGPUMATMULTCONF.html#ad63ce32e7e0fbfdb3230d05f88c5eb76"
+"src_2AtmosphereModel_2AtmosphereModel_8h.html#a4d97c63ac032ba6bd8882ba253353264",
+"src_2CLIcore_8c.html#afcdbfc486152403a8152045c561db794",
+"src_2calc__flex_8c.html#ae6ac796aa6c45d433a4b89bf45e6e9dc",
+"structAOLOOPCONTROL__CONF.html#ad2b6e1747337c652aa5e0b7391b76b15",
+"structGPUMATMULTCONF.html#ae0f1b4ef5fad13670cfd96814e1bc0f4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
