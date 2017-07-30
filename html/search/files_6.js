@@ -12,8 +12,6 @@ var searchData=
   ['imcreate_5ftest_2ec',['ImCreate_test.c',['../ImCreate__test_8c.html',1,'']]],
   ['info_2ec',['info.c',['../info_8c.html',1,'']]],
   ['info_2eh',['info.h',['../info_8h.html',1,'']]],
-  ['initmodules_2ec',['initmodules.c',['../src_2initmodules_8c.html',1,'']]],
-  ['initmodules_2ec',['initmodules.c',['../AdaptiveOpticsControl-1_86_814_2src_2initmodules_8c.html',1,'']]],
-  ['initmodules_2eh',['initmodules.h',['../AdaptiveOpticsControl-1_86_814_2src_2initmodules_8h.html',1,'']]],
-  ['initmodules_2eh',['initmodules.h',['../src_2initmodules_8h.html',1,'']]]
+  ['initmodules_2ec',['initmodules.c',['../initmodules_8c.html',1,'']]],
+  ['initmodules_2eh',['initmodules.h',['../initmodules_8h.html',1,'']]]
 ];

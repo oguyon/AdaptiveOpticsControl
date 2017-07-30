@@ -1,24 +1,24 @@
 var searchData=
 [
-  ['f',['F',['../struct____attribute____.html#a1c2360411cef6f9baecbc8e9b016cf58',1,'__attribute__::F()'],['../structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd',1,'VARIABLE::f()'],['../structEXAOSIMCONF.html#a7e9ba060c27b41a02ad4e849c84b2690',1,'EXAOSIMCONF::f()']]],
+  ['f',['f',['../structEXAOSIMCONF.html#a7e9ba060c27b41a02ad4e849c84b2690',1,'EXAOSIMCONF::f()'],['../structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd',1,'VARIABLE::f()'],['../struct____attribute____.html#a1c2360411cef6f9baecbc8e9b016cf58',1,'__attribute__::F()']]],
   ['f107',['f107',['../structnrlmsise__input.html#aaf339ba3dc1807f2a606215c6ec99502',1,'nrlmsise_input']]],
   ['f107a',['f107A',['../structnrlmsise__input.html#a067d86f0e8c35a6d2b3c9acf0d4a2b40',1,'nrlmsise_input']]],
   ['f_5f0',['f_0',['../structEXAOSIMCONF.html#a070107b65ea10563aa34e3a81f238e57',1,'EXAOSIMCONF']]],
   ['f_5fwfs',['f_wfs',['../structEXAOSIMCONF.html#a9f9bc4019aeeef422cd6d13116208372',1,'EXAOSIMCONF']]],
-  ['fifoname',['fifoname',['../structDATA.html#a604785ee6d2a7393bb2b832633f74fe3',1,'DATA']]],
+  ['fifoname',['fifoname',['../structDATA.html#ac3b98b39c316089481ab31820a1f4b21',1,'DATA']]],
   ['fifoon',['fifoON',['../structDATA.html#a37b44a7ef0d3d29f33bf3700ec28665e',1,'DATA']]],
   ['filecnt',['filecnt',['../structLOGSHIM__CONF.html#a540e125719be22adb4d4d1c1c87f575d',1,'LOGSHIM_CONF']]],
   ['firstlong',['firstlong',['../structTIMESPECFIXED.html#ac5d8359c6f00ae3b50f59946055ac6c8',1,'TIMESPECFIXED']]],
   ['fitsio_5fstatus',['FITSIO_status',['../COREMOD__iofits_8c.html#a6c2cc8d105d4821fd2f03c00125c9e86',1,'COREMOD_iofits.c']]],
-  ['floatarray',['FLOATARRAY',['../structDATA.html#a61336e8f5f1586474bec34d70788a188',1,'DATA']]],
+  ['floatarray',['FLOATARRAY',['../structDATA.html#a58210ca81311d78d220027755351f8b8',1,'DATA']]],
   ['flogcomment',['flogcomment',['../AOloopControl_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;AOloopControl.c'],['../AOsystSim_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;AOsystSim.c']]],
   ['flux',['flux',['../structOPTSYST.html#a50cc581680a3ba2856a0ba03f1ea97c0',1,'OPTSYST']]],
   ['fminit',['fmInit',['../linopt__imtools_8c.html#a867bce46990afb113a1ab42430a9e888',1,'linopt_imtools.c']]],
   ['fname',['fname',['../structsavethreadmsg.html#a86ce40d969ce095eb8ee5360b3298e8e',1,'savethreadmsg::fname()'],['../structLOGSHIM__CONF.html#aa4b09441bd4b5c40b120b76c075d595d',1,'LOGSHIM_CONF::fname()']]],
   ['fnctptr',['fnctptr',['../structsymrec.html#accae313254c71fad5d7eb0446473bec5',1,'symrec::fnctptr()'],['../unionYYSTYPE.html#a2ede02959c9774fe63cc959095e4a50f',1,'YYSTYPE::fnctptr()']]],
   ['focmaskarray',['FOCMASKarray',['../structOPTSYST.html#a8d4ccf0884791758d77f5488ddf93bb0',1,'OPTSYST']]],
-  ['forceseminit',['FORCESEMINIT',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html#ac1a738ea19b335ef19aad2749c296937',1,'FORCESEMINIT():&#160;cudacomp.c'],['../src_2cudacomp_2cudacomp_8c.html#ac1a738ea19b335ef19aad2749c296937',1,'FORCESEMINIT():&#160;cudacomp.c']]],
-  ['fp',['fp',['../structCMD.html#a5038dc2c42a519bad16517c59d09ef5f',1,'CMD']]],
+  ['forceseminit',['FORCESEMINIT',['../cudacomp_8c.html#ac1a738ea19b335ef19aad2749c296937',1,'cudacomp.c']]],
+  ['fp',['fp',['../structCMD.html#ae8ee9d3a38444931eae3f8988af15acb',1,'CMD']]],
   ['fpgnuplot',['fpgnuplot',['../COREMOD__tools_8c.html#a7a9031c756cc5a1da42cffc862eb783a',1,'COREMOD_tools.c']]],
   ['fpmid',['fpmID',['../structFOCMASK.html#aab678e43f6debad7a4699487249ef650',1,'FOCMASK']]],
   ['framedelay',['framedelay',['../structEXAOSIMCONF.html#aaf76d3c016773e2ebeff013d198e98a5',1,'EXAOSIMCONF']]],
@@ -26,5 +26,5 @@ var searchData=
   ['free_5fnodes',['free_nodes',['../kdtree_8c.html#a36fcc7a723160bc0d367c6e616940231',1,'kdtree.c']]],
   ['fsci',['Fsci',['../structEXAOSIMCONF.html#a9e63fcf190598bba04287ee99b683c75',1,'EXAOSIMCONF']]],
   ['fwfs',['Fwfs',['../structEXAOSIMCONF.html#a077a672d832c1468e875e92a69c9c651',1,'EXAOSIMCONF']]],
-  ['fwhm_5fmeasured',['FWHM_MEASURED',['../AdaptiveOpticsControl-1_86_814_2src_2psf_2psf_8c.html#a45c45f9affb7a1208d03534b2c5b0afd',1,'FWHM_MEASURED():&#160;psf.c'],['../src_2psf_2psf_8c.html#a45c45f9affb7a1208d03534b2c5b0afd',1,'FWHM_MEASURED():&#160;psf.c']]]
+  ['fwhm_5fmeasured',['FWHM_MEASURED',['../psf_8c.html#a45c45f9affb7a1208d03534b2c5b0afd',1,'psf.c']]]
 ];

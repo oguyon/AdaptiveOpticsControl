@@ -26,12 +26,12 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "statistic", "dir_545a73c80b83e1c7812a6808fc9654f7.html", "dir_545a73c80b83e1c7812a6808fc9654f7" ],
     [ "WFpropagate", "dir_cad50416a3e7e6cff3daf0b59fb2403a.html", "dir_cad50416a3e7e6cff3daf0b59fb2403a" ],
     [ "ZernikePolyn", "dir_79cde7c2c2a1e8c6935a72a82b7ac777.html", "dir_79cde7c2c2a1e8c6935a72a82b7ac777" ],
-    [ "calc.h", "src_2calc_8h.html", "src_2calc_8h" ],
-    [ "calc_bison.c", "src_2calc__bison_8c.html", "src_2calc__bison_8c" ],
-    [ "calc_bison.h", "src_2calc__bison_8h.html", "src_2calc__bison_8h" ],
-    [ "calc_flex.c", "src_2calc__flex_8c.html", "src_2calc__flex_8c" ],
-    [ "CLIcore.c", "src_2CLIcore_8c.html", "src_2CLIcore_8c" ],
-    [ "CLIcore.h", "src_2CLIcore_8h.html", "src_2CLIcore_8h" ],
+    [ "calc.h", "calc_8h.html", "calc_8h" ],
+    [ "calc_bison.c", "calc__bison_8c.html", "calc__bison_8c" ],
+    [ "calc_bison.h", "calc__bison_8h.html", "calc__bison_8h" ],
+    [ "calc_flex.c", "calc__flex_8c.html", "calc__flex_8c" ],
+    [ "CLIcore.c", "CLIcore_8c.html", "CLIcore_8c" ],
+    [ "CLIcore.h", "CLIcore_8h.html", "CLIcore_8h" ],
     [ "ImageStruct.h", "ImageStruct_8h.html", [
       [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
       [ "TIMESPECFIXED", "structTIMESPECFIXED.html", "structTIMESPECFIXED" ],
@@ -41,6 +41,6 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
       [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
       [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ]
     ] ],
-    [ "initmodules.c", "src_2initmodules_8c.html", "src_2initmodules_8c" ],
-    [ "initmodules.h", "src_2initmodules_8h.html", "src_2initmodules_8h" ]
+    [ "initmodules.c", "initmodules_8c.html", "initmodules_8c" ],
+    [ "initmodules.h", "initmodules_8h.html", "initmodules_8h" ]
 ];

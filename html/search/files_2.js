@@ -1,17 +1,11 @@
 var searchData=
 [
-  ['calc_2eh',['calc.h',['../AdaptiveOpticsControl-1_86_814_2src_2calc_8h.html',1,'']]],
-  ['calc_2eh',['calc.h',['../src_2calc_8h.html',1,'']]],
-  ['calc_5fbison_2ec',['calc_bison.c',['../src_2calc__bison_8c.html',1,'']]],
-  ['calc_5fbison_2ec',['calc_bison.c',['../AdaptiveOpticsControl-1_86_814_2src_2calc__bison_8c.html',1,'']]],
-  ['calc_5fbison_2eh',['calc_bison.h',['../AdaptiveOpticsControl-1_86_814_2src_2calc__bison_8h.html',1,'']]],
-  ['calc_5fbison_2eh',['calc_bison.h',['../src_2calc__bison_8h.html',1,'']]],
-  ['calc_5fflex_2ec',['calc_flex.c',['../src_2calc__flex_8c.html',1,'']]],
-  ['calc_5fflex_2ec',['calc_flex.c',['../AdaptiveOpticsControl-1_86_814_2src_2calc__flex_8c.html',1,'']]],
-  ['clicore_2ec',['CLIcore.c',['../AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8c.html',1,'']]],
-  ['clicore_2ec',['CLIcore.c',['../src_2CLIcore_8c.html',1,'']]],
-  ['clicore_2eh',['CLIcore.h',['../AdaptiveOpticsControl-1_86_814_2src_2CLIcore_8h.html',1,'']]],
-  ['clicore_2eh',['CLIcore.h',['../src_2CLIcore_8h.html',1,'']]],
+  ['calc_2eh',['calc.h',['../calc_8h.html',1,'']]],
+  ['calc_5fbison_2ec',['calc_bison.c',['../calc__bison_8c.html',1,'']]],
+  ['calc_5fbison_2eh',['calc_bison.h',['../calc__bison_8h.html',1,'']]],
+  ['calc_5fflex_2ec',['calc_flex.c',['../calc__flex_8c.html',1,'']]],
+  ['clicore_2ec',['CLIcore.c',['../CLIcore_8c.html',1,'']]],
+  ['clicore_2eh',['CLIcore.h',['../CLIcore_8h.html',1,'']]],
   ['clicore_2emd',['CLIcore.md',['../CLIcore_8md.html',1,'']]],
   ['coremod_5farith_2ec',['COREMOD_arith.c',['../COREMOD__arith_8c.html',1,'']]],
   ['coremod_5farith_2eh',['COREMOD_arith.h',['../COREMOD__arith_8h.html',1,'']]],
@@ -21,8 +15,6 @@ var searchData=
   ['coremod_5fmemory_2eh',['COREMOD_memory.h',['../COREMOD__memory_8h.html',1,'']]],
   ['coremod_5ftools_2ec',['COREMOD_tools.c',['../COREMOD__tools_8c.html',1,'']]],
   ['coremod_5ftools_2eh',['COREMOD_tools.h',['../COREMOD__tools_8h.html',1,'']]],
-  ['cudacomp_2ec',['cudacomp.c',['../src_2cudacomp_2cudacomp_8c.html',1,'']]],
-  ['cudacomp_2ec',['cudacomp.c',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8c.html',1,'']]],
-  ['cudacomp_2eh',['cudacomp.h',['../src_2cudacomp_2cudacomp_8h.html',1,'']]],
-  ['cudacomp_2eh',['cudacomp.h',['../AdaptiveOpticsControl-1_86_814_2src_2cudacomp_2cudacomp_8h.html',1,'']]]
+  ['cudacomp_2ec',['cudacomp.c',['../cudacomp_8c.html',1,'']]],
+  ['cudacomp_2eh',['cudacomp.h',['../cudacomp_8h.html',1,'']]]
 ];

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['z_5fair',['Z_Air',['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphericTurbulence_2AtmosphericTurbulence_8c.html#a6c3139e4f450454cdaa4ce079dcc6191',1,'Z_Air(double P, double T, double RH):&#160;AtmosphericTurbulence.c'],['../src_2AtmosphericTurbulence_2AtmosphericTurbulence_8c.html#a6c3139e4f450454cdaa4ce079dcc6191',1,'Z_Air(double P, double T, double RH):&#160;AtmosphericTurbulence.c']]],
-  ['z_5fn2',['Z_N2',['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphericTurbulence_2AtmosphericTurbulence_8c.html#a00902d1a290cdedf3678e8dbaeb75ba9',1,'Z_N2(double P, double T):&#160;AtmosphericTurbulence.c'],['../src_2AtmosphericTurbulence_2AtmosphericTurbulence_8c.html#a00902d1a290cdedf3678e8dbaeb75ba9',1,'Z_N2(double P, double T):&#160;AtmosphericTurbulence.c']]],
-  ['zenithangle',['ZenithAngle',['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphereModel_2AtmosphereModel_8c.html#a58f391202e2e3ae1de02f60930370e29',1,'ZenithAngle():&#160;AtmosphereModel.c'],['../src_2AtmosphereModel_2AtmosphereModel_8c.html#a58f391202e2e3ae1de02f60930370e29',1,'ZenithAngle():&#160;AtmosphereModel.c']]],
+  ['z_5fair',['Z_Air',['../AtmosphericTurbulence_8c.html#a6c3139e4f450454cdaa4ce079dcc6191',1,'AtmosphericTurbulence.c']]],
+  ['z_5fn2',['Z_N2',['../AtmosphericTurbulence_8c.html#a00902d1a290cdedf3678e8dbaeb75ba9',1,'AtmosphericTurbulence.c']]],
+  ['zenithangle',['ZenithAngle',['../AtmosphereModel_8c.html#a58f391202e2e3ae1de02f60930370e29',1,'AtmosphereModel.c']]],
   ['zer_5fm',['Zer_m',['../structZERNIKE.html#a92c691d4081cb095e8f006335bf20f08',1,'ZERNIKE']]],
   ['zer_5fn',['Zer_n',['../structZERNIKE.html#a9c1c566a6926ec5c5458614732c6d358',1,'ZERNIKE']]],
   ['zermax',['ZERMAX',['../structZERNIKE.html#a2c37fde142f459b1374da2472151ee29',1,'ZERNIKE']]],
@@ -15,6 +15,6 @@ var searchData=
   ['zernikepolyn_2eh',['ZernikePolyn.h',['../ZernikePolyn_8h.html',1,'']]],
   ['zernikepolyn_5frmpiston',['ZERNIKEPOLYN_rmPiston',['../ZernikePolyn_8c.html#a5dbfdca8ba770d4108b8418de82e1104',1,'ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name):&#160;ZernikePolyn.c'],['../ZernikePolyn_8h.html#a5dbfdca8ba770d4108b8418de82e1104',1,'ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name):&#160;ZernikePolyn.c']]],
   ['zernikepolyn_5frmpiston_5fcli',['ZERNIKEPOLYN_rmPiston_cli',['../ZernikePolyn_8c.html#aedcbd216b72931511f1531e8b408cc84',1,'ZernikePolyn.c']]],
-  ['zeta',['zeta',['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphereModel_2AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;AtmosphereModel.c'],['../AdaptiveOpticsControl-1_86_814_2src_2AtmosphericTurbulence_2nrlmsise-00_820131225_2nrlmsise-00_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;nrlmsise-00.c'],['../src_2AtmosphereModel_2AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;AtmosphereModel.c'],['../src_2AtmosphericTurbulence_2nrlmsise-00_820131225_2nrlmsise-00_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;nrlmsise-00.c']]],
+  ['zeta',['zeta',['../AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;nrlmsise-00.c']]],
   ['zfactor',['zfactor',['../structFOCMASK.html#ae4f8bac28f3d485f900c7236b94a0aa2',1,'FOCMASK']]]
 ];
