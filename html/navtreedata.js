@@ -2,6 +2,7 @@ var NAVTREE =
 [
   [ "AdaptiveOpticsControl", "index.html", [
     [ "AOCCE user's Guide", "index.html", "index" ],
+    [ "Source code conventions", "page_sourcecode_conventions.html", null ],
     [ "Bug List", "bug.html", null ],
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
@@ -36,12 +37,12 @@ var NAVTREEINDEX =
 "COREMOD__memory_8c.html#a92bb4be8f7727c20b7dd450b04ec8529",
 "COREMOD__tools_8h_source.html",
 "calc__flex_8c.html#a71cf769ce518e8687bf8999b278c65f4",
-"functions_u.html",
-"image__filter_8c.html#a758219c5ee0939f082d0fd75ac46b29d",
-"kdtree_8h.html#ae783df8818133e4fb833e9203302f162",
-"statistic_8c.html#ad84dae9cad55950b3f92d17f748be1e8",
-"structEXAOSIMCONF.html#a544bd5d15f71838590b1bf4831985b94",
-"structnrlmsise__input.html#ac41fa549d9cfb5f0f4b93c744d9225ce"
+"functions_r.html",
+"image__filter_8c.html#a44c9a2b0ba64ba78d95ad0f551bc3b59",
+"kdtree_8h.html#adb070dde37e9a978f231d730b7a24b53",
+"statistic_8c.html#a61ccd72f7e2d2f65912807eda4c8643c",
+"structEXAOSIMCONF.html#a46ddfc38ba7314453d82c5dc4692e165",
+"structnrlmsise__input.html#a696afdcb8f4f94993f5a88e29c1b7a68"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

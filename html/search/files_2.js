@@ -7,6 +7,7 @@ var searchData=
   ['clicore_2ec',['CLIcore.c',['../CLIcore_8c.html',1,'']]],
   ['clicore_2eh',['CLIcore.h',['../CLIcore_8h.html',1,'']]],
   ['clicore_2emd',['CLIcore.md',['../CLIcore_8md.html',1,'']]],
+  ['coding_5fstandards_2emd',['coding_standards.md',['../coding__standards_8md.html',1,'']]],
   ['coremod_5farith_2ec',['COREMOD_arith.c',['../COREMOD__arith_8c.html',1,'']]],
   ['coremod_5farith_2eh',['COREMOD_arith.h',['../COREMOD__arith_8h.html',1,'']]],
   ['coremod_5fiofits_2ec',['COREMOD_iofits.c',['../COREMOD__iofits_8c.html',1,'']]],

@@ -110,18 +110,23 @@ $(document).ready(function(){initNavTree('ImageStreamIO_8h_source.html','');});
 <a href="ImageStreamIO_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#ifndef _IMAGECREATE_H</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#define _IMAGECREATE_H</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;int_fast8_t <a class="code" href="ImageStreamIO_8h.html#a6996ee2254bfcc9b0b31759259975202">init_ImageStreamIO</a>();</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keywordtype">int</span> <a class="code" href="ImageStreamIO_8h.html#a5d9fdb844a8ac77653d7cfba9dbf528a">ImageStreamIO_createSem</a>(IMAGE *image, <span class="keywordtype">long</span> NBsem);</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keywordtype">int</span> <a class="code" href="ImageStreamIO_8h.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO_createIm</a>(IMAGE *image, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">long</span> naxis, uint32_t *size, uint8_t atype, <span class="keywordtype">int</span> shared, <span class="keywordtype">int</span> NBkw);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keywordtype">long</span> <a class="code" href="ImageStreamIO_8h.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO_read_sharedmem_image_toIMAGE</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, IMAGE *image);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keywordtype">int</span> <a class="code" href="ImageStreamIO_8h.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO_createIm</a>(IMAGE *image, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">long</span> naxis, uint32_t *size, uint8_t atype, <span class="keywordtype">int</span> shared, <span class="keywordtype">int</span> NBkw);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keywordtype">long</span> <a class="code" href="ImageStreamIO_8h.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO_read_sharedmem_image_toIMAGE</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, IMAGE *image);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="ttc" id="ImageStreamIO_8h_html_a8fc3bb169fb87361c1e136e3c6a55dfb"><div class="ttname"><a href="ImageStreamIO_8h.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO_createIm</a></div><div class="ttdeci">int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)</div><div class="ttdef"><b>Definition:</b> ImageStreamIO.c:181</div></div>
 <div class="ttc" id="ImageStreamIO_8h_html_a6996ee2254bfcc9b0b31759259975202"><div class="ttname"><a href="ImageStreamIO_8h.html#a6996ee2254bfcc9b0b31759259975202">init_ImageStreamIO</a></div><div class="ttdeci">int_fast8_t init_ImageStreamIO()</div><div class="ttdef"><b>Definition:</b> ImageStreamIO.c:71</div></div>
 <div class="ttc" id="ImageStreamIO_8h_html_af64adde8baff4fbdba23ac51192f9882"><div class="ttname"><a href="ImageStreamIO_8h.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO_read_sharedmem_image_toIMAGE</a></div><div class="ttdeci">long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)</div><div class="ttdef"><b>Definition:</b> ImageStreamIO.c:725</div></div>
@@ -132,7 +137,7 @@ $(document).ready(function(){initNavTree('ImageStreamIO_8h_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_f9bfd6d7838ce96d8ef51017747ec480.html">ImageStreamIO</a></li><li class="navelem"><a class="el" href="ImageStreamIO_8h.html">ImageStreamIO.h</a></li>
-    <li class="footer">Generated on Sat Jul 29 2017 16:56:04 for AdaptiveOpticsControl by
+    <li class="footer">Generated on Mon Jul 31 2017 15:26:59 for AdaptiveOpticsControl by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

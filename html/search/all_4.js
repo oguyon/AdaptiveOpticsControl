@@ -86,6 +86,7 @@ var searchData=
   ['cntmax',['cntmax',['../structAOLOOPCONTROL__CONF.html#adda3452da7229a9a8232a76e49850b37',1,'AOLOOPCONTROL_CONF']]],
   ['co2_5fppm',['CO2_ppm',['../AtmosphereModel_8c.html#a78d44b4bb2e42dc83220d0d5f48d6265',1,'AtmosphereModel.c']]],
   ['code',['code',['../structMaterialIndex.html#a7b54b40a48c454c51cc0403b571dce15',1,'MaterialIndex']]],
+  ['coding_5fstandards_2emd',['coding_standards.md',['../coding__standards_8md.html',1,'']]],
   ['combine_5f2psf',['combine_2psf',['../psf_8c.html#add41c81f007431113c86618e214b409d',1,'combine_2psf(const char *ID_name, const char *ID_name1, const char *ID_name2, float radius, float index):&#160;psf.c'],['../psf_8h.html#add41c81f007431113c86618e214b409d',1,'combine_2psf(const char *ID_name, const char *ID_name1, const char *ID_name2, float radius, float index):&#160;psf.c']]],
   ['command_5fline',['command_line',['../CLIcore_8c.html#a08a15eb6d82a4967d50502a18fe5f205',1,'CLIcore.c']]],
   ['comment',['comment',['../structVARIABLE.html#a681a0cb52e89855a9cf7f1bd908ba6ee',1,'VARIABLE::comment()'],['../struct____attribute____.html#acf06de4ba0ca012cd5794a104a972fad',1,'__attribute__::comment()']]],
@@ -270,5 +271,6 @@ var searchData=
   ['cudacomp_5fmatmatmult_5ftestpseudoinverse',['CUDACOMP_MatMatMult_testPseudoInverse',['../cudacomp_8c.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c'],['../cudacomp_8h.html#a1194bccddfcc6525520b96f49b05e7a1',1,'CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *IDmatAinv_name, const char *IDmatOut_name):&#160;cudacomp.c']]],
   ['cudacomp_5fmatmatmult_5ftestpseudoinverse_5fcli',['CUDACOMP_MatMatMult_testPseudoInverse_cli',['../cudacomp_8c.html#a452a6f095dd28bf63a83be60fdccda6a',1,'cudacomp.c']]],
   ['cudacomp_5ftest_5fcli',['CUDACOMP_test_cli',['../cudacomp_8c.html#ad81526b0b3c245b0f134a3bae42e0d24',1,'cudacomp.c']]],
+  ['coding_20standards',['Coding Standards',['../page_coding_standards.html',1,'index']]],
   ['command_20line_20interface_20_28cli_29',['Command Line Interface (CLI)',['../page_command_line_interface.html',1,'page_userinput']]]
 ];
