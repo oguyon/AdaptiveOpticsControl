@@ -1,11 +1,14 @@
 # Readline Input Keys {#page_readlinekeys}
 
+
+The command line interface (CLI) uses readline to take input command for keyboard. Readline offers convenient bindings, listed in this page.
+ 
+For more information, consult the readline library documentation.
+
+
 <pre> 
 
 READLINE QUICK HELP
-
-For more information, consult the readline library documentation
-
 
 
 Notations:

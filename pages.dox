@@ -11,7 +11,7 @@ Adpative Optics Control Computation Engine
 - @subpage page_userinput
 	- @ref page_readlinekeys
 	- @ref page_command_line_interface
-- @subpage page_sourcecode_conventions
+- @subpage page_coding_standards
 - @subpage page_modules
 	- @ref page_module_AOloopControl 
 - @subpage page_news
