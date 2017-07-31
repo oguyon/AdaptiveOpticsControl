@@ -1,5 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.815633.svg)](https://doi.org/10.5281/zenodo.815633)
+[![Build Status](https://travis-ci.org/oguyon/AdaptiveOpticsControl.svg?branch=master)](https://travis-ci.org/oguyon/AdaptiveOpticsControl)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8091ec2f16214595a72dcd41a4e18942)](https://www.codacy.com/app/oguyon/AdaptiveOpticsControl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=oguyon/AdaptiveOpticsControl&amp;utm_campaign=Badge_Grade)
 
 
