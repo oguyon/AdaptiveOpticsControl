@@ -2664,7 +2664,7 @@ double AirMixture_N(double lambda, double dens_N2, double dens_O2, double dens_A
 	double ZH = 1.0; // TO BE UPDATED
 	
 	
-
+	denstotal = 0.0;
     
     // N2
     if(initRIA_N2==1)

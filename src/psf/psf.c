@@ -1020,8 +1020,8 @@ int extract_psf(const char *ID_name, const char *out_name, long size)
   long box_size;
   long naxes[2];
 
-  xcenter = (double*) malloc(sizeof(float));
-  ycenter = (double*) malloc(sizeof(float));
+  xcenter = (double*) malloc(sizeof(double));
+  ycenter = (double*) malloc(sizeof(double));
   ID = image_ID(ID_name);
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1];

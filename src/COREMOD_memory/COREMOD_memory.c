@@ -1827,6 +1827,8 @@ void *save_fits_function( void *ptr )
 
         default:
             printf("ERROR: WRONG DATA TYPE\n");
+			free(imsizearray);
+            free(tmsg);
             exit(0);
             break;
         }
@@ -1845,6 +1847,8 @@ void *save_fits_function( void *ptr )
     tret = ID;
     free(imsizearray);
     pthread_exit(&tret);
+    
+    free(tmsg);
 }
 
 
@@ -2906,6 +2910,8 @@ int_fast8_t init_list_image_ID_ncurses(const char *termttyname)
 int_fast8_t list_image_ID_ncurses()
 {
     char str[500];
+    char str1[500];
+    char str2[500];
     long i, j;
     long long tmp_long;
     char type[STYPESIZE];
@@ -2957,11 +2963,11 @@ int_fast8_t list_image_ID_ncurses()
 
             for(j=1; j<data.image[i].md[0].naxis; j++)
             {
-                sprintf(str, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
+                sprintf(str1, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
             }
-            sprintf(str, "%s]", str);
+            sprintf(str2, "%s]", str1);
 
-            printw("%-28s", str);
+            printw("%-28s", str2);
 
             attron(COLOR_PAIR(3));
             n = 0;
@@ -3041,17 +3047,25 @@ int_fast8_t list_image_ID_ncurses()
     //attron(A_BOLD);
 
     sprintf(str, "%ld image(s)      ", compute_nb_image());
-    if(sizeGb>0)
-        sprintf(str, "%s %ld GB", str, (long) (sizeGb));
+    if(sizeGb>0){
+        sprintf(str1, "%s %ld GB", str, (long) (sizeGb));
+		strcpy(str, str1);
+	}
+    
+    if(sizeMb>0){
+        sprintf(str1, "%s %ld MB", str, (long) (sizeMb));
+		strcpy(str, str1);
+	}
 
-    if(sizeMb>0)
-        sprintf(str, "%s %ld MB", str, (long) (sizeMb));
+    if(sizeKb>0){
+        sprintf(str1, "%s %ld KB", str, (long) (sizeKb));
+		strcpy(str, str1);
+	}
 
-    if(sizeKb>0)
-        sprintf(str, "%s %ld KB", str, (long) (sizeKb));
-
-    if(sizeb>0)
-        sprintf(str, "%s %ld B", str, (long) (sizeb));
+    if(sizeb>0){
+        sprintf(str1, "%s %ld B", str, (long) (sizeb));
+		strcpy(str, str1);
+	}
 
     mvprintw(listim_scr_wrow-1, 0, "%s\n", str);
     //  attroff(A_BOLD);
@@ -3089,6 +3103,7 @@ int_fast8_t list_image_ID_ofp(FILE *fo)
     int n;
     unsigned long long sizeb, sizeKb, sizeMb, sizeGb;
     char str[500];
+    char str1[500];
     struct timespec timenow;
     double timediff;
 	struct mallinfo minfo;
@@ -3121,9 +3136,11 @@ int_fast8_t list_image_ID_ofp(FILE *fo)
 
             for(j=1; j<data.image[i].md[0].naxis; j++)
             {
-                sprintf(str, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
+                sprintf(str1, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
+				strcpy(str, str1);
             }
-            sprintf(str, "%s]", str);
+            sprintf(str1, "%s]", str);
+            strcpy(str, str1);
 
             fprintf(fo, "%-32s", str);
 
@@ -5746,9 +5763,12 @@ long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr
     }
 
     free(buff);
+	
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
+    
+	free(frame_md);
 
     return(ID);
 }
@@ -6121,7 +6141,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 //
 long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)
 {
-    long IDout;
+    long IDout = -1;
     long IDin;
     long IDmap;
     long slice, sliceii;
@@ -6135,7 +6155,7 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     int loopOK;
     long ii;
     long cnt = 0;
-    int RT_priority = 80; //any number from 0-99
+//    int RT_priority = 80; //any number from 0-99
 
     struct sched_param schedpar;
     struct timespec ts;
@@ -6149,6 +6169,9 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     double *dtarray;
     struct timespec *tarray;
     long slice1;
+
+
+
 
     sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
@@ -6349,7 +6372,8 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     free(nbpixslice);
     free(sizearray);
     free(dtarray);
-
+    free(tarray);
+    
     return(IDout);
 }
 
@@ -6979,6 +7003,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const
     }
 
     free(imsizearray);
+	free(tmsg);
 
     return(0);
 }

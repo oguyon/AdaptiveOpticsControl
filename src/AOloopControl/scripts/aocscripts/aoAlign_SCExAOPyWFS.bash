@@ -1,6 +1,7 @@
 #!/bin/bash
 
 execname="Cfits"
+echo "execname = $execname"
 mesgfile="/dev/null"
 
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -18,7 +19,7 @@ echo "$COLUMNS -> $nbwcols"
 
 
 LOOPNUMBER_file="LOOPNUMBER"
-confnbfile="./conf/conf_CONFNUMBER.txt"
+
 
 
 mkdir -p conf
@@ -189,8 +190,8 @@ Pcamloopgain=$(cat ./status/gain_PyAlignCam.txt)
 
 
 if [ -f ./status/pcampos.txt ]; then
-pywfsreimagexposref=$(cat ./status/pcampos.txt | awk '{print $1}')
-pywfsreimageyposref=$(cat ./status/pcampos.txt | awk '{print $2}')
+pywfsreimagexposref=$( awk '{print $1}' ./status/pcampos.txt )
+pywfsreimageyposref=$( awk '{print $2}' ./status/pcampos.txt )
 fi
 
 
@@ -271,7 +272,7 @@ fi
 
 
 echo "$pmodscale $pymodampl" > tmpfile.txt
-pmodradmas=$( awk '{ printf("%5.1f\n", $1*$2) }' tmpfile.txt )
+#pmodradmas=$( awk '{ printf("%5.1f\n", $1*$2) }' tmpfile.txt )
 pmodradmas05=$( awk '{ printf("%5.1f\n", $1*0.05) }' tmpfile.txt )
 pmodradmas10=$( awk '{ printf("%5.1f\n", $1*0.10) }' tmpfile.txt )
 pmodradmas15=$( awk '{ printf("%5.1f\n", $1*0.15) }' tmpfile.txt )

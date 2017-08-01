@@ -888,6 +888,7 @@ int save_db_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				free(array);
 				return(-1);
 				break;				
 			}            
@@ -1061,6 +1062,7 @@ int save_fl_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				free(array);
 				return(-1);
 				break;				
 			}            
@@ -1173,7 +1175,7 @@ int save_sh_fits(const char *ID_name, const char *file_name)
         for(i=0; i<naxis; i++)
         {
             naxes[i] = data.image[ID].md[0].size[i];
-			naxesl[3] = (long) naxes[i];
+			naxesl[i] = (long) naxes[i];
 		}
 
         nelements = 1;
@@ -1238,6 +1240,7 @@ int save_sh_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				free(array);
 				return(-1);
 				break;				
 			}            
@@ -1412,6 +1415,7 @@ int save_ush_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				free(array);
 				return(-1);
 				break;				
 			}            

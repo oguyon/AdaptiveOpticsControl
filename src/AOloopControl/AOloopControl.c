@@ -1674,7 +1674,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     
     // Normalize WFS frames ?
-        if((fp=fopen("./conf/conf_WFSnormalize.txt","r"))==NULL)
+        if((fp=fopen("./conf/conf_WFSnormalize.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/conf_WFSnormalize.txt missing\n");
         fprintf(fplog, "WARNING: file ./conf/conf_WFSnormalize.txt missing. Assuming WFSnormalize = 1\n");
@@ -2272,6 +2272,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                     printf("Cannot read conf/conf_NBmodeblocks.txt.... assuming 1 block\n");
                     AOconf[loop].DMmodesNBblock = 1;
                 }
+                fclose(fp);
             }
         
         
@@ -2425,7 +2426,6 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
     int create = 0;
     int result;
     long loop;
-    uint32_t *sizearray;
     char cntname[200];
     int k;
     FILE *fp;
@@ -2512,6 +2512,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((aoconfIDlogdata = image_ID(cntname))==-1)
         {
+			uint32_t *sizearray;
             sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearray[0] = 1;
             sizearray[1] = 1;
@@ -3341,7 +3342,7 @@ static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_nam
 
     IDout = create_2Dimage_ID(IDout_name, zsize1, zsize2);
     for(ii=0;ii<zsize1*zsize2;ii++)
-        data.image[IDout].array.F[z2*zsize1+z1] = 0.0;
+        data.image[IDout].array.F[ii] = 0.0;
   
     if(IDmask==-1)    
     {

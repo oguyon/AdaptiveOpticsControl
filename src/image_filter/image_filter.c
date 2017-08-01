@@ -1222,10 +1222,17 @@ int filter_fit2Dcossin(const char *IDname, float radius)
     }
   free(coscoeff);
   free(sincoeff);
+
+	free(xarray);
+	free(yarray);
   free(rarray);
 
   return(0);
 }
+
+
+
+
 
 int filter_fit2DcosKernel(const char *IDname, float radius)
 {

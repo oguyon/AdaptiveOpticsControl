@@ -1129,7 +1129,7 @@ long make_hexagon(const char *IDname, long l1, long l2, double x_center, double 
 
 long IMAGE_gen_segments2WFmodes(const char *prefix, long ndigit, const char *IDout_name)
 {
-	long IDout;
+	long IDout = -1;
 	long NBseg;
 	long seg;
 	int OK;
@@ -1276,8 +1276,8 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
 
     int WriteCIF = 0;
     FILE *fpmlevel;
-    FILE *fp;
-    FILE *fp1;
+    FILE *fp = NULL;
+    FILE *fp1 = NULL;
     double pixscale = 1.0;
     long vID;
     double x, y;
@@ -1330,7 +1330,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
     bitval = (int*) malloc(sizeof(int)*SEGcnt);
  
     fpmlevel = fopen("fpm_level.txt", "r");
-    if(fp!=NULL)
+    if(fpmlevel!=NULL)
         {
             for(i=0;i<SEGcnt;i++)
                 {
@@ -2480,7 +2480,8 @@ long image_gen_im2coord(const char *IDin_name, int axis, const char *IDout_name)
 {
 	long naxis;
 	int OK = 1;
-	long IDin, IDout;
+	long IDin;
+	long IDout = -1;
 	long xsize, ysize, zsize;
 	long ii, jj, kk;
 

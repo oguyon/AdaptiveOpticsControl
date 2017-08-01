@@ -220,6 +220,10 @@ int_fast8_t CUDACOMP_test_cli()
     #endif
 }
 
+
+
+
+
 #ifdef HAVE_CUDA
 
 
@@ -519,7 +523,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     double SVDeps = 0.1;
 
     long n, m;
-    uint32_t *arraysizetmp;
+//    uint32_t *arraysizetmp;
     long ID, ID_R, ID_C;
     long ii, jj;
     float val;
@@ -572,6 +576,8 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
                     data.image[ID].array.F[jj*n+ii] = val;
                 }
         save_fits("SVDcheck", "!SVDcheck.fits");
+
+		free(arraysizetmp);
         printf("DONE\n");
         fflush(stdout);*/
     }
@@ -3374,6 +3380,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if(atype!=_DATATYPE_FLOAT)
     {
         printf("wrong type\n");
+        free(arraysizetmp);
         exit(0);
     }
 
@@ -3395,6 +3402,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if(m!=n)
     {
         printf("ERROR: m must be equal to n\n");
+        free(arraysizetmp);
         exit(0);
     }
 
@@ -3410,6 +3418,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3419,6 +3428,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3430,6 +3440,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_S returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3437,6 +3448,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_U returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3444,6 +3456,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_VT returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     
@@ -3451,6 +3464,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc devInfo returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3460,6 +3474,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     cusolver_status = cusolverDnSgesvd_bufferSize(cudenseH, m, n, &Lwork );
     if (cusolver_status != CUSOLVER_STATUS_SUCCESS) {
         printf ("CUSOLVER DnSgesvd_bufferSize failed\n");
+		free(arraysizetmp);
         return EXIT_FAILURE;
     }
 
@@ -3467,6 +3482,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_Work returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     
@@ -3491,6 +3507,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
    
@@ -3503,6 +3520,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3510,6 +3528,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if((fp=fopen(fname, "w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", fname);
+        free(arraysizetmp);
         exit(0);
     }
     for(i=0; i<n; i++)
@@ -3527,6 +3546,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_U1 returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     for(ii=0;ii<m;ii++)
@@ -3565,6 +3585,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     
@@ -3573,6 +3594,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_M returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     
@@ -3583,6 +3605,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
      if (cudaStat != cudaSuccess)
     {
         printf("cublasSgemm returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
 
@@ -3618,6 +3641,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        free(arraysizetmp);
         exit(EXIT_FAILURE);
     }
     
@@ -3650,6 +3674,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     free(rwork);
     free(h_A);
     free(h_M);
+    
     
     return(0);
 }

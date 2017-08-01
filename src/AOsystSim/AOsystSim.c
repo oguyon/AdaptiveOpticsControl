@@ -2122,8 +2122,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
                     jj1start0 = jj1;
             }
         }
-    ii1end ++;
-    jj1end ++;
+
 
 
 	
@@ -3186,8 +3185,6 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     }
 
 
-    free(sizearray);
-
     return(0);
 }
 
@@ -3724,7 +3721,6 @@ int AOsystSim_DM(const char *CONF_FNAME)
     }
 
 
-    free(sizearray);
     free(dmifcarray_value);
     free(dmifcarray_act);
     free(dmifcarray_iijj);

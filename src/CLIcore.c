@@ -537,7 +537,8 @@ static int_fast8_t CLI_execute_line()
 
     }
 
-
+	free(thetime);
+	
     return(0);
 }
 
@@ -815,8 +816,9 @@ int_fast8_t main(int argc, char *argv[])
 
         data.CMDexecuted = 0;
 
-        if( fopen( "STOPCLI","r" ) != NULL ) {
+        if( (fp=fopen( "STOPCLI", "r" )) != NULL ) {
             fprintf(stdout, "STOPCLI FILE FOUND. Exiting...\n");
+            fclose(fp);
             exit(1);
         }
 
