@@ -1727,7 +1727,7 @@ int_fast8_t clearall()
 void *save_fits_function( void *ptr )
 {
     long ID;
-    struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+    struct savethreadmsg *tmsg; // = malloc(sizeof(struct savethreadmsg));
     uint32_t*imsizearray;
     uint32_t xsize, ysize;
     uint8_t atype;
@@ -1743,7 +1743,9 @@ void *save_fits_function( void *ptr )
     // printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
     //fflush(stdout);
     if(tmsg->partial==0) // full image
+    {
         save_fits(tmsg->iname, tmsg->fname);
+	}
     else
     {
         //      printf("Saving partial image (name = %s   zsize = %ld)\n", tmsg->iname, tmsg->cubesize);
@@ -1848,7 +1850,7 @@ void *save_fits_function( void *ptr )
     free(imsizearray);
     pthread_exit(&tret);
     
-    free(tmsg);
+  //  free(tmsg);
 }
 
 
@@ -6066,7 +6068,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
         exit(EXIT_FAILURE);
     }
 
-    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    // this line is not needed, as frame_md is declared below
+    // frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    
     framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
     buff = (char*) malloc(sizeof(char)*framesize1);
 

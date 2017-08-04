@@ -85,6 +85,24 @@ Additional documentation that is not meant to be processed by doxygen (but can b
 
 
 
+### Documentation in source code: conventions
+
+Documentation should appear before each function in the .c and .h files, following these teamplates.
+
+
+### .h file
+
+<a href="../doc/templatemodule/templatemodule.h">Download templatemodule.h</a> 
+
+See corresponding doxygen documentation : templatemodule/templatemodule.h
+
+
+### .c file
+
+<a href="../doc/templatemodule/templatemodule.c">Download templatemodule.c</a> 
+
+See corresponding doxygen documentation : templatemodule/templatemodule.c
+
 
 
 

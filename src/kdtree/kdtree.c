@@ -817,9 +817,10 @@ static int rlist_insert(struct res_node *list, struct kdnode *item, double dist_
 
 static void clear_results(struct kdres *rset)
 {
-        struct res_node *tmp, *node = rset->rlist->next;
+        struct res_node *node = rset->rlist->next;
 
         while(node) {
+				struct res_node *tmp;
                 tmp = node;
                 node = node->next;
                 free_resnode(tmp);

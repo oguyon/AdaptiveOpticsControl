@@ -55,7 +55,7 @@ int OPTICSMATERIALS_code(char *name)
     for (i = 0; MatCode[i].name != NULL; i++) {
         if (strcmp(name, MatCode[i].name) == 0) {
             //printf("Material \"%s\" -> code = %d\n",  name, MatCode[i].code);
-            return MatCode[i].code;
+            code = MatCode[i].code;
         }
     }
 
@@ -67,6 +67,8 @@ int OPTICSMATERIALS_code(char *name)
 
     return(code);
 }
+
+
 
 
 char* OPTICSMATERIALS_name(int code)
@@ -1451,7 +1453,7 @@ double OPTICSMATERIALS_pha_lambda( int material, double z, double lambda )
     double pha;
 
     double PressureRatio = 0.0; // Vacuum
-    double nair = 1.0;
+    double nair;
     double lambdaum;
 
     lambdaum = lambda*1.0e6;

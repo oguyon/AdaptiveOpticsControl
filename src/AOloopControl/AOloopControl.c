@@ -383,12 +383,9 @@ NOTATIONS:
 
 static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *FunctionName, const long line, char *comments)
 {
-	FILE *fp;
 	time_t tnow;
-	struct tm *uttime;
 	struct timespec timenow;
 	pid_t tid;
-	char string[21];
 	char modechar;
 	
 	modechar = '?';
@@ -405,14 +402,16 @@ static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *Fun
 
 	if(AOLOOPCONTROL_logfunc_level < AOLOOPCONTROL_logfunc_level_max)
 	{
+		struct tm *uttime;
 		tnow = time(NULL);
 		uttime = gmtime(&tnow);
 		clock_gettime(CLOCK_REALTIME, &timenow);
 		tid = syscall(SYS_gettid);
 		
 	
-		// add custom parameter into string (optional) 
-
+		// add custom parameter into string (optional)
+		char string[21];
+		FILE *fp;
 		fp = fopen(AOLOOPCONTROL_logfunc_fname, "a");
 		fprintf(fp, "%02d:%02d:%02ld.%09ld  %10d  %10d  %3d  %c %40s %6ld   %20s %s\n", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec, getpid(), (int) tid, modechar, AOLOOPCONTROL_logfunc_level, FunctionName, line, string, comments);
 		fclose(fp);
@@ -1108,7 +1107,6 @@ int_fast8_t AOloopControl_setparam_cli()
 int_fast8_t init_AOloopControl()
 {
     FILE *fp;
-    int r;
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -1116,8 +1114,10 @@ int_fast8_t init_AOloopControl()
 
 
     if((fp=fopen("LOOPNUMBER","r"))!=NULL)
-    {
-        r = fscanf(fp,"%ld", &LOOPNUMBER);
+    {		
+        if(fscanf(fp,"%8ld", &LOOPNUMBER) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read LOOPNUMBER");
+
         printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
         fclose(fp);
     }
@@ -1404,7 +1404,6 @@ int_fast8_t init_AOloopControl()
 
 
 
-
     
 
     
@@ -1415,7 +1414,15 @@ int_fast8_t init_AOloopControl()
 
 
 
-    RegisterCLIcommand("aolsetloopfrequ",__FILE__, AOloopControl_set_loopfrequ_cli, "set loop frequency", "<loop frequ [Hz]>", "aolsetloopfrequ 2000", "int AOloopControl_set_loopfrequ(float loopfrequ)");
+RegisterCLIcommand("aolsetloopfrequ",
+                   __FILE__,
+                   AOloopControl_set_loopfrequ_cli,
+                   "set loop frequency",
+                   "<loop frequ [Hz]>",
+                   "aolsetloopfrequ 2000",
+                   "int AOloopControl_set_loopfrequ(float loopfrequ)");
+
+
 
     RegisterCLIcommand("aolsethlat", __FILE__, AOloopControl_set_hardwlatency_frame_cli, "set hardware latency", "<hardware latency [frame]>", "aolsethlat 2.7", "int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
 
@@ -1573,23 +1580,19 @@ int_fast8_t init_AOloopControl()
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 {
     FILE *fp;
-    char content[200];
-    char name[200];
-    char name1[200];
-    char fname[200];
-    long ID;
+    char content[201];
+    char name[201];
+    char fname[201];
     uint32_t *sizearray;
-    int vOK;
     int kw;
     long k;
     int r;
     int sizeOK;
-    char command[500];
+    char command[501];
     int CreateSMim;
-    long ID1tmp, ID2tmp;
     long ii;
-    long kk, tmpl;
-    char testdirname[200];
+    long tmpl;
+    char testdirname[201];
     
     int initwfsref;
     
@@ -1621,19 +1624,26 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     // Name definitions for shared memory
 
-    sprintf(name, "aol%ld_dmC", loop);
+    if(sprintf(name, "aol%ld_dmC", loop)<1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
     printf("DM control file name : %s\n", name);
     strcpy(AOconf[loop].dmCname, name);
 
-    sprintf(name, "aol%ld_dmdisp", loop); // used to notify dm combine that a new displacement should be computed
+    if(sprintf(name, "aol%ld_dmdisp", loop) < 1) // used to notify dm combine that a new displacement should be computed
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     printf("DM displacement file name : %s\n", name);
     strcpy(AOconf[loop].dmdispname, name);
 
-    sprintf(name, "aol%ld_dmRM", loop);
+    if(sprintf(name, "aol%ld_dmRM", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
     printf("DM RM file name : %s\n", name);
     strcpy(AOconf[loop].dmRMname, name);
 
-    sprintf(name, "aol%ld_wfsim", loop);
+    if(sprintf(name, "aol%ld_wfsim", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("WFS file name: %s\n", name);
     strcpy(AOconf[loop].WFSname, name);
 
@@ -1641,15 +1651,18 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     // Modal control
 
-    sprintf(name, "aol%ld_DMmodes", loop);
+    if(sprintf(name, "aol%ld_DMmodes", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("DMmodes file name: %s\n", name);
     strcpy(AOconf[loop].DMmodesname, name);
 
-    sprintf(name, "aol%ld_respM", loop);
+    if(sprintf(name, "aol%ld_respM", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("respM file name: %s\n", name);
     strcpy(AOconf[loop].respMname, name);
 
-    sprintf(name, "aol%ld_contrM", loop);
+    if(sprintf(name, "aol%ld_contrM", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
 
@@ -1665,7 +1678,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf("ERROR: file ./conf/conf_LOOPNAME.txt missing\n");
         exit(0);
     }
-    r = fscanf(fp, "%s", content);
+    if(fscanf(fp, "%200s", content) != 1)
+		printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+    
+    
     printf("loop name : %s\n", content);
     fprintf(fplog, "AOconf[%ld].name = %s\n", loop, AOconf[loop].name);
     fclose(fp);
@@ -1682,7 +1698,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			
         printf("WFSnormalize : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1699,7 +1717,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].loopfrequ);
+        if(fscanf(fp, "%50f", &AOconf[loop].loopfrequ) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			
         printf("loopfrequ : %f\n", AOconf[loop].loopfrequ);
         fclose(fp);
         fflush(stdout);
@@ -1714,7 +1734,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].hardwlatency);
+        if(fscanf(fp, "%50f", &AOconf[loop].hardwlatency) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("hardwlatency : %f\n", AOconf[loop].hardwlatency);
         fclose(fp);
         fflush(stdout);
@@ -1730,7 +1752,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].complatency);
+        if(fscanf(fp, "%50f", &AOconf[loop].complatency) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("complatency : %f\n", AOconf[loop].complatency);
         fclose(fp);
         fflush(stdout);
@@ -1745,7 +1769,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency);
+        if(fscanf(fp, "%50f", &AOconf[loop].wfsmextrlatency) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf(" : %f\n", AOconf[loop].wfsmextrlatency);
         fclose(fp);
         fflush(stdout);
@@ -1767,7 +1793,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPU : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1786,7 +1814,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPUall : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1804,7 +1834,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPU : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1824,7 +1856,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("AOLCOMPUTE_TOTAL_ASYNC : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1846,7 +1880,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("Matrix mult mode : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1865,7 +1901,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%200s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("loopfrequ : %f\n", atof(content));
         fclose(fp);
         fflush(stdout);
@@ -1881,7 +1919,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    sprintf(name, "aol%ld_looptiming", loop);
+    if(sprintf(name, "aol%ld_looptiming", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1);
 
 
@@ -1920,24 +1960,29 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     // If not available in shared memory, create it in shared memory
     // if "fname" exists, attempt to load it into the shared memory image
 
-    sprintf(name, "aol%ld_wfsdark", loop);
+    if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     sprintf(fname, "./conf/aol%ld_wfsdark.fits", loop);
     aoconfID_wfsdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     
     
 
-    sprintf(name, "aol%ld_imWFS0", loop);
+    if(sprintf(name, "aol%ld_imWFS0", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     COREMOD_MEMORY_image_set_createsem(name, 10);
   
-    sprintf(name, "aol%ld_imWFS0tot", loop);
+    if(sprintf(name, "aol%ld_imWFS0tot", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     aoconfID_imWFS0tot = AOloopControl_2Dloadcreate_shmim(name, " ", 1, 1);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
-    sprintf(name, "aol%ld_imWFS1", loop);
+    if(sprintf(name, "aol%ld_imWFS1", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     aoconfID_imWFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-    sprintf(name, "aol%ld_imWFS2", loop);
+    if(sprintf(name, "aol%ld_imWFS2", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     aoconfID_imWFS2 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
@@ -1945,18 +1990,31 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	
 	initwfsref = AOconf[loop].init_wfsref0;
-    sprintf(name, "aol%ld_wfsref0", loop);
-    sprintf(fname, "./conf/aol%ld_wfsref0.fits", loop);
+    
+    if(sprintf(name, "aol%ld_wfsref0", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
+    if(sprintf(fname, "./conf/aol%ld_wfsref0.fits", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_wfsref0 = 1;
 
-    sprintf(name, "aol%ld_wfsref", loop);
-    sprintf(fname, "./conf/aol%ld_wfsref.fits", loop);
+    if(sprintf(name, "aol%ld_wfsref", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
+    if(sprintf(fname, "./conf/aol%ld_wfsref.fits", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     aoconfID_wfsref = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     if(initwfsref==0)
 		{
-			sprintf(name1, "aol%ld_wfsref0", loop);
+			char name1[200];
+			
+			if(sprintf(name1, "aol%ld_wfsref0", loop) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
 			copy_image_ID(name1, name, 1);
 		}
  
@@ -2012,7 +2070,11 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
         if(aoconfID_DMmodes==-1) // If not, check file
         {
-           sprintf(fname, "./conf/aol%ld_DMmodes.fits", loop);
+			long ID1tmp, ID2tmp;
+			int vOK;
+			
+            if(sprintf(fname, "./conf/aol%ld_DMmodes.fits", loop) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             printf("Checking file \"%s\"\n", fname);
 
@@ -2021,7 +2083,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             if(ID1tmp==-1)
             {
                 printf("WARNING: no file \"%s\" -> loading zonal modes\n", fname);
-                sprintf(fname, "./conf/aol%ld_DMmodes_zonal.fits", loop);
+                
+                if(sprintf(fname, "./conf/aol%ld_DMmodes_zonal.fits", loop) <1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
 				ID1tmp = load_fits(fname, "tmp3Dim", 1);
 				if(ID1tmp==-1)
 					{
@@ -2162,8 +2227,12 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     if(level>=10)
     {
+		long ID;
+		
         // Load/create modal command vector memory
-        sprintf(name, "aol%ld_DMmode_cmd", loop);
+        if(sprintf(name, "aol%ld_DMmode_cmd", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         ID = image_ID(name);
         printf("STEP 000-------------\n");
         fflush(stdout);
@@ -2176,42 +2245,48 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-        sprintf(name, "aol%ld_DMmode_meas", loop);
+        if(sprintf(name, "aol%ld_DMmode_meas", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_meas_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
 			for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_meas_modes].array.F[k] = 0.0;
 
-        sprintf(name, "aol%ld_DMmode_AVE", loop);
+        if(sprintf(name, "aol%ld_DMmode_AVE", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_AVE_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_AVE_modes].array.F[k] = 0.0;
 
-        sprintf(name, "aol%ld_DMmode_RMS", loop);
+        if(sprintf(name, "aol%ld_DMmode_RMS", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_RMS_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
 
-        sprintf(name, "aol%ld_DMmode_GAIN", loop);
+        if(sprintf(name, "aol%ld_DMmode_GAIN", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_GAIN_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_GAIN_modes].array.F[k] = 1.0;
 
-        sprintf(name, "aol%ld_DMmode_LIMIT", loop);
+        if(sprintf(name, "aol%ld_DMmode_LIMIT", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_LIMIT_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
 
-        sprintf(name, "aol%ld_DMmode_MULTF", loop);
+        if(sprintf(name, "aol%ld_DMmode_MULTF", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         ID = image_ID(name);
         aoconfID_MULTF_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
@@ -2221,7 +2296,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-       sprintf(name, "aol%ld_wfsmask", loop);
+		if(sprintf(name, "aol%ld_wfsmask", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         sprintf(fname, "conf/%s.fits", name);
         aoconfID_wfsmask = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
         AOconf[loop].activeWFScnt = 0;
@@ -2232,8 +2308,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             if(data.image[aoconfID_wfsmask].array.F[ii]>0.5)
                 AOconf[loop].activeWFScnt++;
             
-       sprintf(name, "aol%ld_dmmask", loop);
-        sprintf(fname, "conf/%s.fits", name);
+		if(sprintf(name, "aol%ld_dmmask", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/%s.fits", name) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_dmmask = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
         if(aoconfID_dmmask==-1)
             for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
@@ -2242,18 +2320,22 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
             if(data.image[aoconfID_dmmask].array.F[ii]>0.5)
                 AOconf[loop].activeDMcnt++;
-    printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
-     printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
+		printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
+		printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
 
 
         AOconf[loop].init_RM = 0;
-        sprintf(fname, "conf/aol%ld_respM.fits", loop);
+        if(sprintf(fname, "conf/aol%ld_respM.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_RM = 1;
 
 
         AOconf[loop].init_CM = 0;
-        sprintf(fname, "conf/aol%ld_contrM.fits", loop);
+        if(sprintf(fname, "conf/aol%ld_contrM.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_CM = 1;
     
@@ -2264,8 +2346,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             }
         else
             {
-                r = fscanf(fp, "%ld", &tmpl);   
-                if(r==1)
+                if(fscanf(fp, "%50ld", &tmpl) == 1)
                     AOconf[loop].DMmodesNBblock = tmpl;
                 else
                 {
@@ -2277,27 +2358,38 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         
         
         
-        sprintf(name, "aol%ld_contrMc", loop);
-        sprintf(fname, "conf/aol%ld_contrMc.fits", loop);
+        if(sprintf(name, "aol%ld_contrMc", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		if(sprintf(fname, "conf/aol%ld_contrMc.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_contrMc = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizeDM);
  
-        sprintf(name, "aol%ld_contrMcact", loop);
-        sprintf(fname, "conf/aol%ld_contrMcact_00.fits", loop);
+        if(sprintf(name, "aol%ld_contrMcact", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/aol%ld_contrMcact_00.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_contrMcact[0] = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
         
         
         
         
-        sprintf(name, "aol%ld_gainb", loop);
-        sprintf(fname, "conf/aol%ld_gainb.fits", loop);
+        if(sprintf(name, "aol%ld_gainb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/aol%ld_gainb.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_gainb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1);
 
-        sprintf(name, "aol%ld_multfb", loop);
-        sprintf(fname, "conf/aol%ld_multfb.fits", loop);
+        if(sprintf(name, "aol%ld_multfb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/aol%ld_multfb.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_multfb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1);
         
-        sprintf(name, "aol%ld_limitb", loop);
-        sprintf(fname, "conf/aol%ld_limitb.fits", loop);
+        if(sprintf(name, "aol%ld_limitb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/aol%ld_limitb.fits", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_limitb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1);        
         
         
@@ -2307,16 +2399,20 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         #endif
     
 		
-    
+		uint_fast16_t kk;
         for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
-            {          
+            {
+				long ID;
+				          
 				#ifdef _PRINT_TEST 
 				printf("TEST - BLOCK %3ld gain = %f\n", kk, data.image[aoconfID_gainb].array.F[kk]);
 				fflush(stdout);
 				#endif
 				      
-                sprintf(name, "aol%ld_DMmodes%02ld", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);
+                if(sprintf(name, "aol%ld_DMmodes%02ld", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                if(sprintf(fname, "conf/%s.fits", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 printf("FILE = %s\n", fname);
                 printf("====== LOADING %s to %s\n", fname, name);
                 fflush(stdout);
@@ -2324,22 +2420,28 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                     AOconf[loop].NBmodes_block[kk] = data.image[ID].md[0].size[2];
                 
                 
-                sprintf(name, "aol%ld_respM%02ld", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);
+                if(sprintf(name, "aol%ld_respM%02ld", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                if(sprintf(fname, "conf/%s.fits", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 printf("====== LOADING %s to %s\n", fname, name);
                 fflush(stdout);
                 AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk]);
              
              
-                sprintf(name, "aol%ld_contrM%02ld", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);
+                if(sprintf(name, "aol%ld_contrM%02ld", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                if(sprintf(fname, "conf/%s.fits", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 printf("====== LOADING %s to %s\n", fname, name);
                 fflush(stdout);
                 AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk]);
         
             
-                sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);      
+                if(sprintf(name, "aol%ld_contrMc%02ld", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                if(sprintf(fname, "conf/%s.fits", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 ID = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
                 if(kk==0)
                     for(ii=0;ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;ii++)
@@ -2348,8 +2450,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                     data.image[aoconfID_contrMc].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
               
                 
-                sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);
+                if(sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                if(sprintf(fname, "conf/%s.fits", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
              //   sprintf(fname, "conf/aol%ld_contrMcact%02ld_00", loop, kk);
                 printf("====== LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
@@ -2377,14 +2481,16 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 			AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
      
-    sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0); 
+    if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     fp = fopen(fname, "w");
 	fprintf(fp, "   0\n");
 	fprintf(fp, "%4ld\n", AOconf[loop].NBmodes_block[0]);
     fclose(fp);
     for(k=1;k<AOconf[loop].DMmodesNBblock; k++)
     {
-		sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", k); 
+		if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", k) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 		fp = fopen(fname, "w");
 		fprintf(fp, "%4ld\n", AOconf[loop].indexmaxMB[k-1]);
 		fprintf(fp, "%4ld\n", AOconf[loop].NBmodes_block[k]);
@@ -2424,15 +2530,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
     int SM_fd;
     struct stat file_stat;
     int create = 0;
-    int result;
-    long loop;
-    char cntname[200];
-    int k;
-    FILE *fp;
-    // FILE *fp1; // testing
+    long loop;    
     int tmpi;
-    int ret;
-    char fname[200];
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -2463,6 +2562,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 
     if(create==1)
     {
+		int result;
+		
         SM_fd = open(AOconfname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 
         if (SM_fd == -1) {
@@ -2500,6 +2601,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 	
     if((mode==0)||(create==1))
     {
+		char cntname[200];
+		
         AOconf[loop].on = 0;
         AOconf[loop].DMprimaryWrite_ON = 0;
 		AOconf[loop].AUTOTUNE_LIMITS_ON = 0;
@@ -2509,7 +2612,9 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         AOconf[loop].cntmax = 0;
         AOconf[loop].init_CMc = 0;
         
-        sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
+        if(sprintf(cntname, "aol%ld_logdata", loop) < 1) // contains loop count (cnt0) and loop gain
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         if((aoconfIDlogdata = image_ID(cntname))==-1)
         {
 			uint32_t *sizearray;
@@ -2573,13 +2678,22 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         fflush(stdout);
 
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+
+        uint_fast16_t k;
+
         for(k=0; k<GPUcntMax; k++)
         {
-            sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", k);
+			FILE *fp;
+			char fname[200];
+			
+            if(sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", (int) k) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
-            {
-                ret = fscanf(fp, "%d" , &tmpi);
+            {				
+                if(fscanf(fp, "%50d" , &tmpi) != 1)
+					 printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+                
                 fclose(fp);
                 GPUset0[k] = tmpi;
             }
@@ -2588,16 +2702,20 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         }
 
 
-
-
         GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
         for(k=0; k<GPUcntMax; k++)
         {
-            sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", k);
+			FILE *fp;
+			char fname[200];
+			
+            if(sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", (int) k) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
             {
-                ret = fscanf(fp, "%d" , &tmpi);
+                if(fscanf(fp, "%50d" , &tmpi) != 1)
+					printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+					
                 fclose(fp);
                 GPUset1[k] = tmpi;
             }
@@ -2643,9 +2761,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     int CreateSMim = 0;
     int sizeOK;
     uint32_t *sizearray;
-    char command[500];
-    int r;
-    long ID1;
+    
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -2671,14 +2787,21 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
         CreateSMim = 0;
         ID = read_sharedmem_image(name);
         if(ID!=-1)  // ... and <name> does not exist as a memory stream
-        {
+        {			
             sizeOK = COREMOD_MEMORY_check_2Dsize(name, xsize, ysize);
             if(sizeOK==0)  // if size is different, delete stream -> create new one
             {
+				char command[500];
+				
                 printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
                 delete_image_ID(name);
-                sprintf(command, "rm /tmp/%s.im.shm", name);
-                r = system(command);
+                
+                if(sprintf(command, "rm /tmp/%s.im.shm", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(system(command)!=0)
+					printERROR(__FILE__,__func__,__LINE__, "system() error");
+
                 CreateSMim = 1;
                 loadcreatestatus = 0;
             }
@@ -2707,6 +2830,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     }
     else
     {
+		long ID1;
+		
         ID1 = load_fits(fname, "tmp2Dim", 1);
         if(ID1!=-1)
         {
@@ -2772,17 +2897,17 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 }
 
 
+
+
+
 long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
 {
     long ID;
     int CreateSMim;
     int sizeOK;
     uint32_t *sizearray;
-    char command[500];
-    int r;
     long ID1;
     int creashmimfromFITS = 0;
-    long xsize1, ysize1, zsize1;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -2825,13 +2950,20 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
             sizeOK = COREMOD_MEMORY_check_3Dsize(name, xsize, ysize, zsize);
             if(sizeOK==0)
             {
+				char command[500];
+				
                 //               printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
        			printf("        AOloopControl_3Dloadcreate_shmim: ===== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s\n", name, name);
 				fflush(stdout);
       
                 delete_image_ID(name);
-                sprintf(command, "rm /tmp/%s.im.shm", name);
-                r = system(command);
+                
+                if(sprintf(command, "rm /tmp/%s.im.shm", name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
+                if(system(command) != 0)
+					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+                
                 CreateSMim = 1;
                 loadcreatestatus = 0;
             }
@@ -2890,6 +3022,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 			fflush(stdout);
             if(sizeOK==1)
             {
+				long xsize1, ysize1, zsize1;
+				
                 xsize1 = data.image[ID1].md[0].size[0];
                 ysize1 = data.image[ID1].md[0].size[1];
                 zsize1 = data.image[ID1].md[0].size[2];
@@ -2998,10 +3132,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
     long IDout_AC, IDout_RMS;
     long xsize, ysize;
     uint32_t *sizearray;
-    long cnt0old;
+    long cnt0old = 0;
     long delayus = 100;
-    int OKloop;
-    long ii;
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -3030,14 +3162,14 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
      
     free(sizearray);
    
-    OKloop = 1;
-    while(OKloop==1)
-    {
+	for(;;)
+	{
         if(data.image[IDin].md[0].cnt0 != cnt0old)
             {
                 data.image[IDout_ave].md[0].write = 1;
                 data.image[IDout_AC].md[0].write = 1;
                 data.image[IDout_RMS].md[0].write = 1;
+                uint_fast64_t ii;
                 for(ii=0;ii<xsize*ysize;ii++)
                     {
                         data.image[IDout_ave].array.F[ii] = (1.0-alpha)*data.image[IDout_ave].array.F[ii] + alpha * data.image[IDin].array.F[ii];
@@ -3054,6 +3186,7 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
             }
         usleep(delayus);
     }
+    
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
@@ -3072,10 +3205,9 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 	long ksize;
 	long IDbuff;
 	long xsize, ysize;
-	long kindex;
+	long kindex = 0;
 	long cnt;
 	long framesize;
-	char *ptr0;
 	long IDtmp;
 	long xysize;
 	float eps=1.0e-8;
@@ -3109,7 +3241,6 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 	
 	
 	IDbuff = create_3Dimage_ID("_tmpbuff", xsize, ysize, ksize);
-	kindex = 0;
 	
 	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = xsize;
@@ -3125,8 +3256,8 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
     kindex = 0;
     cnt = 0;
 
-    while(1 == 1)
-    {
+	for(;;)
+	{
 	 if(data.image[IDin].md[0].sem==0)
         {
             while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
@@ -3136,7 +3267,7 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
         else
             sem_wait(data.image[IDin].semptr[insem]);
 		
-	
+		char *ptr0;
 
         ptr0 = (char*) data.image[IDbuff].array.F;
         ptr0 += kindex*framesize;
@@ -3184,6 +3315,7 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 
 
 
+
 long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)
 {
 	long IDin, IDout;
@@ -3227,7 +3359,8 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	xsize1 = xsize0*NBcols;
 	ysize1 = ysize0*(1 + (long) (1.0*zsize0/NBcols-0.00001));
 	
-	sprintf(out0name, "%sc", out_name);
+	if(sprintf(out0name, "%sc", out_name) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 	
 	atype = _DATATYPE_FLOAT;
 	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
@@ -3237,7 +3370,7 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	IDout0 = create_image_ID(out0name, 2, sizearray, atype, 1, 0);
 	free(sizearray);
 	
-	while(1 == 1)
+	for(;;)
     {
 		if(data.image[IDin].md[0].sem==0)
         {
@@ -3821,7 +3954,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
 
-        sprintf(Average_cam_frames_dname, "aol%ld_wfsdark", loop);
+        if(sprintf(Average_cam_frames_dname, "aol%ld_wfsdark", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         Average_cam_frames_IDdark = image_ID(Average_cam_frames_dname);
         Average_cam_frames_nelem = AOconf[loop].sizeWFS;
 
@@ -4222,16 +4357,14 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     int r;
     long IDpokeC;
     long NBpoke;
-    long PokeIndex, PokeIndex1;
 	long framesize;
 	char *ptr0; // source
 	float *arrayf;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     int ret;
-    long cntn;
 	long imcnt;
-	long ii, kk, kk1;
+	long ii;
 	
 	long imcntmax;
 	long *array_iter;
@@ -4307,7 +4440,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-    sprintf(name, "aol%ld_imWFS1RM", loop);
+    if(sprintf(name, "aol%ld_imWFS1RM", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -4316,13 +4451,12 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-
+	uint_fast16_t PokeIndex;
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] = 0.0;
 
 
-    cntn = 0;
     iter = 0;
 
 
@@ -4357,10 +4491,10 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
         
         // initialize with first poke
-        kk = 0;
-        kk1 = 0;
-		PokeIndex = 0;
-		PokeIndex1 = 0;
+        long kk = 0;
+        long kk1 = 0;
+		uint_fast16_t PokeIndex = 0;
+		uint_fast16_t PokeIndex1 = 0;
         
         
         usleep(delayRM1us);    
@@ -4475,7 +4609,6 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
             PokeIndex++;
         }
-        cntn = NBave; // Number of images
             
 
         for(ii=0; ii<AOconf[loop].sizeDM; ii++)
@@ -4501,8 +4634,6 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     
     free(sizearray);
 
-
-    
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
@@ -4672,8 +4803,7 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     int ret;
-    int PokeSign;
-    long act1, act2, kk1;
+    long act2;
     
     long *actarray;
     long poke, poke1, poke2;
@@ -4738,7 +4868,9 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 
 
 
-    sprintf(name, "aol%ld_imWFS1RM", loop);
+    if(sprintf(name, "aol%ld_imWFS1RM", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -4781,10 +4913,15 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
         
 //    save_fits("RMpokeCube", "!./conf/test1_RMpokeCube.fits");
 
-    sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
-    ret = system(command);
-    sprintf(command, "echo \"%ld\" > test_RM_NBpoke.txt\n", NBpoke);
-    ret = system(command);
+    if(sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+		
+    if(sprintf(command, "echo \"%ld\" > test_RM_NBpoke.txt\n", NBpoke) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     //    sleep(10);
 
@@ -4825,11 +4962,17 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
     fflush(stdout);
     
     //    for(iter=0; iter<NBiter; iter++)
-    r = system("mkdir -p zresptmp");
-    r = system("rm ./zresptmp/LO*.fits");
+    if(system("mkdir -p zresptmp") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+    
+    if(system("rm ./zresptmp/LO*.fits") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
-    r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
-    r = system(command);
+    if(sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
     printf("STARTING RM...\n");
@@ -4867,9 +5010,9 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 
         act = 0;
         
-        kk1 = 0;
-        PokeSign = 1;
-        act1 = 0;
+        long kk1 = 0;
+        int PokeSign = 1;
+        long act1 = 0;
         
 
         
@@ -5043,7 +5186,8 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
             for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii]/ampl/cntn;
-            sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
+            if(sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             save_fits(zrespm_name, fname);
 
             for(act=0; act<NBpoke; act++)
@@ -5053,9 +5197,14 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
                     data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                 }
 
-            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
+            if(sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             save_fits("zrespfp", fname);
-            r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
+
+            if(sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             save_fits("zrespfm", fname);
 
             total = 0.0;
@@ -5084,9 +5233,15 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 						data.image[ID_WFSref2n].array.F[ii] /= NBave;
 					}
             }
-            sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
+
+            if(sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             save_fits(WFSref0_name, fname);
-            sprintf(fname, "!./zresptmp/wfsimRMS.fits");
+            
+            if(sprintf(fname, "!./zresptmp/wfsimRMS.fits") < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             save_fits("wfsimrms", fname);
 
 
@@ -5102,7 +5257,10 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
                     }
                     data.image[ID_DMmap].array.F[act] = rms;
                 }
-                sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
+                
+                if(sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
                 save_fits(DMmap_name, fname);
 
 
@@ -5116,7 +5274,10 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
                     }
                     data.image[ID_WFSmap].array.F[ii] = rms;
                 }
-                sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
+                
+                if(sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
                 save_fits(WFSmap_name, fname);
 
                 if(mode>0) // compute WFSmask and DMmask
@@ -5143,8 +5304,11 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
                 }
             }
             iter++;
-            r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
-            r = system(command);
+            if(sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
         }
     } // end of iteration loop 
 
@@ -5188,8 +5352,6 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
 
     long IDeigenmodes;
 
-    long frameDelay = 0;
-    long frameDelayMax = 50;
     long double RMsig;
     long double RMsigold;
     long kc0;
@@ -5211,8 +5373,6 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
 
     long IDrespM;
     long IDwfsref0;
-
-    int r;
 
     long IDoptsignal; // optical signal for each mode, cumulative
     long IDoptsignaln; // optical signal for each mode, normalize
@@ -5304,7 +5464,9 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
     {
         if (file_exists("stopRM.txt"))
         {
-            r = system("rm stopRM.txt");
+            if(system("rm stopRM.txt") != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+
             iter = NBiter;
         }
         else
@@ -5530,7 +5692,8 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
             }
             save_fits("optsignaln","!./tmp/RM_optsign.fits");
 
-            sprintf(signame, "./tmp/RM_optsign_%06ld.txt", iter);
+            if(sprintf(signame, "./tmp/RM_optsign_%06ld.txt", iter) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             normcoeff = 0.0;
             normcoeffcnt = 0.0;
@@ -5555,7 +5718,8 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
             for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
                 fprintf(fp, "%ld  %g  %g  %g\n", k1, data.image[IDoptsignaln].array.F[k1], data.image[IDoptcnt].array.F[k1], data.image[IDmcoeff].array.F[k1]*amp);
             fclose(fp);
-            r = system("cp ./tmp/RM_outsign%06ld.txt ./tmp/RM_outsign.txt");
+            if(system("cp ./tmp/RM_outsign%06ld.txt ./tmp/RM_outsign.txt") != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
             save_fits("refwfsacq", "!./tmp/refwfs.fits");
             save_fits("respmacq", "!./tmp/respM.fits");
@@ -5604,25 +5768,23 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 	long IDbuff;
 	long ii, kk;
 	
-	
 	long HardwareLag_int;
 	float HardwareLag_frac;
 	float WFSperiod;
 
 	long NBmodes;
 	long dmxsize, dmysize, dmxysize, wfsxsize, wfsysize, wfsxysize;
-	long twait = 100;
+	long twait;
 
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
 	char *ptr0;
-	char *ptr1;
 	long dmframesize;
 	long wfsframesize;
 	char *ptrs0;
 	char *ptrs1;
-	long buffindex;
+	
 	
 
     #ifdef AOLOOPCONTROL_LOGFUNC0
@@ -5694,6 +5856,7 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 	
 	for(kk=0;kk<NBmodes;kk++)
 	{
+		char *ptr1;
 		
 		sem_wait(data.image[IDwfs].semptr[semtrig]);
 		ptrs1 = ptrs0 + wfsxysize*(2*kk);
@@ -5743,6 +5906,8 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 	IDout = create_3Dimage_ID(outname, wfsxsize, wfsysize, NBmodes);
 	for(kk=0;kk<NBmodes;kk++)
 		{
+			long buffindex;
+			
 			buffindex = 2*kk + HardwareLag_int;
 			for(ii=0;ii<wfsxysize;ii++)
 			{
@@ -5916,7 +6081,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
 {
     long IDin, IDhad, IDout, IDindex;
     long NBact, NBframes, sizexwfs, sizeywfs, sizewfs;
-    long kk, kk0, kk1, ii;
+    long kk, kk1, ii;
     uint32_t zsizeout;
 
 
@@ -5945,7 +6110,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
     zsizeout = data.image[IDindex].md[0].size[0]*data.image[IDindex].md[0].size[1];
     IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, zsizeout);
 
-
+	long kk0;
     # ifdef _OPENMP
     #pragma omp parallel for private(kk0,kk1,ii)
     # endif
@@ -5987,14 +6152,9 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
 long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
 {
     long IDmask;
-    long ID, ID0, IDtm, IDg, IDeModes, IDem, IDtmp, IDtmpg, IDslaved;
+    long ID, ID0, IDtm, IDem, IDtmpg, IDslaved;
     long ii, jj;
-    double x, y, r, PA, val1, xc1, yc1, ave, totm, totvm, val0, offset, rms, sigma;
-
-    double a0=0.88;
-    double b0=40.0;
-    double a1=1.2;
-    double b1=12.0;
+    double x, y, r, PA, xc1, yc1, totm, offset, rms, sigma;
 
     long NBZ, m;
     long zindex[10];
@@ -6004,14 +6164,8 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 
     double coeff;
     long kelim = 20;
-    long kernsize, citer, conviter;
-   long NBciter = 200;
-    long NBconviter = 10;
+    long conviter;
 
-	long IDtmp1, IDtmp2;
-	long pixcnt;
-	float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym;
-	float ctot;
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -6055,6 +6209,12 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     IDmask = image_ID("dmmask");
     if(IDmask==-1)
     {
+		double val0, val1;
+		double a0=0.88;
+		double b0=40.0;
+		double a1=1.2;
+		double b1=12.0;
+		
         IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
         for(ii=0; ii<msizex; ii++)
             for(jj=0; jj<msizey; jj++)
@@ -6155,7 +6315,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
     {
         /// Remove excluded modes
-        IDeModes = image_ID("emodes");
+        long IDeModes = image_ID("emodes");
         if(IDeModes!=-1)
         {
             IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
@@ -6178,8 +6338,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
         }
 
 
-        ave = 0.0;
-        totvm = 0.0;
+        double totvm = 0.0;
         for(ii=0; ii<msizex*msizey; ii++)
         {
             //	  data.image[ID].array.F[k*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
@@ -6226,11 +6385,16 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 	
     if(MaskMode==1)
     {
-        kernsize = 5;
+        long kernsize = 5;
+		long NBciter = 200;
+		long citer;
+		
         if(2*kernsize>msizex)
             kernsize = msizex/2;
         for(citer=0; citer<NBciter; citer++)
         {
+			long IDg; 
+			
             printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
             gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), kernsize);
             IDg = image_ID("modeg");
@@ -6252,10 +6416,9 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     ID = image_ID(ID_name);
     if((IDslaved != -1)&&(IDmask!=-1))
     {
-         IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
-         IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);
-                
-                IDtmp2 = create_2Dimage_ID("_tmpcoeff2", msizex, msizey);
+         long IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
+         long IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);                
+         long IDtmp2 = create_2Dimage_ID("_tmpcoeff2", msizex, msizey);
                 for(m=0; m<data.image[ID].md[0].size[2]; m++)
                 {
 					// write input DM mode
@@ -6266,7 +6429,10 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 							data.image[IDtmp2].array.F[ii] = data.image[IDtmp1].array.F[ii];
 						}
 				
-					pixcnt = 1;
+					long pixcnt = 1;
+					float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym;
+					float ctot;
+					
 					while(pixcnt>0)
 					{
 					pixcnt = 0;
@@ -6352,6 +6518,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 
 
 
+
 // dmmask_perclow = 0.2
 // dmmask_coefflow = 1.0
 // dmmask_perchigh = 0.7
@@ -6384,7 +6551,9 @@ int_fast8_t AOloopControl_mkCalib_map_mask(long loop, const char *zrespm_name, c
     sizeyWFS = data.image[IDzrm].md[0].size[1];
     NBpoke = data.image[IDzrm].md[0].size[2];
     
-    sprintf(name, "aol%ld_dmC", loop);
+    if(sprintf(name, "aol%ld_dmC", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     IDdm = read_sharedmem_image(name);
     sizexDM = data.image[IDdm].md[0].size[0];
     sizeyDM = data.image[IDdm].md[0].size[1];
@@ -6547,7 +6716,9 @@ int_fast8_t AOloopControl_Process_zrespM(long loop, const char *IDzrespm0_name, 
     sizeyWFS = data.image[IDzrm].md[0].size[1];
     NBpoke = data.image[IDzrm].md[0].size[2];
     
-    sprintf(name, "aol%ld_dmC", loop);
+    if(sprintf(name, "aol%ld_dmC", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     IDdm = read_sharedmem_image(name);
     sizexDM = data.image[IDdm].md[0].size[0];
     sizeyDM = data.image[IDdm].md[0].size[1];
@@ -6653,9 +6824,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     char fname[200];
     char zrname[200];
     long kmat;
-    long IDzrespfp, IDzrespfm;
     long sizexWFS, sizeyWFS, sizeWFS;
-    long sizexDM, sizeyDM;
     long *IDzresp_array;
     long ii;
     double fluxpos, fluxneg;
@@ -6663,26 +6832,25 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     long k, kmin, kmax, kband;
     long IDzrm;
     float ave;
-    int initWFSrefcube = 0;
     long *IDWFSrefc_array;
     long IDWFSref;
     long IDWFSmap, IDDMmap;
     long IDWFSmask, IDDMmask;
     float lim, rms;
     double tmpv;
-    long IDdm;
     long NBmatlim = 3;
     long ID1;
-    long IDrmpokec;
     long NBpoke, poke;
-    double tot, tot1, totm;
+    double tot, totm;
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif
     
 
-    sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
+    if(sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
     if((fp = fopen(fname, "r"))==NULL)
     {
         printf("ERROR: cannot open file \"%s\"\n", fname);
@@ -6690,7 +6858,9 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     }
     else
     {
-        r = fscanf(fp, "%ld", &NBmat);
+        if(fscanf(fp, "%50ld", &NBmat) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+		
         fclose(fp);
     }
 
@@ -6704,10 +6874,9 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     else
         printf("Processing %ld matrices\n", NBmat);
 
-    sprintf(name, "aol%ld_dmC", loop);
-    IDdm = read_sharedmem_image(name);
-    sizexDM = data.image[IDdm].md[0].size[0];
-    sizeyDM = data.image[IDdm].md[0].size[1];
+    if(sprintf(name, "aol%ld_dmC", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
 
     IDzresp_array = (long*) malloc(sizeof(long)*NBmat);
     IDWFSrefc_array = (long*) malloc(sizeof(long)*NBmat);
@@ -6715,21 +6884,29 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
     {                    
-        r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
-        IDzrespfp = load_fits(fname, "zrespfp", 2);
-        r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
-        IDzrespfm = load_fits(fname, "zrespfm", 2);
+        if(sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
+        long IDzrespfp = load_fits(fname, "zrespfp", 2);
+
+        if(sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+        long IDzrespfm = load_fits(fname, "zrespfm", 2);
 
         sizexWFS = data.image[IDzrespfp].md[0].size[0];
         sizeyWFS = data.image[IDzrespfp].md[0].size[1];
         NBpoke = data.image[IDzrespfp].md[0].size[2];
         sizeWFS = sizexWFS*sizeyWFS;
         
-        r = sprintf(name, "wfsrefc%03ld", kmat);
+        if(sprintf(name, "wfsrefc%03ld", kmat) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
 
-        r = sprintf(zrname, "zrespm%03ld", kmat);
+        if(sprintf(zrname, "zrespm%03ld", kmat) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
 
@@ -6795,7 +6972,6 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     
 
 
-    kband = 0;
     kband = (long) (0.2*NBmat);
 
     kmin = kband;
@@ -6832,7 +7008,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     printf("\n");
 
   
-    kband = 0;
+    
     kband = (long) (0.2*NBmat*NBpoke);
     kmin = kband;
     kmax = NBmat*NBpoke-kband;
@@ -6889,7 +7065,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
             
             IDzrm = image_ID(zrespm_name);
 
-            if((IDrmpokec = image_ID("RMpokeC"))!=-1)   
+            if(image_ID("RMpokeC") != -1)   
                 {
                     AOloopControl_Hadamard_decodeRM("RMpokeC", "Hmat", "pixindexim", "RMpokeC1");
                     save_fits("RMpokeC1", "!test_RMpokeC1.fits");
@@ -6934,7 +7110,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
 		for(ii=0; ii<sizeWFS; ii++)
 			data.image[IDzrm].array.F[poke*sizeWFS+ii] -= tot*data.image[IDWFSmask].array.F[ii]/totm;
 
-		tot1 = 0.0;
+		double tot1 = 0.0;
 		for(ii=0; ii<sizeWFS; ii++)
 			tot1 += data.image[IDzrm].array.F[poke*sizeWFS+ii]*data.image[IDWFSmask].array.F[ii];
 		fprintf(fp, "%6ld %06ld %20f %20f\n", poke, NBpoke, tot, tot1);
@@ -7013,7 +7189,7 @@ long AOloopControl_mkSlavedAct(const char *IDmaskRM_name, float pixrad, const ch
 	
 	IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
 	for(ii=0;ii<xsize*ysize;ii++)
-		data.image[IDout].array.F[jj*xsize+ii] = xsize+ysize;
+		data.image[IDout].array.F[ii] = xsize+ysize;
 	
 	for(ii=0;ii<xsize;ii++)
 		for(jj=0;jj<ysize;jj++)
@@ -7375,83 +7551,49 @@ long AOloopControl_DMslaveExt(const char *IDin_name, const char *IDmask_name, co
 long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode, int BlockNB, float SVDlim)
 {
     FILE *fp;
-    long ID0;
-    long ID=-1;
-    long k, ii, jj;
-    int use_magma = 0;
+    long ID = -1;
+    long ii, jj;
 
     long IDmaskRM; // DM mask
     long IDmask; // DM mask
-    long IDwfsmask; // WFS mask
 
-    double ave;
-    double offset;
     double totm;
-    double totvm;
 
-    double a0=0.88;
-    double b0=40.0;
+    double x, y, r, xc1, yc1;
+    double rms;
 
-    double a1=1.2;
-    double b1=12.0;
-
-    double x, y, r, PA, xc1, yc1;
-    double val0, val1, rms;
-
-    long IDtm, IDem;
-    long IDeModes;
-
-    long kelim = 5;
-    double coeff;
-    long citer;
-    long NBciter = 200;
-    long IDg;
-
-
-    long NBZ;
     long IDz;
 
     long zindex[10];
     double zcpa[10];  /// CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)
-    long IDfreq;
-
-    long IDmfcpa; /// modesfreqcpa ID
-    int ret;
 
     long mblock, m;
     long NBmblock;
-    float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+
     long MBLOCK_NBmode[MAX_MBLOCK]; // number of blocks
     long MBLOCK_ID[MAX_MBLOCK];
     long MBLOCK_IDwfs[MAX_MBLOCK];
     float MBLOCK_CPA[MAX_MBLOCK];
-    float cpa;
+
 
     char *ptr0;
     char *ptr1;
 
     char imname[200];
     char imname1[200];
-    char imnameDM[200];
-    char imnameDM1[200];
-    char imnameWFS1[200];
-    char imnameCM[200]; // modal control matrix
-    char imnameCMc[200]; // zonal ("combined") control matrix
-    char imnameCMcact[200]; // zonal control matrix masked
+
+
     char fname[200];
     char fname1[200];
-    char fname2[200];
-    char command[1000];
+
 
     float value, value0, value1, value1cnt, valuen;
     long msizexy;
     long m0, mblock0;
 
     long iter;
-    long kernsize;
 
     long IDzrespM;
-    long IDwfsMresp;
     long wfsxsize, wfsysize, wfssize;
     long wfselem, act;
 
@@ -7464,12 +7606,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     float SVDlim00;// DM filtering step 0
     float SVDlim01; // DM filtering step 1
-    float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
-    float rmslim0 = 0.01;
+
+
     float rmslim1 = 0.1;
-    float *rmsarray;
-    long IDm, IDSVDmodes;
-    float svdcoeff0;
+    long IDm;
+
 
     int *mok;
     long NBmm = 2000; // max number of modes per block
@@ -7477,24 +7618,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
     int reuse;
-    long IDSVDmodein, IDSVDmode1, IDSVDcoeff, IDSVDmask, IDSVDmode1DM;
+    long IDSVDmodein, IDSVDmode1, IDSVDcoeff, IDSVDmask;
     long m1;
     long IDnewmodeC;
 
-    long IDmwfs, IDmwfs1;
-    long IDwfs;
-    long IDmdm, IDmdm1;
-
-    long kk, kk1;
-    long ID_VTmatrix;
-    long cnt1;
-
-    long IDslaved, IDtmp, IDtmpg;
+    long IDtmp, IDtmpg;
     long conviter;
-    long NBconviter = 10;
     float sigma;
-
-    long act1, act2;
 
     int MODAL; // 1 if "pixels" of DM are already modes
 
@@ -7503,7 +7633,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long ID_imfit = -1;
     long IDRMM_coeff = -1;
     long IDcoeffmat = -1;
-    long IDmodes0all = -1;
+
     long linfitsize;
     int linfitreuse;
     double res, res1, v0;
@@ -7513,44 +7643,37 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     double LOcoeff;
     FILE *fpLOcoeff;
     long IDwfstmp;
-    char fnameLOcoeff[200];
 
-	long pixcnt;
-	float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym, ctot;
-	long IDtmp1, IDtmp2;
-
-
-	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
-	int COMPUTE_FULL_CMAT = 0;
-
-	long IDcmat, IDcmatall;
-
-	long ii1, jj1;
-	float dx, dy, dist, dist0, val1cnt;
-	long IDprox, IDprox1;
+    long pixcnt;
+    float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym, ctot;
+    long IDtmp1, IDtmp2;
 
 
-	long IDmaskRMedge, IDmaskRMin;
-	float gain;
-	
-	FILE *fpcoeff;
-	char fnameSVDcoeff[400];
+    int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
 
 
-	// extra block
-	long IDextrablock;
-	long extrablockIndex;
-	long mblock1;
+    long ii1, jj1;
+    float dx, dy, dist, dist0, val1cnt;
+    long IDprox, IDprox1;
+    float gain;
 
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
-	#endif
+    FILE *fpcoeff;
+    char fnameSVDcoeff[400];
+
+
+    // extra block
+    long extrablockIndex;
+
+
+#ifdef AOLOOPCONTROL_LOGFUNC
+    AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
+#endif
 
 
 
-	// SET LIMITS
-	SVDlim00 = SVDlim; // DM filtering step 0
-	SVDlim01 = SVDlim; // DM filtering step 1
+    // SET LIMITS
+    SVDlim00 = SVDlim; // DM filtering step 0
+    SVDlim01 = SVDlim; // DM filtering step 1
 
 
 
@@ -7592,7 +7715,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-    ret = system("mkdir -p mkmodestmp");
+    if(system("mkdir -p mkmodestmp") < 1)
+        printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     msizexy = msizex*msizey;
 
@@ -7604,6 +7728,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         IDmaskRM = image_ID("dmmaskRM");
         if(IDmaskRM==-1)
         {
+            double val0, val1;
+            double a0=0.88;
+            double b0=40.0;
+            double a1=1.2;
+            double b1=12.0;
+
             IDmaskRM = create_2Dimage_ID("dmmaskRM", msizex, msizey);
             for(ii=0; ii<msizex; ii++)
                 for(jj=0; jj<msizey; jj++)
@@ -7648,20 +7778,34 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-	
-	COMPUTE_DM_MODES = 0;
-	ID2b = image_ID("fmodes2ball");
-	if(ID2b == -1)
-		COMPUTE_DM_MODES = 1;
+
+    COMPUTE_DM_MODES = 0;
+    ID2b = image_ID("fmodes2ball");
+
+    if(ID2b == -1)
+        COMPUTE_DM_MODES = 1;
 
 
 
     if(COMPUTE_DM_MODES==1) // DM modes fmodes2b
     {
+        long ID0 = -1;
+        long NBZ = 0;
+        long IDmfcpa;
+        float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+
+        long IDmask;
+        long IDslaved;
+        long IDmaskRMedge;
+
+
+
         if(MODAL==0)
         {
+	        long IDmaskRMin;
+			
             // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
-            NBZ = 5; /// 3: tip, tilt, focus
+            //NBZ = 5; /// 3: tip, tilt, focus
             NBZ = 0;
             for(m=0; m<10; m++)
             {
@@ -7670,11 +7814,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             }
 
 
-			// here we create simple Fourier modes
+            // here we create simple Fourier modes
             linopt_imtools_makeCPAmodes("CPAmodes", msizex, CPAmax, deltaCPA, 0.5*msizex, 1.2, 0);
             ID0 = image_ID("CPAmodes");
 
-            IDfreq = image_ID("cpamodesfreq");
+            long IDfreq = image_ID("cpamodesfreq");
 
 
 
@@ -7685,6 +7829,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
             zernike_init();
+
+            double PA;
+            uint_fast32_t k;
             for(k=0; k<NBZ; k++)
             {
                 data.image[IDmfcpa].array.F[k] = zcpa[k];
@@ -7698,6 +7845,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         data.image[ID].array.F[k*msizex*msizey+jj*msizex+ii] = Zernike_value(zindex[k], r, PA);
                     }
             }
+
             for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
             {
                 data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
@@ -7706,61 +7854,62 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             }
 
 
-			fp = fopen("rmscomp.dat", "w");
-			
+            fp = fopen("rmscomp.dat", "w");
+
+
+
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
-               // set RMS = 1 over mask
+                // set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                    //data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
                     rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
-				
-				fprintf(fp, "%5ld  %g ", k, rms);
-                
-                 /// Remove excluded modes if they exist
-      /*          IDeModes = image_ID("emodes");
-                if(IDeModes!=-1)
-                {
-                    IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-3, "lcoeff", 0);
-                    linopt_imtools_image_construct("emodes", "lcoeff", "em00");
-                    delete_image_ID("lcoeff");
-                    IDem = image_ID("em00");
+                fprintf(fp, "%5ld  %g ", k, rms);
 
-//					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+                /// Remove excluded modes if they exist
+                /*          IDeModes = image_ID("emodes");
+                          if(IDeModes!=-1)
+                          {
+                              IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-					if(k>kelim)
-						coeff = 1.0;
-					else
-						coeff = 0.0;
+                              for(ii=0; ii<msizex*msizey; ii++)
+                                  data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
+                              linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-3, "lcoeff", 0);
+                              linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+                              delete_image_ID("lcoeff");
+                              IDem = image_ID("em00");
 
+                //					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
-
-                    delete_image_ID("em00");
-                    delete_image_ID("tmpmode");
-                }*/
+                			if(k>kelim)
+                				coeff = 1.0;
+                			else
+                				coeff = 0.0;
 
 
-				// Compute total of image over mask -> totvm
-                ave = 0.0;
-                totvm = 0.0;
+                              for(ii=0; ii<msizex*msizey; ii++)
+                                  data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
+
+                              delete_image_ID("em00");
+                              delete_image_ID("tmpmode");
+                          }*/
+
+
+                // Compute total of image over mask -> totvm
+                double totvm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
                 // compute DC offset in mode
-                offset = totvm/totm;
+                double offset = totvm/totm;
 
-				// remove DM offset
+                // remove DM offset
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
 
@@ -7768,7 +7917,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 for(ii=0; ii<msizex*msizey; ii++)
                     offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
-				// set RMS = 1 over mask
+                // set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
@@ -7778,24 +7927,27 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
                 fprintf(fp, " %g\n", rms);
-                
+
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
             }
-			fclose(fp);
+            fclose(fp);
 
-       
+
 
             if(MaskMode==1)
             {
-                kernsize = 5;
+                long kernsize = 5;
                 if(2*kernsize>msizex)
                     kernsize = msizex/2;
+                long citer;
+                long NBciter = 200;
                 for(citer=0; citer<NBciter; citer++)
                 {
                     printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
                     gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), kernsize);
-                    IDg = image_ID("modeg");
+                    long IDg = image_ID("modeg");
+                    uint_fast32_t  k;
                     for(k=0; k<data.image[ID].md[0].size[2]; k++)
                     {
                         for(ii=0; ii<msizex*msizey; ii++)
@@ -7808,57 +7960,57 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-	
-		
-		
-		
-		// MAKE MASKS FOR EDGE EXTRAPOLATION
-		
-		          
-		IDslaved = image_ID("dmslaved");
-		// load or create DM mask : union of dmslaved and dmmaskRM
-		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
-		printf("Create DM mask\n");
-		fflush(stdout);
-		IDmask = -1;
-		if(IDmask == -1)
-		{
-			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
-			for(ii=0; ii<msizex*msizey; ii++)
-				{
-					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
-					if(data.image[IDmask].array.F[ii]>1.0)
-						data.image[IDmask].array.F[ii] = 1.0;
-				}
-			save_fits("dmmask", "!dmmask.fits");
-		}
-
-		// EDGE PIXELS IN IDmaskRM
-		IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
-		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
-		
-		// IDmaskRM pixels excluding edge
-		IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
-		for(ii=0; ii<msizex*msizey; ii++)
-			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
-		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
-		
-		
-		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
-		
-		
-		IDtmp = AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
-		save_fits("fmodes0test", "!fmodes0test.fits");
-		
-		
-		for(m=0; m<data.image[ID].md[0].size[2]; m++)
-		{
-			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii] * data.image[IDmask].array.F[ii];		
-		}
 
 
 
+
+            // MAKE MASKS FOR EDGE EXTRAPOLATION
+
+
+            IDslaved = image_ID("dmslaved");
+            // load or create DM mask : union of dmslaved and dmmaskRM
+            //IDmask = load_fits("dmmask.fits", "dmmask", 1);
+            printf("Create DM mask\n");
+            fflush(stdout);
+
+
+            //IDmask = -1;
+            //if(IDmask == -1)
+            //{
+            IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
+                if(data.image[IDmask].array.F[ii]>1.0)
+                    data.image[IDmask].array.F[ii] = 1.0;
+            }
+            save_fits("dmmask", "!dmmask.fits");
+            //}
+
+            // EDGE PIXELS IN IDmaskRM
+            IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
+            save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
+
+            // IDmaskRM pixels excluding edge
+            IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
+            save_fits("dmmaskRMin", "!dmmaskRMin.fits");
+
+
+            save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
+
+
+            IDtmp = AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
+            save_fits("fmodes0test", "!fmodes0test.fits");
+
+
+            for(m=0; m<data.image[ID].md[0].size[2]; m++)
+            {
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii] * data.image[IDmask].array.F[ii];
+            }
         }
         else
         {
@@ -7877,82 +8029,83 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 data.image[ID].array.F[m*msizex*msizey+m] = 1.0;
             }
         }
-        
-    
-       
+
+
+
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
 
 
 
-		// remove modes
-		
-		for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
-		{
-			  /// Remove excluded modes if they exist
-                IDeModes = image_ID("emodes");
-                if(IDeModes!=-1)
-                {
-                    IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
+        // remove modes
+        uint_fast32_t k;
+        for(k=0; k<data.image[ID0].md[0].size[2]-1 + NBZ; k++)
+        {
+            /// Remove excluded modes if they exist
+            long IDeModes = image_ID("emodes");
+            if(IDeModes!=-1)
+            {
+                long kelim = 5;
+                long IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
-                    linopt_imtools_image_construct("emodes", "lcoeff", "em00");
-                    delete_image_ID("lcoeff");
-                    IDem = image_ID("em00");
-
-					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
-
-					if(k>kelim)
-						coeff = 1.0;
-					else
-						coeff = 0.0;
-
-
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
-
-                    delete_image_ID("em00");
-                    delete_image_ID("tmpmode");
-                }
-			
-			// Compute total of image over mask -> totvm
-                ave = 0.0;
-                totvm = 0.0;
-                totm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
-                    {
-						totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
-						totm += data.image[IDmask].array.F[ii];
-					}
-					
-                // compute DC offset in mode
-                offset = totvm/totm;
+                    data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
+                linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
+                linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+                delete_image_ID("lcoeff");
+                long IDem = image_ID("em00");
 
-				// remove DM offset
+                double coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+
+                if(k>kelim)
+                    coeff = 1.0;
+                else
+                    coeff = 0.0;
+
+
                 for(ii=0; ii<msizex*msizey; ii++)
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
+                    data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
 
-                offset = 0.0;
-                for(ii=0; ii<msizex*msizey; ii++)
-                    offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                delete_image_ID("em00");
+                delete_image_ID("tmpmode");
+            }
 
-				// set RMS = 1 over mask
-                rms = 0.0;
-                for(ii=0; ii<msizex*msizey; ii++)
-                {
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
-                }
-                rms = sqrt(rms/totm);
-                printf("Mode %ld   RMS = %lf\n", k, rms);
-                
-                for(ii=0; ii<msizex*msizey; ii++)
-                    data.image[ID].array.F[k*msizex*msizey+ii] /= rms;		
-		}
+            // Compute total of image over mask -> totvm
+            double ave = 0.0;
+            double totvm = 0.0;
+            totm = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                totm += data.image[IDmask].array.F[ii];
+            }
 
-       save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+            // compute DC offset in mode
+            double offset = totvm/totm;
+
+            // remove DM offset
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
+
+            offset = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+                offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+
+            // set RMS = 1 over mask
+            rms = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+            }
+            rms = sqrt(rms/totm);
+            printf("Mode %ld   RMS = %lf\n", k, rms);
+
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
+        }
+
+        save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
 
 
 
@@ -7960,7 +8113,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-        IDmodes0all = image_ID(ID_name);
+        long IDmodes0all = image_ID(ID_name);
         printf("DONE SAVING\n");
 
         // time : 0:04
@@ -7987,7 +8140,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         printf("size: %ld %ld %ld\n", (long) data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
 
-
+        long act1, act2;
 # ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
 # endif
@@ -8071,8 +8224,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 delete_image_ID("testrc");
 
 
-                LOcoeff = 1.0;
-
                 LOcoeff = 1.0/(1.0+pow(10.0*res, 4.0));
 
                 if(res1>1.0)
@@ -8145,7 +8296,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         NBmblock = 0;
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-            cpa = data.image[IDmfcpa].array.F[m];
+            float cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
             {
@@ -8163,58 +8314,66 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         NBmblock++;
 
-		
-		IDextrablock = image_ID("extrablockM");
-		if(IDextrablock != -1)
-			{				
-				extrablockIndex = 4;
-				
-				fp = fopen("./conf/conf_extrablockIndex.txt", "r");
-				if(fp != NULL)
-				{
-					ret = fscanf(fp, "%ld", &extrablockIndex);
-					fclose(fp);
-				}
-			}
-			
-			
+
+        long IDextrablock = image_ID("extrablockM");
+        if(IDextrablock != -1)
+        {
+            extrablockIndex = 4;
+
+            fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+            if(fp != NULL)
+            {
+                if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
+                    printERROR(__FILE__, __func__, __LINE__, "cannot read parameter from file");
+                fclose(fp);
+            }
+        }
+
+
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			if(IDextrablock != -1)
-			{
-				mblock1 = mblock;
-				if(mblock>extrablockIndex-1)
-					mblock1 = mblock+1;
-			}
-			else
-				mblock1 = mblock;
-				
-            sprintf(imname, "fmodes0_%02ld", mblock1);
+            long mblock1;
+
+            if(IDextrablock != -1)
+            {
+                mblock1 = mblock;
+                if(mblock>extrablockIndex-1)
+                    mblock1 = mblock+1;
+            }
+            else
+                mblock1 = mblock;
+
+            if(sprintf(imname, "fmodes0_%02ld", mblock1) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             MBLOCK_ID[mblock1] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
             MBLOCK_ID[mblock1] = image_ID(imname);
         }
 
-			
+
 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
 
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-            cpa = data.image[IDmfcpa].array.F[m];
+            long mblock1;
+
+            float cpa = data.image[IDmfcpa].array.F[m];
+
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
                 mblock++;
 
-			if(IDextrablock!= -1)
-			{
-				mblock1 = mblock;
-				if(mblock>extrablockIndex-1)
-					mblock1 = mblock+1;
-			}
-			else
-				mblock1 = mblock;
+            if(IDextrablock!= -1)
+            {
+                mblock1 = mblock;
+                if(mblock>extrablockIndex-1)
+                    mblock1 = mblock+1;
+            }
+            else
+                mblock1 = mblock;
 
 
             for(ii=0; ii<msizex*msizey; ii++)
@@ -8224,19 +8383,22 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 
-		if(IDextrablock != -1)
-			{
-				mblock = extrablockIndex;
-				sprintf(imname, "fmodes0_%02ld", mblock);
-				MBLOCK_NBmode[mblock] = data.image[IDextrablock].md[0].size[2];
-				MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
+        if(IDextrablock != -1)
+        {
+            mblock = extrablockIndex;
 
-				for(m=0;m<MBLOCK_NBmode[mblock];m++)
-					for(ii=0; ii<msizex*msizey; ii++)
-						data.image[MBLOCK_ID[mblock]].array.F[m*msizex*msizey+ii] = data.image[IDextrablock].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
-				
-				NBmblock++;
-			}
+            if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            MBLOCK_NBmode[mblock] = data.image[IDextrablock].md[0].size[2];
+            MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
+
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[MBLOCK_ID[mblock]].array.F[m*msizex*msizey+ii] = data.image[IDextrablock].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+
+            NBmblock++;
+        }
 
 
 
@@ -8245,16 +8407,17 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         // time : 00:42
 
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)
-		printf("STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)\n");
-		fflush(stdout);
-		
+        printf("STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)\n");
+        fflush(stdout);
+
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             printf("\nMODE BLOCK %ld\n", mblock);
             fflush(stdout);
 
-            sprintf(imname, "fmodes0_%02ld", mblock);
-            
+            if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             printf("SVD decomp ... (%ld) .... ", (long) data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
@@ -8262,21 +8425,27 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
-            svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+            float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
                 if(data.image[IDSVDcoeff].array.F[m]>SVDlim00*svdcoeff0)
                     cnt++;
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
-            sprintf(imname1, "fmodes1_%02ld", mblock);
+
+            if(sprintf(imname1, "fmodes1_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
-            IDSVDmodes = image_ID("svdmodes");
+            long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
-            sprintf(fname1, "!./mkmodestmp/fmodes1_%02ld.fits", mblock);
+
+            if(sprintf(fname1, "!./mkmodestmp/fmodes1_%02ld.fits", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             save_fits(imname1, fname1);
 
             delete_image_ID("svdmodes");
@@ -8302,13 +8471,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-	
+
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
         /// fmodes1all -> fmodes2all
-		printf("STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)\n");
-		fflush(stdout);
+        printf("STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)\n");
+        fflush(stdout);
 
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
@@ -8328,16 +8497,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                  //  printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                  //  fflush(stdout);
-                    
+                    //  printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+                    //  fflush(stdout);
+
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
-                    sprintf(imname, "fmodes1_%02ld", mblock0);
-					
+
+                    if(sprintf(imname, "fmodes1_%02ld", mblock0) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
 
-                  
+
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                     IDSVDmode1 = image_ID("SVDmode1");
@@ -8351,6 +8522,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     delete_image_ID("SVDmode1");
 
                     rms = sqrt(value1/totm);
+                    float rmslim0 = 0.01;
                     if(rms>rmslim0)
                     {
                         //       for(ii=0; ii<msizexy; ii++)
@@ -8359,8 +8531,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     else
                         mok[m] = 0;
 
-//                    printf("->  %12g (%g %g)\n", rms, value1, totm);
-//					fflush(stdout);
+                    //                    printf("->  %12g (%g %g)\n", rms, value1, totm);
+                    //					fflush(stdout);
                 }
             }
             cnt = 0;
@@ -8370,7 +8542,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
             if(cnt>0)
             {
-                sprintf(imname, "fmodes2_%02ld", mblock);
+                if(sprintf(imname, "fmodes2_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 printf("saving result %s \n", imname);
                 fflush(stdout);
                 IDm = create_3Dimage_ID(imname, msizex, msizey, cnt);
@@ -8387,7 +8561,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     }
                 }
                 MBLOCK_ID[mblock] = IDm;
-                sprintf(fname2, "!./mkmodestmp/fmodes2_%02ld.fits", mblock);
+
+                char fname2[200];
+                if(sprintf(fname2, "!./mkmodestmp/fmodes2_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imname, fname2);
             }
             MBLOCK_NBmode[mblock] = cnt;
@@ -8408,7 +8586,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			
+
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<msizexy; ii++)
@@ -8430,7 +8608,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             printf("MODE BLOCK %ld\n", mblock);
             fflush(stdout);
 
-            sprintf(imname, "fmodes2_%02ld", mblock);
+            if(sprintf(imname, "fmodes2_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             printf("SVD decomp ...");
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
@@ -8438,39 +8618,44 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
-            svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
-            
-            sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff01_%02ld.txt", mblock);
-            fpcoeff = fopen(fnameSVDcoeff, "w");            
+            float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+
+            if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff01_%02ld.txt", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            fpcoeff = fopen(fnameSVDcoeff, "w");
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
             {
-				fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", m, data.image[IDSVDcoeff].array.F[m], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[m]/data.image[IDSVDcoeff].array.F[0], SVDlim01);
+                fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", m, data.image[IDSVDcoeff].array.F[m], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[m]/data.image[IDSVDcoeff].array.F[0], SVDlim01);
 
-				if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
-					cnt++;
-			}
+                if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
+                    cnt++;
+            }
             fclose(fpcoeff);
-            
+
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
-            sprintf(imname1, "fmodes2b_%02ld", mblock);
+
+            if(sprintf(imname1, "fmodes2b_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
-            IDSVDmodes = image_ID("svdmodes");
+            long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
             for(m=0; m<cnt; m++)
             {
-				value1 = 0.0;
-				value1cnt = 0.0;
-				for(ii=0; ii<msizexy; ii++)
-					{
-						value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-						value1cnt += data.image[IDmaskRM].array.F[ii];
-					}
-				for(ii=0; ii<msizexy; ii++)
-					data.image[IDm].array.F[m*msizexy+ii] -= value1/value1cnt;
-				
+                value1 = 0.0;
+                value1cnt = 0.0;
+                for(ii=0; ii<msizexy; ii++)
+                {
+                    value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                    value1cnt += data.image[IDmaskRM].array.F[ii];
+                }
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[m*msizexy+ii] -= value1/value1cnt;
+
                 value1 = 0.0;
                 for(ii=0; ii<msizexy; ii++)
                     value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
@@ -8479,17 +8664,20 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     data.image[IDm].array.F[m*msizexy+ii] /= rms;
             }
 
-			// Extrapolate outside maskRM
-			IDtmp = AOloopControl_DMslaveExt(data.image[IDm].md[0].name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodesext", 100.0);
-			for(m=0; m<cnt; m++)
-				for(ii=0; ii<msizexy; ii++)
-					data.image[IDm].array.F[m*msizexy+ii] = data.image[IDtmp].array.F[m*msizexy+ii];
-			delete_image_ID("fmodesext");
+            // Extrapolate outside maskRM
+            IDtmp = AOloopControl_DMslaveExt(data.image[IDm].md[0].name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodesext", 100.0);
+            for(m=0; m<cnt; m++)
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[m*msizexy+ii] = data.image[IDtmp].array.F[m*msizexy+ii];
+            delete_image_ID("fmodesext");
 
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
-            sprintf(fname1, "!./mkmodestmp/fmodes2b_%02ld.fits", mblock);
+
+            if(sprintf(fname1, "!./mkmodestmp/fmodes2b_%02ld.fits", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             save_fits(imname1, fname1);
 
             delete_image_ID("svdmodes");
@@ -8497,9 +8685,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 
-		fp = fopen("./mkmodestmp/NBblocks.txt", "w");
-		fprintf(fp, "%ld\n", NBmblock);
-		fclose(fp);
+        fp = fopen("./mkmodestmp/NBblocks.txt", "w");
+        fprintf(fp, "%ld\n", NBmblock);
+        fclose(fp);
 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -8520,18 +8708,24 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     }
     else
     {
-		fp = fopen("./mkmodestmp/NBblocks.txt", "r");
-		ret = fscanf(fp, "%ld", &NBmblock);
-		fclose(fp);
-		for(mblock=0; mblock<NBmblock; mblock++)
-			{
-				sprintf(fname, "./mkmodestmp/fmodes2b_%02ld.fits", mblock);
-				sprintf(imname, "fmodes2b_%02ld", mblock);
-				ID = load_fits(fname, imname, 1);
-				MBLOCK_NBmode[mblock] = data.image[ID].md[0].size[2];
-				MBLOCK_ID[mblock] = ID;
-			}
-	}
+        fp = fopen("./mkmodestmp/NBblocks.txt", "r");
+        if(fscanf(fp, "%50ld", &NBmblock) != 1)
+            printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+
+        fclose(fp);
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            if(sprintf(fname, "./mkmodestmp/fmodes2b_%02ld.fits", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            if(sprintf(imname, "fmodes2b_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            ID = load_fits(fname, imname, 1);
+            MBLOCK_NBmode[mblock] = data.image[ID].md[0].size[2];
+            MBLOCK_ID[mblock] = ID;
+        }
+    }
 
 
 
@@ -8542,7 +8736,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     // 1:25
 
 
-	// ==================================================
+    // ==================================================
 
 
 
@@ -8552,6 +8746,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     {
         /// STEP 6: COMPUTE WFS RESPONSE TO MODES
         /// fmodes2ball -> fmodesWFS0all.fits
+
+        char imnameDM[200];
+        char imnameDM1[200];
 
         if(BlockNB<0)
         {   // check size
@@ -8567,7 +8764,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
             /// Load ... or create WFS mask
-            IDwfsmask = image_ID("wfsmask");
+            long IDwfsmask = image_ID("wfsmask");
             if((wfsxsize!=data.image[IDwfsmask].md[0].size[0])||(wfsysize!=data.image[IDwfsmask].md[0].size[1]))
             {
                 printf("ERROR: File wfsmask has wrong size\n");
@@ -8586,10 +8783,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
                 fflush(stdout);
-                sprintf(imname, "fmodesWFS0_%02ld", mblock);
+
+
+                if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(MBLOCK_NBmode[mblock]>0)
                 {
-                    IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
+                    long IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
 
 # ifdef _OPENMP
                     #pragma omp parallel for private(m,act,wfselem)
@@ -8607,7 +8808,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
-                        sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff_%02ld.txt", mblock);
+                        char fnameLOcoeff[200];
+                        if(sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff_%02ld.txt", mblock) < 1)
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                         fpLOcoeff = fopen(fnameLOcoeff, "w");
                         if(fpLOcoeff == NULL)
@@ -8706,7 +8909,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                             data.image[IDwfsMresp].array.F[m*wfssize+wfselem] *= data.image[IDwfsmask].array.F[wfselem];
 
 
-                    sprintf(fname, "!./mkmodestmp/fmodesWFS0_%02ld.fits", mblock);
+                    if(sprintf(fname, "!./mkmodestmp/fmodesWFS0_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imname, fname);
                 }
             }
@@ -8720,8 +8925,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
-                sprintf(imname, "fmodesWFS0_%02ld", mblock);
-                IDmwfs = image_ID(imname);
+                if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                long IDmwfs = image_ID(imname);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
                     for(ii=0; ii<wfssize; ii++)
@@ -8755,11 +8962,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
+                float *rmsarray;
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                    sprintf(imname, "fmodesWFS0_%02ld", mblock);
-                    IDmwfs = image_ID(imname);
+                    if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    long IDmwfs = image_ID(imname);
                     value1 = 0.0;
                     for(ii=0; ii<wfssize; ii++)
                         value1 += data.image[IDmwfs].array.F[m*wfssize+ii]*data.image[IDmwfs].array.F[m*wfssize+ii];
@@ -8770,32 +8980,43 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     mok[m] = 1;
 
 
- 
-				// REMOVE WFS MODES FROM PREVIOUS BLOCKS
+
+                // REMOVE WFS MODES FROM PREVIOUS BLOCKS
 
                 for(mblock0=0; mblock0<mblock; mblock0++)
                 {
+
                     reuse = 0;
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
-                        sprintf(imname, "fmodesWFS0_%02ld", mblock);
-                        IDmwfs = image_ID(imname);
-                        sprintf(imnameDM, "fmodes2b_%02ld", mblock);
+                        if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                        long IDmwfs = image_ID(imname);
+
+                        if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         IDm = image_ID(imnameDM);
 
 
                         for(ii=0; ii<wfsxsize*wfsysize; ii++)
                             data.image[IDSVDmodein].array.F[ii] = data.image[IDmwfs].array.F[m*wfssize+ii];
 
-                        sprintf(imname, "fmodesWFS0_%02ld", mblock0);
-                        sprintf(imnameDM, "fmodes2b_%02ld", mblock0);
+                        if(sprintf(imname, "fmodesWFS0_%02ld", mblock0) < 1)
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                        if(sprintf(imnameDM, "fmodes2b_%02ld", mblock0) < 1)
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
                         IDSVDcoeff = image_ID("modecoeff");
                         reuse = 1;
                         linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
-                        IDSVDmode1DM = image_ID("SVDmode1DM");
+
+                        long IDSVDmode1DM = image_ID("SVDmode1DM");
 
                         delete_image_ID("modecoeff");
 
@@ -8813,7 +9034,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         delete_image_ID("SVDmode1DM");
 
                         rms = sqrt(value1/wfssize);
-                        
+
                         if(rms<rmsarray[m]*rmslim1)
                         {
                             mok[m] = 0;
@@ -8829,15 +9050,26 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 if(cnt>0)
                 {
-                    sprintf(imname, "fmodesWFS1_%02ld", mblock);
-                    sprintf(imnameDM, "fmodes3_%02ld", mblock);
-                    IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
-                    IDmdm1 = create_3Dimage_ID(imnameDM, msizex, msizey, cnt);
+                    if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+
+                    long IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
+                    long IDmdm1 = create_3Dimage_ID(imnameDM, msizex, msizey, cnt);
                     m1 = 0;
-                    sprintf(imname, "fmodesWFS0_%02ld", mblock);
-                    IDmwfs = image_ID(imname);
-                    sprintf(imnameDM, "fmodes2b_%02ld", mblock);
-                    IDmdm = image_ID(imnameDM);
+
+                    if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    long IDmwfs = image_ID(imname);
+
+                    if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    long IDmdm = image_ID(imnameDM);
                     if(IDmdm==-1)
                     {
                         printf("ERROR: image %s does not exist\n", imnameDM);
@@ -8873,8 +9105,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     printf("STEP 0000\n");
                     fflush(stdout);//TEST
 
-                    sprintf(imname1, "fmodesWFS1_%02ld", mblock);
-                    sprintf(fname1, "!./mkmodestmp/fmodesWFS1_%02ld.fits", mblock);
+                    if(sprintf(imname1, "fmodesWFS1_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    if(sprintf(fname1, "!./mkmodestmp/fmodesWFS1_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                     printf("   saving   %s -> %s\n", imname1, fname1);
                     fflush(stdout);//TEST
@@ -8884,8 +9119,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     printf("STEP 0001\n");
                     fflush(stdout);//TEST
 
-                    sprintf(imname1, "fmodes3_%02ld", mblock);
-                    sprintf(fname1, "!./mkmodestmp/fmodes3_%02ld.fits", mblock);
+                    if(sprintf(imname1, "fmodes3_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    if(sprintf(fname1, "!./mkmodestmp/fmodes3_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imname1, fname1);
                     MBLOCK_ID[mblock] = IDmdm1;
                     printf("STEP 0002\n");
@@ -8893,9 +9132,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
                 else
                 {
-					printf("ERROR: keeping no mode in block !!!\n");
-					exit(0);
-				}
+                    printf("ERROR: keeping no mode in block !!!\n");
+                    exit(0);
+                }
                 printf("STEP 0010\n");
                 fflush(stdout);//TEST
 
@@ -8914,22 +9153,27 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             // time : 04:34
 
 
-	list_image_ID();
+            list_image_ID();
             cnt = 0;
             for(mblock=0; mblock<NBmblock; mblock++)
                 cnt += MBLOCK_NBmode[mblock];
             IDm = create_3Dimage_ID("fmodesWFS1all", wfsxsize, wfsysize, cnt);
-            IDmdm1 = create_3Dimage_ID("fmodes3all", msizex, msizey, cnt);
+            long IDmdm1 = create_3Dimage_ID("fmodes3all", msizex, msizey, cnt);
 
             cnt = 0;
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 if(MBLOCK_NBmode[mblock]>0)
                 {
-                    sprintf(imname, "fmodesWFS1_%02ld", mblock);
-                    IDmwfs = image_ID(imname);
-                    sprintf(imnameDM, "fmodes3_%02ld", mblock);
-                    IDmdm = image_ID(imnameDM);
+                    if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    long IDmwfs = image_ID(imname);
+
+                    if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    long IDmdm = image_ID(imnameDM);
 
                     if(IDmwfs==-1)
                     {
@@ -8959,8 +9203,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         if(BlockNB<0)
         {
-            sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock);
-            ret = system(command);
+            char command[1000];
+            if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            if(system(command) != 0)
+                printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
         }
         else
         {
@@ -8969,7 +9217,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 printf("ERROR: cannot read file ./conf_staged/conf_NBmodeblocks.txt\n");
                 exit(0);
             }
-            ret = fscanf(fp, "%ld", &NBmblock);
+            if(fscanf(fp, "%50ld", &NBmblock) != 1)
+                printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
             fclose(fp);
         }
 
@@ -8986,15 +9235,23 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             if(BlockNB>-1) // LOAD & VERIFY SIZE
             {
-                sprintf(imname1, "fmodesWFS1_%02ld", mblock);
-                sprintf(fname1, "./mkmodestmp/fmodesWFS1_%02ld.fits", mblock);
+                if(sprintf(imname1, "fmodesWFS1_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(sprintf(fname1, "./mkmodestmp/fmodesWFS1_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 ID = load_fits(fname1, imname1, 1);
                 wfsxsize = data.image[ID].md[0].size[0];
                 wfsysize = data.image[ID].md[0].size[1];
                 wfssize = wfsxsize*wfsysize;
 
-                sprintf(imname1, "fmodes3_%02ld", mblock);
-                sprintf(fname1, "./mkmodestmp/fmodes3_%02ld.fits", mblock);
+                if(sprintf(imname1, "fmodes3_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(sprintf(fname1, "./mkmodestmp/fmodes3_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 ID = load_fits(fname1, imname1, 1);
                 if((data.image[ID].md[0].size[0] != msizex) && (msizey != data.image[ID].md[0].size[0]))
                 {
@@ -9007,42 +9264,54 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
+                char command[1000];
+                if(sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
-                ret = system(command);
+                if(system(command) != 0)
+                    printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
                 //if(MBLOCK_NBmode[mblock]>-1)
                 //{
 
-                sprintf(imname, "fmodesWFS1_%02ld", mblock);
-                IDmwfs = image_ID(imname);
+                if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                long IDmwfs = image_ID(imname);
                 if(IDmwfs==-1)
                 {
                     printf("ERROR: image %s does not exit\n", imname);
                     exit(0);
                 }
 
-                sprintf(imnameDM, "fmodes3_%02ld", mblock);
-                IDmdm = image_ID(imnameDM);
+                if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                long IDmdm = image_ID(imnameDM);
                 if(IDmdm==-1)
                 {
                     printf("ERROR: image %s does not exit\n", imnameDM);
                     exit(0);
                 }
 
-                sprintf(imnameDM1, "fmodes_%02ld", mblock);
+                if(sprintf(imnameDM1, "fmodes_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
 
                 linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD
                 IDSVDcoeff = image_ID("modecoeff");
 
                 cnt = 0;
-                sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock);
+
+                if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 fpcoeff = fopen(fnameSVDcoeff, "w");
+                uint_fast16_t kk;
                 for(kk=0; kk<data.image[IDSVDcoeff].md[0].size[0]; kk++)
                 {
-					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
+                    fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
                     printf("==== %ld %12g %12g  %3ld\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt);
                     if(data.image[IDSVDcoeff].array.F[kk]>SVDlim*data.image[IDSVDcoeff].array.F[0])
                         cnt++;
@@ -9050,14 +9319,19 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 fclose(fpcoeff);
 
 
-                IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
-                sprintf(imnameWFS1, "fmodesWFS_%02ld", mblock);
-                IDmwfs1 = create_3Dimage_ID(imnameWFS1, wfsxsize, wfsysize, cnt);
-                ID_VTmatrix = image_ID("SVD_VTm");
+                long IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
+
+                char imnameWFS1[200];
+                if(sprintf(imnameWFS1, "fmodesWFS_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                long IDmwfs1 = create_3Dimage_ID(imnameWFS1, wfsxsize, wfsysize, cnt);
+                long ID_VTmatrix = image_ID("SVD_VTm");
 
 
                 for(kk=0; kk<cnt; kk++) /// eigen mode index
                 {
+                    long kk1;
                     for(kk1=0; kk1<data.image[IDSVDcoeff].md[0].size[0]; kk1++)
                     {
                         for(ii=0; ii<msizexy; ii++)
@@ -9067,43 +9341,49 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                             data.image[IDmwfs1].array.F[kk*wfssize + ii] += data.image[ID_VTmatrix].array.F[kk1*data.image[IDSVDcoeff].md[0].size[0]+kk]*data.image[IDmwfs].array.F[kk1*wfssize + ii];
                     }
 
-					value1 = 0.0;
-					value1cnt = 0.0;
-					for(ii=0; ii<msizexy; ii++)
-						{
-						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-						value1cnt += data.image[IDmaskRM].array.F[ii];
-						}
-					for(ii=0; ii<msizexy; ii++)
-						data.image[IDmdm1].array.F[kk*msizexy+ii] -= value1/value1cnt;
-				
-					value1 = 0.0;
-					for(ii=0; ii<msizexy; ii++)
-						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-					rms = sqrt(value1/value1cnt);
-					
-					for(ii=0; ii<msizexy; ii++)
-						data.image[IDmdm1].array.F[kk*msizexy+ii] /= rms;
-
-					for(ii=0; ii<wfssize; ii++)
-						data.image[IDmwfs1].array.F[kk*wfssize+ii] /= rms;
-
-
-               /*     value1 = 0.0;
+                    value1 = 0.0;
+                    value1cnt = 0.0;
                     for(ii=0; ii<msizexy; ii++)
-                        value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
-                    rms = sqrt(value1/totm);
-                    */
-                    
-                    
+                    {
+                        value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                        value1cnt += data.image[IDmaskRM].array.F[ii];
+                    }
+                    for(ii=0; ii<msizexy; ii++)
+                        data.image[IDmdm1].array.F[kk*msizexy+ii] -= value1/value1cnt;
+
+                    value1 = 0.0;
+                    for(ii=0; ii<msizexy; ii++)
+                        value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                    rms = sqrt(value1/value1cnt);
+
+                    for(ii=0; ii<msizexy; ii++)
+                        data.image[IDmdm1].array.F[kk*msizexy+ii] /= rms;
+
+                    for(ii=0; ii<wfssize; ii++)
+                        data.image[IDmwfs1].array.F[kk*wfssize+ii] /= rms;
+
+
+                    /*     value1 = 0.0;
+                         for(ii=0; ii<msizexy; ii++)
+                             value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
+                         rms = sqrt(value1/totm);
+                         */
+
+
                     // for(ii=0; ii<msizexy; ii++)
                     //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
                 }
                 delete_image_ID("SVDout");
                 delete_image_ID("modecoeff");
-                sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
+
+                if(sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imnameDM1, fname);
-                sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+
+                if(sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imnameWFS1, fname);
                 MBLOCK_ID[mblock] = IDmdm1;
                 MBLOCK_IDwfs[mblock] = IDmwfs1;
@@ -9112,9 +9392,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             }
             else
             {
-                sprintf(fname, "./mkmodestmp/fmodes_%02ld.fits", mblock);
-                sprintf(imnameDM1, "fmodes_%02ld", mblock);
-                IDmdm1 = load_fits(fname, imnameDM1, 1);
+                if(sprintf(fname, "./mkmodestmp/fmodes_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(sprintf(imnameDM1, "fmodes_%02ld", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                long IDmdm1 = load_fits(fname, imnameDM1, 1);
                 MBLOCK_ID[mblock] = IDmdm1;
                 //MBLOCK_IDwfs[mblock] = IDmwfs1;
                 MBLOCK_NBmode[mblock] = data.image[IDmdm1].md[0].size[2];
@@ -9125,9 +9409,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
         IDm = create_3Dimage_ID("fmodesall", msizex, msizey, cnt);
-        IDwfs = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
+        long IDwfs = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
         cnt = 0;
-        cnt1 = 0;
+        long cnt1 = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             if(MBLOCK_NBmode[mblock]>0)
@@ -9143,8 +9427,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 cnt++;
             }
-        }                       
-        
+        }
+
         save_fits("fmodesall", "!./mkmodestmp/fmodesall.fits");
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
@@ -9156,7 +9440,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-//exit(0);//TEST
+        //exit(0);//TEST
 
 
 
@@ -9172,11 +9456,21 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             printf(".... BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
             fflush(stdout);
-            sprintf(imname, "fmodesWFS_%02ld", mblock);
 
-            sprintf(imnameCM, "cmat_%02ld", mblock);
-            sprintf(imnameCMc, "cmatc_%02ld", mblock);
-            sprintf(imnameCMcact, "cmatcact_%02ld", mblock);
+            if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            char imnameCM[200]; // modal control matrix
+            if(sprintf(imnameCM, "cmat_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            char imnameCMc[200]; // zonal ("combined") control matrix
+            if(sprintf(imnameCMc, "cmatc_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            char imnameCMcact[200]; // zonal control matrix masked
+            if(sprintf(imnameCMcact, "cmatcact_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
@@ -9190,14 +9484,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                     // COMPUTE MODAL CONTROL MATRICES
                     printf("COMPUTE CONTROL MATRIX\n");
-                    #ifdef HAVE_MAGMA
-                        CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
-                    #else
-                        linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
-					#endif
+                    float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
+#ifdef HAVE_MAGMA
+                    CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
+#else
+                    linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
+#endif
 
                     delete_image_ID("VTmat");
-                    sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
+
+                    if(sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imnameCM, fname);
 
                     printf("-- COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX\n");
@@ -9208,10 +9506,17 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
 
 
-                    sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
+                    if(sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imnameCMc, fname);
-                    sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
-                    sprintf(imname1, "%s_00", imnameCMcact);
+
+                    if(sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                    if(sprintf(imname1, "%s_00", imnameCMcact) < 1)
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imname1, fname);
 
                     list_image_ID();
@@ -9222,16 +9527,27 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
-                
-			//	list_image_ID();
-				
-                sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+
+                //	list_image_ID();
+
+                if(sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imname, 1);
-                sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock);
+
+                if(sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCM, 1);
-                sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock);
+
+                if(sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCMc, 1);
-                sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock);
+
+                if(sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCMcact, 1);
             }
         }
@@ -9243,11 +9559,17 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
-            ret = system(command);
+            char command[1000];
+            if(sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-            sprintf(imname, "fmodesWFS_%02ld", mblock);
-            IDmwfs = image_ID(imname);
+            if(system(command) != 0)
+                printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+
+            if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            long IDmwfs = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9261,12 +9583,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
-        IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
+        long IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            sprintf(imname, "cmat_%02ld", mblock);
-            IDcmat = image_ID(imname);
+            if(sprintf(imname, "cmat_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            long IDcmat = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9276,41 +9600,45 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
 
-    
-    
-    
-    
-    
-    if(COMPUTE_FULL_CMAT == 1)
-    {
+
+
+
         // COMPUTE OVERALL CONTROL MATRIX
-        printf("COMPUTE OVERALL CONTROL MATRIX\n");
-        #ifdef HAVE_MAGMA
-            CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
-        #else
-            linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
-		#endif
-		
-        //save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
-        delete_image_ID("VTmat");
-        save_fits("cmat", "!./mkmodestmp/cmat.fits");
+        /*    int COMPUTE_FULL_CMAT = 0;
+            if(COMPUTE_FULL_CMAT == 1)
+            {
+                printf("COMPUTE OVERALL CONTROL MATRIX\n");
+                float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
+                #ifdef HAVE_MAGMA
+                    CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
+                #else
+                    linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
+        		#endif
 
-		}
+                delete_image_ID("VTmat");
+                save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
-        sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt);
-        ret = system(command);
+        	}
 
-    
+        		char command[1000];
+                if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
+        			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(system(command) != 0)
+        			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+
+            */
     }
     // time : 07:43
 
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
-	#endif
+#ifdef AOLOOPCONTROL_LOGFUNC
+    AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
+#endif
 
 
     return(ID);
 }
+
 
 
 
@@ -9325,7 +9653,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	long *MBLOCK_blockstart;
 	long *MBLOCK_blockend;
 	char fname[500];
-	int ret;
+
 	char imname[500];
 	char imname1[500];
 	long ID;
@@ -9341,9 +9669,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	long NBmodes;
 	long cnt;
 	long IDm;
-	long IDmwfs;
 	long m;
-	long IDcmat;
 	long IDcmatall;
 	char command[500];
 
@@ -9354,7 +9680,9 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	
 	printf("Function AOloopControl_mkModes_Simple - Cmblock = %ld / %ld\n", Cmblock, NBmblock);
 	fflush(stdout);
-	ret = system("mkdir -p mkmodestmp");
+	
+	if(system("mkdir -p mkmodestmp") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 	
 	
 	
@@ -9373,7 +9701,10 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	if(NBmblock==1)
 	{
 		MBLOCK_blockend[0] = NBmodes;
-		sprintf(fname, "./conf_staged/conf_block00end.txt");
+		
+		if(sprintf(fname, "./conf_staged/conf_block00end.txt") < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		fp = fopen(fname, "w");
 		fprintf(fp, "%03ld\n", NBmodes);
 		fclose(fp);
@@ -9382,14 +9713,17 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	{
 		for(mblock=0; mblock<NBmblock; mblock++)
 		{
-			sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock);
+			if(sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
 			fp = fopen(fname, "r");
 			if(fp==NULL)
 				{
 					printf("ERROR: File \"%s\" not found\n", fname);
 					exit(0);
 				}
-			ret = fscanf(fp, "%ld", &MBLOCK_blockend[mblock]);
+			if(fscanf(fp, "%50ld", &MBLOCK_blockend[mblock]) != 1)
+				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
 			fclose(fp);
 			
 			printf("Block end %ld = %ld\n", mblock, MBLOCK_blockend[mblock]);
@@ -9424,15 +9758,20 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 			{
 				printf("Reconstructing block %ld\n", mblock);
 			
-				 sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
-                ret = system(command);
+				if(sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
+                if(system(command) != 0)
+					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 				
 				IDdmmask = create_2Dimage_ID("dmmask", NBmodes, 1);
 				for(kk=0;kk<NBmodes;kk++)
 					data.image[IDdmmask].array.F[kk] = 1.0;
 		
-				sprintf(imname, "fmodesWFS_%02ld", mblock);
+				if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
 				ID = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
 				for(kk=0;kk<MBLOCK_NBmode[mblock];kk++)
 					{
@@ -9440,13 +9779,20 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 							data.image[ID].array.F[kk*wfssize+ii] = data.image[IDin].array.F[(kk+MBLOCK_blockstart[mblock])*wfssize+ii];
 					}
 				
-				sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+				if(sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
 				save_fits(imname, fname);
 				
 				
-				sprintf(imnameCM, "cmat_%02ld", mblock);
-				sprintf(imnameCMc, "cmatc_%02ld", mblock);
-				sprintf(imnameCMcact, "cmatcact_%02ld", mblock);
+				if(sprintf(imnameCM, "cmat_%02ld", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
+				if(sprintf(imnameCMc, "cmatc_%02ld", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
+				if(sprintf(imnameCMcact, "cmatcact_%02ld", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 				
 				// COMPUTE MODAL CONTROL MATRICES
                 printf("COMPUTE CONTROL MATRIX\n");
@@ -9457,14 +9803,19 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 				#endif
 	             
 	            delete_image_ID("VTmat");
-                sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
+                
+                if(sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imnameCM, fname);
 			
 				printf("-- COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX\n");
                 fflush(stdout);
 
 				// COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
-                sprintf(imname, "fmodes_%02ld", mblock);
+                if(sprintf(imname, "fmodes_%02ld", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 IDmodes = create_3Dimage_ID(imname, NBmodes, 1, MBLOCK_NBmode[mblock]);
                 list_image_ID();
                 for(kk=0;kk<MBLOCK_NBmode[mblock];kk++)
@@ -9473,17 +9824,27 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 							data.image[IDmodes].array.F[kk*NBmodes+ii] = 0.0;
 						data.image[IDmodes].array.F[kk*NBmodes+(kk+MBLOCK_blockstart[mblock])] = 1.0;
 					}
-				sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
+					
+				if(sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
 				save_fits(imname, fname);
 				
 				
                 compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
 				delete_image_ID("dmmask");
 
-				sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
+				if(sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+					
 				save_fits(imnameCMc, fname);
-                sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
-                sprintf(imname1, "%s_00", imnameCMcact);
+                
+                if(sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
+                if(sprintf(imname1, "%s_00", imnameCMcact) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 save_fits(imname1, fname);
 			}
 		
@@ -9492,13 +9853,24 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
                 printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
 
-                sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+                if(sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 load_fits(fname, imname, 1);
-                sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock);
+                
+                if(sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 load_fits(fname, imnameCM, 1);
-                sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock);
+                
+                if(sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 load_fits(fname, imnameCMc, 1);
-                sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock);
+                
+                if(sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                
                 load_fits(fname, imnameCMcact, 1);
             }
 		}
@@ -9511,11 +9883,16 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
      cnt = 0;
      for(mblock=0; mblock<NBmblock; mblock++)
         {
-			sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
-            ret = system(command);
+			if(sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 			
-            sprintf(imname, "fmodesWFS_%02ld", mblock);
-            IDmwfs = image_ID(imname);
+            if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
+            long IDmwfs = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9533,8 +9910,10 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            sprintf(imname, "cmat_%02ld", mblock);
-            IDcmat = image_ID(imname);
+            if(sprintf(imname, "cmat_%02ld", mblock) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
+            long IDcmat = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9576,7 +9955,6 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, const char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim)
 {
     FILE *fp;
-    long ID;
     long ii1, jj1, k, ii;
     gsl_matrix *matrix_D; /* this is the response matrix */
     gsl_matrix *matrix_Ds; /* this is the pseudo inverse of D */
@@ -9596,8 +9974,8 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     long ID_Rmatrix, ID_Cmatrix, ID_VTmatrix;
     uint32_t *arraysizetmp;
 
-    long IDmodes, IDeigenmodes;
-    uint32_t xsize_modes, ysize_modes, zsize_modes;
+    long IDmodes;
+
     long IDeigenmodesResp;
     long kk, kk1;
     long ID_RMmask;
@@ -9672,7 +10050,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     
      if(Beta>0.000001)
     {
-        ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
+        long ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
         if(ID==-1)
         {
             for(k=0; k<m; k++)
@@ -9763,7 +10141,9 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
                 data.image[IDeigenmodesResp].array.F[kk*n + ii] += data.image[ID_VTmatrix].array.F[kk1*m+kk]*data.image[ID_Rmatrix].array.F[kk1*n + ii];
         }
     }
-    sprintf(fname, "!eigenmodesrespM_%4.2f.fits", Beta);
+    if(sprintf(fname, "!eigenmodesrespM_%4.2f.fits", Beta) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
     save_fits("eigenmodesrespM", fname);
     printf("\n");
 
@@ -9772,6 +10152,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     IDmodes = image_ID("modesM");
     if(IDmodes!=-1)
     {
+		uint32_t xsize_modes, ysize_modes, zsize_modes;
         xsize_modes = data.image[IDmodes].md[0].size[0];
         ysize_modes = data.image[IDmodes].md[0].size[1];
         zsize_modes = data.image[IDmodes].md[0].size[2];
@@ -9779,7 +10160,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
             printf("ERROR: zsize (%ld) of modesM does not match expected size (%ld)\n", (long) zsize_modes, (long) m);
         else
         {
-            IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
+            long IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
             printf("Computing eigenmodes .... \n");
             for(kk=0; kk<m; kk++) /// eigen mode index
             {
@@ -9793,7 +10174,10 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
             }
             printf("\n");
         }
-        sprintf(fname, "!eigenmodesM_%4.2f.fits", Beta);
+        
+        if(sprintf(fname, "!eigenmodesM_%4.2f.fits", Beta) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         save_fits("eigenmodesM", fname);
     }
 
@@ -9860,14 +10244,24 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
         if(NB_MODE_REMOVED_STEP==0)
         {
             save_fits(ID_Cmatrix_name, "!cmat.fits");
-            sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES_RM.txt", NBMODES_REMOVED_EIGENVLIM);
-            ret = system(command);
-            sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES.txt",  m);
-            ret = system(command);
+            
+            if(sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES_RM.txt", NBMODES_REMOVED_EIGENVLIM) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+				
+            if(sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES.txt",  m) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
        }
         else
         {
-            sprintf(fname, "!cmat_%4.2f_%02ld.fits", Beta, NB_MR);
+            if(sprintf(fname, "!cmat_%4.2f_%02ld.fits", Beta, NB_MR) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             printf("  SAVING -> %s\n", fname);
             fflush(stdout);
             save_fits(ID_Cmatrix_name, fname);
@@ -9910,7 +10304,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
 
 long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_name, const char* IDwfsmask_name, const char *IDdmmask_name, const char *IDcmatc_name, const char *IDcmatc_active_name)
 {
-    long ID;
+   // long ID;
     struct timespec t1;
     struct timespec t2;
     struct timespec tdiff;
@@ -9921,7 +10315,6 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     //    long n_sizeDM, n_NBDMmodes, n_sizeWFS;
     float *matrix_Mc, *matrix_DMmodes;
     long act_active, wfselem_active;
-    int chunk = 10;
 
     long IDwfsmask, IDdmmask;
     long sizexWFS, sizeyWFS, sizeWFS, sizeWFS_active[100];
@@ -10029,7 +10422,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     //    }
     //# endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
-
+	free(matrix_cmp);
 
     printf("REDUCE MATRIX SIZE\n");
     fflush(stdout);
@@ -10058,7 +10451,9 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
                 }
             }
         sizeWFS_active[slice] = ii1;
-        sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice);
+        
+        if(sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
 /* CAN CRASH        
         sizearray = (long*) malloc(sizeof(long)*2);
@@ -10098,7 +10493,9 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     // reduce matrix size to active elements
     for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
     {
-        sprintf(imname, "%s_%02d", IDcmatc_active_name, slice);
+        if(sprintf(imname, "%s_%02d", IDcmatc_active_name, slice) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         IDcmatc_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], sizeDM_active);
         for(act_active=0; act_active<sizeDM_active; act_active++)
         {
@@ -10129,7 +10526,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
 	#endif
 
-    return(ID);
+    return(0);
 }
 
 
@@ -10140,10 +10537,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
 long AOloopControl_loadCM(long loop, const char *CMfname)
 {
     long ID = -1;
-    int vOK;
-    char name[200];
-    long ID0;
-    long ii;
+    
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10155,9 +10549,11 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
 
     if( (ID = load_fits(CMfname, "tmpcontrM", 1)) != -1 )
     {
-
+		
         // check size is OK
-        vOK = 1;
+        int vOK = 1;
+    
+    
         if(data.image[ID].md[0].naxis!=3)
         {
             printf("Control matrix has wrong dimension\n");
@@ -10191,12 +10587,16 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
         if(vOK==1)
         {
             AOconf[loop].init_CM = 1;
-            sprintf(name, "ContrM_%ld", loop);
+            char name[200];
+            if(sprintf(name, "ContrM_%ld", loop) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+            
             ID = image_ID(name);
             if(ID==-1)
                 ID = read_sharedmem_image(name);
-            ID0 = image_ID("tmpcontrM");
+            long ID0 = image_ID("tmpcontrM");
             data.image[ID].md[0].write  = 1;
+            long ii;
             for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].NBDMmodes; ii++)
                 data.image[ID].array.F[ii] = data.image[ID0].array.F[ii];
             data.image[ID].md[0].write  = 0;
@@ -10370,6 +10770,8 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
 }
 
 
+
+
 //
 // Create zero point WFS channels
 // watch semaphore 1 on output (IDwfsref_name) -> sum all channels to update WFS zero point
@@ -10382,17 +10784,17 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     long wfsxsize, wfsysize, wfsxysize;
     long IDwfsref, IDwfsref0;
     long *IDwfszparray;
-    long cntsum, cntsumold;
+    long cntsumold;
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     long nsecwait = 10000; // 10 us
-    int r;
     struct timespec semwaitts;
     long ch;
     long IDtmp;
     long ii;
     char name[200];
     int semval;
+    
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10401,9 +10803,13 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
-    r = seteuid(euid_called); //This goes up to maximum privileges
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    r = seteuid(euid_real);//Go back to normal privileges
+    if(seteuid(euid_called) != 0) //This goes up to maximum privileges
+		printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
+		
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster    
+
+    if(seteuid(euid_real) != 0) //Go back to normal privileges
+		printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
 	#endif
 
     IDwfsref = image_ID(IDwfsref_name);
@@ -10425,7 +10831,9 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     // create / read the zero point WFS channels
     for(ch=0; ch<NBzp; ch++)
     {
-        sprintf(name, "%s%ld", ID_WFSzp_name, ch);
+        if(sprintf(name, "%s%ld", ID_WFSzp_name, ch) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         AOloopControl_2Dloadcreate_shmim(name, "", wfsxsize, wfsysize);
         COREMOD_MEMORY_image_set_createsem(name, 10);
         IDwfszparray[ch] = image_ID(name);
@@ -10433,7 +10841,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
 
     cntsumold = 0;
-    while(1 == 1)
+    for(;;)
     {
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");
@@ -10445,7 +10853,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
         sem_timedwait(data.image[IDwfsref].semptr[1], &semwaitts);
 
-        cntsum = 0;
+        long cntsum = 0;
         for(ch=0; ch<NBzp; ch++)
             cntsum += data.image[IDwfszparray[ch]].md[0].cnt0;
         
@@ -10506,16 +10914,13 @@ int_fast8_t AOloopControl_run()
     double a;
     long cnttest;
     float tmpf1;
-    int k;
-    long xsize, ysize;
+    
 
     struct timespec t1;
     struct timespec t2;
     struct timespec tdiff;
-    double tdiffv;
-    int timerinit;
     int semval;
-    int semnb;
+   
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10578,8 +10983,8 @@ int_fast8_t AOloopControl_run()
 
     if(COMPUTE_PIXELSTREAMING == 1)
     {
-        xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
-        ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
+        long xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
+        long ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
         PIXSTREAM_NBSLICES = 0;
         for(ii=0; ii<xsize*ysize; ii++)
             if(data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii] > PIXSTREAM_NBSLICES)
@@ -10598,8 +11003,9 @@ int_fast8_t AOloopControl_run()
     printf("GPU = %d\n", AOconf[loop].GPU);
     if(AOconf[loop].GPU>1)
     {
+		uint8_t k;
         for(k=0; k<AOconf[loop].GPU; k++)
-            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", k, GPUset0[k], GPUset1[k]);
+            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", (int) k, GPUset0[k], GPUset1[k]);
     }
 
 
@@ -10622,6 +11028,7 @@ int_fast8_t AOloopControl_run()
     AOconf[loop].init_CMc = 0;
     clock_gettime(CLOCK_REALTIME, &t1);
 
+
     if(vOK==1)
     {
         AOconf[loop].kill = 0;
@@ -10630,7 +11037,9 @@ int_fast8_t AOloopControl_run()
         AOconf[loop].ARPFon = 0;
         printf("entering loop ...\n");
         fflush(stdout);
-        
+
+		int timerinit = 0;
+		
         while( AOconf[loop].kill == 0)
         {
             if(timerinit==1)
@@ -10641,7 +11050,7 @@ int_fast8_t AOloopControl_run()
             clock_gettime(CLOCK_REALTIME, &t2);
 
             tdiff = info_time_diff(t1, t2);
-            tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+            double tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 			
             printf(" WAITING     %20.3lf sec         \r", tdiffv);
             fflush(stdout);
@@ -10758,7 +11167,7 @@ int_fast8_t AOloopControl_run()
 
 
 
-
+						int semnb;
                         for(semnb=0; semnb<data.image[aoconfID_dmC].md[0].sem; semnb++)
                         {
                             sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
@@ -10836,15 +11245,10 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 
 int_fast8_t set_DM_modes(long loop)
 {
-    long k;
-    long i, j;
-    float *arrayf;
     double a;
     long cnttest;
     int semval;
     
-//    printf("======= set DM modes\n");
-//   fflush(stdout);
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10852,7 +11256,11 @@ int_fast8_t set_DM_modes(long loop)
     
     if(AOconf[loop].GPU == 0)
     {
+		float *arrayf;
+        long i, j, k;
+        
         arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+		
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
 
@@ -10876,8 +11284,7 @@ int_fast8_t set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-     //   printf("GPU setup\n");
-     //   fflush(stdout);
+
 		
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);        
         AOconf[loop].status = 12; 
@@ -10954,17 +11361,14 @@ int_fast8_t set_DM_modesRM(long loop)
 
 int_fast8_t AOcompute(long loop, int normalize)
 {
-    float total = 0.0;
-    long k, k1, k2;
+    long k1, k2;
     long ii;
     long i;
     long m, n;
     long index;
     //  long long wcnt;
     // long long wcntmax;
-    long cnttest;
     double a;
-    uint32_t *sizearray;
 
     float *matrix_cmp;
     long wfselem, act, mode;
@@ -10972,16 +11376,13 @@ int_fast8_t AOcompute(long loop, int normalize)
     struct timespec t1;
     struct timespec t2;
 
-    int chunk = 10;
     float *matrix_Mc, *matrix_DMmodes;
     long n_sizeDM, n_NBDMmodes, n_sizeWFS;
 
-    long ii1;
     long IDmask;
     long act_active, wfselem_active;
     float *matrix_Mc_active;
     long IDcmatca_shm;
-    char imname[200];
     int r;
     float imtot;
 
@@ -11036,7 +11437,6 @@ int_fast8_t AOcompute(long loop, int normalize)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_imWFS2].array.F[ii] = data.image[aoconfID_imWFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_wfsref].array.F[ii];
 		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2, -1);
-        cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
         data.image[aoconfID_imWFS2].md[0].cnt0 ++;
         data.image[aoconfID_imWFS2].md[0].write = 0;
     }
@@ -11065,7 +11465,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         {
             for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
             {
-                ii1 = 0;
+                long ii1 = 0;
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     if(data.image[aoconfID_wfsmask].array.F[ii]>0.1)
                     {
@@ -11081,7 +11481,12 @@ int_fast8_t AOcompute(long loop, int normalize)
                         }
                     }
                 AOconf[loop].sizeWFS_active[slice] = ii1;
-                sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice);
+                
+                char imname[200];
+                if(sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                uint32_t *sizearray;
                 sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 				sizearray[0] =  AOconf[loop].sizeWFS_active[slice];
 				sizearray[1] =  1;
@@ -11103,7 +11508,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
         if(aoconfID_dmmask != -1)
         {
-            ii1 = 0;
+            long ii1 = 0;
             for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                 if(data.image[aoconfID_dmmask].array.F[ii]>0.5)
                 {
@@ -11115,11 +11520,15 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-
+		uint32_t *sizearray;
         sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sizearray[0] = AOconf[loop].sizeDM_active;
         sizearray[1] = 1;
-        sprintf(imname, "aol%ld_meas_act_active", LOOPNUMBER);
+        
+        char imname[200];
+        if(sprintf(imname, "aol%ld_meas_act_active", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_meas_act_active = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
         free(sizearray);
 
@@ -11130,7 +11539,10 @@ int_fast8_t AOcompute(long loop, int normalize)
             sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearray[0] = AOconf[loop].sizexDM;
             sizearray[1] = AOconf[loop].sizeyDM;
-            sprintf(imname, "aol%ld_meas_act", LOOPNUMBER);
+            
+            if(sprintf(imname, "aol%ld_meas_act", LOOPNUMBER) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
             aoconfID_meas_act = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem(imname, 10);
             free(sizearray);
@@ -11360,6 +11772,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     if(MATRIX_COMPUTATION_MODE==0)
     {
         AOconf[loop].RMSmodes = 0;
+        long k;
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
 
@@ -11401,20 +11814,18 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name)
 {
+	#ifdef HAVE_CUDA
+	
     int *GPUsetM;
-    int GPUcntMax = 1;
     long ID_CM;
     long ID_WFSref;
     long ID_coeff;
-    long GPUcnt=1;
+    long GPUcnt;
     int k;
     int_fast8_t GPUstatus[100];
     int_fast8_t status;
-    long iter;
-    long NBiter=100;
     long NBmodes;
     uint32_t *sizearray;
-    long initWFSref = 0;
     
     long ID_WFSim;
     long ID_WFSim_n;
@@ -11424,13 +11835,9 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     
     long ID_WFSimtot;
     double totfluxave;
-    double alpha = 0.1;
     long ID_coefft;
     
-    
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
-	#endif
+	double alpha = 0.1;
 
     
     GPUcnt = 2;
@@ -11465,15 +11872,16 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 10);
     
     
+    
+    
     ID_WFSim = image_ID(ID_WFSim_name);
     ID_WFSimtot = image_ID(ID_WFSimtot_name);
     
-//    for(iter=0; iter<NBiter; iter++)
-    #ifdef HAVE_CUDA
+    
     GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", "coefftmp", GPUcnt, GPUsetM, 0, 1, 1, 0);
 
     totfluxave = 1.0;
-    
+    int initWFSref;
     while(1==1)
         {
             if(initWFSref==0)
@@ -11503,10 +11911,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
               data.image[ID_coeff].array.F[m] = data.image[ID_coefft].array.F[m]/totfluxave - data.image[IDcoeff0].array.F[m];
             data.image[ID_coeff].md[0].cnt0 ++;
             data.image[ID_coeff].md[0].write = 0;
-            
-            iter++;
         }
-    #endif
         
     
     delete_image_ID("coeff0");
@@ -11514,9 +11919,9 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
         
     free(GPUsetM);
     
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
-	#endif
+
+    
+    #endif
     
     return(0);
 }
@@ -11530,6 +11935,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
 //
 int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode)
 {
+#ifdef HAVE_CUDA
 	long IDmodecoeffs;
 	int GPUcnt, k;
 	int *GPUsetM;
@@ -11566,9 +11972,9 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
     schedpar.sched_priority = RT_priority;
-#ifndef __MACH__
+	#ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); 
-#endif
+	#endif
 
 
 	// read AO loop gain, mult
@@ -11588,7 +11994,10 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
 	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
-	sprintf(imnamecorr, "aol%ld_mode_limcorr", loop);
+	
+	if(sprintf(imnamecorr, "aol%ld_mode_limcorr", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	sizearray[0] = NBmodes;
 	sizearray[1] = 1;
 	IDmodesC = create_image_ID(imnamecorr, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
@@ -11597,7 +12006,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
 
-	#ifdef HAVE_CUDA
+	
     GPU_loop_MultMat_setup(0, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
 
 
@@ -11607,15 +12016,17 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 	if(offloadMode==1)
 	{
-		sprintf(imnamedmC, "aol%ld_dmC", loop);
+		if(sprintf(imnamedmC, "aol%ld_dmC", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
 		IDc = image_ID(imnamedmC);
 		dmxsize = data.image[IDc].md[0].size[0];
 		dmysize = data.image[IDc].md[0].size[1];
-	} 
 	
-	printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
-	fflush(stdout);
-
+	
+		printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
+		fflush(stdout);
+	}
 
 	while(1==1)
         {	
@@ -11640,7 +12051,6 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 				}		
 			AOconf[loop].statusM = 20;	
 		}
-	#endif
 
 
 	
@@ -11650,8 +12060,13 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
 	#endif
 
+	#endif
+
 	return(0);
 }
+
+
+
 
 
 //
@@ -11761,16 +12176,24 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif
 	
-	sprintf(imname, "aol%ld_imWFS0", loop);
+	if(sprintf(imname, "aol%ld_imWFS0", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDimWFS0 = read_sharedmem_image(imname);
 	
-	sprintf(imname, "aol%ld_wfsref", loop);
+	if(sprintf(imname, "aol%ld_wfsref", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDwfsref = read_sharedmem_image(imname);
 	
-	sprintf(imname, "aol%ld_wfsmask", loop);
+	if(sprintf(imname, "aol%ld_wfsmask", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDwfsmask = read_sharedmem_image(imname);
 	
-	sprintf(imname, "aol%ld_imWFS0tot", loop);
+	if(sprintf(imname, "aol%ld_imWFS0tot", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDtot = read_sharedmem_image(imname);
 	
 	wfsxsize = data.image[IDimWFS0].md[0].size[0];
@@ -11781,27 +12204,37 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 	sizearray[0] = wfsxsize;
 	sizearray[1] = wfsysize;
 	
-	sprintf(imname, "aol%ld_wfsres", loop);
+	if(sprintf(imname, "aol%ld_wfsres", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDout = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-	sprintf(imname, "aol%ld_wfsres_ave", loop);
+	if(sprintf(imname, "aol%ld_wfsres_ave", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDoutave = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutave].array.F[ii] = 0.0;
 
-	sprintf(imname, "aol%ld_wfsresm", loop);
+	if(sprintf(imname, "aol%ld_wfsresm", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDoutm = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-	sprintf(imname, "aol%ld_wfsresm_ave", loop);
+	if(sprintf(imname, "aol%ld_wfsresm_ave", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDoutmave = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutave].array.F[ii] = 0.0;
 
-	sprintf(imname, "aol%ld_wfsres_rms", loop);
+	if(sprintf(imname, "aol%ld_wfsres_rms", loop) < 1) 
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDoutrms = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
@@ -11877,6 +12310,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 }
 
 
+
+
 // includes mode filtering (limits, multf)
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
@@ -11909,7 +12344,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long framelatency0, framelatency1;
 	long IDgainb;
 	long cnt;
-	long ii;
 	
 	
 	// FILTERING
@@ -11957,7 +12391,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	
 	// INPUT
-	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
+	if(sprintf(imname, "aol%ld_modeval", loop) < 1)// measured from WFS
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	IDmodeval = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodeval].md[0].size[0];
 
@@ -11976,19 +12412,25 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	if(aoconfID_gainb == -1)
 	{
-		sprintf(imname, "aol%ld_gainb", loop);
+		if(sprintf(imname, "aol%ld_gainb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_gainb = read_sharedmem_image(imname);
 	}
 	
 	if(aoconfID_multfb == -1)
 	{
-		sprintf(imname, "aol%ld_multfb", loop);
+		if(sprintf(imname, "aol%ld_multfb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_multfb = read_sharedmem_image(imname);
 	}
 	
 	if(aoconfID_limitb == -1)
 	{
-		sprintf(imname, "aol%ld_limitb", loop);
+		if(sprintf(imname, "aol%ld_limitb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_limitb = read_sharedmem_image(imname);
 	}
 
@@ -11998,7 +12440,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	if(aoconfID_GAIN_modes == -1)
     {
-        sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER);
+        if(sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_GAIN_modes = read_sharedmem_image(imname);
     }
 	printf("aoconfID_GAIN_modes = %ld\n", aoconfID_GAIN_modes);
@@ -12006,7 +12450,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	if(aoconfID_LIMIT_modes == -1)
 	{
-		sprintf(imname, "aol%ld_DMmode_LIMIT", loop);
+		if(sprintf(imname, "aol%ld_DMmode_LIMIT", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_LIMIT_modes = read_sharedmem_image(imname);
 	}
 	if(aoconfID_LIMIT_modes == -1)
@@ -12015,7 +12461,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	if(aoconfID_MULTF_modes == -1)
 	{
-		sprintf(imname, "aol%ld_DMmode_MULTF", loop);
+		if(sprintf(imname, "aol%ld_DMmode_MULTF", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_MULTF_modes = read_sharedmem_image(imname);
 	}
 	if(aoconfID_MULTF_modes == -1)
@@ -12031,10 +12479,13 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 	// predictive control output
-	sprintf(imname, "aol%ld_modevalPF", loop);
+	if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodevalPF = read_sharedmem_image(imname);
 	if(IDmodevalPF != -1)
 		{
+			long ii;
 			for(ii=0;ii<data.image[IDmodevalPF].md[0].size[0]*data.image[IDmodevalPF].md[0].size[1];ii++)
 				data.image[IDmodevalPF].array.F[ii] = 0.0;
 		}
@@ -12044,29 +12495,42 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizeout[0] = NBmodes;
     sizeout[1] = 1;
-	sprintf(imname, "aol%ld_modeval_ol", loop);
+	
+	if(sprintf(imname, "aol%ld_modeval_ol", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+   	
    	IDout = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
-	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
+	if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) // block indices
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
    	IDblknb = create_image_ID(imname, 2, sizeout, _DATATYPE_UINT16, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
- 	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
+ 	if(sprintf(imname, "aol%ld_modeval_dm_now", loop) < 1) // current modal DM correction 
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
    	IDmodevalDMnow = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
-	sprintf(imname, "aol%ld_modeval_dm_now_filt", loop); // current modal DM correction, filtered 
+	if(sprintf(imname, "aol%ld_modeval_dm_now_filt", loop) < 1) // current modal DM correction, filtered 
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
    	IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
  
-	sprintf(imname, "aol%ld_modeval_dm", loop); // modal DM correction at time of currently available WFS measurement
+	if(sprintf(imname, "aol%ld_modeval_dm", loop) < 1) // modal DM correction at time of currently available WFS measurement
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
    	IDmodevalDM = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
   	sizeout[1] = modevalDM_bsize;
- 	sprintf(imname, "aol%ld_modeval_dm_C", loop); // modal DM correction, circular buffer
+ 	if(sprintf(imname, "aol%ld_modeval_dm_C", loop) < 1) // modal DM correction, circular buffer
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
    	IDmodevalDM_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);     
 
@@ -12075,7 +12539,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	// auto limit tuning
 	sizeout[0] = AOconf[loop].DMmodesNBblock;
 	sizeout[1] = 1;
-	sprintf(imname, "aol%ld_autotune_lim_bcoeff", loop);
+	if(sprintf(imname, "aol%ld_autotune_lim_bcoeff", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
     IDatlimbcoeff = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
@@ -12090,7 +12556,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	blk = 0;
 	while(m<NBmodes)
 		{
-			sprintf(imname, "aol%ld_DMmodes%02ld", loop, blk);
+			if(sprintf(imname, "aol%ld_DMmodes%02ld", loop, blk) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
 			printf("Loading %s  (%2ld/%2ld)\n", imname, m, NBmodes);
 			fflush(stdout);
@@ -12224,7 +12691,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			{
 				if(IDmodevalPF==-1)
 				{
-					sprintf(imname, "aol%ld_modevalPF", loop);
+					if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
+						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+						
 					IDmodevalPF = read_sharedmem_image(imname);
 				}
 				else
@@ -12559,13 +13028,15 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	if(aoconfID_gainb == -1)
 	{
-		sprintf(imname, "aol%ld_gainb", loop);
+		if(sprintf(imname, "aol%ld_gainb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 		aoconfID_gainb = read_sharedmem_image(imname);
 	}
 	
 	if(aoconfID_multfb == -1)
 	{
-		sprintf(imname, "aol%ld_multfb", loop);
+		if(sprintf(imname, "aol%ld_multfb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 		aoconfID_multfb = read_sharedmem_image(imname);
 	}
 
@@ -12573,41 +13044,55 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	if(aoconfID_GAIN_modes == -1)
     {
-        sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER);
+        if(sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_GAIN_modes = read_sharedmem_image(imname);
     }
 	printf("aoconfID_GAIN_modes = %ld\n", aoconfID_GAIN_modes);
 	
 	if(aoconfID_MULTF_modes == -1)
 	{
-		sprintf(imname, "aol%ld_DMmode_MULTF", loop);
+		if(sprintf(imname, "aol%ld_DMmode_MULTF", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 		aoconfID_MULTF_modes = read_sharedmem_image(imname);
 	}
 
 
 
 	// INPUT
-	sprintf(imname, "aol%ld_modeval_ol", loop); // measured from WFS
+	if(sprintf(imname, "aol%ld_modeval_ol", loop) < 1) // measured from WFS
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	IDmodevalOL = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodevalOL].md[0].size[0];
 
-	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
+	if(sprintf(imname, "aol%ld_modeval", loop) < 1) // measured from WFS
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval = read_sharedmem_image(imname);
 
-	sprintf(imname, "aol%ld_modeval_dm", loop); // measured from WFS
+	if(sprintf(imname, "aol%ld_modeval_dm", loop) < 1) // measured from WFS
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval_dm = read_sharedmem_image(imname);
 
- 	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
+ 	if(sprintf(imname, "aol%ld_modeval_dm_now", loop) < 1) // current modal DM correction
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval_dm_now = read_sharedmem_image(imname);
  
-	sprintf(imname, "aol%ld_modeval_dm_now_filt", loop); // current modal DM correction, filtered 
+	if(sprintf(imname, "aol%ld_modeval_dm_now_filt", loop) < 1) // current modal DM correction, filtered 
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval_dm_now_filt = read_sharedmem_image(imname);
  
 
 
 
 	// blocks
-	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
+	if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) // block indices
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
    	IDblk = read_sharedmem_image(imname);
    	
 
@@ -12826,8 +13311,6 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	}
 	
 	
-	free(sizearray);
-	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
 		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
@@ -12858,6 +13341,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	free(modegain);
 	free(modemult);
 	free(NOISEfactor);
+
+	free(stdev);
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
@@ -12935,7 +13420,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     long IDmodecoeff;
     long NBsamples;
     long NBmodes;
-    double SVDeps;
+    double SVDeps = 0.001;
     
     long IDtrace;
     
@@ -12944,7 +13429,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     long modeouto;
     long filtsize = 20;
     double val;
-    
+        
     long ii, jj, m;
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -12965,7 +13450,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     
     for(ii=0;ii<NBsamples;ii++)
         for(m=0;m<modesize;m++)
-            data.image[IDtrace].array.F[jj*NBsamples+ii] = data.image[IDmodecoeff].array.F[ii*NBmodes+jj];
+            data.image[IDtrace].array.F[m*NBsamples+ii] = data.image[IDmodecoeff].array.F[ii*NBmodes+m];
 
     
     val = AOloopControl_testPredictiveFilter("trace", modeouto, delayfr, filtsize, "filt", SVDeps);
@@ -13181,7 +13666,9 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	
 	
 	// read PF block parameters
-	sprintf(fname, "conf/conf_PFblock_%03ld.txt", PFblock);
+	if(sprintf(fname, "conf/conf_PFblock_%03ld.txt", PFblock) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	if((fp = fopen(fname, "r"))==NULL)
 		{
 			printf("ERROR: File \"%s\" NOT FOUND\n", fname);
@@ -13189,14 +13676,18 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		}
 	else
 	{
-		ret = fscanf(fp, "%ld %ld %ld %f %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain);
+		if(fscanf(fp, "%50ld %50ld %50ld %50f %50f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain) != 5)
+			printERROR(__FILE__, __func__, __LINE__, "Cannot read parameters from file");
 		fclose(fp);
 	}
 	PFblockSize = PFblockEnd - PFblockStart;
 	
 	
-	sprintf(imnameb0, "aol%ld_modeval_ol_logbuff0", loop);
-	sprintf(imnameb1, "aol%ld_modeval_ol_logbuff1", loop);
+	if(sprintf(imnameb0, "aol%ld_modeval_ol_logbuff0", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+	if(sprintf(imnameb1, "aol%ld_modeval_ol_logbuff1", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 	
 	IDinb0 = read_sharedmem_image(imnameb0);
 	IDinb1 = read_sharedmem_image(imnameb1);
@@ -13214,16 +13705,25 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	list_image_ID();
 	
 	
-	ret = system("mkdir -p PredictiveControl");
-	ret = sprintf(inmaskname, "inmaskPFb%ld", PFblock);
+	if(system("mkdir -p PredictiveControl") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+		
+	if(sprintf(inmaskname, "inmaskPFb%ld", PFblock) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDinmask = create_2Dimage_ID(inmaskname, xysize, 1);
 	for(ii=0;ii<xysize;ii++)
 		data.image[IDinmask].array.F[ii] = 0.0;
 	for(ii=PFblockStart;ii<PFblockEnd;ii++)
 		data.image[IDinmask].array.F[ii] = 1.0;
-	ret = sprintf(inmaskfname, "!./PredictiveControl/inmaskPF%ld.fits", PFblock);
+	
+	if(sprintf(inmaskfname, "!./PredictiveControl/inmaskPF%ld.fits", PFblock) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	save_fits(inmaskname, inmaskfname);
-	ret = sprintf(outmaskfname, "!./PredictiveControl/outmaskPF%ld.fits", PFblock);
+	if(sprintf(outmaskfname, "!./PredictiveControl/outmaskPF%ld.fits", PFblock) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	save_fits(inmaskname, outmaskfname);
 	
 	
@@ -13236,7 +13736,10 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	imsizearray[0] = PFblockSize;
 	imsizearray[1] = 1;
 	imsizearray[2] = zsize;
-	sprintf(imnameout, "aol%ld_modevalol_PFb%ld", loop, PFblock);
+	
+	if(sprintf(imnameout, "aol%ld_modevalol_PFb%ld", loop, PFblock) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDout = create_image_ID(imnameout, 3, imsizearray, atype, 1, 1);
 	free(imsizearray);
 	COREMOD_MEMORY_image_set_semflush(imnameout, -1);
@@ -13474,7 +13977,6 @@ int_fast8_t AOloopControl_loopstep(long loop, long NBstep)
 
 int_fast8_t AOloopControl_loopreset()
 {
-    char name[200];
     long k;
     long mb;
 
@@ -13487,7 +13989,10 @@ int_fast8_t AOloopControl_loopreset()
 
     if(aoconfID_cmd_modes==-1)
     {
-        sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+		char name[200];
+        if(sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
@@ -14003,8 +14508,11 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 	}
 	else if (AOconf[loop].DMmodesNBblock<2)
 	{
-		sprintf(name2, "aol%ld_contrMc00", loop);
-        sprintf(name3, "aol%ld_contrMcact00_00", loop);
+		if(sprintf(name2, "aol%ld_contrMc00", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+        if(sprintf(name3, "aol%ld_contrMcact00_00", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 		
 		 // for CPU mode
         printf("UPDATING Mc matrix (CPU mode)\n");
@@ -14030,7 +14538,9 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 		
 	
 
-    sprintf(name, "aol%ld_gainb", loop);
+    if(sprintf(name, "aol%ld_gainb", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     aoconfID_gainb = image_ID(name);
     if((blocknb<AOconf[loop].DMmodesNBblock)&&(blocknb>-1))
         data.image[aoconfID_gainb].array.F[blocknb] = gain;
@@ -14059,8 +14569,11 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
         for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
         {
 				//sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
-                sprintf(name2, "aol%ld_contrMc%02ld", loop, kk);
-                sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk);
+                if(sprintf(name2, "aol%ld_contrMc%02ld", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                 printf("adding %ld / %ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
 				
@@ -14136,7 +14649,9 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
     if(aoconfID_cmd_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
+        if(sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
@@ -14222,7 +14737,9 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     */
 
 
-	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
+	if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) // block indices
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
    	IDblknb = image_ID(imname);
 
    	if(IDblknb==-1)
@@ -14232,7 +14749,9 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
 
 	if(aoconfID_LIMIT_modes == -1)
 	{
-		sprintf(imname, "aol%ld_DMmode_LIMIT", loop);
+		if(sprintf(imname, "aol%ld_DMmode_LIMIT", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
 		aoconfID_LIMIT_modes = read_sharedmem_image(imname);
 	}
 
@@ -14417,26 +14936,34 @@ int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
     // load arrays that are required
     if(aoconfID_cmd_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_cmd", loop);
+        if(sprintf(name, "aol%ld_DMmode_cmd", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
     if(aoconfID_meas_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_meas", loop);
+        if(sprintf(name, "aol%ld_DMmode_meas", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_meas_modes = read_sharedmem_image(name);
     }
 
 
     if(aoconfID_RMS_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_RMS", loop);
+        if(sprintf(name, "aol%ld_DMmode_RMS", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_RMS_modes = read_sharedmem_image(name);
     }
 
     if(aoconfID_AVE_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_AVE", loop);
+        if(sprintf(name, "aol%ld_DMmode_AVE", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_AVE_modes = read_sharedmem_image(name);
     }
 
@@ -14444,19 +14971,25 @@ int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 	// blocks
 	if(aoconfID_gainb == -1)
 	{
-		sprintf(name, "aol%ld_gainb", loop);
+		if(sprintf(name, "aol%ld_gainb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_gainb = read_sharedmem_image(name);
 	}
 	
 	if(aoconfID_multfb == -1)
 	{
-		sprintf(name, "aol%ld_multfb", loop);
+		if(sprintf(name, "aol%ld_multfb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_multfb = read_sharedmem_image(name);
 	}
 	
 	if(aoconfID_limitb == -1)
 	{
-		sprintf(name, "aol%ld_limitb", loop);
+		if(sprintf(name, "aol%ld_limitb", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 		aoconfID_limitb = read_sharedmem_image(name);
 	}
 
@@ -14465,19 +14998,25 @@ int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
     if(aoconfID_GAIN_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_GAIN", loop);
+        if(sprintf(name, "aol%ld_DMmode_GAIN", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_GAIN_modes = read_sharedmem_image(name);
     }
 
     if(aoconfID_LIMIT_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_LIMIT", loop);
+        if(sprintf(name, "aol%ld_DMmode_LIMIT", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_LIMIT_modes = read_sharedmem_image(name);
     }
 
     if(aoconfID_MULTF_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_MULTF", loop);
+        if(sprintf(name, "aol%ld_DMmode_MULTF", loop) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         aoconfID_MULTF_modes = read_sharedmem_image(name);
     }
 
@@ -14489,20 +15028,29 @@ int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
 
 	// real-time DM mode value
-	sprintf(fname, "aol%ld_modeval_dm_now", loop);
+	
+	if(sprintf(fname, "aol%ld_modeval_dm_now", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval_dm = read_sharedmem_image(fname);
 
 	// real-time WFS mode value
-	sprintf(fname, "aol%ld_modeval", loop);
+	if(sprintf(fname, "aol%ld_modeval", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodeval = read_sharedmem_image(fname);
 
 	// averaged WFS residual modes, computed by CUDACOMP_extractModesLoop
-	sprintf(fname, "aol%ld_modeval_ave", loop);
+	if(sprintf(fname, "aol%ld_modeval_ave", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	IDmodevalave = read_sharedmem_image(fname);
 	ksize = data.image[IDmodevalave].md[0].size[1]; // number of averaging line, each line is 2x averaged of previous line
 	
 	// averaged WFS residual modes RMS, computed by CUDACOMP_extractModesLoop
-	sprintf(fname, "aol%ld_modeval_rms", loop);
+	if(sprintf(fname, "aol%ld_modeval_rms", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDmodevalrms = read_sharedmem_image(fname);
 
 
@@ -14687,10 +15235,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     }
 
 
-	sprintf(imname, "aol%ld_wfsim", LOOPNUMBER);
+	if(sprintf(imname, "aol%ld_wfsim", LOOPNUMBER) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	aoconfID_wfsim = read_sharedmem_image(imname);
 
-	sprintf(imname, "aol%ld_dmC", LOOPNUMBER);
+	if(sprintf(imname, "aol%ld_dmC", LOOPNUMBER) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	aoconfID_dmC = read_sharedmem_image(imname);
 
 	
@@ -14773,7 +15325,9 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 		}
 	else
 		{
-			ret = fscanf(fp, "%f", &AOconf[LOOPNUMBER].hardwlatency);
+			if(fscanf(fp, "%50f", &AOconf[LOOPNUMBER].hardwlatency) != 1)
+				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+				
 			printf("hardware latency = %f\n", AOconf[LOOPNUMBER].hardwlatency);
 			fclose(fp);
 			fflush(stdout);
@@ -15033,12 +15587,11 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     long wfsframeoffset = 10;
 
     long IDwfsref;
-    unsigned int dmstate;
+    
     unsigned long wfscnt0;
     char *ptr;
     long kk, kkmax;
     double *valarray;
-    double valmax, valmaxdt;
     double tmp;
     double dtoffset;
     long kkoffset;
@@ -15054,8 +15607,6 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     double latency;
-    float latencystep;
-    int ret;
     float minlatency, maxlatency;
 	double wfsdt;
 	
@@ -15132,7 +15683,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
-    ret = system("mkdir -p timingstats");
+	if(system("mkdir -p timingstats") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     if ((fp=fopen("timingstats/hardwlatency.txt", "w"))==NULL)
     {
@@ -15156,7 +15708,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 		printf("write to %s\n", dmname);
 		fflush(stdout);
         copy_image_ID("_testdm0", dmname, 1);
-        dmstate = 0;
+        
+        unsigned int dmstate = 0;
 
         // waiting time
         usleep(twaitus);  	
@@ -15214,7 +15767,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 
             tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
             dt = tdouble - tstartdouble;
-            dt1 = tdouble - tlastdouble;
+          //  dt1 = tdouble - tlastdouble;
             dtarray[wfsframe] = dt;
             tlastdouble = tdouble;
 
@@ -15243,8 +15796,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         // Computing difference between consecutive images
         NBwfsframe = wfsframe;
         valarray = (double*) malloc(sizeof(double)*NBwfsframe);
-        valmax = 0.0;
-        valmaxdt = 0.0;
+        double valmax = 0.0;
+        double valmaxdt = 0.0;
         for(kk=1; kk<NBwfsframe; kk++)
         {
             valarray[kk] = 0.0;
@@ -15275,13 +15828,14 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         for(wfsframe=1; wfsframe<NBwfsframe; wfsframe++)
             fprintf(fp, "%ld   %10.2f     %g\n", wfsframe-kkoffset, 1.0e6*(0.5*(dtarray[wfsframe]+dtarray[wfsframe-1])-dtoffset), valarray[wfsframe]);
 
-        printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
+        printf("mean interval =  %10.2f ns\n", 1.0e9*(dt-dtoffset)/NBwfsframe);
         fflush(stdout);
 
         free(valarray);
 
         latency = valmaxdt-dtoffset;
-        latencystep = kkmax;
+       // latencystep = kkmax;
+        
         printf("Hardware latency = %f ms  = %ld frames\n", 1000.0*latency, kkmax);
         if(latency > latencymax)
         {
@@ -15326,17 +15880,27 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
-    ret = sprintf(command, "echo %8.6f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2]);
-    ret = system(command);
+    if(sprintf(command, "echo %8.6f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2]) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
-    ret = sprintf(command, "echo %f %f %f %f %f > timinstats/hardwlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
-    ret = system(command);
+    if(sprintf(command, "echo %f %f %f %f %f > timinstats/hardwlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
 	dt = tdouble_end - tdouble_start;
 	printf("FRAME RATE = %.3f Hz\n", 1.0*(wfscntend-wfscntstart)/dt);
-	ret = sprintf(command, "echo %.3f > conf/conf_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt );
-    ret = system(command);
+	
+	if(sprintf(command, "echo %.3f > conf/conf_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt ) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
     
     free(latencyarray);
     free(latencysteparray);
@@ -15375,7 +15939,9 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	#endif	
 	
 
-	sprintf(fname, "aol%ld_modeval", loop);
+	if(sprintf(fname, "aol%ld_modeval", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	IDmodeval = read_sharedmem_image(fname);
 	NBmodes = data.image[IDmodeval].md[0].size[0];
 
@@ -15392,7 +15958,9 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	blk = 0;
 	while(m<NBmodes)
 		{
-			sprintf(fname, "aol%ld_DMmodes%02ld", loop, blk);
+			if(sprintf(fname, "aol%ld_DMmodes%02ld", loop, blk) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
 			ID = read_sharedmem_image(fname);		
 			n = data.image[ID].md[0].size[2];
 			for(i=0;i<n;i++)
@@ -15415,17 +15983,22 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	printf("NBblock = %ld\n", NBblock);
 	sizeout[0] = NBblock;
 	sizeout[1] = 1;
-	sprintf(fname, "aol%ld_blockRMS", loop);
+	
+	if(sprintf(fname, "aol%ld_blockRMS", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 	IDblockRMS = create_image_ID(fname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(fname, 10);
 
-	sprintf(fname, "aol%ld_blockRMS_ave", loop);
+	if(sprintf(fname, "aol%ld_blockRMS_ave", loop) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
 	IDblockRMS_ave = create_image_ID(fname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(fname, 10);
 	
 	
 	cnt =  0;
-	while(1==1)
+	for(;;)
     {
 	  if(data.image[IDmodeval].md[0].sem==0)
         {
@@ -15473,7 +16046,6 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 {
     long i;
-    float *arrayf;
     char name[200];
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -15486,7 +16058,9 @@ int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 
     if(aoconfID_DMmodes==-1)
     {
-        sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
+        if(sprintf(name, "aol%ld_DMmodes", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_DMmodes = read_sharedmem_image(name);
     }
 
@@ -15500,6 +16074,8 @@ int_fast8_t AOloopControl_InjectMode( long index, float ampl )
     }
     else
     {
+		float *arrayf;
+		
         arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
 
         for(i=0; i<AOconf[LOOPNUMBER].sizeDM; i++)
@@ -15635,7 +16211,9 @@ long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float am
  
     IDcoeffarray = create_2Dimage_ID("_tmpcoeffarray", kmax, NBmodes);
 
-    sprintf(fname, "mode%03ld_PSD.txt", kk);
+    if(sprintf(fname, "mode%03ld_PSD.txt", kk) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
     if( (fp = fopen(fname, "w"))==NULL)
         {
             printf("ERROR: cannot create file \"%s\"", fname);
@@ -16276,7 +16854,6 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
     int k;
     long act, wfselem;
     
-    char *ptr0;
     FILE *fp;
     char flogname[200];
     int loopOK;
@@ -16337,7 +16914,9 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
     
     t = time(NULL);
     uttime = gmtime(&t);
-    sprintf(flogname, "logfpwfs_%04d-%02d-%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec);
+    if(sprintf(flogname, "logfpwfs_%04d-%02d-%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
     if((fp=fopen(flogname,"w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", flogname);
@@ -16393,6 +16972,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
         fflush(stdout);
 
         // apply probe
+        char *ptr0;
         ptr0 = (char*) data.image[IDdmC].array.F;
         ptr0 += k*dmframesize;
         data.image[IDdmstream].md[0].write = 1;
@@ -16418,7 +16998,10 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
         t = time(NULL);
         uttime = gmtime(&t);
         clock_gettime(CLOCK_REALTIME, thetime);
-        sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+
+        if(sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
         printf("time = %s\n", timestr);
         if((fp = fopen(flogname, "a"))==NULL)
         {
@@ -16489,9 +17072,8 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	
 	long IDout_ave;
 	long IDout_rms;
-	double ave, rms, tmpv;
 	
-	long kk, m;
+	long m;
 	long ID1dtmp;
 	FILE *fp;
 	
@@ -16499,8 +17081,8 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	FILE *fpPSD;
 	long IDft;
 	char fname[200];
-	int ret;
 
+	
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif	
@@ -16516,11 +17098,17 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	ID1dtmp = create_2Dimage_ID("modeval1d", data.image[ID].md[0].size[2], 1);
 	ID1dPSD = create_2Dimage_ID("modevalPSD", data.image[ID].md[0].size[2]/2, 1);
 	
-	ret = system("mkdir -p modePSD");
+	if(system("mkdir -p modePSD") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+	
 	fp = fopen("moveval_stats.dat", "w");
 	for(m=0;m<NBmodes;m++)
 		{
-			ave = 0.0;
+			double ave = 0.0;
+			double rms;
+			long kk;
+			double tmpv;
+			
 			for(kk=0;kk<NBframes;kk++)
 				ave += data.image[ID].array.F[kk*NBmodes+m];
 			ave /= NBframes;
@@ -16540,7 +17128,9 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 			do1drfft("modeval1d", "modeval1d_FT");
 			IDft = image_ID("modeval1d_FT");
 			
-			sprintf(fname, "./modePSD/modevalPSD_%04ld.dat", m);
+			if(sprintf(fname, "./modePSD/modevalPSD_%04ld.dat", m) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
 			fpPSD = fopen(fname, "w");
 			for(kk=0;kk<NBframes/2;kk++)
 				{
@@ -16927,14 +17517,16 @@ int_fast8_t AOloopControl_setgainrange(long m0, long m1, float gainval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_GAIN_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_GAIN", LOOPNUMBER);
+		char name[200];
+        if(sprintf(name, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_GAIN_modes = read_sharedmem_image(name);
     }
 
@@ -16955,14 +17547,16 @@ int_fast8_t AOloopControl_setlimitrange(long m0, long m1, float limval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_LIMIT_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER);
+		char name[200];
+        if(sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_LIMIT_modes = read_sharedmem_image(name);
     }
 
@@ -16978,18 +17572,21 @@ int_fast8_t AOloopControl_setlimitrange(long m0, long m1, float limval)
 
 
 
+
 int_fast8_t AOloopControl_setmultfrange(long m0, long m1, float multfval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_MULTF_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER);
+		char name[200];
+        if(sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_MULTF_modes = read_sharedmem_image(name);
     }
 
@@ -17005,16 +17602,18 @@ int_fast8_t AOloopControl_setmultfrange(long m0, long m1, float multfval)
 
 
 
+
 int_fast8_t AOloopControl_setgainblock(long mb, float gainval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_gainb == -1)
 	{
-		sprintf(imname, "aol%ld_gainb", LOOPNUMBER);
+		char imname[200];
+		if(sprintf(imname, "aol%ld_gainb", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
 		aoconfID_gainb = read_sharedmem_image(imname);
 	}
 	
@@ -17027,16 +17626,18 @@ int_fast8_t AOloopControl_setgainblock(long mb, float gainval)
 
 
 
+
 int_fast8_t AOloopControl_setlimitblock(long mb, float limitval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_limitb == -1)
 	{
-		sprintf(imname, "aol%ld_limitb", LOOPNUMBER);
+		char imname[200];
+		if(sprintf(imname, "aol%ld_limitb", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
 		aoconfID_limitb = read_sharedmem_image(imname);
 	}
 
@@ -17048,16 +17649,18 @@ int_fast8_t AOloopControl_setlimitblock(long mb, float limitval)
 
 
 
+
 int_fast8_t AOloopControl_setmultfblock(long mb, float multfval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_multfb == -1)
 	{
-		sprintf(imname, "aol%ld_multfb", LOOPNUMBER);
+		char imname[200];
+		if(sprintf(imname, "aol%ld_multfb", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
 		aoconfID_multfb = read_sharedmem_image(imname);
 	}
 
@@ -17110,7 +17713,9 @@ long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long 
 
 	if(aoconfID_DMmodes==-1)
 		{
-			sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
+			if(sprintf(name, "aol%ld_DMmodes", LOOPNUMBER) < 1)
+				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+				
 			aoconfID_DMmodes = read_sharedmem_image(name);
 		}
 	xsize = data.image[aoconfID_DMmodes].md[0].size[0];
@@ -17145,9 +17750,6 @@ long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long 
 int_fast8_t AOloopControl_AutoTune()
 {
     long block;
-    float gainStart = 0.0;
-    float gainEnd = 1.0;
-
     long NBgain = 10;
     long NBstep = 10000;
     float gain;
@@ -17157,16 +17759,14 @@ int_fast8_t AOloopControl_AutoTune()
     float bestval = 10000000.0;
     float val;
 
-    int gOK;
-
-
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_cmd_modes==-1)
     {
-        sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
+        if(sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+			
         aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
@@ -17181,8 +17781,12 @@ int_fast8_t AOloopControl_AutoTune()
 
     for(block=0; block<AOconf[LOOPNUMBER].DMmodesNBblock; block++)
     {
+		float gainStart = 0.0;
+		float gainEnd = 1.0;
+		int gOK = 1;
+
+
         // tune block gain
-        gOK = 1;
         gain = gainStart;
         bestval = 100000000.0;
         while((gOK==1)&&(gain<gainEnd))

@@ -64,6 +64,17 @@ extern int C_ERRNO;			// C errno (from errno.h)
 #define NB_ARG_MAX                 20
 
 
+
+// declare a boolean type "BOOL" 
+// TRUE and FALSE improve code readability
+//
+typedef uint_fast8_t BOOL;
+#define FALSE 0
+#define TRUE 1
+
+
+
+
 //Need to install process with setuid.  Then, so you aren't running privileged all the time do this:
 extern uid_t euid_real;
 extern uid_t euid_called;

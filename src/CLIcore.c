@@ -1,13 +1,24 @@
 
 /**
  * @file CLIcore.c
+ * @brief main C file
+ * 
+ * Contains main()
+ * 
  * @author Olivier Guyon
- * @date 2017
+ * @date Aug 2 2017
  */
 
 
 
 #define _GNU_SOURCE
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                        HEADER FILES                                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 #include <stdint.h>
 #include <string.h>
@@ -82,6 +93,30 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 #include "calc.h"
 #include "calc_bison.h"
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                      DEFINES, MACROS                                            */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                  GLOBAL DATA DECLARATION                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 
 
 
@@ -173,6 +208,19 @@ static int_fast8_t help_command(char *cmdkey);
 
 
 
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                    FUNCTIONS SOURCE CODE                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name CLIcore functions */
+
+
 /// signal catching
 
 
@@ -222,13 +270,13 @@ void sig_handler(int signo)
 
 int_fast8_t exitCLI()
 {
-    char command[500];
-    int r;
-
     if(data.fifoON == 1)
     {
+		char command[500];
         sprintf(command, "rm %s", data.fifoname);
-        r = system(command);
+        
+        if( system(command) != 0)
+            printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
     }
 
     main_free();
@@ -247,6 +295,7 @@ int_fast8_t exitCLI()
 
     printf("Closing PID %ld (prompt process)\n", (long) getpid());
     exit(0);
+    
     return 0;
 }
 
@@ -314,7 +363,7 @@ static int_fast8_t help()
   char command[200];
 
   sprintf(command, "more %s/doc/help.txt", ABSSRCTOPDIR);
-  if(system(command)==-1)
+  if(system(command) != 0)
     {
       printERROR(__FILE__,__func__,__LINE__,"system call error");
       exit(1);
@@ -330,7 +379,7 @@ static int_fast8_t helpreadline()
   int r;
 
   sprintf(command, "more %s/doc/helpreadline.txt", ABSSRCTOPDIR);
-  if(system(command)==-1)
+  if(system(command) != 0)
     {
       printERROR(__FILE__,__func__,__LINE__,"system call error");
       exit(1);
@@ -355,12 +404,13 @@ static int_fast8_t help_cmd()
 
 static int_fast8_t help_module()
 {
-    long i;
 
     if(data.cmdargtoken[1].type == 3)
         list_commands_module(data.cmdargtoken[1].val.string);
     else
     {
+		long i;
+		
         for(i=0; i<data.NBmodule; i++)
             printf("%5ld  %20s    %s\n", i, data.module[i].name, data.module[i].info);
     }
@@ -414,12 +464,12 @@ static int_fast8_t CLI_execute_line()
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     char command[200];
-    int r;
+    
 
     if (line[0]=='!')
     {
         line[0] = ' ';
-        if(system(line)==-1)
+        if(system(line) != 0)
         {
             printERROR(__FILE__,__func__,__LINE__,"system call error");
             exit(1);
@@ -452,7 +502,9 @@ static int_fast8_t CLI_execute_line()
             {
                 printf("ERROR: cannot log into file %s\n", data.CLIlogname);
                 sprintf(command, "mkdir -p %s/logdir/%04d%02d%02d\n", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday);
-                r = system(command);
+                
+                if( system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             }
             else
             {
@@ -608,15 +660,14 @@ uint_fast16_t RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t (*CL
 
 int_fast8_t main(int argc, char *argv[])
 {
-    FILE *fp;
     long i, j;
     int quiet=0;
     long tmplong;
     //  FILE *fp;
     const gsl_rng_type * rndgenType;
-    double v1;
+
     char prompt[200];
-    int terminate = 0;
+  //  int terminate = 0;
     char str[200];
     char command[200];
     int nbtk;
@@ -643,17 +694,17 @@ int_fast8_t main(int argc, char *argv[])
 
     int initstartup = 0; /// becomes 1 after startup
 
-	int blockCLIinput = 0;
-	int CLIinit1 = 0;
-	int cliwaitus=100;
-	struct timeval tv;   // sleep 100 us after reading FIFO 
-	
+    int blockCLIinput = 0;
+    int CLIinit1 = 0;
+    int cliwaitus=100;
+    struct timeval tv;   // sleep 100 us after reading FIFO
+
 
 
     strcpy(data.processname, argv[0]);
 
 
-	
+
 
 
     TYPESIZE[_DATATYPE_UINT8] = SIZEOF_DATATYPE_UINT8;
@@ -669,7 +720,7 @@ int_fast8_t main(int argc, char *argv[])
     TYPESIZE[_DATATYPE_COMPLEX_FLOAT] = SIZEOF_DATATYPE_COMPLEX_FLOAT;
     TYPESIZE[_DATATYPE_COMPLEX_DOUBLE] = SIZEOF_DATATYPE_COMPLEX_DOUBLE;
     TYPESIZE[_DATATYPE_EVENT_UI8_UI8_UI16_UI8] = SIZEOF_DATATYPE_EVENT_UI8_UI8_UI16_UI8;
-    
+
 
 
     atexit(fnExit1);
@@ -687,7 +738,7 @@ int_fast8_t main(int argc, char *argv[])
 
 
     // signal handling
-    
+
     data.sigact.sa_handler = sig_handler;
     sigemptyset(&data.sigact.sa_mask);
     data.sigact.sa_flags = 0;
@@ -701,27 +752,27 @@ int_fast8_t main(int argc, char *argv[])
     data.signal_ABRT = 0;
     data.signal_HUP = 0;
     data.signal_PIPE = 0;
-    
-   // if (signal(SIGINT, sig_handler) == SIG_ERR)
-     //   printf("\ncan't catch SIGINT\n");
+
+    // if (signal(SIGINT, sig_handler) == SIG_ERR)
+    //   printf("\ncan't catch SIGINT\n");
     if (sigaction(SIGUSR1, &data.sigact, NULL) == -1)
         printf("\ncan't catch SIGUSR1\n");
     if (sigaction(SIGUSR2, &data.sigact, NULL) == -1)
         printf("\ncan't catch SIGUSR2\n");
-   
+
 
 
 
 
     // to take advantage of kernel priority:
     // owner=root mode=4755
-    
-    #ifndef __MACH__
+
+#ifndef __MACH__
     getresuid(&euid_real, &euid_called, &suid);
 
     //This sets it to the privileges of the normal user
     r = seteuid(euid_real);
-	#endif
+#endif
 
 
 
@@ -746,7 +797,7 @@ int_fast8_t main(int argc, char *argv[])
     }
 
     CLIPID = getpid();
-    
+
     //    sprintf(promptname, "%s", data.processname);
     sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, data.processname, 0x1B, 0);
     //sprintf(prompt, "%s> ", PACKAGE_NAME);
@@ -774,8 +825,8 @@ int_fast8_t main(int argc, char *argv[])
     gsl_rng_set (data.rndgen,time(NULL));
 
     // warm up
-    for(i=0; i<10; i++)
-        v1 = gsl_rng_uniform (data.rndgen);
+    //for(i=0; i<10; i++)
+    //    v1 = gsl_rng_uniform (data.rndgen);
 
 
     /*--------------------------------------------------
@@ -811,8 +862,11 @@ int_fast8_t main(int argc, char *argv[])
     tmplong = data.NB_MAX_VARIABLE;
     C_ERRNO = 0; // initialize C error variable to 0 (no error)
 
-    terminate = 0;
-    while(terminate==0) {
+//    terminate = 0;
+ //   while(terminate==0)
+    for (;;) {
+        FILE *fp;
+
 
         data.CMDexecuted = 0;
 
@@ -851,7 +905,8 @@ int_fast8_t main(int argc, char *argv[])
             {
                 printf("IMPORTING FILE %s\n", CLIstartupfilename);
                 sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
-                r = system(command);
+                if( system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             }
         initstartup = 1;
 
@@ -859,35 +914,35 @@ int_fast8_t main(int argc, char *argv[])
         // -------------------------------------------------------------
         //                 get user input
         // -------------------------------------------------------------
-		tv.tv_sec = 0;		
-		tv.tv_usec = cliwaitus;
-		FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors. 
+        tv.tv_sec = 0;
+        tv.tv_usec = cliwaitus;
+        FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors.
         if(data.fifoON==1)
-            FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
-        FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
+            FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
+        FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
 
-			
+
         while(CLIexecuteCMDready == 0)
         {
             n = select(fdmax+1, &cli_fdin_set, NULL, NULL, &tv);
-            
+
             if (n==0) // nothing received, need to re-init and go back to select call
-				{
-					tv.tv_sec = 0;			
-					tv.tv_usec = cliwaitus;
-           
-           
-					FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors. 
-					if(data.fifoON==1)
-						FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
-					FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set. 
-					continue;
-				}
+            {
+                tv.tv_sec = 0;
+                tv.tv_usec = cliwaitus;
+
+
+                FD_ZERO(&cli_fdin_set);  // Initializes the file descriptor set cli_fdin_set to have zero bits for all file descriptors.
+                if(data.fifoON==1)
+                    FD_SET(fifofd, &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
+                FD_SET(fileno(stdin), &cli_fdin_set);  // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
+                continue;
+            }
             if (n == -1) {
                 if(errno==EINTR) // no command received
-                    {
-                        continue;
-                    }
+                {
+                    continue;
+                }
                 else
                 {
                     perror("select");
@@ -895,8 +950,8 @@ int_fast8_t main(int argc, char *argv[])
                 }
             }
 
-			blockCLIinput = 0;
-           
+            blockCLIinput = 0;
+
             if(data.fifoON==1)
             {
                 if (FD_ISSET(fifofd, &cli_fdin_set)) {
@@ -918,27 +973,27 @@ int_fast8_t main(int argc, char *argv[])
                         {
                             buf1[total_bytes-1] = '\0';
                             line = buf1;
-                            CLI_execute_line();                           
+                            CLI_execute_line();
                             printf("%s", prompt);
                             fflush(stdout);
                             break;
                         }
                     }
-					blockCLIinput = 1; // keep blocking input while fifo is not empty
+                    blockCLIinput = 1; // keep blocking input while fifo is not empty
                 }
             }
-			
+
             if(blockCLIinput == 0)
-				if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
-					rl_callback_read_char();
-				}
+                if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
+                    rl_callback_read_char();
+                }
         }
         CLIexecuteCMDready = 0;
 
         if(data.CMDexecuted==0)
             printf("Command not found, or command with no effect\n");
     }
-    
+
 
     return(0);
 }
@@ -975,12 +1030,14 @@ static char** CLI_completion( const char * text , int start,  int end)
 
 }
 
+
+
 char* CLI_generator(const char* text, int state)
 {
     static int list_index, list_index1, len;
     char *name;
     char *strtmp;
-    int iok = 0;
+    
 
     if (!state) {
         list_index = 0;
@@ -999,6 +1056,7 @@ char* CLI_generator(const char* text, int state)
 
     while (list_index1<data.NB_MAX_IMAGE)
     {
+		int iok;
         iok = data.image[list_index1].used;
         if(iok == 1)
         {
@@ -1016,6 +1074,8 @@ char* CLI_generator(const char* text, int state)
 
 }
 
+
+
 char * dupstr (char* s) {
     char *r;
 
@@ -1023,6 +1083,8 @@ char * dupstr (char* s) {
     strcpy (r, s);
     return (r);
 }
+
+
 
 void * xmalloc (int size)
 {
@@ -1036,6 +1098,7 @@ void * xmalloc (int size)
 
     return buf;
 }
+
 
 
 
@@ -1091,7 +1154,7 @@ void main_init()
   data.NB_MAX_COMMAND = 5000;
   if(data.Debug>0)
     {
-      printf("Allocating cmd array : %ld\n", data.NB_MAX_COMMAND*sizeof(CMD));
+      printf("Allocating cmd array : %ld\n", sizeof(CMD)*data.NB_MAX_COMMAND);
       fflush(stdout);
     }
   data.cmd = (CMD*) malloc(sizeof(CMD)*data.NB_MAX_COMMAND);
@@ -1136,10 +1199,8 @@ void main_init()
 		data.variable[i].type = 0; /** defaults to floating point type */
 	}
   
-  
-  tmplong = data.NB_MAX_VARIABLE;
   if (data.variable == NULL)   {
-    printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.variable has failed - exiting program");
+    printERROR(__FILE__,__func__,__LINE__, "Reallocation of data.variable has failed - exiting program");
     exit(0);
   }
   
@@ -1463,10 +1524,8 @@ int command_line( int argc, char **argv)
     // char startup_info[1024];
     struct tm *ptr;
     time_t tm;
-    int c;
     int option_index = 0;
     struct sched_param schedpar;
-    int r;
     char command[200];
 
 
@@ -1499,7 +1558,9 @@ int command_line( int argc, char **argv)
 
     while (1)
     {
-        c = getopt_long (argc, argv, "hioed:m:n:f:s:",
+		int c;
+		
+        c = getopt_long (argc, argv, "hidoe:m:n:p:f:s:",
                          long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -1541,7 +1602,8 @@ int command_line( int argc, char **argv)
         case 'e':
             printf("Idle mode: only runs process when X is idle (pid %ld)\n", (long) getpid());
             sprintf(command, "runidle %ld > /dev/null &\n", (long) getpid());
-            r = system(command);
+            if( system(command) != 0)
+				printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             break;
             
         case 'm':
@@ -1563,10 +1625,15 @@ int command_line( int argc, char **argv)
 
         case 'p':
             schedpar.sched_priority = atoi(optarg);
+            printf("RUNNING WITH RT PRIORITY = %d\n", schedpar.sched_priority);
             #ifndef __MACH__
-            r = seteuid(euid_called); //This goes up to maximum privileges
+            //r = seteuid(euid_called); //This goes up to maximum privileges
+            if(seteuid(euid_called) != 0) //This goes up to maximum privileges
+				printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");            
             sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-            r = seteuid(euid_real);//Go back to normal privileges
+//            r = seteuid(euid_real);//Go back to normal privileges
+			if(seteuid(euid_real) != 0) //Go back to normal privileges
+				printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
             #endif
             break;
 

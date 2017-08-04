@@ -228,13 +228,13 @@ static int FITSIO_status = 0;
 // set print to 1 if error message should be printed to stderr
 int check_FITSIO_status(const char *cfile, const char *cfunc, long cline, int print)
 {
-    char errstr[SBUFFERSIZE];
     int Ferr = 0;
 
     if(FITSIO_status!=0)
     {
         if(print==1)
         {
+			char errstr[SBUFFERSIZE];
             fits_get_errstatus(FITSIO_status, errstr);
             fprintf(stderr,"%c[%d;%dmFITSIO error %d [%s, %s, %ld]: %s%c[%d;m\n\a",(char) 27, 1, 31, FITSIO_status, cfile, cfunc, cline, errstr, (char) 27, 0);
         }
@@ -263,12 +263,14 @@ int file_exists(const char *file_name)
 }
 
 
+
+
+
 int is_fits_file(const char *file_name)
 {
     int value=0;
     fitsfile *fptr;
-    int n;
-    //  int status = 0;
+
 
     if (!fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
     {
@@ -277,7 +279,7 @@ int is_fits_file(const char *file_name)
     }
     if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
     {
-        n = snprintf(errormessage_iofits,SBUFFERSIZE,"Error in function is_fits_file(%s)",file_name);
+        int n = snprintf(errormessage_iofits,SBUFFERSIZE,"Error in function is_fits_file(%s)",file_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
         printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
@@ -293,19 +295,20 @@ int is_fits_file(const char *file_name)
 int read_keyword(const char* file_name, const char* KEYWORD, char* content)
 {
     fitsfile *fptr;         /* FITS file pointer, defined in fitsio.h */
-    char str1[SBUFFERSIZE];
-    char comment[SBUFFERSIZE];
     int exists = 0;
     int n;
 
-    if (!fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
+    if (!fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
     {
-        if (fits_read_keyword(fptr,KEYWORD, str1, comment, &FITSIO_status))
+		char comment[SBUFFERSIZE];
+		char str1[SBUFFERSIZE];
+		
+        if (fits_read_keyword(fptr, KEYWORD, str1, comment, &FITSIO_status))
         {
-            n = snprintf(errormessage_iofits,SBUFFERSIZE,"Keyword \"%s\" does not exist in file \"%s\"",KEYWORD,file_name);
+            n = snprintf(errormessage_iofits, SBUFFERSIZE,"Keyword \"%s\" does not exist in file \"%s\"", KEYWORD,file_name);
             if(n >= SBUFFERSIZE)
-                printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
+                printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, errormessage_iofits);
 
             //	  printf("%c[%d;%dm Keyword \"%s\" does not exist in file \"%s\" %c[%d;m\n", (char) 27, 1, 31, KEYWORD,file_name, (char) 27, 0);
             exists = 1;
@@ -318,11 +321,11 @@ int read_keyword(const char* file_name, const char* KEYWORD, char* content)
         }
         fits_close_file(fptr, &FITSIO_status);
     }
-    if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
+    if(check_FITSIO_status(__FILE__, __func__, __LINE__, 0)==1)
     {
-        n = snprintf(errormessage_iofits,SBUFFERSIZE,"Error reading keyword \"%s\" in file \"%s\"",KEYWORD,file_name);
+        n = snprintf(errormessage_iofits, SBUFFERSIZE,"Error reading keyword \"%s\" in file \"%s\"", KEYWORD,file_name);
         if(n >= SBUFFERSIZE)
-            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
         printERROR(__FILE__,__func__,__LINE__,errormessage_iofits);
         //      fprintf(stderr,"%c[%d;%dm Error reading keyword \"%s\" in file \"%s\" %c[%d;m\n", (char) 27, 1, 31, KEYWORD,file_name, (char) 27, 0);
     }
@@ -335,10 +338,9 @@ int read_keyword(const char* file_name, const char* KEYWORD, char* content)
 
 int read_keyword_alone(const char* file_name, const char* KEYWORD)
 {
-  char *content = NULL;
-  
-  content = (char*) malloc(sizeof(char)*SBUFFERSIZE); 
-  if(content==NULL)
+	char *content = (char*) malloc(sizeof(char)*SBUFFERSIZE); 
+ 
+	if(content==NULL)
     {
       printERROR(__FILE__,__func__,__LINE__,"malloc error");
       exit(0);
@@ -404,26 +406,22 @@ int data_type_code(int bitpix)
 long load_fits(const char *file_name, const char *ID_name, int errcode)
 {
     fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
-    int nulval, anynul,bitpix;
+    int nulval, anynul;
     long bitpixl = 0;
-    char keyword[SBUFFERSIZE];
     char comment[SBUFFERSIZE];
     char errstr[SBUFFERSIZE];
-    long  fpixel = 1, nelements;
+    long  nelements;
     long naxis = 0;
     uint32_t naxes[3];
     long ID = -1;
     double bscale;
     double bzero;
-    long i;
     unsigned char *barray = NULL;
     long *larray = NULL;
     unsigned short *sarray = NULL;
-    long ii;
     long NDR=1; /* non-destructive reads */
     int n;
 
-    int LOAD_FITS_ERROR = 0;
 	int fileOK;
 	int try;
 	int NBtry = 3;
@@ -464,7 +462,6 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 				usleep(10000);
             }
 			}
-        LOAD_FITS_ERROR = 1;
         ID = -1;
 		}
 		else
@@ -474,6 +471,11 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
     
     if(fileOK==1)
     {
+		char keyword[SBUFFERSIZE];
+		long  fpixel = 1;
+		long i;
+		long ii;
+		
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
        if(errcode!=0)
             {
@@ -525,7 +527,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
 
 
-        bitpix = (int) bitpixl;
+        int bitpix = (int) bitpixl;
         fits_read_key(fptr, TDOUBLE, "BSCALE", &bscale, comment, &FITSIO_status);
         if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
         {
@@ -782,15 +784,10 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 int save_db_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
-    long  fpixel = 1, naxis, nelements;
-    uint32_t naxes[3];
-    long naxesl[3];
-
-    double *array;
+    long naxis, nelements;
     long ID;
     long ii;
     long i;
-    uint8_t atype;
     char file_name1[SBUFFERSIZE];
     int n;
 
@@ -815,6 +812,12 @@ int save_db_fits(const char *ID_name, const char *file_name)
 
     if(ID!=-1)
     {
+		long  fpixel = 1;
+		uint32_t naxes[3];
+		long naxesl[3];
+		double *array;
+		uint8_t atype;
+		 
         atype = data.image[ID].md[0].atype;
         naxis = data.image[ID].md[0].naxis;
         for(i=0; i<naxis; i++)
@@ -830,7 +833,7 @@ int save_db_fits(const char *ID_name, const char *file_name)
             nelements *= naxes[i];
 
 
-        if (atype != _DATATYPE_FLOAT) // data conversion required
+        if (atype != _DATATYPE_DOUBLE) // data conversion required
 		{
 			array = (double*) malloc(SIZEOF_DATATYPE_DOUBLE*nelements);
 			if(array==NULL)
@@ -885,11 +888,13 @@ int save_db_fits(const char *ID_name, const char *file_name)
 				for (ii = 0; ii < nelements; ii++)
 					array[ii] = (double) data.image[ID].array.F[ii];
 				break;
-        			
+        		        		        			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				printf("ID %ld  atype = %d\n", ID, atype);
 				free(array);
-				return(-1);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1061,9 +1066,11 @@ int save_fl_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				printf("ID %ld  atype = %d\n", ID, atype);
 				free(array);
-				return(-1);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1239,9 +1246,11 @@ int save_sh_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				return(-1);
+				printf("ID %ld  atype = %d\n", ID, atype);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1414,9 +1423,11 @@ int save_ush_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				return(-1);
+				printf("ID %ld  atype = %d\n", ID, atype);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1505,17 +1516,22 @@ int save_fits_atomic(const char *ID_name, const char *file_name)
     uint8_t atype;
     char fnametmp[1000];
     char savename[1000];
-	char command[2000];
-	int ret;
 	pthread_t self_id;
 	
     ID = image_ID(ID_name);
 
 	self_id=pthread_self();
-	sprintf(fnametmp, "_savefits_atomic_%s_%d_%ld.tmp.fits", ID_name, (int) getpid(), (unsigned long) self_id);
-	sprintf(savename, "!%s", fnametmp);
+	
+	if(sprintf(fnametmp, "_savefits_atomic_%s_%d_%ld.tmp.fits", ID_name, (int) getpid(), (long) self_id) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		
+	if(sprintf(savename, "!%s", fnametmp) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
     if (ID!=-1)
     {
+		char command[2000];
+		
         atype = data.image[ID].md[0].atype;
         switch(atype) {
         case _DATATYPE_UINT8:
@@ -1539,8 +1555,11 @@ int save_fits_atomic(const char *ID_name, const char *file_name)
             break;
         }
 		
-		sprintf(command, "mv %s %s", fnametmp, file_name);
-		ret = system(command);
+		if(sprintf(command, "mv %s %s", fnametmp, file_name) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+		if(system(command) != 0)
+			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
     }
 
     return 0;
@@ -1553,15 +1572,20 @@ int saveall_fits(const char *savedirname)
     long i;
     char fname[200];
     char command[200];
-    int r;
     
-    sprintf(command, "mkdir -p %s", savedirname);
-    r = system(command);
+    if(sprintf(command, "mkdir -p %s", savedirname) < 1)
+		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
     
     for (i=0; i<data.NB_MAX_IMAGE; i++)
         if(data.image[i].used==1)
             {
-                sprintf(fname, "!./%s/%s.fits", savedirname, data.image[i].name);
+                if(sprintf(fname, "!./%s/%s.fits", savedirname, data.image[i].name) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                
                 save_fits(data.image[i].name, fname);
             }
     return(0);
@@ -1603,7 +1627,7 @@ int break_cube(const char *ID_name)
     {
         n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
         if(n >= SBUFFERSIZE)
-            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
         for(i=0; i<(long) strlen(framename); i++)
         {
             if(framename[i] == ' ')

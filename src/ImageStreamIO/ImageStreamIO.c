@@ -81,11 +81,10 @@ int_fast8_t init_ImageStreamIO()
 
 int ImageStreamIO_printERROR(const char *file, const char *func, int line, char *errmessage)
 {
-    char buff[256];
-
     fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, file, func, line, (char) 27, 0);
     if( errno != 0)
     {
+        char buff[256];
         if( strerror_r( errno, buff, 256 ) == 0 ) {
             fprintf(stderr,"C Error: %s\n", buff );
         }
@@ -114,11 +113,9 @@ int ImageStreamIO_printERROR(const char *file, const char *func, int line, char 
 
 int ImageStreamIO_createSem(IMAGE *image, long NBsem)
 {
-    char sname[200];
-    long s, s1;
+    long s;
     int r;
     char command[200];
-    char fname[200];
     int semfile[100];
 
 	
@@ -133,8 +130,10 @@ int ImageStreamIO_createSem(IMAGE *image, long NBsem)
         image->md[0].sem = 0;
 
 		// ... and remove associated files
+		long s1;
         for(s1=NBsem; s1<100; s1++)
         {
+			char fname[200];
             sprintf(fname, "/dev/shm/sem.%s_sem%02ld", image->md[0].name, s1);
             remove(fname);
         }
@@ -155,6 +154,7 @@ int ImageStreamIO_createSem(IMAGE *image, long NBsem)
 
         for(s=0; s<NBsem; s++)
         {
+			char sname[200];
             sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
             if ((image->semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
                 if ((image->semptr[s] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
@@ -184,12 +184,7 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
     time_t lt;
     long nelement;
     struct timespec timenow;
-    char sname[200];
-
-    size_t sharedsize = 0; // shared memory size in bytes
-    int SM_fd; // shared memory file descriptor
-    char SM_fname[200];
-    int result;
+    
     IMAGE_METADATA *map;
     char *mapv; // pointed cast in bytes
 
@@ -206,7 +201,11 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
     // compute total size to be allocated
     if(shared==1)
     {
+		char sname[200];
+		
+		
         // create semlog
+		size_t sharedsize = 0; // shared memory size in bytes
 
         sprintf(sname, "%s_semlog", name);
         remove(sname);
@@ -258,10 +257,10 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
 
         sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
 
-
-        sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+		char SM_fname[200];
+        sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);    
+        int SM_fd; // shared memory file descriptor
         SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-
         if (SM_fd == -1) {
             perror("Error opening file for writing");
             exit(0);
@@ -273,6 +272,7 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
         image->shmfd = SM_fd;
         image->memsize = sharedsize;
 
+		int result;
         result = lseek(SM_fd, sharedsize-1, SEEK_SET);
         if (result == -1) {
             close(SM_fd);
@@ -725,19 +725,8 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
 long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 {
     int SM_fd;
-    struct stat file_stat;
-    char SM_fname[200];
-    IMAGE_METADATA *map;
-    char *mapv;
-    uint8_t atype;
-    int kw;
-    char sname[200];
-    sem_t *stest;
-    int sOK;
-    long snb;
-    long s;
- 
-   int rval = -1;
+    char SM_fname[200];    
+	int rval = -1;
 
 
 
@@ -747,12 +736,20 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
     if(SM_fd==-1)
     {
         image->used = 0;
-        return(-1);
         printf("Cannot import shared memory file %s \n", name);
         rval = -1;
     }
     else
     {
+		char sname[200];
+		IMAGE_METADATA *map;
+		long s;
+		struct stat file_stat;
+		
+		long snb = 0;
+        int sOK = 1;
+		
+		
 		rval = 0; // we assume by default success
 		
         fstat(SM_fd, &file_stat);
@@ -778,7 +775,8 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
 
         image->md = map;
-//        image->md[0].sem = 0;
+
+		uint8_t atype;
         atype = image->md[0].atype;
         image->md[0].shared = 1;
 
@@ -806,7 +804,7 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         }
 
 
-
+		char *mapv;
         mapv = (char*) map;
         mapv += sizeof(IMAGE_METADATA);
 
@@ -906,6 +904,7 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
         image->kw = (IMAGE_KEYWORD*) (mapv);
 
+		int kw;
         for(kw=0; kw<image->md[0].NBkw; kw++)
         {
             if(image->kw[kw].type == 'L')
@@ -917,19 +916,18 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         }
 
 
-        mapv += sizeof(IMAGE_KEYWORD)*image->md[0].NBkw;
+       // mapv += sizeof(IMAGE_KEYWORD)*image->md[0].NBkw;
 
         strcpy(image->name, name);
 
 
 
  
-        // looking for semaphores
-        snb = 0;
-        sOK = 1;
-       while(sOK==1)
+        // looking for semaphores       
+		while(sOK==1)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, snb);
+            sem_t *stest;
             if((stest = sem_open(sname, 0, 0644, 0))== SEM_FAILED)
                 sOK = 0;
             else

@@ -18,7 +18,6 @@ echo "$COLUMNS -> $nbwcols"
 
 
 LOOPNUMBER_file="LOOPNUMBER"
-confnbfile="./conf/conf_CONFNUMBER.txt"
 
 
 mkdir -p conf
