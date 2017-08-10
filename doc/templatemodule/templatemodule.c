@@ -194,10 +194,23 @@ int_fast8_t init_templatemodule()
 /* =============================================================================================== */
 /** @name TEMPLATEMODULE functions */
 
+
+
+
+
+
+
+
+
 /* =============================================================================================== */
-/* 1. FIRST GROUP OF FUNCTIONS                                                                     */
 /* =============================================================================================== */
-/** @name TEMPLATEMODULE - 1. FIRST GROUP OF FUNCTIONS */
+/** @name TEMPLATEMODULE - 1. FIRST GROUP OF FUNCTIONS                                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
 
 // CODING STANDARD NOTE: minimal required documentation for doxygen
 /**
@@ -272,8 +285,12 @@ int templatemodule_examplefunc00(int mode)
 
 	// CODING STANDARD NOTE: include field width limits in fscanf and sscanf calls
     if(fscanf(fp_test, "%8ld", &n2) != 1)
-		printERROR(__FILE__,__func__,__LINE__, "Cannot read LOOPNUMBER");
+		printERROR(__FILE__,__func__,__LINE__, "fscanf returns value != 1");
 	fclose(fp_test);
+
+	// CODING STANDARD NOTE: Other test prototypes:
+	// CODING STANDARD NOTE: if(fread(...) < 1) printERROR(__FILE__,__func__,__LINE__, "fread() returns <1 value");
+
 
     free(farray);
     
@@ -283,16 +300,18 @@ int templatemodule_examplefunc00(int mode)
 
 
 /* =============================================================================================== */
-/* 2. SECOND GROUP OF FUNCTIONS                                                                    */
 /* =============================================================================================== */
-/** @name TEMPLATEMODULE - 2. SECOND GROUP OF FUNCTIONS */
+/** @name TEMPLATEMODULE - 2. SECOND GROUP OF FUNCTIONS                                            */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
+
+
 /* =============================================================================================== */
-/* 2.1. SUBGROUP                                                                                   */
+/** @name TEMPLATEMODULE - 2.1. SECOND GROUP OF FUNCTIONS - SUBGROUP1                              */
 /* =============================================================================================== */
-/** @name TEMPLATEMODULE - 2.1. SECOND GROUP OF FUNCTIONS - SUBGROUP 1 */
 
 
 

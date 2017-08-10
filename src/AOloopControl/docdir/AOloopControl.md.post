@@ -9,7 +9,7 @@
 
 
 
-# Initial Setup {#AOloopControl_UserGuide}
+# Initial Setup
 
 ## Scope
 

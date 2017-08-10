@@ -408,9 +408,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
     fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
     int nulval, anynul;
     long bitpixl = 0;
-    char comment[SBUFFERSIZE];
     char errstr[SBUFFERSIZE];
-    long  nelements;
     long naxis = 0;
     uint32_t naxes[3];
     long ID = -1;
@@ -420,7 +418,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
     long *larray = NULL;
     unsigned short *sarray = NULL;
     long NDR=1; /* non-destructive reads */
-    int n;
+
 
 	int fileOK;
 	int try;
@@ -475,6 +473,8 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 		long  fpixel = 1;
 		long i;
 		long ii;
+	    char comment[SBUFFERSIZE];
+	    long  nelements;
 		
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
        if(errcode!=0)
@@ -493,6 +493,8 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
         for(i=0; i<naxis; i++)
         {
+		    int n;
+			
             n = snprintf(keyword,SBUFFERSIZE,"NAXIS%ld",i+1);
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -502,7 +504,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
                 if(errcode!=0)
                 {
                     fprintf(stderr, "%c[%d;%dm Error while calling \"fits_read_key\" NAXIS%ld %c[%d;m\n", (char) 27, 1, 31, i, (char) 27, 0);
-                    fprintf(stderr, "%c[%d;%dm within save_db_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
+                    fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
                     fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                     list_image_ID();
                     if(errcode>1)
@@ -784,10 +786,8 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 int save_db_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
-    long naxis, nelements;
+    long nelements;
     long ID;
-    long ii;
-    long i;
     char file_name1[SBUFFERSIZE];
     int n;
 
@@ -817,6 +817,9 @@ int save_db_fits(const char *ID_name, const char *file_name)
 		long naxesl[3];
 		double *array;
 		uint8_t atype;
+		long naxis;
+		long i;
+		
 		 
         atype = data.image[ID].md[0].atype;
         naxis = data.image[ID].md[0].naxis;
@@ -835,10 +838,12 @@ int save_db_fits(const char *ID_name, const char *file_name)
 
         if (atype != _DATATYPE_DOUBLE) // data conversion required
 		{
+			 long ii;
+			
 			array = (double*) malloc(SIZEOF_DATATYPE_DOUBLE*nelements);
 			if(array==NULL)
             {
-                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+				printERROR(__FILE__,__func__,__LINE__,"malloc error");
                 exit(0);
             }
             
@@ -963,14 +968,11 @@ int save_db_fits(const char *ID_name, const char *file_name)
 int save_fl_fits(const char *ID_name, const char *file_name)
 {
     fitsfile *fptr;
-    long  fpixel = 1, naxis, nelements;
-    uint32_t naxes[3];
-    long naxesl[3];
+    long  naxis, nelements;
     float *array = NULL;
     long ID;
     long ii;
     long i;
-    uint8_t atype;
     char file_name1[SBUFFERSIZE];
     int n;
 
@@ -996,6 +998,11 @@ int save_fl_fits(const char *ID_name, const char *file_name)
 
     if (ID!=-1)
     {
+	    uint8_t atype;
+        long naxesl[3];
+        uint32_t naxes[3];
+        long  fpixel = 1;
+		
         atype = data.image[ID].md[0].atype;
         naxis = data.image[ID].md[0].naxis;
         for(i=0; i<naxis; i++)
@@ -1611,7 +1618,7 @@ int saveall_fits(const char *savedirname)
 
 int break_cube(const char *ID_name)
 {
-    long ID,ID1;
+    long ID;
     uint32_t naxes[3];
     long ii,jj,kk;
     char framename[SBUFFERSIZE];
@@ -1625,6 +1632,8 @@ int break_cube(const char *ID_name)
 
     for(kk=0; kk<naxes[2]; kk++)
     {
+		long ID1;
+		
         n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");

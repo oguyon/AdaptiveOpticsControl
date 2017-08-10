@@ -8,7 +8,7 @@
 
 # User's guide
 
-[AOCCE user's guide]( src/AOloopControl/doc/AOloopControl.html )
+[AOCCE user's guide]( src/AOloopControl/docdir/AOloopControl.html )
 
 
 

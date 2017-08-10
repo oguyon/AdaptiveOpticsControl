@@ -117,13 +117,18 @@ double fact(int n)
   return(value);
 }
 
+
+
+
+
 int zernike_init()
 {
-  long j,n,m,s;
-  long ii,jj;
 
   if(Zernike.init != 1)
     {  
+	long j, n, m, s;
+	long ii, jj;
+ 
       printf("ZERMAX= %ld\n",Zernike.ZERMAX);
       fflush(stdout);
 
@@ -187,6 +192,9 @@ int zernike_init()
   return(0);
 }
 
+
+
+
 long Zernike_n(long i)
 {
   return(Zernike.Zer_n[i]);
@@ -242,7 +250,6 @@ long mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix)
     double r,theta;
     long ID;
     long naxes[2];
-    double coeff_norm;
     long n, m;
     double coeffextend1 = -1.0;
     double coeffextend2 = 0.3;
@@ -323,6 +330,8 @@ long mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix)
   
     if (zer_nb>0)
       {
+		      double coeff_norm;
+		      
 	make_disk("disk_tmp", SIZE, SIZE, SIZE/2, SIZE/2, rpix);
 	coeff_norm = sqrt(ssquare("disk_tmp")/ss);
 	//	printf("coeff = %f\n", coeff_norm);
@@ -351,14 +360,15 @@ long mk_zer(const char *ID_name, long SIZE, long zer_nb, float rpix)
     return(ID);
 }
 
+
+
 // continue Zernike exp. beyond nominal radius, using the same polynomial expression
 long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
-    double r,theta;
+    double r, theta;
     long ID;
     long naxes[2];
-    double coeff_norm;
     long n,m;
 
     naxes[0] = SIZE;
@@ -385,6 +395,8 @@ long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
     
     if (zer_nb>0)
       {
+		  double coeff_norm;
+		  
 	make_disk("disk_tmp",SIZE,SIZE,SIZE/2,SIZE/2,rpix);
 	coeff_norm=sqrt(ssquare("disk_tmp")/ssquare(ID_name));
 	arith_image_cstmult_inplace(ID_name,coeff_norm);
@@ -396,7 +408,7 @@ long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
 	for (ii=0;ii<SIZE;ii++)
 	  for (jj=0;jj<SIZE;jj++)
 	    {
-	      r = sqrt((ii-SIZE/2)*(ii-SIZE/2)+(jj-SIZE/2)*(jj-SIZE/2))/rpix;
+	      //r = sqrt((ii-SIZE/2)*(ii-SIZE/2)+(jj-SIZE/2)*(jj-SIZE/2))/rpix;
 	      //    if(r<1.0)
 	      data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
 	    }
@@ -404,6 +416,9 @@ long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
  
     return(ID);
 }
+
+
+
 
 // continue Zernike exp. beyond nominal radius, using the r=1 for r>1
 long mk_zer_unbounded1(const char *ID_name, long SIZE, long zer_nb, float rpix)
@@ -457,6 +472,8 @@ long mk_zer_unbounded1(const char *ID_name, long SIZE, long zer_nb, float rpix)
  
     return(ID);
 }
+
+
 
 int mk_zer_series(const char *ID_name, long SIZE, long zer_nb, float rpix)
 {
@@ -532,6 +549,7 @@ int mk_zer_series(const char *ID_name, long SIZE, long zer_nb, float rpix)
   
   return(0);
 }
+
 
 
 long mk_zer_seriescube(const char *ID_namec, long SIZE, long zer_nb, float rpix)
@@ -637,6 +655,9 @@ double get_zer(const char *ID_name, long zer_nb, double radius)
   return(value);
 }
 
+
+
+
 double get_zer_crop(const char *ID_name, long zer_nb, double radius, double radius1)
 {
   double value;
@@ -689,10 +710,11 @@ int get_zerns(const char *ID_name, long max_zer, double radius)
 int get_zern_array(const char *ID_name, long max_zer, double radius, double *array)
 {
   long i;
-  double tmp;
 
   for(i=0;i<max_zer;i++)
     {
+		  double tmp;
+		  
       tmp = get_zer(ID_name,i,radius);
       /*     printf("%ld %e\n",i,tmp);*/
       array[i] = tmp;
@@ -706,7 +728,6 @@ int get_zern_array(const char *ID_name, long max_zer, double radius, double *arr
 int remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, double radius)
 {
   int i;
-  double coeff;
   long ID;
   long SIZE;
 
@@ -715,6 +736,8 @@ int remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, doub
   SIZE = data.image[ID].md[0].size[0];
   for(i=0;i<max_zer;i++)
     {
+		  double coeff;
+		  
       mk_zer("zer_tmp",SIZE,i,radius);
       coeff = -1.0*get_zer(ID_name,i,radius);
       arith_image_cstmult_inplace("zer_tmp",coeff);
@@ -728,13 +751,13 @@ int remove_zerns(const char *ID_name, const char *ID_name_out, int max_zer, doub
 }
 
 
+
+
 long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name)
 {
 	long ID, IDmask;
 	long xsize, ysize, zsize, xysize;
 	long ii, kk;
-	double tot1, tot2, ave;
-	
 	
 	ID = image_ID(ID_name);
 	xsize = data.image[ID].md[0].size[0];
@@ -746,6 +769,8 @@ long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name)
 
 	for(kk=0;kk<zsize;kk++)
 		{
+			double tot1, tot2, ave;
+			
 			tot1 = 0.0;
 			tot2 = 0.0;
 			for(ii=0;ii<xysize;ii++)
@@ -760,10 +785,11 @@ long ZERNIKEPOLYN_rmPiston(const char *ID_name, const char *IDmask_name)
 				}
 		}
 
-
 	return(ID);
 }
 	
+
+
 
 
 int remove_TTF(const char *ID_name, const char *ID_name_out, double radius)
@@ -785,7 +811,7 @@ int remove_TTF(const char *ID_name, const char *ID_name_out, double radius)
 	{
 	  mk_zer("zer_tmp",SIZE,i,radius);
 	  arith_image_mult("zer_tmp",ID_name,"mult_tmp");
-	  coeff = arith_image_total("mult_tmp")/arith_image_total("disktmpttf");
+	  //coeff = arith_image_total("mult_tmp")/arith_image_total("disktmpttf");
 	  delete_image_ID("mult_tmp");
 	  coeff = -1.0*get_zer(ID_name,i,radius);
 	  data.DOUBLEARRAY[i] = coeff;
@@ -807,10 +833,13 @@ int remove_TTF(const char *ID_name, const char *ID_name_out, double radius)
 
 
 
+
+
+
 double fit_zer(const char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual)
 {
   long SIZE;
-  long ID,IDZ,IDdisk,ID0;
+  long ID, IDZ, IDdisk;
   char fname[200];
   char fname1[200];
   long i;
@@ -823,7 +852,6 @@ double fit_zer(const char *ID_name, long maxzer_nb, double radius, double *zvalu
 
   NBpass = 10;
 
-  ID0 = image_ID(ID_name);
   copy_image_ID(ID_name, "resid", 0);  
 
   ID = image_ID("resid");

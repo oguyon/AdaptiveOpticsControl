@@ -15,6 +15,7 @@ Main features:
 
 
 
+
 ## Scripts
 
 
@@ -33,19 +34,21 @@ aolconf is located in the AOloopControl/scripts directory, along with multiple s
 
 
 
-### aolrun
+### Streams
 
 The following table lists all input / files required prior to running aolrun
 
-Variable Name                       | Description                                      | Setting location
+Variable Name                       | Description                                      | Memory location
 ------------------------------------|--------------------------------------------------|-----------------------------------
 LOOPNUMBER                          | loop number [integer]                            | local file LOOPNUMBER
-AOconf[loop].DMname                 | shared memory DM image (for correction)          | image aol<LOOPNUMBER>_dmC 
-AOconf[loop].DMnameRM               | shared memory DM image (for response matrix acq) | image aol<LOOPNUMBER>_dmRM 
-AOconf[loop].WFSname                | shared memory WFS image                          | image aol<LOOPNUMBER>_wfs 
-AOconf[loop].DMMODESname            | DM modes                                         | image aol<LOOPNUMBER>_DMmodes 
-AOconf[loop].respMname              | response matrix                                  | image aol<LOOPNUMBER>_RespM 
-AOconf[loop].contrMname             | control matrix                                   | image aol<LOOPNUMBER>_ContrM 
+ -                                  | -                                                | -                                  
+AOconf[loop].DMname                 | shared memory DM image (for correction)          | stream aol<LOOPNUMBER>_dmC 
+AOconf[loop].DMnameRM               | shared memory DM image (for response matrix acq) | stream aol<LOOPNUMBER>_dmRM 
+AOconf[loop].WFSname                | shared memory WFS image                          | stream aol<LOOPNUMBER>_wfs 
+AOconf[loop].DMMODESname            | DM modes                                         | stream aol<LOOPNUMBER>_DMmodes 
+AOconf[loop].respMname              | response matrix                                  | stream aol<LOOPNUMBER>_respM 
+AOconf[loop].contrMname             | control matrix                                   | stream aol<LOOPNUMBER>_contrM 
+  -                                 |  -                                               |  -                              
 AOconf[loop].name                   | loop name                                        | local file ./conf/conf_LOOPNAME.txt
 AOconf[loop].GPU                    | number of GPUs used                              | local file ./conf/conf_GPU.txt
 AOconf[loop].GPUall                 | skip CPU image scaling and go straight to CPU ?  | local file ./conf/conf_GPUall.txt

@@ -94,8 +94,8 @@ int Fresnel_propagate_wavefront(const char *in, const char *out, double PUPIL_SC
     double re, im;
     double angle;
     double co1;
-    long ii2,jj2;
-    long n0h,n1h;
+    long ii2, jj2;
+    long n0h;
     int atype;
 
 
@@ -114,7 +114,6 @@ int Fresnel_propagate_wavefront(const char *in, const char *out, double PUPIL_SC
 
     co1 = 1.0*naxes[0]*naxes[1];
     n0h = naxes[0]/2;
-    n1h = naxes[1]/2;
 
 
 //	printf("coeff = %g     co1 = %g\n", coeff, co1);
@@ -357,10 +356,7 @@ long Fresnel_propagate_cube(const char *IDcin_name, const char *IDout_name_amp, 
     long IDouta, IDoutp;
     long IDcin;
     long xsize, ysize;
-    long ii,jj,kk;
-    double zprop;
-    long IDtmp;
-    double re,im,amp,pha;
+    long kk;
     int atype;
 
     IDcin = image_ID(IDcin_name);
@@ -381,6 +377,11 @@ long Fresnel_propagate_cube(const char *IDcin_name, const char *IDout_name_amp, 
 
     for(kk=0; kk<NBzpts; kk++)
     {
+		double zprop;
+		long IDtmp;
+		long ii, jj;
+		double re, im, amp, pha;
+		
         zprop = zstart + (zend-zstart)*kk/NBzpts;
         printf("[%ld] propagating by %f m\n",kk,zprop);
         Fresnel_propagate_wavefront(IDcin_name, "_propim", PUPIL_SCALE, zprop, lambda);
@@ -434,7 +435,7 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
     double value = 0.0;
     double valuecnt = 0.0;
 
-    long ID, IDm, IDa, IDp;
+    long ID, IDa;
     long size;
     long ii, jj;
     double x, y, r;
@@ -447,6 +448,8 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
     copy_image_ID("imc", "imc0", 0);
     for(k=0; k<NBmask; k++)
     {
+		long IDm;
+		
         sprintf(fname, "mask%ld", k);
         IDm = image_ID(fname);
         Fresnel_propagate_wavefront("imc0", "imc1", pixscale, maskpos[k]-z, lambda);
@@ -485,7 +488,6 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
     execute_arith("foci=foca*foca/98130");
 
     IDa = image_ID("foca");
-    IDp = image_ID("focp");
     size = data.image[IDa].md[0].size[0];
     for(ii=0; ii<size; ii++)
         for(jj=0; jj<size; jj++)
