@@ -129,7 +129,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#scripts"><span class="toc-section-number">11.2</span> Scripts</a></li>
 <li><a href="#data-flow"><span class="toc-section-number">11.3</span> Data flow</a></li>
 </ul></li>
-<li><a href="#reference-additional-pages"><span class="toc-section-number">12</span> REFERENCE, ADDITIONAL PAGES</a></li>
+<li><a href="#reference"><span class="toc-section-number">12</span> REFERENCE</a><ul>
+<li><a href="#loading-images-from-fits-to-shared-memory-stream"><span class="toc-section-number">12.1</span> Loading images from FITS to shared memory stream</a></li>
+</ul></li>
+<li><a href="#reference-additional-pages"><span class="toc-section-number">13</span> REFERENCE, ADDITIONAL PAGES</a></li>
 </ul>
 </div>
 <div id="initial-setup" class="section level1">
@@ -2387,8 +2390,106 @@ EOF</code></pre></td></tr></table></div>
 <p>All 3 processes work in a chain, and can be turned on/off from the GUI.</p>
 </div>
 </div>
+<div id="reference" class="section level1">
+<h1><span class="header-section-number">12</span> REFERENCE</h1>
+<div id="loading-images-from-fits-to-shared-memory-stream" class="section level2">
+<h2><span class="header-section-number">12.1</span> Loading images from FITS to shared memory stream</h2>
+<p>File name can be :</p>
+<ul>
+<li>option A: read from ./conf/conf_&lt;stream&gt;_name.txt</li>
+<li>option B: specfied and written to ./conf/conf_&lt;stream&gt;_name.txt</li>
+</ul>
+<p>Directory ./loadedSM/ is used to keep track of streams loaded from FITS files. Important files:</p>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.FITSinfo</td>
+<td align="left">FITS file name, size, time of last modification</td>
+</tr>
+<tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.FITSinfo.old</td>
+<td align="left">previous version of above file - to be used for comparison</td>
+</tr>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.FITSsame</td>
+<td align="left">File exists if the two FITS files are identical</td>
+</tr>
+<tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.FITSchanged</td>
+<td align="left">File exists if the two FITS files are different</td>
+</tr>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.SMinfo</td>
+<td align="left">stream file name, size, time of last modfification</td>
+</tr>
+<tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.SMinfo.old</td>
+<td align="left">previous version of above file - to be used for comparison</td>
+</tr>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.SMsame</td>
+<td align="left">File exists if the two SM files are identical</td>
+</tr>
+<tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.SMchanged</td>
+<td align="left">File exists if the two SM files are different</td>
+</tr>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.new</td>
+<td align="left">File exists if last load request updated stream</td>
+</tr>
+<tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.kept</td>
+<td align="left">File exists if last load request kept stream unchanged</td>
+</tr>
+<tr class="odd">
+<td align="left">./loadedSM/&lt;stream&gt;.missing</td>
+<td align="left">File exists if last load request created new stream (stream was missing)</td>
+</tr>
+</tbody>
+</table>
+<p>The logic is as follows:</p>
+<ul>
+<li>Assume LOAD=0 (do not load FITS file in memory)</li>
+<li>Check if FITS file has changed. If yes, set LOAD=1</li>
+<li>Check if SM file has changed. If yes, set LOAD=1</li>
+<li>Check if SM file exists, if not:
+<ul>
+<li>set LOAD=1</li>
+<li>create &lt;stream&gt;.missing file (otherwise, rm &lt;stream&gt;.missing file)</li>
+</ul></li>
+<li>Check if FORCE option, if yes, set LOAD=1</li>
+<li>If LOAD=1:
+<ul>
+<li>load file to shared memory</li>
+<li>update &lt;stream&gt;.SMinfo file</li>
+<li>remove &lt;stream&gt;.kept file</li>
+<li>create &lt;stream&gt;.new file</li>
+</ul></li>
+</ul>
+<p>Operations performed when loading FITS file to stream:</p>
+<ul>
+<li><p>Check if the file has changed since the last loading request.</p></li>
+<li>write: loadedSM/<streamname>.imsize contains image size string</li>
+<li>loadedSM/<streamname>.kept</li>
+<li>loadedSM/<streamname>.missing</li>
+<li><p>write FITS file to ./conf/conf_<streamname>.fits</p></li>
+</ul>
+<p>Script 'fits2shmim' is used with option '-s' (write image size to file).</p>
+</div>
+</div>
 <div id="reference-additional-pages" class="section level1">
-<h1><span class="header-section-number">12</span> REFERENCE, ADDITIONAL PAGES</h1>
+<h1><span class="header-section-number">13</span> REFERENCE, ADDITIONAL PAGES</h1>
 <ul>
 <li>Page <span class="citation">@subpage</span> streams_semaphores</li>
 <li>Page <span class="citation">@subpage</span> streams_semaphores</li>

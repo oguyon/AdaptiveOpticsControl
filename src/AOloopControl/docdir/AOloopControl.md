@@ -1240,8 +1240,81 @@ All 3 processes work in a chain, and can be turned on/off from the GUI.
 
 
 
+# REFERENCE
+
+## Loading images from FITS to shared memory stream
+
+File name can be :
+
+- option A: read from ./conf/conf_\<stream\>_name.txt
+- option B: specfied and written to ./conf/conf_\<stream\>_name.txt
 
 
+For both options, FITS files and shared memory files are inspected to assess need to load the image. If repetitive load requests are issued on the same file and shared memory, the script may decide that no action is required as the shared memory is already up-to-date.
+
+Local directory ./loadedSM/ is used to keep track of streams loaded from FITS files. Important files:
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+./loadedSM/\<stream\>.FITSinfo          FITS file name, size, time of last modification
+
+./loadedSM/\<stream\>.FITSinfo.old      previous version of above file - to be used for comparison
+
+./loadedSM/\<stream\>.FITSsame          File exists if the two FITS files are identical
+
+./loadedSM/\<stream\>.FITSchanged       File exists if the two FITS files are different
+
+./loadedSM/\<stream\>.SMinfo            stream file name, size, time of last modfification
+
+./loadedSM/\<stream\>.SMinfo.old        previous version of above file - to be used for comparison
+
+./loadedSM/\<stream\>.SMsame            File exists if the two SM files are identical
+
+./loadedSM/\<stream\>.SMchanged         File exists if the two SM files are different
+
+./loadedSM/\<stream\>.imsize            Image size - updated upon SM load
+
+./loadedSM/\<stream\>.new               File exists if last load request updated or created stream
+
+./loadedSM/\<stream\>.kept              File exists if last load request kept stream unchanged
+
+./loadedSM/\<stream\>.missing           File exists if last load request created new stream (stream was missing)
+------------------------------------- -----------------------------------------------------------
+
+The logic is as follows:
+
+- Assume LOAD=0 (do not load FITS file in memory)
+- Check if FITS file has changed. If yes, set LOAD=1
+- Check if SM file has changed. If yes, set LOAD=1
+- Check if SM file exists, if not:
+	- set LOAD=1
+	- create \<stream\>.missing file (otherwise, rm \<stream\>.missing file)
+- Check if FORCE option, if yes, set LOAD=1
+- If LOAD=1:
+	- load file to shared memory
+	- update \<stream\>.SMinfo file
+	- remove \<stream\>.kept file
+	- create \<stream\>.new file
+	- copy \<stream\>.imsize file to ./conf/ directory
+	- OPTION A: update ./conf/conf_\<stream\>_name.txt to the FITS file name 
+	
+
+
+
+
+
+Operations performed when loading FITS file to stream:
+
+- Check if the file has changed since the last loading request. 
+
+- write: loadedSM/<streamname>.imsize contains image size string 
+- loadedSM/<streamname>.kept 
+- loadedSM/<streamname>.missing
+- write FITS file to ./conf/conf_<streamname>.fits
+
+
+Script 'fits2shmim' is used with option '-s' (write image size to file). 
 
 
 

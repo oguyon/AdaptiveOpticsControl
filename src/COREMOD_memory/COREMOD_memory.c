@@ -171,6 +171,7 @@ int_fast8_t delete_image_ID_cli()
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                                                                                 */
@@ -182,21 +183,23 @@ int_fast8_t delete_image_ID_cli()
 
 int_fast8_t image_write_keyword_L_cli()
 {
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
-    image_write_keyword_L(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
-  else
-    return 1;
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+        image_write_keyword_L(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+    else
+        return 1;
 }
+
 
 
 
 int_fast8_t image_list_keywords_cli()
 {
-  if(CLI_checkarg(1,4)==0)
-    image_list_keywords(data.cmdargtoken[1].val.string);
-  else
-    return 1;
+    if(CLI_checkarg(1,4)==0)
+        image_list_keywords(data.cmdargtoken[1].val.string);
+    else
+        return 1;
 }
+
 
 
 
@@ -214,20 +217,24 @@ int_fast8_t image_list_keywords_cli()
 
 int_fast8_t read_sharedmem_image_size_cli()
 {
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,3)==0)
-    read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
-  else
-    return 1;
+    if(CLI_checkarg(1,5)+CLI_checkarg(2,3)==0)
+        read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+    else
+        return 1;
 }
+
+
 
 
 int_fast8_t read_sharedmem_image_cli()
 {
-  if(CLI_checkarg(1,3)==0)
-    read_sharedmem_image(data.cmdargtoken[1].val.string);
-  else
-    return 1;
+    if(CLI_checkarg(1,3)==0)
+        read_sharedmem_image(data.cmdargtoken[1].val.string);
+    else
+        return 1;
 }
+
+
 
 
 
@@ -1064,7 +1071,7 @@ int_fast8_t init_COREMOD_memory()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("readshmimsize", __FILE__, read_sharedmem_image_size_cli, "read shared memory image size", "<name> <output file>", "readshmim im1 imsize.txt", "read_sharedmem_image_size(const char *name, const char *fname)");
+    RegisterCLIcommand("readshmimsize", __FILE__, read_sharedmem_image_size_cli, "read shared memory image size", "<name> <output file>", "readshmimsize im1 imsize.txt", "read_sharedmem_image_size(const char *name, const char *fname)");
     
     RegisterCLIcommand("readshmim", __FILE__, read_sharedmem_image_cli, "read shared memory image", "<name>", "readshmim im1", "read_sharedmem_image(const char *name)");
 
@@ -2040,7 +2047,23 @@ long image_read_keyword_L(const char *IDname, const char *kname, long *val)
 
 
 
-
+/**
+ *  ## Purpose
+ * 
+ *  Read shared memory image size
+ * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * name		char*
+ * -		stream name
+ * 
+ * @param[in]
+ * fname	char*
+ * 			file name to write image name
+ * 
+ */
 long read_sharedmem_image_size(const char *name, const char *fname)
 {
     int SM_fd;
@@ -2051,40 +2074,57 @@ long read_sharedmem_image_size(const char *name, const char *fname)
     int i;
     FILE *fp;
 
+    long ID;
 
-    sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
 
-    SM_fd = open(SM_fname, O_RDWR);
-    if(SM_fd==-1)
-        printf("Cannot import file - continuing\n");
+    if((ID=image_ID(name))==-1)
+    {
+		
+		
+        sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+
+        SM_fd = open(SM_fname, O_RDWR);
+        if(SM_fd==-1)
+            printf("Cannot import file - continuing\n");
+        else
+        {
+            fstat(SM_fd, &file_stat);
+            //        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+            map = (IMAGE_METADATA*) mmap(0, sizeof(IMAGE_METADATA), PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+            if (map == MAP_FAILED) {
+                close(SM_fd);
+                perror("Error mmapping the file");
+                exit(0);
+            }
+
+            fp = fopen(fname, "w");
+            for(i=0; i<map[0].naxis; i++)
+                fprintf(fp, "%ld ", (long) map[0].size[i]);
+            fprintf(fp, "\n");
+            fclose(fp);
+
+
+            if (munmap(map, sizeof(IMAGE_METADATA)) == -1) {
+                printf("unmapping %s\n", SM_fname);
+                perror("Error un-mmapping the file");
+            }
+            close(SM_fd);
+        }
+    }
     else
     {
-        fstat(SM_fd, &file_stat);
-//        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
-
-        map = (IMAGE_METADATA*) mmap(0, sizeof(IMAGE_METADATA), PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-        if (map == MAP_FAILED) {
-            close(SM_fd);
-            perror("Error mmapping the file");
-            exit(0);
-        }
-        
         fp = fopen(fname, "w");
-        for(i=0;i<map[0].naxis;i++)
-            fprintf(fp, "%ld ", (long) map[0].size[i]);
-        fprintf(fp, "\n"); 
+        for(i=0; i<data.image[ID].md[0].naxis; i++)
+            fprintf(fp, "%ld ", (long) data.image[ID].md[0].size[i]);
+        fprintf(fp, "\n");
         fclose(fp);
- 
- 
-        if (munmap(map, sizeof(IMAGE_METADATA)) == -1) {
-            printf("unmapping %s\n", SM_fname);
-            perror("Error un-mmapping the file");
-        }
-        close(SM_fd);
     }
-    
+
     return 0;
 }
+
+
 
 
 

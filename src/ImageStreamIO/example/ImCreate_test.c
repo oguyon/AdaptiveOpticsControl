@@ -2,7 +2,7 @@
  * Example code to write image in shared memory
  * 
  * compile with:
- * gcc ImCreate_test.c ImageCreate.c -lm -lpthread 
+ * gcc ImCreate_test.c ImageStreamIO.c -lm -lpthread 
  * 
  * Required files in compilation directory :
  * ImCreate_test.c   : source code (this file)
