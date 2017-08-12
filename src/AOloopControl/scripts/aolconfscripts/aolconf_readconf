@@ -39,19 +39,14 @@ fi
 
 
 
-function ReaddmCname {
-file="./conf/conf_dmC_name.txt"
-if [ -a $file ]
-	then
-	dmC=$(echo "$(cat $file)")
-	else
-	dmC="dmC" #default
-fi
-# DM correction channel
-aoconflog "linking dmC to ${dmC}"
-rm /tmp/aol${LOOPNUMBER}_dmC.im.shm 
-ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
-}
+
+
+
+
+
+
+
+
 
 
 # DM output of loop to another loop
@@ -128,163 +123,6 @@ rm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 }
 
-
-function ReaddmZP0name {
-file="./conf/conf_dmZP0_name.txt"
-if [ -a $file ]
-	then
-	dmZP0=$(echo "$(cat $file)")
-	else
-	dmZP0="dmZP0" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP0"
-aoconflog "linking dmZP0 to ${dmZP0}"
-rm /tmp/aol${LOOPNUMBER}_dmZP0.im.shm 
-ln -s /tmp/${dmZP0}.im.shm /tmp/aol${LOOPNUMBER}_dmZP0.im.shm
-}
-
-function ReaddmZP1name {
-file="./conf/conf_dmZP1_name.txt"
-if [ -a $file ]
-	then
-	dmZP1=$(echo "$(cat $file)")
-	else
-	dmZP1="dmZP1" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP1"
-aoconflog "linking dmZP1 to ${dmZP1}"
-rm /tmp/aol${LOOPNUMBER}_dmZP1.im.shm 
-ln -s /tmp/${dmZP1}.im.shm /tmp/aol${LOOPNUMBER}_dmZP1.im.shm
-}
-
-function ReaddmZP2name {
-file="./conf/conf_dmZP2_name.txt"
-if [ -a $file ]
-	then
-	dmZP2=$(echo "$(cat $file)")
-	else
-	dmZP2="dmZP2" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP2"
-aoconflog "linking dmZP2 to ${dmZP2}"
-rm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm 
-ln -s /tmp/${dmZP2}.im.shm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm
-}
-
-
-function ReaddmZP3name {
-file="./conf/conf_dmZP3_name.txt"
-if [ -a $file ]
-	then
-	dmZP3=$(echo "$(cat $file)")
-	else
-	dmZP3="dmZP3" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP3"
-aoconflog "linking dmZP3 to ${dmZP3}"
-rm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm 
-ln -s /tmp/${dmZP3}.im.shm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm
-}
-
-function ReaddmZP4name {
-file="./conf/conf_dmZP4_name.txt"
-if [ -a $file ]
-	then
-	dmZP4=$(echo "$(cat $file)")
-	else
-	dmZP4="dmZP4" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP4"
-aoconflog "linking dmZP4 to ${dmZP4}"
-rm /tmp/aol${LOOPNUMBER}_dmZP4.im.shm 
-ln -s /tmp/${dmZP4}.im.shm /tmp/aol${LOOPNUMBER}_dmZP4.im.shm
-}
-
-
-function ReaddmZP5name {
-file="./conf/conf_dmZP5_name.txt"
-if [ -a $file ]
-	then
-	dmZP5=$(echo "$(cat $file)")
-	else
-	dmZP5="dmZP5" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP5"
-aoconflog "linking dmZP5 to ${dmZP5}"
-rm /tmp/aol${LOOPNUMBER}_dmZP5.im.shm 
-ln -s /tmp/${dmZP5}.im.shm /tmp/aol${LOOPNUMBER}_dmZP5.im.shm
-}
-
-
-function ReaddmZP6name {
-file="./conf/conf_dmZP6_name.txt"
-if [ -a $file ]
-	then
-	dmZP6=$(echo "$(cat $file)")
-	else
-	dmZP6="dmZP6" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP6"
-aoconflog "linking dmZP6 to ${dmZP6}"
-rm /tmp/aol${LOOPNUMBER}_dmZP6.im.shm 
-ln -s /tmp/${dmZP6}.im.shm /tmp/aol${LOOPNUMBER}_dmZP6.im.shm
-}
-
-
-function ReaddmZP7name {
-file="./conf/conf_dmZP7_name.txt"
-if [ -a $file ]
-	then
-	dmZP7=$(echo "$(cat $file)")
-	else
-	dmZP7="dmZP7" #default
-fi
-# DM correction channel
-echo "linking to dm offset channel ZP7"
-aoconflog "linking dmZP7 to ${dmZP7}"
-rm /tmp/aol${LOOPNUMBER}_dmZP7.im.shm 
-ln -s /tmp/${dmZP7}.im.shm /tmp/aol${LOOPNUMBER}_dmZP7.im.shm
-}
-
-
-
-
-function Readdmdispname {
-file="./conf/conf_dmdisp_name.txt"
-if [ -a $file ]
-	then
-	dmdisp=$(echo "$(cat $file)")
-	else
-	dmdisp="dm0disp" #default
-fi
-# DM correction channel
-echo "linking to dm correction channel"
-aoconflog "linking dmdisp to ${dmdisp}"
-rm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm 
-ln -s /tmp/${dmdisp}.im.shm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm
-}
-
-
-function ReaddmRMname {
-file="./conf/conf_dmRM_name.txt"
-if [ -a $file ]
-	then
-	dmRM=$(echo "$(cat $file)")
-	else
-	dmRM="dmRM" #default
-fi
-# DM response matrix channel
-aoconflog "linking dmRM to ${dmRM}"
-rm /tmp/aol${LOOPNUMBER}_dmRM.im.shm 
-ln -s /tmp/${dmRM}.im.shm /tmp/aol${LOOPNUMBER}_dmRM.im.shm
-}
 
 
 function Readwfsimcamname {
@@ -500,50 +338,6 @@ ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
 
 
 
-# arg1 : image/stream name
-#
-# Reads conf/conf_XXX_name.txt
-# -> moves file to shared mem under aol#_XXX stream
-# -> makes sym link to conf/aol#_XXX.fits
-#
-# ./loadedSM/  keeps track of what has been loaded
-#
-function ReadConfFile {
-file="./conf/conf_$1_name.txt"
-fname="null"
-if [ -f $file ]
-	then
-	fname=$(echo "$(cat $file)")
-	else
-	fname="$1.fits" #default
-fi
-aoconflog "ReadConfFile: linking $1 to ${fname}" 
-
-# is file a link ?
-if [ -L "$fname" ]; then
-flink=$( readlink -f $fname )
-rm $fname
-rsync -auL $flink $fname
-fi
-
-#./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
-rm conf/aol${LOOPNUMBER}_$1.fits
-
-rm /tmp/$1.im.shm
-rm /dev/shm/sem.$1.*
-
-if [ -f "$PWD/${fname}" ]
-then # SUCCESS
-# echo "$PWD/${fname}" > case1_$1.txt
-./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
-ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
-else # CAN'T LOAD
-# echo "$PWD/${fname}" > case2_$1.txt
-rm /tmp/aol${LOOPNUMBER}_$1.im.shm
-rm /dev/shm/sem.$1.*
-rm conf/aol${LOOPNUMBER}_$1.fits
-fi
-}
 
 
 

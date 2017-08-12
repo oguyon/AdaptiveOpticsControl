@@ -1694,16 +1694,77 @@ All 3 processes work in a chain, and can be turned on/off from the GUI.
 
 
 
-# REFERENCE
+# REFERENCE, CONVENTIONS
+
+
+
+## Linking to existing stream 
+
+Creates a sym link from an existing stream to a new stream. This is frequently used to connect to hardware (for example pointing aol8_wfsim to the WFS camera stream).
+
+Within AOCCE, setting (new) stream aol#_\<deststream\> to point to \<srcstream\> involves:
+
+- writing "\<srcstream\>" to file conf/streamlink_\<deststream\>.name.txt
+- removing any existing aol#_\<deststream\> stream 
+- establishing sym link from \<srcstream\> to aol#_\<deststream\>
+
+The corresponding commands, to point aol8_wfsim to imcam, would be:
+
+	echo "imcam" > conf/streamlink_wfsim.name.txt
+	rm /tmp/aol8_wfsim.im.shm
+	ln -s /tmp/imcam.im.shm /tmp/aol8_wfsim.im.shm
+
+This is implemented in script :
+
+	./aolfuncs/aolfunc_StreamLink
+
+
+
 
 ## Loading images from FITS to shared memory stream
 
+### Overview
+
+Loading FITS file into a new or existing stream.
+
+The recommended command to load a FITS image to shared memory in AOCCE is for example:
+
+	echo "./wfsref0/wfsref0_today.fits" > ./conf/conf_wfsref0.name.txt
+	Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
+
+This command will skip loading if the stream does not need to be updated from the last load command. Add the -f option to force loading.
+
+
+### Detailed description
+
 File name can be :
 
-- option A: read from ./conf/conf_\<stream\>_name.txt
-- option B: specfied and written to ./conf/conf_\<stream\>_name.txt
+- option A: read from ./conf/shmim_\<stream\>.name.txt
+- option B: specfied and written to ./conf/shmim_\<stream\>.name.txt
 
-Directory ./loadedSM/ is used to keep track of streams loaded from FITS files. Important files:
+Command for option A:
+
+	Fits2shm <FITS file> <stream>
+
+Command for option B:
+
+	Fits2shm -c <stream>
+
+A prefix is usually added to the shared memory file with the -p option:
+
+	Fits2shm -c -p aol8_ <stream>
+
+The -r removes/clears any previous instance of the stream and associated files: it is a stronger option than -f.
+
+Fits2shm is located in the src/scripts/ directory of the AOCCE source code.
+
+
+For both options, FITS files and shared memory files are inspected to assess need to load the image. If repetitive load requests are issued on the same file and shared memory, the script may decide that no action is required as the shared memory is already up-to-date.
+
+Local directory ./loadedSM/ is used to keep track of streams loaded from FITS files. 
+
+
+Important files:
 
 ------------------------------------- ----------------------------------------
 File                                  Description
@@ -1724,14 +1785,28 @@ File                                  Description
 
 ./loadedSM/\<stream\>.SMchanged         File exists if the two SM files are different
 
-./loadedSM/\<stream\>.new               File exists if last load request updated stream
+./loadedSM/\<stream\>.imsize            Image size - updated upon SM load
+
+./loadedSM/\<stream\>.new               File exists if last load request updated or created stream
 
 ./loadedSM/\<stream\>.kept              File exists if last load request kept stream unchanged
 
 ./loadedSM/\<stream\>.missing           File exists if last load request created new stream (stream was missing)
+
+./conf/shmim_\<stream\>.name.txt         FITS file name for stream
+
+./conf/shmim_\<stream\>.imsize.txt       Stream size
+
+./conf/shmim_\<stream\>.fits            (symbolic link to) FITS file
+
+./tmp/\<prefix\>\<stream\>.im.shm       File-mapped shared memory
 ------------------------------------- -----------------------------------------------------------
 
-The logic is as follows:
+
+
+
+
+The logic behind Fits2shm is as follows:
 
 - Assume LOAD=0 (do not load FITS file in memory)
 - Check if FITS file has changed. If yes, set LOAD=1
@@ -1742,26 +1817,280 @@ The logic is as follows:
 - Check if FORCE option, if yes, set LOAD=1
 - If LOAD=1:
 	- load file to shared memory
-	- update \<stream\>.SMinfo file
-	- remove \<stream\>.kept file
-	- create \<stream\>.new file
+	
+	
+When loading :	
+
+- OPTION A only: update ./conf/shmim_\<stream\>_name.txt to the FITS file name 	
+- update ./loadedSM/\<stream\>.FITSinfo file
+- update ./loadedSM/\<stream\>.SMinfo file
+- create ./loadedSM/\<stream\>.kept OR ./loadedSM/\<stream\>.new file, remove the other one
+- create ./loadedSM/\<stream\>.missing file if the SM file did not exist, otherwise remove ./loadedSM/\<stream\>.missing
+- copy ./loadedSM/\<stream\>.imsize file to ./conf/shmim_\<stream\>.imsize.txt
+- load FITS file to ./tmp/\<prefix\>\<stream\>.im.shm
+- create sym link ./conf/shmim_\<stream\>.fits pointing to FITS file
 	
 
 
 
+# REFERENCE: Content of ./conf directory
+
+## Parameters
+
+### Overall and misc
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_CPUset_mode.txt                 1 if using CPUset
+
+param_wfslambdanm.txt                 WFS wavelength \[nm\]
+------------------------------------- ----------------------------------------
 
 
-Operations performed when loading FITS file to stream:
-
-- Check if the file has changed since the last loading request. 
-
-- write: loadedSM/<streamname>.imsize contains image size string 
-- loadedSM/<streamname>.kept 
-- loadedSM/<streamname>.missing
-- write FITS file to ./conf/conf_<streamname>.fits
 
 
-Script 'fits2shmim' is used with option '-s' (write image size to file). 
+### Linear Hardware Simulator
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_linsimDelay.txt                 Linear Hardware Simulator (LHS) hardware latency \[us\]
+
+param_linsimdt.txt                    Linear Hardware Simulator (LHS) loop interval \[us\]
+
+param_GPUlinsim.txt                   Linear Hardware Simulator (LHS) GPU index
+------------------------------------- ----------------------------------------
+
+
+### DM 
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_DMindex.txt                     DM index (00, 01, 02 ... )
+
+param_DMMODE.txt                      ZONAL (default) or MODAL
+
+param_DMxsize.txt                     DM x size
+
+param_DMysize.txt                     DM y size
+
+param_DM2DM_mode.txt                  DM-to-DM more. 1 if this DM drives another DM, 0 otherwise
+
+param_DMwfsref_mode.txt               1 for CPU-based dmcomb DM ouput applied as WFS offset
+
+param_DMvolt_mode.txt                 1 if DM voltages applied (requires stream "dmvolt")
+
+param_DMcombave_mode.txt              DM averaging mode (default = 0)
+
+param_DMdelayON.txt                   1 if DM delay introduced
+
+param_DMdelayus.txt                   DM delay value \[us\]
+------------------------------------- ----------------------------------------
+
+
+### Timing
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_loopfrequ.txt                   WFS camera frequency \[Hz\]
+
+param_hardwlatency.txt                Hardware latency \[s\]
+
+param_hardwlatency_frame.txt          Hardware latency \[frame\]
+
+param_complatency.txt                 Computation latency \[s\]
+
+param_complatency_frame.txt           Computation latency \[frame\]
+
+param_wfsmextrlatency.txt             Modal reconstruction latency \[s\]
+
+param_wfsmextrlatency_frame.txt       Modal reconstruction latency \[frame\]
+
+param_nblatm.txt                      Number of cycles in latency measurement
+------------------------------------- ----------------------------------------
+
+
+
+
+### Response Matrix acquisition
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_ACzrmtime.txt                   Max running time for zonal RM acquisition \[s\]
+
+param_ACzrmNBcycle.txt                Max number of cycles for zonal RM acquition
+
+param_ACmrmtime.txt                   Max running time for monal RM acquisition \[s\]
+
+param_ACmrmNBcycle.txt                Max number of cycles for modal RM acquition
+
+param_RMdelayfr.txt                   RM acquisition delay \[frame\]
+
+param_RMfrave.txt                     RM acquisition number of frames averaged per poke
+
+param_RMexft.txt                      RM acquisition number of frames excluded during poke transition
+
+param_RMamplum.txt                    RM acquisition amplitude \[um\]
+
+param_delayRM1us.txt                  RM acquisition delay 1 \[s\]
+
+param_RMpokeMode.txt                  RM poking mode. 0=zonal, 1=Hadamard.
+
+param_WFSnorm.txt                     Normalize WFS frames
+
+param_DMmaskRMp0.txt                     
+
+param_DMmaskRMc0.txt                     
+
+param_DMmaskRMp1.txt                     
+
+param_DMmaskRMc1.txt                     
+
+param_WFSmaskRMp0.txt                     
+
+param_WFSmaskRMc0.txt                     
+
+param_WFSmaskRMp1.txt                     
+
+param_WFSmaskRMc1.txt                     
+
+param_WFSmaskSNRr.txt                     
+
+param_.txt                     
+
+param_.txt                     
+------------------------------------- ----------------------------------------
+
+
+### Modess and Control Matrix computation
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_MASKS_LOCK.txt                  1 if WFS and DM masks are locked
+
+param_NBmodeblocks.txt                Number of mode blocks (default=1)
+------------------------------------- ----------------------------------------
+
+
+
+
+## Stream Links
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+streamlink_dmC.name.txt               DM correction stream
+
+streamlink_dmO.name.txt               DM offset stream (DM flat channel)
+
+streamlink_dmZP0.name.txt             DM zero point offset #0 stream
+
+streamlink_dmZP1.name.txt             DM zero point offset #1 stream
+
+streamlink_dmZP2.name.txt             DM zero point offset #2 stream
+
+streamlink_dmZP3.name.txt             DM zero point offset #3 stream
+
+streamlink_dmZP4.name.txt             DM zero point offset #4 stream
+
+streamlink_dmZP5.name.txt             DM zero point offset #5 stream
+
+streamlink_dmZP6.name.txt             DM zero point offset #6 stream
+
+streamlink_dmZP7.name.txt             DM zero point offset #7 stream
+
+streamlink_dmdisp.name.txt            DM total displacement stream
+
+streamlink_dmRM.name.txt              DM response matrix stream
+
+streamlink_dm2dmM.name.txt            DM modes controlled in DM-to-DM mode (optional)
+
+streamlink_dm2dmO.name.txt            DM modes output in DM-to-DM mode (optional)
+
+streamlink_dmwrefRM.name.txt          WFS ref RM (optional)
+
+streamlink_dmwrefO.name.txt           WFS output (optional)
+
+streamlink_wfsim.name.txt             WFS image
+------------------------------------- ----------------------------------------
+
+## Shared memory FITS file initializations to streams
+
+File shmim_\<stream\>.name.txt contain the FITS file names that are loaded into shared memory streams aol\<loop\>_\<stream\>.
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+shmim_wfsdark.name.txt                WFS dark
+
+shmim_wfsmap.name.txt                 WFS response map
+
+shmim_wfsmask.name.txt                WFS mask
+
+shmim_dmmap.name.txt                
+
+shmim_dmmaskRM.name.txt                
+
+shmim_dmslaved.name.txt                
+
+shmim_dmmask.name.txt                
+
+shmim_wfsref0.name.txt                
+
+shmim_zrespM.name.txt                
+
+shmim_LODMmodes.name.txt                
+
+shmim_LOrespM.name.txt                
+
+shmim_DModes.name.txt                
+
+shmim_respM.name.txt                
+
+shmim_contrM.name.txt                
+
+shmim_DMmodesXX.name.txt                
+
+shmim_respMXX.name.txt                
+
+shmim_contrMXX.name.txt                
+
+shmim_contrMcXX.name.txt                
+
+shmim_contrMcactXX_00.name.txt                
+------------------------------------- ----------------------------------------
+
+
+
+## FITS files
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+RMpokeCubeZ.fits.gz                   Poke modes (simple zonal poke)
+
+RM_DMmask.fits.gz                     mask for RM pokes
+
+Hpoke.fits.gz                         Hadamard poke modes
+------------------------------------- ----------------------------------------
+
+
+# REFERENCE: Content of ./status directory
+
+The status directories contrains the current state of the AOCCE processes
+
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+stat_DMcombON.txt                     " ON" if DMcomb is running, "OFF" otherwise
+
+stat_lsimON.txt                       " ON" if linear hardware simulator is running, "OFF" otherwise
+------------------------------------- ----------------------------------------
 
 
 

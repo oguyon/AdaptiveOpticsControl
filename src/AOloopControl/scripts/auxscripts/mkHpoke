@@ -93,15 +93,15 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
-DMindex=$(cat ./conf/conf_DMindex.txt)
-dmxsize=$(cat conf/conf_dm${DMindex}xsize.txt)
-dmysize=$(cat conf/conf_dm${DMindex}ysize.txt)
-echo "DM size = $dmxsize $dmysize"
+DMindex=$(cat conf/param_DMindex.txt)
+DMxsize=$(cat conf/param_DMxsize.txt)
+DMysize=$(cat conf/param_DMysize.txt)
+echo "DM size = $DMxsize $DMysize"
 
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-DMMODEfile="conf/conf_DMMODE.txt"
+DMMODEfile="conf/param_DMMODE.txt"
 if [ -f $DMMODEfile ]; then
 DMMODE=$( cat ${DMMODEfile} )
 else
@@ -116,19 +116,19 @@ if [ ! -f "./conf/RM_DMmask.fits" ]; then
 
 if [ "$DMMODE" = "ZONAL" ]; then
 ./AOloopControl << EOF
-cx=0.5*${dmxsize}-0.5
-cy=0.5*${dmysize}-0.5
-rad=0.5*${dmxsize}+0.6
-mkdisk dmmask ${dmxsize} ${dmysize} cx cy rad
-savefits dmmask "!./conf/RM_DMmask.fits"
+cx=0.5*${DMxsize}-0.5
+cy=0.5*${DMysize}-0.5
+rad=0.5*${DMxsize}+0.6
+mkdisk dmmask ${DMxsize} ${DMysize} cx cy rad
+savefits dmmask "!./conf/RM_DMmask.fits.gz"
 itot(dmmask)
 exitCLI
 EOF
 else
 ./AOloopControl << EOF
-creaim im ${dmxsize} ${dmysize}
+creaim im ${DMxsize} ${DMysize}
 dmmask=im+1
-savefits dmmask "!./conf/RM_DMmask.fits"
+savefits dmmask "!./conf/RM_DMmask.fits.gz"
 exitCLI
 EOF
 fi
@@ -136,8 +136,8 @@ fi
 fi
 
 ./AOloopControl << EOF
-loadfits "./conf/RM_DMmask.fits" DMmask
+loadfits "./conf/RM_DMmask.fits.gz" DMmask
 aolmkH DMmask outim
-savefits outim "!./conf/Hpoke.fits"
+savefits outim "!./conf/Hpoke.fits.gz"
 exitCLI
 EOF

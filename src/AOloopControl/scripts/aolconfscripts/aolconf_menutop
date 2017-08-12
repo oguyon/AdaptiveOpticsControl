@@ -20,20 +20,20 @@ if [ $state = "menutop" ]; then
 stateok=1
 dateUTC=$( date -u )
 #aoconflog "$0 state = ${state}"
-confselected=$(cat "./conf/conf_CONFNUMBER.txt")
+confselected="0" #$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 
-file="./conf/conf_dmcombavemode.txt"
-dmcombavemode=$( cat $file )
-if [[ -f "$file" && ( "$dmcombavemode" = "0" || "$dmcombavemode" = "1" || "$dmcombavemode" = "2" ) ]]; then
+file="./conf/param_DMcombave_mode.txt"
+DMcombave_mode=$( cat $file )
+if [[ -f "$file" && ( "$DMcombave_mode" = "0" || "$DMcombave_mode" = "1" || "$DMcombave_mode" = "2" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmcombavemode=0
+DMcombave_mode=0
 fi
 
-DMindex=$(cat "./conf/conf_DMindex.txt")
+DMindex=$(cat "./conf/param_DMindex.txt")
 
 
 
@@ -53,10 +53,10 @@ menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
-dmxsize=$(cat "./conf/conf_dm${DMindex}xsize.txt")
-menuitems+=( "dmxs" "[${dmxsize}] Set DM x size (if modal control, = number of modes)" )
-dmysize=$(cat "./conf/conf_dm${DMindex}ysize.txt")
-menuitems+=( "dmys" "[${dmysize}] Set DM y size (1 if modal control)" )
+dmxsize=$(cat "./conf/param_DMxsize.txt")
+menuitems+=( "dmxs" "[${DMxsize}] Set DM x size (if modal control, = number of modes)" )
+dmysize=$(cat "./conf/param_DMysize.txt")
+menuitems+=( "dmys" "[${DMysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
 menuitems+=( "nolink"  "Auto-configure: main DM  (no link)             -> DM actuators are physical actuators" )
@@ -67,12 +67,12 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-DMMODEfile="conf/conf_DMMODE.txt"
-if [ -f $DMMODEfile ]; then
+file="conf/param_DMMODE.txt"
+if [ -f $file ]; then
 DMMODE=$( cat ${DMMODEfile} )
 else
 DMMODE="ZONAL"
-echo "$DMMODE" > $DMMODEfile
+echo "$DMMODE" > $file
 fi
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -84,13 +84,13 @@ fi
 
 
 
-file="./conf/conf_dm2dm_mode.txt"
-dm2dm_mode=$( cat $file )
-if [[ -f "$file" && ( "$dm2dm_mode" = "1" || "$dm2dm_mode" = "0" ) ]]; then
+file="./conf/param_DM2DM_mode.txt"
+DM2DM_mode=$( cat $file )
+if [[ -f "$file" && ( "$DM2DM_mode" = "1" || "$DM2DM_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dm2dm_mode=0
+DM2DM_mode=0
 fi
 
 file="./conf/conf_dm2dmModes_name.txt"
@@ -186,26 +186,26 @@ fi
 
 
 file="./conf/conf_dmvolt_mode.txt"
-dmvoltmode=$( cat $file )
-if [[ -f "$file" && ( "$dmvoltmode" = "1" || "$dmvoltmode" = "0" ) ]]; then
+DMvolt_mode=$( cat $file )
+if [[ -f "$file" && ( "$DMvolt_mode" = "1" || "$DMvolt_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmvoltmode=0
+DMvolt_mode=0
 fi
 
 menuitems+=( " " " ")
-if [ "${dmvoltmode}" = "0" ];
+if [ "${DMvolt_mode}" = "0" ];
 then
 menuitems+=( "dmvolt1" " [  OFF  ] Activate DM volt output [-> dmvolt]" )
 fi
-if [ "${dmvoltmode}" = "1" ];
+if [ "${DMvolt_mode}" = "1" ];
 then
 menuitems+=( "dmvolt0" " [   ON  ] De-activate DM volt output [-> dmvolt]" )
 fi
 menuitems+=( " " " ")
 
-menuitems+=( "dmcombam" "[${dmcombavemode}] DM combination averaging mode" )
+menuitems+=( "dmcombam" "[${DMcombave_mode}] DM combination averaging mode" )
 
 
 menuitems+=( " " " ")
@@ -410,79 +410,91 @@ done
 
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 DMindex=$("${cmd[@]}" 2>&1 >/dev/tty)
-echo "$DMindex" > ./conf/conf_DMindex.txt
-aoconflog "set DMindex = $DMindex"
-getshmimsize dm${DMindex}disp
-sizestring=$( cat conf/conf_imsize_dm${DMindex}disp.txt )
-read -r dmxsize dmysize <<< "$sizestring"
-echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
-echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
+echo "$DMindex" > ./conf/param_DMindex.txt
+
+echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
+./aolfuncs/aolfunc_StreamLink dmdisp
+
+sizestring=$( cat conf/streamlink_dmdisp.imsize.txt )
+read -r DMxsize DMysize <<< "$sizestring"
+echo "$DMxsize" > ./conf/param_DMxsize.txt
+echo "$DMysize" > ./conf/param_DMysize.txt
 ;;
 
 	dmxs)
-exec 3>&1;dmxsize=$(dialog --inputbox "DM xsize" 0 0 "$dmxsize" 2>&1 1>&3);
+exec 3>&1;DMxsize=$(dialog --inputbox "DM xsize" 0 0 "$DMxsize" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
-aoconflog "set dm${DMindex}xsize = $dmxsize"
+echo "$dmxsize" > ./conf/param_DMxsize.txt
+#aoconflog "set DMsize = $DMxsize"
 ;;
 
 	dmys)
-exec 3>&1;dmysize=$(dialog --inputbox "DM ysize" 0 0 "$dmysize" 2>&1 1>&3);
+exec 3>&1;DMysize=$(dialog --inputbox "DM ysize" 0 0 "$DMysize" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
-aoconflog "set dm${DMindex}ysize = $dmysize"
+echo "$DMysize" > ./conf/param_DMysize.txt
+#aoconflog "set DMysize = $DMysize"
 ;;
 
     nolink)
 aoconflog "set DM nolink"
 
 DMMODE="ZONAL"
-DMMODEfile="conf/conf_DMMODE.txt"
+DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
-echo "0" > "./conf/conf_dm2dm_mode.txt"
-echo "0" > "./conf/conf_dmwfsref_mode.txt"
-echo "1" > "./conf/conf_dmvolt_mode.txt"
-echo "0" > "./conf/conf_dmcombavemode.txt"
-echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
-ReaddmCname
-echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
-ReaddmOname
+echo "0" > "./conf/param_DM2DM_mode.txt"
+echo "0" > "./conf/param_DMwfsref_mode.txt"
+echo "1" > "./conf/param_DMvolt_mode.txt"
+echo "0" > "./conf/param_DMcombave_mode.txt"
 
-echo "dm${DMindex}disp04" > ./conf/conf_dmZP0_name.txt
-ReaddmZP0name
-echo "dm${DMindex}disp05" > ./conf/conf_dmZP1_name.txt
-ReaddmZP1name
-echo "dm${DMindex}disp06" > ./conf/conf_dmZP2_name.txt
-ReaddmZP2name
-echo "dm${DMindex}disp07" > ./conf/conf_dmZP3_name.txt
-ReaddmZP3name
-echo "dm${DMindex}disp08" > ./conf/conf_dmZP4_name.txt
-ReaddmZP4name
-echo "dm${DMindex}disp09" > ./conf/conf_dmZP5_name.txt
-ReaddmZP5name
-echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
-ReaddmZP6name
-echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
-ReaddmZP7name
+echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
+./aolfuncs/aolfunc_StreamLink dmC
 
-echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
-Readdmdispname
-echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
-ReaddmRMname
+echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
+./aolfuncs/aolfunc_StreamLink dmO
+
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
+./aolfuncs/aolfunc_StreamLink dmZP0
+
+echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP1
+
+echo "dm${DMindex}disp06" > ./conf/streamlink_dmZP2.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP2
+
+echo "dm${DMindex}disp07" > ./conf/streamlink_dmZP3.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP3
+
+echo "dm${DMindex}disp08" > ./conf/streamlink_dmZP4.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP4
+
+echo "dm${DMindex}disp09" > ./conf/streamlink_dmZP5.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP5
+
+echo "dm${DMindex}disp10" > ./conf/streamlink_dmZP6.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP6
+
+echo "dm${DMindex}disp11" > ./conf/streamlink_dmZP7.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP7
+
+echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
+./aolfuncs/aolfunc_StreamLink dmdisp
+
+echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation channel for RM matrix
+./aolfuncs/aolfunc_StreamLink dmRM
 ;;
 
     dmolink)
 aoconflog "set DM link"
 
 DMMODE="MODAL"
-DMMODEfile="conf/conf_DMMODE.txt"
+DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
-echo "1" > "./conf/conf_dm2dm_mode.txt"
-echo "1" > "./conf/conf_dmwfsref_mode.txt"
-echo "0" > "./conf/conf_dmvolt_mode.txt"
-echo "2" > "./conf/conf_dmcombavemode.txt"
+echo "1" > "./conf/param_DM2DM_mode.txt"
+echo "1" > "./conf/param_DMwfsref_mode.txt"
+echo "0" > "./conf/param_DMvolt_mode.txt"
+echo "2" > "./conf/param_DMcombave_mode.txt"
 menuitems1=( "0" "loop 0 (directory ../AOloop0/)" )
 for i in 1 2 3 4 5 6 7 8 9;
         do
@@ -496,7 +508,7 @@ dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
 menuitems1=( " " " " )
 for i in 0 1 2 3 4 5 6 7;
         do
-dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
+dmnb=$( cat ../AOloop${dmolinknb}/conf/param_DMindex.txt )
 dmolinkchan="$i"
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 menuitems1+=( "$i" "offset channel $i  ( dm${dmnb}disp${dmolinkchan1} )" )
@@ -506,6 +518,7 @@ done
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 
+
 # set external loop DM modes controlled by this loop 
 $execname << EOF
 loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$dmxsize]" im
@@ -514,15 +527,16 @@ cpsh im aol${dmolinknb}_modes0_$dmxsize
 quit
 EOF
 dm2dmM="aol${dmolinknb}_modes0_$dmxsize"
-echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
-Readdm2dmMname
+echo "$dm2dmM" > ./conf/streamlink_dm2dmM.name.txt
+./aolfuncs/aolfunc_StreamLink dm2dmM
+
 
 # symbolic link to dm channel in external loop
 dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 dm2dmO="dm${dmnb}disp${dmolinkchan1}"
-echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
-Readdm2dmOname
+echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
+./aolfuncs/aolfunc_StreamLink dm2dmO
 
 
 # external loop WFS response of modes controlled by this loop
@@ -533,40 +547,50 @@ cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
 quit
 EOF
 dmwrefRM="aol${dmolinknb}_modesWFS0_$dmxsize"
-echo "$dmwrefRM" > ./conf/conf_dmwrefRM_name.txt
-ReaddmwrefRMname
+echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
+./aolfuncs/aolfunc_StreamLink dmwrefRM
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
-echo "$dmwrefO" > ./conf/conf_dmwrefO_name.txt
-ReaddmwrefOname
+echo "$dmwrefO" > ./conf/streamlink_dmwrefO_name.txt
+./aolfuncs/aolfunc_StreamLink dmwrefO
 
 
-echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
-ReaddmCname
-echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
-ReaddmOname
+echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
+./aolfuncs/aolfunc_StreamLink dmC
 
-echo "dm${DMindex}disp04" > ./conf/conf_dmZP0_name.txt
-ReaddmZP0name
-echo "dm${DMindex}disp05" > ./conf/conf_dmZP1_name.txt
-ReaddmZP1name
-echo "dm${DMindex}disp06" > ./conf/conf_dmZP2_name.txt
-ReaddmZP2name
-echo "dm${DMindex}disp07" > ./conf/conf_dmZP3_name.txt
-ReaddmZP3name
-echo "dm${DMindex}disp08" > ./conf/conf_dmZP4_name.txt
-ReaddmZP4name
-echo "dm${DMindex}disp09" > ./conf/conf_dmZP5_name.txt
-ReaddmZP5name
-echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
-ReaddmZP6name
-echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
-ReaddmZP7name
+echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
+./aolfuncs/aolfunc_StreamLink dmO
 
-echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
-Readdmdispname
-echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
-ReaddmRMname
+
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP0
+
+echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP1
+
+echo "dm${DMindex}disp06" > ./conf/streamlink_dmZP2.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP2
+
+echo "dm${DMindex}disp07" > ./conf/streamlink_dmZP3.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP3
+
+echo "dm${DMindex}disp08" > ./conf/streamlink_dmZP4.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP4
+
+echo "dm${DMindex}disp09" > ./conf/streamlink_dmZP5.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP5
+
+echo "dm${DMindex}disp10" > ./conf/streamlink_dmZP6.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP6
+
+echo "dm${DMindex}disp11" > ./conf/streamlink_dmZP7.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP7
+
+echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
+./aolfuncs/aolfunc_StreamLink dmdisp
+
+echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation channel for RM matrix
+./aolfuncs/aolfunc_StreamLink dmRM
 ;;
 
 
@@ -574,14 +598,14 @@ ReaddmRMname
 
 DMmodeM)
 DMMODE="MODAL"
-DMMODEfile="conf/conf_DMMODE.txt"
+DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeZ"
 ;;
 
 DMmodeZ)
 DMMODE="ZONAL"
-DMMODEfile="conf/conf_DMMODE.txt"
+DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeM"
 ;;
@@ -592,19 +616,19 @@ menutop_default="DMmodeM"
 
    dm2dmMode0)
 aoconflog "set dm2dm_mode = 0"
-echo "0" > "./conf/conf_dm2dm_mode.txt"
+echo "0" > "./conf/param_DM2DM_mode.txt"
 menutop_default="dm2dmMode1"
 ;;
     dm2dmMode1)
 aoconflog "set dm2dm_mode = 1"
-echo "1" > "./conf/conf_dm2dm_mode.txt"
+echo "1" > "./conf/param_DM2DM_mode.txt"
 menutop_default="dm2dmMode0"
 ;;
     dm2dmM)
 exec 3>&1;
 dm2dmM=$(dialog --inputbox "dm2dmM" 0 0 "$dm2dmM" 2>&1 1>&3);
-echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
-Readdm2dmMname
+echo "$dm2dmM" > ./conf/streamlink_dm2dmM.name.txt
+./aolfuncs/aolfunc_StreamLink dm2dmM
 aoconflog "set dm2dm_name = $dm2dmM"
 ;;
 
@@ -612,78 +636,78 @@ aoconflog "set dm2dm_name = $dm2dmM"
 exec 3>&1;
 dm2dmO=$(dialog --inputbox "dm2dmO" 0 0 "$dm2dmO" 2>&1 1>&3);
 exec 3>&-;
-echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
-Readdm2dmOname
+echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
+./aolfuncs/aolfunc_StreamLink dm2dmO
 aoconflog "set dm2dmO_name = $dm2dmO"
 ;;
 
     dmwref0)
 aoconflog "set dmwfsref = 0"
-echo "0" > "./conf/conf_dmwfsref_mode.txt"
+echo "0" > "./conf/param_DMwfsref_mode.txt"
 menutop_default="dmwref1"
 ;;
     dmwref1)
 aoconflog "set dmwfsref = 1"
-echo "1" > "./conf/conf_dmwfsref_mode.txt"
+echo "1" > "./conf/param_DMwfsref_mode.txt"
 menutop_default="dmwref0"
 ;;
 
     dmvolt0)
 aoconflog "set dmvolt_mode = 0"
-echo "0" > "./conf/conf_dmvolt_mode.txt"
+echo "0" > "./conf/param_DMvolt_mode.txt"
 menutop_default="dmvolt1"
 ;;
     dmvolt1)
 aoconflog "set dmvolt_mode = 1"
-echo "1" > "./conf/conf_dmvolt_mode.txt"
+echo "1" > "./conf/param_DMvolt_mode.txt"
 menutop_default="dmvolt0"
 ;;
 
     dmcombam)
-vali=$( echo $dmcombavemode )
+vali=$( echo $DMcombave_mode )
 menuitems1=( "0" "do not appy DC offset command to average, but offset combined average to mid-range, and clip displacement at >0.0" )
 menuitems1+=( "1" "apply DC offset to remove average" )
 menuitems1+=( "2" "do not apply DC offset, do not offset sum, do not clip" )
 
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
-dmcombavemode=$("${cmd[@]}" 2>&1 >/dev/tty)
-echo "$dmcombavemode" > ./conf/conf_dmcombavemode.txt
-aoconflog "set dmcombavemode = ${dmcombavemode}"
+DMcombave_mode=$("${cmd[@]}" 2>&1 >/dev/tty)
+echo "$DMcombave_mode" > ./conf/param_DMcombave_mode.txt
+aoconflog "set DMcombave_mode = ${DMcombave_mode}"
 ;;
 
 	setDMdelayval)
-exec 3>&1;dmdelayus=$(dialog --inputbox "DM delay [us]" 0 0 "$dmdelayus" 2>&1 1>&3);
+exec 3>&1;dmdelayus=$(dialog --inputbox "DM delay [us]" 0 0 "$DMdelayus" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmdelayus" > ./conf/conf_dmdelayus.txt
-aoconflog "set dmdelayus = $dmdelayus"
+echo "$dmdelayus" > ./conf/param_DMdelayus.txt
+aoconflog "set dmdelayus = $DMdelayus"
 ;;
 
 	setDMdelayON)
 dmDelayON=" ON"
-echo "$dmDelayON" > ./conf/conf_dmdelayON.txt
+echo "$dmDelayON" > ./conf/param_dmdelayON.txt
 menutop_default="setDMdelayOFF"
 ;;
 
 	setDMdelayOFF)
 dmDelayON="OFF"
-echo "$dmDelayON" > ./conf/conf_dmdelayON.txt
+echo "$dmDelayON" > ./conf/param_dmdelayON.txt
 menutop_default="setDMdelayON"
 ;;
 
 
 	initDM)
-mkdir -p $HOME/status
-file="$HOME/status/stat_initdm${DMindex}.txt"
+mkdir -p status
+file="status/stat_initdm${DMindex}.txt"
 echo "1" > $file
-initDMfunc
+./aolfuncs/aolfunc_initDM
 menutop_default="stopDM"
 ;;
 
     stopDM)
-mkdir -p $HOME/status
-file="$HOME/status/stat_initdm${DMindex}.txt"
+mkdir -p status
+file="status/stat_initdm${DMindex}.txt"
 echo "0" > $file
-stopDMfunc
+./aolfuncs/aolfunc_stopDM
 menutop_default="initDM"
 ;;
 
@@ -707,6 +731,7 @@ C00)
 tmuxnameC00="aol${LOOPNUMBER}calib00"
 
 RMCalibReuseMasks=1
+echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 
 echo "Start session ${tmuxnameC00}"
 echo " command: tmux new-session -d -s ${tmuxnameC00}"
@@ -739,6 +764,8 @@ function_computeModesCM # in aolconf_controlmatrix_funcs
 C0)
 echo "CALIBRATE ALL"
 RMCalibReuseMasks=0
+echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
+
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
 if [ $C0test -eq 0 ]; then
@@ -855,7 +882,7 @@ done
 
 # SAVE CONFIGURATION
 tmux send-keys -t ${tmuxnameC0} "mkdir -p \"${confname}\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/conf_* \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/*.txt \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpoke.fits \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/Hpoke.fits \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMmat.fits \"${confname}/\"" C-m	

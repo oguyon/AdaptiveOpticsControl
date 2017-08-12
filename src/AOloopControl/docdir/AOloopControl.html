@@ -129,10 +129,28 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#scripts"><span class="toc-section-number">11.2</span> Scripts</a></li>
 <li><a href="#data-flow"><span class="toc-section-number">11.3</span> Data flow</a></li>
 </ul></li>
-<li><a href="#reference"><span class="toc-section-number">12</span> REFERENCE</a><ul>
-<li><a href="#loading-images-from-fits-to-shared-memory-stream"><span class="toc-section-number">12.1</span> Loading images from FITS to shared memory stream</a></li>
+<li><a href="#reference-conventions"><span class="toc-section-number">12</span> REFERENCE, CONVENTIONS</a><ul>
+<li><a href="#linking-to-existing-stream"><span class="toc-section-number">12.1</span> Linking to existing stream</a></li>
+<li><a href="#loading-images-from-fits-to-shared-memory-stream"><span class="toc-section-number">12.2</span> Loading images from FITS to shared memory stream</a><ul>
+<li><a href="#overview-4"><span class="toc-section-number">12.2.1</span> Overview</a></li>
+<li><a href="#detailed-description"><span class="toc-section-number">12.2.2</span> Detailed description</a></li>
 </ul></li>
-<li><a href="#reference-additional-pages"><span class="toc-section-number">13</span> REFERENCE, ADDITIONAL PAGES</a></li>
+</ul></li>
+<li><a href="#reference-content-of-.conf-directory"><span class="toc-section-number">13</span> REFERENCE: Content of ./conf directory</a><ul>
+<li><a href="#parameters"><span class="toc-section-number">13.1</span> Parameters</a><ul>
+<li><a href="#overall-and-misc"><span class="toc-section-number">13.1.1</span> Overall and misc</a></li>
+<li><a href="#linear-hardware-simulator"><span class="toc-section-number">13.1.2</span> Linear Hardware Simulator</a></li>
+<li><a href="#dm"><span class="toc-section-number">13.1.3</span> DM</a></li>
+<li><a href="#timing"><span class="toc-section-number">13.1.4</span> Timing</a></li>
+<li><a href="#response-matrix-acquisition"><span class="toc-section-number">13.1.5</span> Response Matrix acquisition</a></li>
+<li><a href="#modess-and-control-matrix-computation"><span class="toc-section-number">13.1.6</span> Modess and Control Matrix computation</a></li>
+</ul></li>
+<li><a href="#stream-links"><span class="toc-section-number">13.2</span> Stream Links</a></li>
+<li><a href="#shared-memory-fits-file-initializations-to-streams"><span class="toc-section-number">13.3</span> Shared memory FITS file initializations to streams</a></li>
+<li><a href="#fits-files"><span class="toc-section-number">13.4</span> FITS files</a></li>
+</ul></li>
+<li><a href="#reference-content-of-.status-directory"><span class="toc-section-number">14</span> REFERENCE: Content of ./status directory</a></li>
+<li><a href="#reference-additional-pages"><span class="toc-section-number">15</span> REFERENCE, ADDITIONAL PAGES</a></li>
 </ul>
 </div>
 <div id="initial-setup" class="section level1">
@@ -2390,16 +2408,52 @@ EOF</code></pre></td></tr></table></div>
 <p>All 3 processes work in a chain, and can be turned on/off from the GUI.</p>
 </div>
 </div>
-<div id="reference" class="section level1">
-<h1><span class="header-section-number">12</span> REFERENCE</h1>
+<div id="reference-conventions" class="section level1">
+<h1><span class="header-section-number">12</span> REFERENCE, CONVENTIONS</h1>
+<div id="linking-to-existing-stream" class="section level2">
+<h2><span class="header-section-number">12.1</span> Linking to existing stream</h2>
+<p>Creates a sym link from an existing stream to a new stream. This is frequently used to connect to hardware (for example pointing aol8_wfsim to the WFS camera stream).</p>
+<p>Within AOCCE, setting (new) stream aol#_&lt;deststream&gt; to point to &lt;srcstream&gt; involves:</p>
+<ul>
+<li>writing &quot;&lt;srcstream&gt;&quot; to file conf/streamlink_&lt;deststream&gt;.name.txt</li>
+<li>removing any existing aol#_&lt;deststream&gt; stream</li>
+<li>establishing sym link from &lt;srcstream&gt; to aol#_&lt;deststream&gt;</li>
+</ul>
+<p>The corresponding commands, to point aol8_wfsim to imcam, would be:</p>
+<pre><code>echo &quot;imcam&quot; &gt; conf/streamlink_wfsim.name.txt
+rm /tmp/aol8_wfsim.im.shm
+ln -s /tmp/imcam.im.shm /tmp/aol8_wfsim.im.shm</code></pre>
+<p>This is implemented in script :</p>
+<pre><code>./aolfuncs/aolfunc_StreamLink</code></pre>
+</div>
 <div id="loading-images-from-fits-to-shared-memory-stream" class="section level2">
-<h2><span class="header-section-number">12.1</span> Loading images from FITS to shared memory stream</h2>
+<h2><span class="header-section-number">12.2</span> Loading images from FITS to shared memory stream</h2>
+<div id="overview-4" class="section level3">
+<h3><span class="header-section-number">12.2.1</span> Overview</h3>
+<p>Loading FITS file into a new or existing stream.</p>
+<p>The recommended command to load a FITS image to shared memory in AOCCE is for example:</p>
+<pre><code>echo &quot;./wfsref0/wfsref0_today.fits&quot; &gt; ./conf/conf_wfsref0.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0</code></pre>
+<p>This command will skip loading if the stream does not need to be updated from the last load command. Add the -f option to force loading.</p>
+</div>
+<div id="detailed-description" class="section level3">
+<h3><span class="header-section-number">12.2.2</span> Detailed description</h3>
 <p>File name can be :</p>
 <ul>
-<li>option A: read from ./conf/conf_&lt;stream&gt;_name.txt</li>
-<li>option B: specfied and written to ./conf/conf_&lt;stream&gt;_name.txt</li>
+<li>option A: read from ./conf/shmim_&lt;stream&gt;.name.txt</li>
+<li>option B: specfied and written to ./conf/shmim_&lt;stream&gt;.name.txt</li>
 </ul>
-<p>Directory ./loadedSM/ is used to keep track of streams loaded from FITS files. Important files:</p>
+<p>Command for option A:</p>
+<pre><code>Fits2shm &lt;FITS file&gt; &lt;stream&gt;</code></pre>
+<p>Command for option B:</p>
+<pre><code>Fits2shm -c &lt;stream&gt;</code></pre>
+<p>A prefix is usually added to the shared memory file with the -p option:</p>
+<pre><code>Fits2shm -c -p aol8_ &lt;stream&gt;</code></pre>
+<p>The -r removes/clears any previous instance of the stream and associated files: it is a stronger option than -f.</p>
+<p>Fits2shm is located in the src/scripts/ directory of the AOCCE source code.</p>
+<p>For both options, FITS files and shared memory files are inspected to assess need to load the image. If repetitive load requests are issued on the same file and shared memory, the script may decide that no action is required as the shared memory is already up-to-date.</p>
+<p>Local directory ./loadedSM/ is used to keep track of streams loaded from FITS files.</p>
+<p>Important files:</p>
 <table>
 <colgroup>
 <col width="48%" />
@@ -2445,20 +2499,40 @@ EOF</code></pre></td></tr></table></div>
 <td align="left">File exists if the two SM files are different</td>
 </tr>
 <tr class="odd">
-<td align="left">./loadedSM/&lt;stream&gt;.new</td>
-<td align="left">File exists if last load request updated stream</td>
+<td align="left">./loadedSM/&lt;stream&gt;.imsize</td>
+<td align="left">Image size - updated upon SM load</td>
 </tr>
 <tr class="even">
+<td align="left">./loadedSM/&lt;stream&gt;.new</td>
+<td align="left">File exists if last load request updated or created stream</td>
+</tr>
+<tr class="odd">
 <td align="left">./loadedSM/&lt;stream&gt;.kept</td>
 <td align="left">File exists if last load request kept stream unchanged</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">./loadedSM/&lt;stream&gt;.missing</td>
 <td align="left">File exists if last load request created new stream (stream was missing)</td>
 </tr>
+<tr class="odd">
+<td align="left">./conf/shmim_&lt;stream&gt;.name.txt</td>
+<td align="left">FITS file name for stream</td>
+</tr>
+<tr class="even">
+<td align="left">./conf/shmim_&lt;stream&gt;.imsize.txt</td>
+<td align="left">Stream size</td>
+</tr>
+<tr class="odd">
+<td align="left">./conf/shmim_&lt;stream&gt;.fits</td>
+<td align="left">(symbolic link to) FITS file</td>
+</tr>
+<tr class="even">
+<td align="left">./tmp/&lt;prefix&gt;&lt;stream&gt;.im.shm</td>
+<td align="left">File-mapped shared memory</td>
+</tr>
 </tbody>
 </table>
-<p>The logic is as follows:</p>
+<p>The logic behind Fits2shm is as follows:</p>
 <ul>
 <li>Assume LOAD=0 (do not load FITS file in memory)</li>
 <li>Check if FITS file has changed. If yes, set LOAD=1</li>
@@ -2472,24 +2546,555 @@ EOF</code></pre></td></tr></table></div>
 <li>If LOAD=1:
 <ul>
 <li>load file to shared memory</li>
-<li>update &lt;stream&gt;.SMinfo file</li>
-<li>remove &lt;stream&gt;.kept file</li>
-<li>create &lt;stream&gt;.new file</li>
 </ul></li>
 </ul>
-<p>Operations performed when loading FITS file to stream:</p>
+<p>When loading :</p>
 <ul>
-<li><p>Check if the file has changed since the last loading request.</p></li>
-<li>write: loadedSM/<streamname>.imsize contains image size string</li>
-<li>loadedSM/<streamname>.kept</li>
-<li>loadedSM/<streamname>.missing</li>
-<li><p>write FITS file to ./conf/conf_<streamname>.fits</p></li>
+<li>OPTION A only: update ./conf/shmim_&lt;stream&gt;_name.txt to the FITS file name<br />
+</li>
+<li>update ./loadedSM/&lt;stream&gt;.FITSinfo file</li>
+<li>update ./loadedSM/&lt;stream&gt;.SMinfo file</li>
+<li>create ./loadedSM/&lt;stream&gt;.kept OR ./loadedSM/&lt;stream&gt;.new file, remove the other one</li>
+<li>create ./loadedSM/&lt;stream&gt;.missing file if the SM file did not exist, otherwise remove ./loadedSM/&lt;stream&gt;.missing</li>
+<li>copy ./loadedSM/&lt;stream&gt;.imsize file to ./conf/shmim_&lt;stream&gt;.imsize.txt</li>
+<li>load FITS file to ./tmp/&lt;prefix&gt;&lt;stream&gt;.im.shm</li>
+<li>create sym link ./conf/shmim_&lt;stream&gt;.fits pointing to FITS file</li>
 </ul>
-<p>Script 'fits2shmim' is used with option '-s' (write image size to file).</p>
 </div>
+</div>
+</div>
+<div id="reference-content-of-.conf-directory" class="section level1">
+<h1><span class="header-section-number">13</span> REFERENCE: Content of ./conf directory</h1>
+<div id="parameters" class="section level2">
+<h2><span class="header-section-number">13.1</span> Parameters</h2>
+<div id="overall-and-misc" class="section level3">
+<h3><span class="header-section-number">13.1.1</span> Overall and misc</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_CPUset_mode.txt</td>
+<td align="left">1 if using CPUset</td>
+</tr>
+<tr class="even">
+<td align="left">param_wfslambdanm.txt</td>
+<td align="left">WFS wavelength [nm]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="linear-hardware-simulator" class="section level3">
+<h3><span class="header-section-number">13.1.2</span> Linear Hardware Simulator</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_linsimDelay.txt</td>
+<td align="left">Linear Hardware Simulator (LHS) hardware latency [us]</td>
+</tr>
+<tr class="even">
+<td align="left">param_linsimdt.txt</td>
+<td align="left">Linear Hardware Simulator (LHS) loop interval [us]</td>
+</tr>
+<tr class="odd">
+<td align="left">param_GPUlinsim.txt</td>
+<td align="left">Linear Hardware Simulator (LHS) GPU index</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="dm" class="section level3">
+<h3><span class="header-section-number">13.1.3</span> DM</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_DMindex.txt</td>
+<td align="left">DM index (00, 01, 02 ... )</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMMODE.txt</td>
+<td align="left">ZONAL (default) or MODAL</td>
+</tr>
+<tr class="odd">
+<td align="left">param_DMxsize.txt</td>
+<td align="left">DM x size</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMysize.txt</td>
+<td align="left">DM y size</td>
+</tr>
+<tr class="odd">
+<td align="left">param_DM2DM_mode.txt</td>
+<td align="left">DM-to-DM more. 1 if this DM drives another DM, 0 otherwise</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMwfsref_mode.txt</td>
+<td align="left">1 for CPU-based dmcomb DM ouput applied as WFS offset</td>
+</tr>
+<tr class="odd">
+<td align="left">param_DMvolt_mode.txt</td>
+<td align="left">1 if DM voltages applied (requires stream &quot;dmvolt&quot;)</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMcombave_mode.txt</td>
+<td align="left">DM averaging mode (default = 0)</td>
+</tr>
+<tr class="odd">
+<td align="left">param_DMdelayON.txt</td>
+<td align="left">1 if DM delay introduced</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMdelayus.txt</td>
+<td align="left">DM delay value [us]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="timing" class="section level3">
+<h3><span class="header-section-number">13.1.4</span> Timing</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_loopfrequ.txt</td>
+<td align="left">WFS camera frequency [Hz]</td>
+</tr>
+<tr class="even">
+<td align="left">param_hardwlatency.txt</td>
+<td align="left">Hardware latency [s]</td>
+</tr>
+<tr class="odd">
+<td align="left">param_hardwlatency_frame.txt</td>
+<td align="left">Hardware latency [frame]</td>
+</tr>
+<tr class="even">
+<td align="left">param_complatency.txt</td>
+<td align="left">Computation latency [s]</td>
+</tr>
+<tr class="odd">
+<td align="left">param_complatency_frame.txt</td>
+<td align="left">Computation latency [frame]</td>
+</tr>
+<tr class="even">
+<td align="left">param_wfsmextrlatency.txt</td>
+<td align="left">Modal reconstruction latency [s]</td>
+</tr>
+<tr class="odd">
+<td align="left">param_wfsmextrlatency_frame.txt</td>
+<td align="left">Modal reconstruction latency [frame]</td>
+</tr>
+<tr class="even">
+<td align="left">param_nblatm.txt</td>
+<td align="left">Number of cycles in latency measurement</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="response-matrix-acquisition" class="section level3">
+<h3><span class="header-section-number">13.1.5</span> Response Matrix acquisition</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_ACzrmtime.txt</td>
+<td align="left">Max running time for zonal RM acquisition [s]</td>
+</tr>
+<tr class="even">
+<td align="left">param_ACzrmNBcycle.txt</td>
+<td align="left">Max number of cycles for zonal RM acquition</td>
+</tr>
+<tr class="odd">
+<td align="left">param_ACmrmtime.txt</td>
+<td align="left">Max running time for monal RM acquisition [s]</td>
+</tr>
+<tr class="even">
+<td align="left">param_ACmrmNBcycle.txt</td>
+<td align="left">Max number of cycles for modal RM acquition</td>
+</tr>
+<tr class="odd">
+<td align="left">param_RMdelayfr.txt</td>
+<td align="left">RM acquisition delay [frame]</td>
+</tr>
+<tr class="even">
+<td align="left">param_RMfrave.txt</td>
+<td align="left">RM acquisition number of frames averaged per poke</td>
+</tr>
+<tr class="odd">
+<td align="left">param_RMexft.txt</td>
+<td align="left">RM acquisition number of frames excluded during poke transition</td>
+</tr>
+<tr class="even">
+<td align="left">param_RMamplum.txt</td>
+<td align="left">RM acquisition amplitude [um]</td>
+</tr>
+<tr class="odd">
+<td align="left">param_delayRM1us.txt</td>
+<td align="left">RM acquisition delay 1 [s]</td>
+</tr>
+<tr class="even">
+<td align="left">param_RMpokeMode.txt</td>
+<td align="left">RM poking mode. 0=zonal, 1=Hadamard.</td>
+</tr>
+<tr class="odd">
+<td align="left">param_WFSnorm.txt</td>
+<td align="left">Normalize WFS frames</td>
+</tr>
+<tr class="even">
+<td align="left">param_DMmaskRMp0.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">param_DMmaskRMc0.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">param_DMmaskRMp1.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">param_DMmaskRMc1.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">param_WFSmaskRMp0.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">param_WFSmaskRMc0.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">param_WFSmaskRMp1.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">param_WFSmaskRMc1.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">param_WFSmaskSNRr.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">param_.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">param_.txt</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="modess-and-control-matrix-computation" class="section level3">
+<h3><span class="header-section-number">13.1.6</span> Modess and Control Matrix computation</h3>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">param_MASKS_LOCK.txt</td>
+<td align="left">1 if WFS and DM masks are locked</td>
+</tr>
+<tr class="even">
+<td align="left">param_NBmodeblocks.txt</td>
+<td align="left">Number of mode blocks (default=1)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="stream-links" class="section level2">
+<h2><span class="header-section-number">13.2</span> Stream Links</h2>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">streamlink_dmC.name.txt</td>
+<td align="left">DM correction stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmO.name.txt</td>
+<td align="left">DM offset stream (DM flat channel)</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmZP0.name.txt</td>
+<td align="left">DM zero point offset #0 stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmZP1.name.txt</td>
+<td align="left">DM zero point offset #1 stream</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmZP2.name.txt</td>
+<td align="left">DM zero point offset #2 stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmZP3.name.txt</td>
+<td align="left">DM zero point offset #3 stream</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmZP4.name.txt</td>
+<td align="left">DM zero point offset #4 stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmZP5.name.txt</td>
+<td align="left">DM zero point offset #5 stream</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmZP6.name.txt</td>
+<td align="left">DM zero point offset #6 stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmZP7.name.txt</td>
+<td align="left">DM zero point offset #7 stream</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmdisp.name.txt</td>
+<td align="left">DM total displacement stream</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmRM.name.txt</td>
+<td align="left">DM response matrix stream</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dm2dmM.name.txt</td>
+<td align="left">DM modes controlled in DM-to-DM mode (optional)</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dm2dmO.name.txt</td>
+<td align="left">DM modes output in DM-to-DM mode (optional)</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_dmwrefRM.name.txt</td>
+<td align="left">WFS ref RM (optional)</td>
+</tr>
+<tr class="even">
+<td align="left">streamlink_dmwrefO.name.txt</td>
+<td align="left">WFS output (optional)</td>
+</tr>
+<tr class="odd">
+<td align="left">streamlink_wfsim.name.txt</td>
+<td align="left">WFS image</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="shared-memory-fits-file-initializations-to-streams" class="section level2">
+<h2><span class="header-section-number">13.3</span> Shared memory FITS file initializations to streams</h2>
+<p>File shmim_&lt;stream&gt;.name.txt contain the FITS file names that are loaded into shared memory streams aol&lt;loop&gt;_&lt;stream&gt;.</p>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">shmim_wfsdark.name.txt</td>
+<td align="left">WFS dark</td>
+</tr>
+<tr class="even">
+<td align="left">shmim_wfsmap.name.txt</td>
+<td align="left">WFS response map</td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_wfsmask.name.txt</td>
+<td align="left">WFS mask</td>
+</tr>
+<tr class="even">
+<td align="left">shmim_dmmap.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_dmmaskRM.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_dmslaved.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_dmmask.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_wfsref0.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_zrespM.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_LODMmodes.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_LOrespM.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_DModes.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_respM.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_contrM.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_DMmodesXX.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_respMXX.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_contrMXX.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">shmim_contrMcXX.name.txt</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">shmim_contrMcactXX_00.name.txt</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="fits-files" class="section level2">
+<h2><span class="header-section-number">13.4</span> FITS files</h2>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">RMpokeCubeZ.fits.gz</td>
+<td align="left">Poke modes (simple zonal poke)</td>
+</tr>
+<tr class="even">
+<td align="left">RM_DMmask.fits.gz</td>
+<td align="left">mask for RM pokes</td>
+</tr>
+<tr class="odd">
+<td align="left">Hpoke.fits.gz</td>
+<td align="left">Hadamard poke modes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="reference-content-of-.status-directory" class="section level1">
+<h1><span class="header-section-number">14</span> REFERENCE: Content of ./status directory</h1>
+<p>The status directories contrains the current state of the AOCCE processes</p>
+<table>
+<colgroup>
+<col width="48%" />
+<col width="51%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">stat_DMcombON.txt</td>
+<td align="left">&quot; ON&quot; if DMcomb is running, &quot;OFF&quot; otherwise</td>
+</tr>
+<tr class="even">
+<td align="left">stat_lsimON.txt</td>
+<td align="left">&quot; ON&quot; if linear hardware simulator is running, &quot;OFF&quot; otherwise</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="reference-additional-pages" class="section level1">
-<h1><span class="header-section-number">13</span> REFERENCE, ADDITIONAL PAGES</h1>
+<h1><span class="header-section-number">15</span> REFERENCE, ADDITIONAL PAGES</h1>
 <ul>
 <li>Page <span class="citation">@subpage</span> streams_semaphores</li>
 <li>Page <span class="citation">@subpage</span> streams_semaphores</li>

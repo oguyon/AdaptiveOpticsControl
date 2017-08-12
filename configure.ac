@@ -51,7 +51,7 @@ AC_PREFIX_DEFAULT(`readlink -f .`)
 
 
 
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.10])
+#PKG_CHECK_MODULES([CHECK], [check >= 0.9.10])
 
 
 

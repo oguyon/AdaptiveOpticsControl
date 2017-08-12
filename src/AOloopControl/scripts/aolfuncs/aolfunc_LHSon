@@ -1,0 +1,127 @@
+#!/bin/bash
+
+#########################################################################################
+##          LINEAR HARDWARE SIMULATOR  ON                                              ##
+#########################################################################################
+
+execname="./AOloopControl"
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_lsimON.txt"
+if [ -a $file ]; then
+	lsimONstat=$( cat $file )
+else
+	lsimONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+if [ "$lsimONstat" = " ON" ]; then
+
+echo "LHS already running"
+
+else
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+
+# READ LHS hardware latency
+file="./conf/param_linsimDelay.txt"
+if [ -a $file ]; then
+	linsimDelay=$( cat $file )
+else
+	linsimDelay="3000"
+	echo "$linsimDelay" > $file
+fi
+
+
+# READ LHS loop interval
+file="./conf/param_linsimdt.txt"
+if [ -a $file ]; then
+	linsimdt=$( cat $file )
+else
+	linsimdt="2000"
+	echo "$linsimdt" > $file
+fi
+
+
+# READ GPU index for LHS 
+file="./conf/param_GPUlinsim.txt"
+if [ -a $file ]; then
+	GPUlinsim=$( cat $file )
+else
+	GPUlinsim="7"
+	echo "$GPUlinsim" > $file
+fi
+
+
+
+
+
+
+
+
+
+
+tmuxname="aol${LOOPNUMBER}linsim"
+tmuxnameD="aol${LOOPNUMBER}linsimD"
+
+
+#logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
+#logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
+
+sleep 0.2
+tmux new-session -d -s ${tmuxnameD}
+sleep 0.2
+tmux new-session -d -s ${tmuxname}
+sleep 0.2
+
+#aoconflog "Start linear WFS simulator"
+
+tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
+
+cp ./conf/streamlink_wfsim.name.txt ./conf/streamlink_wfsim_hardware.name.txt
+
+echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/streamlink_wfsim.name.txt
+
+# turn off DM voltage 
+#$execname << EOF
+#aoldmvoltOFF 0
+#exitCLI
+#EOF
+
+# set dark to zero
+#$execname << EOF
+#readshmim aol${LOOPNUMBER_wfsdark
+#imzero aol${LOOPNUMBER_wfsdark
+#exitCLI
+#EOF
+
+#dmdispzero 00 00
+
+#Readwfsimcamname
+./aolfuncs/aolfunc_StreamLink wfsim
+
+echo " ON" > ./status/stat_lsimON.txt
+
+fi
+
+

@@ -1,0 +1,283 @@
+#!/bin/bash
+
+ERRORSTATUS="0"
+execname="./AOloopControl"
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_DMcombON.txt"
+if [ -a $file ]; then
+	DMcombONstat=$( cat $file )
+else
+	DMcombONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+
+
+
+if [ "$DMcombONstat" = " ON" ]; then
+
+echo "DM process already running"
+
+else
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+# READ CPUset_mode
+file="./conf/param_CPUset_mode.txt"
+if [ -a $file ]
+     then          
+     CPUset_mode=$( cat $file )
+     else
+     CPUset_mode=0 #default
+     echo "$CPUset_mode" > $file
+fi
+
+
+# READ DM INDEX
+file="./conf/param_DMindex.txt"
+if [ -a $file ]; then
+	DMindex=$( cat $file )
+else
+	DMindex="03"
+	echo "$DMindex" > $file
+fi
+
+
+# READ DM MODE (ZONAL or MODAL)
+file="./conf/param_DMMODE.txt"
+if [ -a $file ]; then
+	DMMODE=$( cat $file )
+else
+	DMMODE="ZONAL"
+	echo "$DMMODE" > $file
+fi
+
+
+
+
+# READ DM SIZE
+file="./conf/param_DMxsize.txt"
+if [ -a $file ]
+    then
+    DMxsize=$( cat $file )
+    else
+    DMxsize=32 #default
+    echo "$DMxsize" > $file
+fi
+
+file="./conf/param_DMysize.txt"
+if [ -a $file ]
+     then          
+     DMysize=$( cat $file ) 
+     else
+     DMysize=32 #default
+     echo "$DMysize" > $file
+fi
+
+
+# READ DM-to-DM mode
+file="./conf/param_DM2DM_mode.txt"
+if [ -a $file ]
+     then          
+     DM2DM_mode=$( cat $file )
+     else
+     DM2DM_mode=0 #default
+     echo "$DM2DM_mode" > $file
+fi
+
+
+# READ DMwfsref_mode (CPU-based dmcomb DM ouput applied as WFS offset)
+file="./conf/param_DMwfsref_mode.txt"
+if [ -a $file ]
+     then          
+     DMwfsref_mode=$( cat $file )
+     else
+     DMwfsref_mode=0 #default
+     echo "$DMwfsref_mode" > $file
+fi
+
+
+# READ DMcombave_mode
+file="./conf/param_DMcombave_mode.txt"
+if [ -a $file ]
+     then          
+     DMcombave_mode=$( cat $file )
+     else
+     DMcombave_mode=0 #default
+     echo "$DMcombave_mode" > $file
+fi
+
+
+# READ DMvolt_mode
+file="./conf/param_DMvolt_mode.txt"
+if [ -a $file ]
+     then          
+     DMvolt_mode=$( cat $file )
+     else
+     DMvolt_mode=0 #default
+     echo "$DMvolt_mode" > $file
+fi
+
+
+
+
+# READ DM delay (optional)
+if [ -f "./conf/param_DMdelayON.txt" ]; then
+	DMdelayON=$(cat ./conf/param_DMdelayON.txt)
+else
+	DMdelayON="OFF"
+fi
+	
+if [ "$DMdelayON" = " ON" ]; then
+	if [ -f "./conf/param_DMdelayus.txt" ]; then
+	DMdelayus=$(cat ./conf/param_DMdelayus.txt)
+	tmux send-keys -t $tmuxname "DMTWAIT=${DMdelayus}" C-m
+	fi
+fi
+
+
+
+
+
+
+
+
+
+
+
+# creates shmim aol#_dm2dmM if applicable
+./scripts/aolfuncs/aolfunc_StreamLink dm2dmM
+
+# creates shmim aol#_dm2dmO if applicable
+./scripts/aolfuncs/aolfunc_StreamLink dm2dmO
+
+# creates shmim aol#_dmwrefRM if applicable
+./scripts/aolfuncs/aolfunc_StreamLink dmwrefRM
+
+# creates shmim aol#_dmwrefO if applicable
+./scripts/aolfuncs/aolfunc_StreamLink dmwrefO
+
+
+
+# default names
+dm2dmM="aol${LOOPNUMBER}_dm2dmM"
+dm2dmO="aol${LOOPNUMBER}_dm2dmO"
+dmwrefRM="aol${LOOPNUMBER}_dmwrefRM"
+dmwrefO="aol${LOOPNUMBER}_dmwrefO"
+
+
+echo "DM2DM_mode = $DM2DM_mode"
+
+if [ ! "$DM2DM_mode" = "1" ];
+then
+    dmmodes="empty"
+    dm2dmO="empty"
+    dm2dmM="empty"
+fi
+
+
+echo "DMwfsref_mode = $DMwfsref_mode"
+
+if [ ! "$DMwfsref_mode" = "1" ];
+then
+    dmwrefRM="empty"
+    dmwrefO="empty"
+fi
+
+
+
+
+
+
+# start tmux session for dmcomb
+
+tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
+echo "tmux session :  $tmuxname"
+sleep 1
+tmux kill-session -t $tmuxname
+sleep 0.2
+tmux new-session -d -s $tmuxname
+sleep 0.2
+
+
+
+
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comb" C-m
+if [ "$CPUset_mode" = "1" ]; then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+    
+if [ "$DMvolt_mode" = "1" ]; then 
+tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
+fi
+
+
+if [ "$DM2DM_mode" = "1" ]; then
+	tmux send-keys -t $tmuxname "readshmim ${dm2dmM}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dm2dmO}" C-m
+fi
+
+    
+if [ "${DMwfsref_mode}" = "1" ]; then
+    tmux send-keys -t $tmuxname "readshmim ${dmwrefRM}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dmwrefO}" C-m
+fi
+
+
+
+
+  
+    
+# aoconflog "STARTING DMcomb"
+    
+tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${DMxsize} ${DMysize} 12 ${DMcombave_mode} ${DM2DM_mode} ${dm2dmM} ${dm2dmO} ${DMwfsref_mode} ${dmwrefRM} ${dmwrefO} ${DMvolt_mode} dmvolt 0.0 120.0" C-m
+
+
+
+# TBD
+# aoconflog "INITIALIZING DM POKE FILES"
+#rm ./conf/RM_DMmask.fits # remove RM DM mask
+#rm ./conf/RMpokeCubeZ.fits # remove zonal poke cube
+#rm ./conf/RMpokeCube.fits # remove poke cube
+#./auxscripts/mkHpoke # make masks, poke pattern (Hadamard mode)
+    
+    
+# if DM is modal, create simple "./conf/DMmodes.fits"
+if [ "$DMMODE" = "MODAL" ]; then
+$execname << EOF
+aolmksimplezpM ${DMxsize} ${DMysize} DMmodes
+savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes.fits"
+savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes_zonal.fits"
+exitCLI
+EOF
+fi
+    
+
+# by default, set # of blocks to 1
+file="./conf/param_NBmodeblocks.txt"
+echo "1" > $file
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+
+echo " ON" > ./status/stat_DMcombON.txt
+
+fi
+

@@ -1,0 +1,81 @@
+#!/bin/bash
+
+execname="./AOloopControl"
+
+
+
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_DMcombON.txt"
+if [ -a $file ]; then
+	DMcombONstat=$( cat $file )
+else
+	DMcombONstat="OFF"
+	echo "$DMcombONstat" > $file
+fi
+
+
+
+
+if [ "$DMcombONstat" = "OFF" ]; then
+
+echo "DM process already OFF"
+
+else
+
+
+
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+
+# READ DM INDEX
+file="./conf/param_DMindex.txt"
+if [ -a $file ]; then
+	DMindex=$( cat $file )
+else
+	DMindex="03"
+	echo "$DMindex" > $file
+fi
+
+
+
+tmuxname="aol${LOOPNUMBER}dm${DMindex}comboff"
+
+tmux kill-session -t $tmuxname
+sleep 0.2
+tmux new-session -d -s $tmuxname
+sleep 0.2
+
+
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comboff" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmcomboff ${DMindex}" C-m
+tmux send-keys -t $tmuxname "exitCLI" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+
+#    tmux kill-session -t $tmuxname # not necessary - just making sure
+tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
+tmux send-keys -t $tmuxname "exit" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+#    tmux kill-session -t $tmuxname # not necessary - just making sure
+
+
+echo "OFF" > "./status/stat_DMcombON.txt"
+
+fi

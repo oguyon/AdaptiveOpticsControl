@@ -1,0 +1,82 @@
+#!/bin/bash
+
+#########################################################################################
+##          LINEAR HARDWARE SIMULATOR  ON                                              ##
+#########################################################################################
+
+execname="./AOloopControl"
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_lsimON.txt"
+if [ -a $file ]; then
+	lsimONstat=$( cat $file )
+else
+	lsimONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+if [ "$lsimONstat" = "OFF" ]; then
+
+echo "LHS already OFF"
+
+else
+
+
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+
+tmuxname="aol${LOOPNUMBER}linsim"
+tmuxnameD="aol${LOOPNUMBER}linsimD"
+
+tmux send-keys -t $tmuxnameD "" C-c
+tmux send-keys -t $tmuxnameD "" C-c
+tmux send-keys -t $tmuxnameD "exit" C-m
+
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "exit" C-m
+
+tmux kill-session -t ${tmuxnameD}
+tmux kill-session -t ${tmuxname}
+
+#rm runproc/aollinsimDelay.runproc
+#rm runproc/aollindm2wfsim.runproc
+
+cp ./conf/streamlink_wfsim_hardware.name.txt ./conf/streamlink_wfsim.name.txt
+./aolfuncs/aolfunc_StreamLink wfsim
+
+# turn on DM voltage
+#$execname << EOF
+#aoldmvoltON 0
+#exit
+#EOF
+
+#ReadWFSdarkfname
+
+#dmflat
+
+
+echo "OFF" > ./status/stat_lsimON.txt
+
+fi
+
+

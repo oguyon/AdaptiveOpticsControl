@@ -6530,7 +6530,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 
             index++;
         }
-    save_fits("Hpixindex", "!Hpixindex.fits");
+    save_fits("Hpixindex", "!Hpixindex.fits.gz");
 
     Hmat = (int*) malloc(sizeof(int)*Hsize*Hsize);
 
@@ -6563,7 +6563,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
         for(jj=0; jj<Hsize; jj++)
             data.image[IDtest].array.F[jj*Hsize+ii] = Hmat[jj*Hsize+ii];
 
-    save_fits("Htest", "!Hmat.fits");
+    save_fits("Htest", "!Hmat.fits.gz");
 
 
     IDout = create_3Dimage_ID(outname, xsize, ysize, Hsize);
@@ -15533,6 +15533,34 @@ int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBp
 }
 
 
+
+
+
+/**
+ *  ## Purpose
+ * 
+ * Measure hardware latency between DM and WFS streams
+ * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * dmname	char*
+ * 			DM actuation stream to which function sends pokes
+ * 
+ * @param[in]
+ * wfsname	char*
+ * -		WFS image stream
+ * 
+ * @param[in]
+ * OPDamp	FLOAT
+ * 			Poke amplitude \[um\]
+ * 
+ * @param[in]
+ * NBiter	LONG
+ * 			Number of poke cycles
+ * 
+ */
 int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, float OPDamp, long NBiter)
 {
     long IDdm;
@@ -15858,7 +15886,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
-    if(sprintf(command, "echo %8.6f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2]) < 1)
+    if(sprintf(command, "echo %8.6f > conf/param_hardwlatency.txt", latencyarray[NBiter/2]) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     if(system(command) != 0)
@@ -15874,7 +15902,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     dt = tdouble_end - tdouble_start;
     printf("FRAME RATE = %.3f Hz\n", 1.0*(wfscntend-wfscntstart)/dt);
 
-    if(sprintf(command, "echo %.3f > conf/conf_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt ) < 1)
+    if(sprintf(command, "echo %.3f > conf/param_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt ) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     if(system(command) != 0)

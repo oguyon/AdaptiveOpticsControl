@@ -120,35 +120,6 @@ Readwfsimcamname
 
 
 
-#########################################################################################
-##          LINEAR SIMULATOR  OFF                                                      ##
-#########################################################################################
-
-function function_lsim_off {
-lsimONstat="OFF"
-tmuxname="aol${LOOPNUMBER}linsim"
-tmuxnameD="aol${LOOPNUMBER}linsimD"
-echo "OFF" > ./status/stat_lsimON.txt
-tmux kill-session -t ${tmuxnameD}
-tmux kill-session -t ${tmuxname}
-rm runproc/aollinsimDelay.runproc
-rm runproc/aollindm2wfsim.runproc
-cp ./conf/conf_wfsimhardware_name.txt ./conf/conf_wfsim_name.txt
-
-# turn on DM voltage
-$execname << EOF
-aoldmvoltON 0
-exit
-EOF
-
-ReadWFSdarkfname
-
-dmflat
-
-Readwfsimcamname
-}
-
-
 
 
 

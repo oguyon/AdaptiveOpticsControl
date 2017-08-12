@@ -28,9 +28,9 @@ aoconflog "ERROR: $@"
 
 
 
-#
+##########################################
 # log queued process
-#
+##########################################
 function logRunningProcessQ0
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -39,10 +39,10 @@ function logRunningProcessQ0
 }
 
 
-#
+##########################################
 # queued process becomes active
 # sends command to tmux session
-#
+##########################################
 function logRunningProcessQ
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -51,9 +51,9 @@ function logRunningProcessQ
 	tmux send-keys -t $2 "mv runproc/$1.runprocQ runproc/$1.runproc" C-m
 }
 
-#
+##########################################
 # log process
-#
+##########################################
 function logRunningProcess 
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -62,6 +62,27 @@ function logRunningProcess
 }
 
 
+
+
+
+
+
+##########################################
+# READ PARAMETER FROM ./conf/
+##########################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
 
 
 
@@ -105,10 +126,9 @@ function makemenuitemstringaolshm {
 name="$1"
 textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
-fname=$( cat ./conf/conf_${name}_name.txt )
-if [ -f "$fname" ] && [ -f "./conf/conf_${name}_name.txt" ]; then
-#getshmimsize "aol${LOOPNUMBER}_${name}"
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_${name}.txt )
+fname=$( cat ./conf/shmim_${name}.name.txt )
+if [ -f "$fname" ] && [ -f "./conf/shmim_${name}.name.txt" ]; then
+sizestring=$( cat conf/shmim_${name}.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else
@@ -119,31 +139,6 @@ fi
 
 
 
-function Fits2shm {
-aoconflog "Move FITS to shared memory : $1 -> $2"
-
-# is file a link ?
-if [ -L "$1" ]; then
-flink=$( readlink -f $1 )
-rm $1
-rsync -auL $flink $1
-fi
-
-if [ "$CPUconfRT" -eq "1" ];then
-$execname << EOF # move file to shared memory
-csetpmove system
-loadfits "$1" im
-imcp2shm im $2
-quit
-EOF
-else
-$execname << EOF # move file to shared memory
-loadfits "$1" im
-imcp2shm im $2
-quit
-EOF
-fi
-}
 
 
 
