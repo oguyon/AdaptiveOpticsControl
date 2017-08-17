@@ -39,6 +39,7 @@ function logRunningProcessQ0
 }
 
 
+
 ##########################################
 # queued process becomes active
 # sends command to tmux session
@@ -50,6 +51,7 @@ function logRunningProcessQ
 	echo "$string" > runproc/$1.runprocQ
 	tmux send-keys -t $2 "mv runproc/$1.runprocQ runproc/$1.runproc" C-m
 }
+
 
 ##########################################
 # log process
@@ -83,9 +85,49 @@ paramvalue="$2"
 echo "$2" > $file
 fi
 }
+# Example:
+# ConfReadParam mvar "0"; mvar="$paramvalue"
 
 
+##############################################
+# FUNCTION: READ STATUS FROM FILE
+##############################################
+# arg 1: status name
+# arg 2: default value
+# 
+# param value is stored in variable "statusvalue"
+function StatReadStat {
+mkdir -p status
+file="./status/stat_$1.txt"
+if [ -f "$file" ]; then
+statusvalue=$( cat $file )
+else
+statusvalue="$2"
+echo "$2" > $file
+fi
+}
+# Example:
+# StatReadStat mvar "0"; mvarstat="$statusvalue"
 
+
+##############################################
+# FUNCTION: READ INSTRUMENT CONF VAL FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "instconfvalue"
+function ConfReadInstConf {
+file="./conf/instconf_$1.txt"
+if [ -f "$file" ]; then
+instconfvalue=$( cat $file )
+else
+instconfvalue="$2"
+echo "$2" > $file
+fi
+}
+# Example:
+# ConfReadInstConf mvar "0"; mvar="$instconfvalue"
 
 
 

@@ -267,7 +267,7 @@ typedef struct
     float gain; // overall loop gain
     uint_fast16_t framesAve; // number of frames to average
 	int_fast8_t DMprimaryWrite_ON; // primary DM write
-	
+	int_fast8_t CMMODE;
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -301,7 +301,15 @@ typedef struct
 	 * 
 	 */
 
-    int_fast8_t GPU; // 1 if matrix multiplication  done by GPU
+    int_fast8_t GPU0; // NB of GPU devices in set 0. 1+ if matrix multiplication done by GPU (set 0)
+    int_fast8_t GPU1; // NB of GPU devices in set 1. 1+ if matrix multiplication done by GPU (set 1)
+    int_fast8_t GPU2; // NB of GPU devices in set 2. 1+ if matrix multiplication done by GPU (set 2)
+    int_fast8_t GPU3; // NB of GPU devices in set 3. 1+ if matrix multiplication done by GPU (set 3)    
+    int_fast8_t GPU4; // NB of GPU devices in set 4. 1+ if matrix multiplication done by GPU (set 4)
+    int_fast8_t GPU5; // NB of GPU devices in set 5. 1+ if matrix multiplication done by GPU (set 5)
+    int_fast8_t GPU6; // NB of GPU devices in set 6. 1+ if matrix multiplication done by GPU (set 6)
+    int_fast8_t GPU7; // NB of GPU devices in set 7. 1+ if matrix multiplication done by GPU (set 7)
+            
     int_fast8_t GPUall; // 1 if scaling computations done by GPU
     int_fast8_t GPUusesem; // 1 if using semaphores to control GPU
     int_fast8_t AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
@@ -448,7 +456,7 @@ static int PIXSTREAM_SLICE; // slice index 0 = all pixels
 
 static long ti; // thread index
 
-static int MATRIX_COMPUTATION_MODE = 0;
+// static int MATRIX_COMPUTATION_MODE = 0;
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
@@ -2149,15 +2157,21 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	
 	/** ## 1. Initial setup from configuration files */
 
+
 	/** - 1.1. Initialize memory */
+	fprintf(fplog, "\n\n============== 1.1. Initialize memory ===================\n\n");
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
 
+
+	
 	//
     /** ### 1.2. Set names of key streams */
     //
     // Here we define names of key streams used by loop
+
+	fprintf(fplog, "\n\n============== 1.2. Set names of key streams ===================\n\n");
 
 	/** - dmC stream  : DM control */
     if(sprintf(name, "aol%ld_dmC", loop)<1)
@@ -2218,6 +2232,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * 
      * - ./conf/conf_LOOPNAME.txt -> AOconf[loop].name 
      */
+	fprintf(fplog, "\n\n============== 1.3. Read loop name ===================\n\n");
 
     if((fp=fopen("./conf/conf_LOOPNAME.txt","r"))==NULL)
     {
@@ -2239,13 +2254,14 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.4. Define WFS image normalization mode 
      * 
-     * - conf/conf_WFSnormalize.txt -> AOconf[loop].WFSnormalize
+     * - conf/param_WFSnorm.txt -> AOconf[loop].WFSnormalize
      */ 
+    fprintf(fplog, "\n\n============== 1.4. Define WFS image normalization mode ===================\n\n");
     
-    if((fp=fopen("./conf/conf_WFSnormalize.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_WFSnorm.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_WFSnormalize.txt missing\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_WFSnormalize.txt missing. Assuming WFSnormalize = 1\n");
+        printf("WARNING: file ./conf/param_WFSnorm.txt missing\n");
+        fprintf(fplog, "WARNING: file ./conf/param_WFSnorm.txt missing. Assuming WFSnormalize = 1\n");
         AOconf[loop].WFSnormalize = 1;
     }
     else
@@ -2264,16 +2280,18 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.5. Read Timing info
      * 
-     * - ./conf/conf_loopfrequ.txt    -> AOconf[loop].loopfrequ
-     * - ./conf/conf_hardwlatency.txt -> AOconf[loop].hardwlatency
+     * - ./conf/param_loopfrequ.txt    -> AOconf[loop].loopfrequ
+     * - ./conf/param_hardwlatency.txt -> AOconf[loop].hardwlatency
      * - AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ
-     * - ./conf/conf_complatency.txt  -> AOconf[loop].complatency
+     * - ./conf/param_complatency.txt  -> AOconf[loop].complatency
      * - AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
-     * - ./conf/conf_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
+     * - ./conf/param_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
      */
-    if((fp=fopen("./conf/conf_loopfrequ.txt", "r"))==NULL)
+     fprintf(fplog, "\n\n============== 1.5. Read Timing info ===================\n\n");
+     
+    if((fp=fopen("./conf/param_loopfrequ.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
+        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
     }
     else
     {
@@ -2288,9 +2306,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
     }
     else
     {
@@ -2306,9 +2324,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ;
 
 
-    if((fp=fopen("./conf/conf_complatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_complatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_complatency.txt missing\n");
+        printf("WARNING: file ./conf/param_complatency.txt missing\n");
     }
     else
     {
@@ -2323,9 +2341,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
 
 
-    if((fp=fopen("./conf/conf_wfsmextrlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_wfsmextrlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_wfsmextrlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_wfsmextrlatency.txt missing\n");
     }
     else
     {
@@ -2344,38 +2362,62 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.6. Define GPU use
      * 
-     * - ./conf/conf_GPU.txt           -> AOconf[loop].GPU (0 if missing)
-     * - ./conf/conf_GPUall.txt        -> AOconf[loop].GPUall
-     * - ./conf/conf_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
+     * - ./conf/param_GPU0.txt           > AOconf[loop].GPU0 (0 if missing)
+     * - ./conf/param_GPUall.txt        -> AOconf[loop].GPUall
+     * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
      * 
      */ 
-
-    if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
+	fprintf(fplog, "\n\n============== 1.6. Define GPU use ===================\n\n");
+	
+    if((fp=fopen("./conf/param_GPU0.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_GPU.txt missing\n");
+        printf("WARNING: file ./conf/param_GPU0.txt missing\n");
         printf("Using CPU only\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_GPU.txt missing. Using CPU only\n");
-        AOconf[loop].GPU = 0;
+        fprintf(fplog, "WARNING: file ./conf/param_GPU0.txt missing. Using CPU only\n");
+        AOconf[loop].GPU0 = 0;
     }
     else
     {
         if(fscanf(fp, "%200s", content) != 1)
             printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 
-        printf("GPU : %d\n", atoi(content));
+        printf("GPU0 : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
-        AOconf[loop].GPU = atoi(content);
-        fprintf(fplog, "AOconf[%ld].GPU = %d\n", loop, AOconf[loop].GPU);
+        AOconf[loop].GPU0 = atoi(content);
+        fprintf(fplog, "AOconf[%ld].GPU0 = %d\n", loop, AOconf[loop].GPU0);
     }
+
+    if((fp=fopen("./conf/param_GPU1.txt","r"))==NULL)
+    {
+        printf("WARNING: file ./conf/param_GPU1.txt missing\n");
+        printf("Using CPU only\n");
+        fprintf(fplog, "WARNING: file ./conf/param_GPU1.txt missing. Using CPU only\n");
+        AOconf[loop].GPU1 = 0;
+    }
+    else
+    {
+        if(fscanf(fp, "%200s", content) != 1)
+            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+
+        printf("GPU1 : %d\n", atoi(content));
+        fclose(fp);
+        fflush(stdout);
+        AOconf[loop].GPU1 = atoi(content);
+        fprintf(fplog, "AOconf[%ld].GPU1 = %d\n", loop, AOconf[loop].GPU1);
+    }
+
+
+
+
 
     // Skip CPU image scaling and go straight to GPUs ?
 
-    if((fp=fopen("./conf/conf_GPUall.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_GPUall.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_GPUall.txt missing\n");
+        printf("WARNING: file ./conf/param_GPUall.txt missing\n");
         printf("Using CPU for image scaling\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_GPUall.txt missing. Using CPU for image scaling\n");
+        fprintf(fplog, "WARNING: file ./conf/param_GPUall.txt missing. Using CPU for image scaling\n");
         AOconf[loop].GPUall = 0;
     }
     else
@@ -2391,11 +2433,11 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
     // Direct DM write ?
-    if((fp=fopen("./conf/conf_DMprimWriteON.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_DMprimWriteON.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_DMprimWriteON.txt missing\n");
+        printf("WARNING: file ./conf/param_DMprimWriteON.txt missing\n");
         printf("Setting DMprimaryWrite_ON = 1\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_DMprimWriteON.txt missing. Setting to 1\n");
+        fprintf(fplog, "WARNING: file ./conf/param_DMprimWriteON.txt missing. Setting to 1\n");
         AOconf[loop].DMprimaryWrite_ON = 1;
     }
     else
@@ -2409,20 +2451,23 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].DMprimaryWrite_ON = atoi(content);
         fprintf(fplog, "AOconf[%ld].DMprimaryWrite_ON = %d\n", loop, AOconf[loop].DMprimaryWrite_ON);
     }
+    
+    
 
 	/** ### 1.7. WFS image total flux computation mode
 	 * 
-	 * - ./conf/conf_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
+	 * - ./conf/param_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
 	 * 
 	 */
+	 fprintf(fplog, "\n\n============== 1.7. WFS image total flux computation mode ===================\n\n");
 
     // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
-    if((fp=fopen("./conf/conf_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt missing\n");
+        printf("WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing\n");
         printf("Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
-        fprintf(fplog, "WARNING: file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt missing. Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
+        fprintf(fplog, "WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing. Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
     }
     else
     {
@@ -2439,17 +2484,19 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.8. Read CMatrix mult mode
      * 
-     * - ./conf/conf_CMmode.txt -> MATRIX_COMPUTATION_MODE
+     * - ./conf/param_CMMMODE.txt -> CMMODE
      * 		- 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
 
-    if((fp=fopen("./conf/conf_CMmode.txt","r"))==NULL)
+ 	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
+
+    if((fp=fopen("./conf/param_CMMODE.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_CMmode.txt missing\n");
+        printf("WARNING: file ./conf/param_CMMODE.txt missing\n");
         printf("Using combined matrix\n");
-        MATRIX_COMPUTATION_MODE = 1;  // by default, use combined matrix
-        fprintf(fplog, "WARNING: file ./conf/conf_CMmode.txt missing. Using combined matrix\n");
+        AOconf[loop].CMMODE = 1;  // by default, use combined matrix
+        fprintf(fplog, "WARNING: file ./conf/param_CMMODE.txt missing. Using combined matrix\n");
     }
     else
     {
@@ -2459,8 +2506,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf("Matrix mult mode : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
-        MATRIX_COMPUTATION_MODE = atoi(content);
-        fprintf(fplog, "MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
+        AOconf[loop].CMMODE = atoi(content);
+        fprintf(fplog, "CMMODE = %d\n", AOconf[loop].CMMODE);
     }
 
 
@@ -2468,16 +2515,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.9. Read loop frequ
 	 * 
-	 * - ./conf/conf_loopfrequ.txt -> AOconf[loop].loopfrequ
+	 * - ./conf/param_loopfrequ.txt -> AOconf[loop].loopfrequ
 	 * 
 	 * @warning check redundancy with earlier read
 	 */
+	fprintf(fplog, "\n\n============== 1.9. Read loop frequ ===================\n\n");
 
-    if((fp=fopen("./conf/conf_loopfrequ.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_loopfrequ.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
+        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
         printf("Using default loop speed\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_loopfrequ.txt missing. Using default loop speed\n");
+        fprintf(fplog, "WARNING: file ./conf/param_loopfrequ.txt missing. Using default loop speed\n");
         AOconf[loop].loopfrequ = 2000.0;
     }
     else
@@ -2497,6 +2545,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.10. Setup loop timing array 
 	 */
+	fprintf(fplog, "\n\n============== 1.10. Setup loop timing array ===================\n\n");
 
     if(sprintf(name, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2507,11 +2556,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
 	/** ## 2. Read/load shared memory arrays
 	 * 
 	 */ 
-
+	fprintf(fplog, "\n\n============== 2. Read/load shared memory arrays ===================\n\n");
 
     /**
      * ### 2.1. CONNECT to existing streams
@@ -2521,6 +2569,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      *  - AOconf[loop].dmdispname  : this image is read to notify when new dm displacement is ready
      *  - AOconf[loop].WFSname     : connect to WFS camera. This is where the size of the WFS is read 
      */
+     
+     fprintf(fplog, "\n\n============== 2.1. CONNECT to existing streams  ===================\n\n");
+     
     aoconfID_dmdisp = read_sharedmem_image(AOconf[loop].dmdispname);
     if(aoconfID_dmdisp==-1)
         fprintf(fplog, "ERROR : cannot read shared memory stream %s\n", AOconf[loop].dmdispname);
@@ -2564,6 +2615,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - aol_wfsref0
      * - aol_wfsref
      */
+     
+     
+	fprintf(fplog, "\n\n============== 2.2. Read file to stream or connect to existing stream  ===================\n\n");
 
     if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2626,8 +2680,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
-
     /** ### Connect to DM
      * 
      * - AOconf[loop].dmCname : DM control channel
@@ -2673,7 +2725,21 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
+	/// Connect to DM modes shared mem
+	aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname);
+	if(aoconfID_DMmodes==-1)
+    {
+        printf("connect to %s\n", AOconf[loop].DMmodesname);
+        aoconfID_DMmodes = read_sharedmem_image(AOconf[loop].DMmodesname);
+        if(aoconfID_DMmodes==-1)
+        {
+            printf("ERROR: cannot connect to shared memory %s\n", AOconf[loop].DMmodesname);
+            exit(0);
+        }
+    }
+    fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_DMmodes);
+	AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
+	printf("NBmodes = %ld\n", AOconf[loop].NBDMmodes);
 
 
 	/** 
@@ -2682,6 +2748,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	 * 
 	 * */
 
+	fprintf(fplog, "\n\n============== 3. Load DM modes (if level >= 10)  ===================\n\n");
+
+
+	
     if(level>=10) // Load DM modes (will exit if not successful)
     {				
 		/** 
@@ -2692,11 +2762,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 		 */
 		
         aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname); 
+		
 
-        if(aoconfID_DMmodes==-1) // If not, check file
+
+        if(aoconfID_DMmodes == -1) // If not, check file
         {
             long ID1tmp, ID2tmp;
             int vOK;
+
+			
 
             if(sprintf(fname, "./conf/aol%ld_DMmodes.fits", loop) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2859,8 +2933,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
         ID = image_ID(name);
-        printf("STEP 000-------------\n");
+        printf("STEP 000----------- (%ld) --\n", AOconf[loop].NBDMmodes);
         fflush(stdout);
+        list_image_ID();
         aoconfID_cmd_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         printf("STEP 001------------\n");
         fflush(stdout);
@@ -2964,9 +3039,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_CM = 1;
 
-        if((fp=fopen("conf/conf_NBmodeblocks.txt", "r"))==NULL)
+        if((fp=fopen("conf/param_NBmodeblocks.txt", "r"))==NULL)
         {
-            printf("Cannot open conf/conf_NBmodeblocks.txt.... assuming 1 block\n");
+            printf("Cannot open conf/param_NBmodeblocks.txt.... assuming 1 block\n");
             AOconf[loop].DMmodesNBblock = 1;
         }
         else
@@ -2975,7 +3050,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 AOconf[loop].DMmodesNBblock = tmpl;
             else
             {
-                printf("Cannot read conf/conf_NBmodeblocks.txt.... assuming 1 block\n");
+                printf("Cannot read conf/param_NBmodeblocks.txt.... assuming 1 block\n");
                 AOconf[loop].DMmodesNBblock = 1;
             }
             fclose(fp);
@@ -3106,7 +3181,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
 
-    if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0) < 1)
+    if(sprintf(fname, "./conf/param_blockoffset_%02ld.txt", (long) 0) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     fp = fopen(fname, "w");
     fprintf(fp, "   0\n");
@@ -3114,7 +3189,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fclose(fp);
     for(k=1; k<AOconf[loop].DMmodesNBblock; k++)
     {
-        if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", k) < 1)
+        if(sprintf(fname, "./conf/param_blockoffset_%02ld.txt", k) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         fp = fopen(fname, "w");
         fprintf(fp, "%4ld\n", AOconf[loop].indexmaxMB[k-1]);
@@ -3326,7 +3401,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             FILE *fp;
             char fname[200];
 
-            if(sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", (int) k) < 1)
+            if(sprintf(fname, "./conf/param_GPUset0dev%d.txt", (int) k) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
@@ -3348,7 +3423,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             FILE *fp;
             char fname[200];
 
-            if(sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", (int) k) < 1)
+            if(sprintf(fname, "./conf/param_GPUset1dev%d.txt", (int) k) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
@@ -3476,7 +3551,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     {
         long ID1;
 
-        ID1 = load_fits(fname, "tmp2Dim", 1);
+        ID1 = load_fits(fname, "tmp2Dim", 3);
+        
         if(ID1!=-1)
         {
             sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
@@ -3658,7 +3734,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
         exit(0);
     }
 
-    ID1 = load_fits(fname, "tmp3Dim", 1);
+    ID1 = load_fits(fname, "tmp3Dim", 3);
     printf("        AOloopControl_3Dloadcreate_shmim: ===== ID1 = %ld\n", ID1);
     fflush(stdout);
     if(ID1!=-1)
@@ -4136,6 +4212,7 @@ static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_nam
 
 
 
+
 static void *compute_function_imtotal( void *ptr )
 {
     long ii;
@@ -4165,6 +4242,7 @@ static void *compute_function_imtotal( void *ptr )
     }
 
 }
+
 
 
 
@@ -6609,7 +6687,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
     IDhad = image_ID(Hmatname);
     if((data.image[IDhad].md[0].size[0]!=NBframes)||(data.image[IDhad].md[0].size[1]!=NBframes))
     {
-        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", (long) data.image[IDhad].md[0].size[0], (long) data.image[IDhad].md[0].size[1]);
+        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames [%ld]\n", (long) data.image[IDhad].md[0].size[0], (long) data.image[IDhad].md[0].size[1], NBframes);
         exit(0);
     }
 
@@ -8351,14 +8429,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
-                printf("Mode %ld   RMS = %lf\n", k, rms);
+                printf("\r Mode %ld   RMS = %lf   ", k, rms);
                 fprintf(fp, " %g\n", rms);
 
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
             }
             fclose(fp);
-
+			printf("\n");
 
 
             if(MaskMode==1)
@@ -8407,7 +8485,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             for(ii=0; ii<msizex*msizey; ii++)
             {
                 data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
-                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
+            //    data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
                 if(data.image[IDmask].array.F[ii]>1.0)
                     data.image[IDmask].array.F[ii] = 1.0;
             }
@@ -8460,6 +8538,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
+
+
+
 
 
 
@@ -8532,6 +8613,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+
+
 
 
 
@@ -8746,7 +8829,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             extrablockIndex = 4;
 
-            fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+            fp = fopen("./conf/param_extrablockIndex.txt", "r");
             if(fp != NULL)
             {
                 if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
@@ -8782,6 +8865,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
 
+
+		ID = image_ID("fmodes");
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
             long mblock1;
@@ -8844,6 +8929,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
+			//TEST
+			//sprintf(fname, "!./mkmodestmp/fmodes0_%02ld.fits", mblock);
+			//save_fits(imname, fname);
+
             printf("SVD decomp ... (%ld) .... ", (long) data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
@@ -8853,9 +8942,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             IDSVDcoeff = image_ID("svdcoeff");
             float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
-                if(data.image[IDSVDcoeff].array.F[m]>SVDlim00*svdcoeff0)
+            {
+				//printf("( %ld -> %g )\n", m, data.image[IDSVDcoeff].array.F[m]);
+                if(data.image[IDSVDcoeff].array.F[m] > SVDlim00*svdcoeff0)
                     cnt++;
-            printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
+            }
+            printf("BLOCK %ld/%ld: keeping %ld / %ld modes  ( %f %f ) [%ld  %ld %ld]\n", mblock, NBmblock, cnt, m, SVDlim00, svdcoeff0, (long) data.image[IDSVDcoeff].md[0].size[0], msizex, msizey);
             fflush(stdout);
 
             if(sprintf(imname1, "fmodes1_%02ld", mblock) < 1)
@@ -8897,7 +8989,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-
+	
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
@@ -9630,7 +9722,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         if(BlockNB<0)
         {
             char command[1000];
-            if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock) < 1)
+            if(sprintf(command, "echo \"%ld\" > ./conf_staged/param_NBmodeblocks.txt", NBmblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if(system(command) != 0)
@@ -9638,9 +9730,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         else
         {
-            if((fp = fopen("./conf/conf_NBmodeblocks.txt", "r"))==NULL)
+            if((fp = fopen("./conf/param_NBmodeblocks.txt", "r"))==NULL)
             {
-                printf("ERROR: cannot read file ./conf_staged/conf_NBmodeblocks.txt\n");
+                printf("ERROR: cannot read file ./conf_staged/param_NBmodeblocks.txt\n");
                 exit(0);
             }
             if(fscanf(fp, "%50ld", &NBmblock) != 1)
@@ -10006,6 +10098,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
 
+		fp = fopen("./mkmodestmp/NBmodes.txt", "w");
+        fprintf(fp, "%ld\n", cnt);
+        fclose(fp);		
+		
+		
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
@@ -10047,7 +10144,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         	}
 
         		char command[1000];
-                if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
+                if(sprintf(command, "echo \"%ld\" > ./conf_staged/param_NBmodes.txt", cnt) < 1)
         			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                 if(system(command) != 0)
@@ -10120,7 +10217,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
     {
         MBLOCK_blockend[0] = NBmodes;
 
-        if(sprintf(fname, "./conf_staged/conf_block00end.txt") < 1)
+        if(sprintf(fname, "./conf_staged/param_block00end.txt") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
         fp = fopen(fname, "w");
@@ -10131,7 +10228,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
     {
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            if(sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock) < 1)
+            if(sprintf(fname, "./conf_staged/param_block%02ldend.txt", mblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             fp = fopen(fname, "r");
@@ -11295,7 +11392,6 @@ int_fast8_t AOloopControl_run()
     int semval;
 
 
-
     /*    float tmpv, tmpv1, tmpv2;
         float range1 = 0.1; // limit single iteration motion
         float rangec = 0.3; // limit cumulative motion
@@ -11312,6 +11408,8 @@ int_fast8_t AOloopControl_run()
 
     loop = LOOPNUMBER;
 
+
+
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
@@ -11320,7 +11418,7 @@ int_fast8_t AOloopControl_run()
     printf("SETTING UP...\n");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
-
+	
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall;
 
@@ -11368,13 +11466,24 @@ int_fast8_t AOloopControl_run()
     COMPUTE_PIXELSTREAMING = 0; // TEST
 
 
-    printf("GPU = %d\n", AOconf[loop].GPU);
-    if(AOconf[loop].GPU>1)
+    printf("GPU0 = %d\n", AOconf[loop].GPU0);
+    if(AOconf[loop].GPU0>1)
     {
         uint8_t k;
-        for(k=0; k<AOconf[loop].GPU; k++)
-            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", (int) k, GPUset0[k], GPUset1[k]);
+        for(k=0; k<AOconf[loop].GPU0; k++)
+            printf("stream %2d      GPUset0 = %2d\n", (int) k, GPUset0[k]);
     }
+
+    printf("GPU1 = %d\n", AOconf[loop].GPU1);
+    if(AOconf[loop].GPU1>1)
+    {
+        uint8_t k;
+        for(k=0; k<AOconf[loop].GPU1; k++)
+            printf("stream %2d      GPUset1 = %2d\n", (int) k, GPUset1[k]);
+    }
+
+
+
 
 
 
@@ -11466,11 +11575,11 @@ int_fast8_t AOloopControl_run()
                 data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
 #ifdef _PRINT_TEST
-                printf("TEST -  MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
+                printf("TEST -  CMMODE = %d\n", AOconf[loop].CMMODE);
                 fflush(stdout);
 #endif
 
-                if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
+                if(AOconf[loop].CMMODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
 #ifdef _PRINT_TEST
                     printf("TEST -  DMprimaryWrite_ON = %d\n", AOconf[loop].DMprimaryWrite_ON);
@@ -11589,6 +11698,9 @@ int_fast8_t AOloopControl_run()
 
 
 
+
+
+
 int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect)
 {
     long i;
@@ -11599,6 +11711,9 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 }
 
 
+
+
+
 int_fast8_t set_DM_modes(long loop)
 {
     double a;
@@ -11606,7 +11721,7 @@ int_fast8_t set_DM_modes(long loop)
     int semval;
 
 
-    if(AOconf[loop].GPU == 0)
+    if(AOconf[loop].GPU1 == 0)
     {
         float *arrayf;
         long i, j, k;
@@ -11638,7 +11753,7 @@ int_fast8_t set_DM_modes(long loop)
 #ifdef HAVE_CUDA
 
 
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU1, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);
         AOconf[loop].status = 12;
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
@@ -11661,6 +11776,7 @@ int_fast8_t set_DM_modes(long loop)
 
     return(0);
 }
+
 
 
 
@@ -11895,12 +12011,12 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-    if(AOconf[loop].GPU == 0)
+    if(AOconf[loop].GPU0 == 0)   // run in CPU
     {
-        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
+            printf("TEST - CM mult: GPU=0, CMMODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
             fflush(stdout);
 #endif
 
@@ -11913,7 +12029,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         else // (*)
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
+            printf("TEST - CM mult: GPU=0, CMMODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
             fflush(stdout);
 #endif
 
@@ -11928,10 +12044,10 @@ int_fast8_t AOcompute(long loop, int normalize)
     else
     {
 #ifdef HAVE_CUDA
-        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
+            printf("TEST - CM mult: GPU=1, CMMODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
             fflush(stdout);
 #endif
 
@@ -11962,9 +12078,9 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
             if(COMPUTE_GPU_SCALING==1)
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
             else
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
 
             initWFSref_GPU[PIXSTREAM_SLICE] = 1;
 
@@ -11983,13 +12099,13 @@ int_fast8_t AOcompute(long loop, int normalize)
         else // direct pixel -> actuators linear transformation
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1\n");
+            printf("TEST - CM mult: GPU=1, CMMODE=1\n");
             fflush(stdout);
 #endif
 
             if(1==0)
             {
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
@@ -12005,7 +12121,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 if(COMPUTE_GPU_SCALING==1) // (**)
                 {
 #ifdef _PRINT_TEST
-                    printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1, COMPUTE_GPU_SCALING=1\n");
+                    printf("TEST - CM mult: GPU=1, CMMODE=1, COMPUTE_GPU_SCALING=1\n");
                     fflush(stdout);
 #endif
 
@@ -12064,7 +12180,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                     initWFSref_GPU[PIXSTREAM_SLICE] = 0;
 
 
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 
                 initWFSref_GPU[PIXSTREAM_SLICE] = 1;
@@ -12105,7 +12221,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[11] = tdiffv;
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    if(AOconf[loop].CMMODE==0)
     {
         AOconf[loop].RMSmodes = 0;
         long k;
@@ -12479,6 +12595,36 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
 }
 
 
+
+
+/**
+ * ## Purpose
+ * 
+ * Computes average of residual in WFS
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * loop		INT
+ * 			loop number
+ * 
+ * @param[in]
+ * alpha	FLOAT
+ * 			averaging coefficient
+ * 
+ * 
+ * ## Output files
+ * 
+ * - aol_wfsres_ave
+ * - aol_wfsres_ave
+ * - aol_wfsresm
+ * - aol_wfsresm_ave
+ * - aol_wfsres_rms
+ * 
+ * 
+ * 
+ */
+
 long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 {
     long IDimWFS0, IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
@@ -12715,7 +12861,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
     // CONNECT to arrays holding gain, limit, and multf values for blocks
-
     if(aoconfID_gainb == -1)
     {
         if(sprintf(imname, "aol%ld_gainb", loop) < 1)
@@ -12743,7 +12888,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
     // CONNECT to arrays holding gain, limit and multf values for individual modes
-
     if(aoconfID_GAIN_modes == -1)
     {
         if(sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
@@ -13220,6 +13364,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
     return(IDout);
 }
+
+
 
 
 //
@@ -13931,7 +14077,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 
 
     // read PF block parameters
-    if(sprintf(fname, "conf/conf_PFblock_%03ld.txt", PFblock) < 1)
+    if(sprintf(fname, "conf/param_PFblock_%03ld.txt", PFblock) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     if((fp = fopen(fname, "r"))==NULL)
@@ -14517,6 +14663,7 @@ int_fast8_t AOloopControl_setframesAve(long nbframes)
 
 
 
+
 int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)
 {
     long IDcontrM0; // local storage
@@ -14538,12 +14685,14 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
     printf("AOconf[loop].DMmodesNBblock = %ld\n", AOconf[loop].DMmodesNBblock);
     fflush(stdout);
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    /*if(AOconf[loop].CMMODE==0)
     {
-        printf("Command has no effect: modeblock gain not compatible with MATRIX_COMPUTATION_MODE = 0\n");
+        printf("Command has no effect: modeblock gain not compatible with CMMODE = 0\n");
         fflush(stdout);
     }
-    else if (AOconf[loop].DMmodesNBblock<2)
+    else*/
+     
+    if (AOconf[loop].DMmodesNBblock<2)
     {
         if(sprintf(name2, "aol%ld_contrMc00", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -14612,7 +14761,7 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
                 if(sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                printf("adding %ld / %ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
+                printf("Adding %4ld / %4ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
 
                 //ID = image_ID(name1);
 
@@ -14661,6 +14810,8 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 
     return(0);
 }
+
+
 
 
 int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
@@ -14782,7 +14933,7 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     kmax = (wrow-28)*(nbcol);
 
 
-    printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+    printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU0, kmax);
     printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm mcoeff=%4.2f) GAIN = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_LIMITS_mcoeff, AOconf[loop].AUTOTUNE_GAINS_ON);
     printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
     nbl++;
@@ -15135,7 +15286,8 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
     FILE *fp;
 
-
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
     statusdef[0] = "LOAD IMAGE";
     statusdef[1] = "DARK SUBTRACT";
@@ -15150,7 +15302,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     statusdef[11] = "MULTIPLYING BY GAINS";
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    if(AOconf[LOOPNUMBER].CMMODE==0)
     {
         statusdef[12] = "ENTER SET DM MODES";
         statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
@@ -15207,15 +15359,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     usec0 = 50.0;
     usec1 = 150.0;
 
-    if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(1);
+
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 #endif
 
-    nbgpu = AOconf[LOOPNUMBER].GPU;
+    nbgpu = AOconf[LOOPNUMBER].GPU0;
 
 
     printf("Measuring loop status distribution \n");
@@ -15265,7 +15416,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
             statuscnt[st]++;
         if(stM<statusmax)
             statusMcnt[stM]++;
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             // 1st matrix mult
             st = 10*gpu + AOconf[LOOPNUMBER].GPUstatus[gpu];
@@ -15319,14 +15470,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
     if(updateconf==1)
     {
-        fp = fopen("conf/conf_loopfrequ.txt", "w");
+        fp = fopen("conf/param_loopfrequ.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].loopfrequ);
         fclose(fp);
     }
 
-    if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
     }
     else
     {
@@ -15343,23 +15494,23 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     {
         AOconf[LOOPNUMBER].hardwlatency_frame = AOconf[LOOPNUMBER].hardwlatency * AOconf[LOOPNUMBER].loopfrequ;
 
-        fp = fopen("conf/conf_hardwlatency_frame.txt", "w");
+        fp = fopen("conf/param_hardwlatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].hardwlatency_frame);
         fclose(fp);
 
-        fp = fopen("conf/conf_complatency.txt", "w");
+        fp = fopen("conf/param_complatency.txt", "w");
         fprintf(fp, "%8.6f", AOconf[LOOPNUMBER].complatency);
         fclose(fp);
 
-        fp = fopen("conf/conf_complatency_frame.txt", "w");
+        fp = fopen("conf/param_complatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].complatency_frame);
         fclose(fp);
 
-        fp = fopen("conf/conf_wfsmextrlatency.txt", "w");
+        fp = fopen("conf/param_wfsmextrlatency.txt", "w");
         fprintf(fp, "%8.6f", AOconf[LOOPNUMBER].wfsmextrlatency);
         fclose(fp);
 
-        fp = fopen("conf/conf_wfsmextrlatency_frame.txt", "w");
+        fp = fopen("conf/param_wfsmextrlatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].wfsmextrlatency_frame);
         fclose(fp);
     }
@@ -15372,14 +15523,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
 
 
-    if(AOconf[LOOPNUMBER].GPU!=0)
+    if(AOconf[LOOPNUMBER].GPU0!=0)
     {
         printf("\n");
         printf("          ----1--------2--------3--------4--------5--------6----\n");
         printf("                   wait im | ->GPU |     COMPUTE     |   ->CPU  \n");
         printf("          ------------------------------------------------------\n");
 
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
             printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBkiter);
@@ -15389,7 +15540,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
             printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
             printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
         }
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
             printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBkiter);
@@ -15401,10 +15552,10 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
         }
 
         printf("\n");
-        if(MATRIX_COMPUTATION_MODE == 0)
+        if(AOconf[LOOPNUMBER].CMMODE == 0)
         {
             printf("          ----1--------2--------3--------4--------5--------6----\n");
-            for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+            for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
             {
                 printf("GPU %2d  : ", gpu);
                 printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
@@ -15455,6 +15606,9 @@ int_fast8_t AOloopControl_resetRMSperf()
 
 
 
+
+
+
 int_fast8_t AOloopControl_showparams(long loop)
 {
 
@@ -15465,7 +15619,7 @@ int_fast8_t AOloopControl_showparams(long loop)
     else
         printf("loop is OFF\n");
 
-    printf("Global gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
+    printf("Global gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU0);
     printf("    Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE: lim %d gain %d\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON,  AOconf[loop].AUTOTUNE_GAINS_ON);
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 

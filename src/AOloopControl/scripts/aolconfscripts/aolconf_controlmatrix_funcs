@@ -8,26 +8,26 @@ exit
 fi
 
 
-
-function function_controlmatrix_readparams {
+# TO BE RETIRED
+function RETIRED_function_controlmatrix_readparams {
 
 
 SVDlimall=0.01
-if [ -f "./conf/conf_SVDlimall.txt" ]; then
-SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
+if [ -f "./conf/param_SVDlimall.txt" ]; then
+SVDlimall=$( cat ./conf/param_SVDlimall.txt )
 fi
 
 
 if [ "$DMMODE" = "MODAL" ]; then
 
 getshmimsize aol${LOOPNUMBER}_zrespM
-mNBmodes=$( cat conf/conf_imsize_aol${LOOPNUMBER}_zrespM.txt | awk '{printf("%03ld", $3)}' )
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 
 
 
 if [ "0" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block00end.txt"
+file="./conf/param_block00end.txt"
 block00end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "001" > $file
@@ -37,7 +37,7 @@ fi
 
 
 if [ "1" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block01end.txt"
+file="./conf/param_block01end.txt"
 block01end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "001" > $file
@@ -47,7 +47,7 @@ fi
 
 
 if [ "2" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block02end.txt"
+file="./conf/param_block02end.txt"
 block02end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "02" > $file
@@ -57,7 +57,7 @@ fi
 
 
 if [ "3" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block03end.txt"
+file="./conf/param_block03end.txt"
 block03end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "03" > $file
@@ -67,7 +67,7 @@ fi
 
 
 if [ "4" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block04end.txt"
+file="./conf/param_block04end.txt"
 block04end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "04" > $file
@@ -77,7 +77,7 @@ fi
 
 
 if [ "5" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block05end.txt"
+file="./conf/param_block05end.txt"
 block05end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "05" > $file
@@ -87,7 +87,7 @@ fi
 
 
 if [ "6" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block06end.txt"
+file="./conf/param_block06end.txt"
 block06end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "06" > $file
@@ -97,7 +97,7 @@ fi
 
 
 if [ "7" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block07end.txt"
+file="./conf/param_block07end.txt"
 block07end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "07" > $file
@@ -107,7 +107,7 @@ fi
 
 
 if [ "8" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block08end.txt"
+file="./conf/param_block08end.txt"
 block08end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "08" > $file
@@ -117,7 +117,7 @@ fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block09end.txt" 'OPEN' 1
+file="./conf/param_block09end.txt" 'OPEN' 1
 block09end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "09" > $file
@@ -127,7 +127,7 @@ fi
 
 
 if [ "10" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block10end.txt"
+file="./conf/param_block10end.txt"
 block10end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "10" > $file
@@ -153,7 +153,7 @@ fi
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
- CMMODEfile="conf/conf_CMMODE.txt"
+ CMMODEfile="conf/param_CMMODE.txt"
  if [ -f $CMMODEfile ]; then
  CMMODE=$( cat ${CMMODEfile} )
  else
@@ -162,24 +162,24 @@ if [ "$DMMODE" = "ZONAL" ]; then
  fi
  
  
- file="./conf/conf_extrablockMindex.txt"
+ file="./conf/param_extrablockMindex.txt"
  if [ -f $file ]; then
- extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
+ extrablockIndex=$(echo "$(cat ./conf/param_extrablockIndex.txt)")
  else
  echo "4" > $file
  extrablockIndex="4"
  fi
  
  
- mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
+ mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
  mkmodesdatestr=${mkmodesdatestr% *}
- NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
- NBmodes=$( cat ./conf/conf_NBmodes.txt )
+ NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+ NBmodes=$( cat ./conf/param_NBmodes.txt )
 
- staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
+ staged_mkmodesdatestr=$(stat -c %y ./conf_staged/param_NBmodeblocks.txt)
  staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
- staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
- staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
+ staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
+ staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
 
 fi
 
@@ -193,7 +193,7 @@ done
 
 
 
-file="./conf/conf_cpamax.txt"
+file="./conf/param_cpamax.txt"
 cpamax=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "00.2" > $file
@@ -240,14 +240,15 @@ echo "./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}"  >> $co
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 echo "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits"  >> $computeModesCMscriptfile
-echo "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf_staged/conf_DMmodes_name.txt"  >> $computeModesCMscriptfile
+echo "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf_staged/shmim_DMmodes.name.txt"  >> $computeModesCMscriptfile
 
 echo "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits"  >> $computeModesCMscriptfile
-echo "echo \"respM/respM_${datestr}.fits\" > ./conf_staged/conf_respM_name.txt"  >> $computeModesCMscriptfile
+echo "echo \"respM/respM_${datestr}.fits\" > ./conf_staged/shmim_respM.name.txt"  >> $computeModesCMscriptfile
 
 echo "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits"  >> $computeModesCMscriptfile
-echo "echo \"contrM/contrM_${datestr}.fits\" > ./conf_staged/conf_contrM_name.txt"  >> $computeModesCMscriptfile
+echo "echo \"contrM/contrM_${datestr}.fits\" > ./conf_staged/shmim_contrM.name.txt"  >> $computeModesCMscriptfile
 
+echo "cp ./mkmodestmp/NBmodes.txt ./conf_staged/param_NBmodes.txt" >> $computeModesCMscriptfile
 
 for i in `seq 0 20`;
 do
@@ -255,19 +256,19 @@ i2=$(printf "%02d" "$i")
 fname="mkmodestmp/fmodes_${i2}.fits"
 #if [ -e "$fname" ]; then
 echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
-echo "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf_staged/conf_DMmodes${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf_staged/shmim_DMmodes${i2}.name.txt; fi"  >> $computeModesCMscriptfile
 
 echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
-echo "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf_staged/conf_respM${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf_staged/shmim_respM${i2}.name.txt; fi"  >> $computeModesCMscriptfile
 
 echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
-echo "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf_staged/conf_contrM${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf_staged/shmim_contrM${i2}.name.txt; fi"  >> $computeModesCMscriptfile
 
 echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
-echo "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMc${i2}_name.txt; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf_staged/shmim_contrMc${i2}.name.txt; fi"  >> $computeModesCMscriptfile
 
 echo "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits; fi"  >> $computeModesCMscriptfile
-echo "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMcact${i2}_00_name.txt; fi"  >> $computeModesCMscriptfile
+echo "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf_staged/shmim_contrMcact${i2}_00.name.txt; fi"  >> $computeModesCMscriptfile
 #fi
 done
 chmod +x $computeModesCMscriptfile
@@ -309,16 +310,20 @@ tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER
 done
 
 
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 rm script_SharedMemLoadCM
 touch script_SharedMemLoadCM
 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2} ; do
-echo "./auxscripts/aolReadConfFile ${imname}" >> script_SharedMemLoadCM	
-echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedMemLoadCM
+echo "Fits2shm -c -p aol${LOOPNUMBER} DMmodes" >> script_SharedMemLoadCM	
+echo "Fits2shm -c -p aol${LOOPNUMBER} respM" >> script_SharedMemLoadCM	
+echo "Fits2shm -c -p aol${LOOPNUMBER} contrM" >> script_SharedMemLoadCM	
+
+
+for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2}_00 ; do
+echo "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" >> script_SharedMemLoadCM	
 done
 done
 

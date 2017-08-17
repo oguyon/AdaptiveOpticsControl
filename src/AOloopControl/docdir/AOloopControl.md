@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Jul 27, 2017
+% Aug 15, 2017
 
 
 
@@ -647,30 +647,55 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 ## Commands log
 
 
-### Automatically generated internal log (very detailed)
+ALL commands are logged by the script : 
 
-All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
+	./aolconfscripts/aollog
+
+
+
+
+### Automatically generated internal command log (very detailed)
+
+`aolconf` uses the script `aolconfscripts/aollog` to log commands and status into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
 
 ~~~~
 tail -f aolconf.log
 ~~~~
 
-Inside the bash script, function `aoconflog` is used to call `aolconfscripts/aollog` with the proper loop name.
-
-
-
-
-### External log (less verbose)
-
-The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
+Inside the bash script, function `aoconflog` is used to call `aolconfscripts/aollog` with the proper loop name, as defined in the main `aolconf` script:
 
 ~~~
-dologext <string>
+# internal log - logs EVERYTHING
+function aoconflog {
+./aolconfscripts/aollog "$LOOPNAME" "$@"
+}
+~~~
+
+
+
+
+### User-provided UsExternal log (less verbose)
+
+
+More important commands are logged simultaneously to the internal log and an external log. The user provides the command to externally log commands. The executable should be in the path, and named `aollogext`. The syntax is:
+
+~~~
+./aollogext <string>
 ~~~
 
 The string usually consists of the loop name followed by comments.
 
-Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name.
+Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name, as defined in the main `aolconf` script:
+
+~~~
+# external log, use for less verbose log
+function aoconflogext {
+./aolconfscripts/aollog -e "$LOOPNAME" "$@"
+}
+~~~
+
+
+
 
 
 
@@ -690,6 +715,11 @@ It is also common practice to start a `MISC` log for misc comments, also to be i
 ./aolconfscripts/aollog -ie MISC NULL
 ~~~
 
+The corresponding log can be viewed by:
+
+~~~
+tail -f logdit/<UTDATE>/logging/MISC.log
+~~~
 
 
 
@@ -1167,7 +1197,23 @@ Every time one of the activated DM channel changes, the corresponding wfs `aolN_
 A faster GPU-based zero point offset from DM to WFS is provided for each of the 8 offset channels. GPU-based and CPU-based offsetting for a single channel are mutually exclusive.
 
 
-## WFS offsets
+## WFS average offset
+
+Measures average WFS residual with script :
+
+	./auxscripts/aolmkWFSres 0.0005
+	
+Running average is in stresm aol_wfsres_ave
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1381,6 +1427,24 @@ When loading :
 
 # REFERENCE: Content of ./conf directory
 
+## Overview
+
+
+------------------------------------- ----------------------------------------
+File Type                             Description
+------------------------------------- ----------------------------------------
+conf_XXXX.txt                         Information about the configuration (name etc...)
+
+param_XXXXX.txt                       AOCCE parameter            
+
+streamlink_XXXX.txt                   shared memory link name for AOCCE stream XXXX     
+
+instconf_XXXXX.txt                    Instrument-specific configuration (filter wheels, stages.. )
+------------------------------------- ----------------------------------------
+
+
+
+
 ## Parameters
 
 ### Overall and misc
@@ -1486,6 +1550,12 @@ param_delayRM1us.txt                  RM acquisition delay 1 \[s\]
 
 param_RMpokeMode.txt                  RM poking mode. 0=zonal, 1=Hadamard.
 
+
+param_RMMamplum.txt                   RM Low Order Modal acquisition amplitude \[um\]
+
+param_RMMcpa.txt                      RM Low Order Modal max CPA
+
+
 param_WFSnorm.txt                     Normalize WFS frames
 
 param_DMmaskRMp0.txt                     
@@ -1522,7 +1592,57 @@ param_MASKS_LOCK.txt                  1 if WFS and DM masks are locked
 param_NBmodeblocks.txt                Number of mode blocks (default=1)
 ------------------------------------- ----------------------------------------
 
+### Loop Control
 
+------------------------------------- ----------------------------------------
+File                                  Description
+------------------------------------- ----------------------------------------
+param_DMprimWriteON.txt               Primary Write ON/OFF (0 or 1)
+
+param_CMMODE.txt                      Combined Matrix (0 or 1)
+
+param_GPU.txt
+
+param_GPUmodesextrwfs.txt             WFS mode coefficients extraction: GPU device
+
+param_GPUdmfwb.txt                    DM modal write (post-filtering): GPU device
+
+param_GPUzpoffsetZ.txt                Zonal WFS zero point offset loop: GPU device
+
+param_GPUzpoffsetM.txt                Modal WFS zero point offset loop: GPU device
+
+param_LOOPPROCESS_EXTRWFSMODES.txt 
+
+param_LOOPPROCESS_EXTROLMODES.txt 
+
+param_LOOPPROCESS_DMFILTWB.txt 
+
+param_LOOPPROCESS_ZPO.txt 
+
+param_LOOPPROCESS_DMCAVE.txt 
+
+param_LOOPPROCESS_WFSRESAVE.txt 
+
+param_AUTOTUNELIMITS_ON.txt           Autotuning ON/OFF (ON or OFF)
+
+param_AUTOTUNELIMITmcoeff.txt         Autotuning limits
+
+param_AUTOTUNELIMITdelta.txt          Autotuning limits
+
+param_AUTOTUNEGAINS_ON.txt            Autotuning gain (ON or OFF)
+
+param_ARPFon.txt                      Auto-regressive predictive filter (ON or OFF)
+
+param_ARPFg.txt                       Auto-regressive predictive filter gain
+
+param_loopgain.txt
+
+param_loopmmultcoeff.txt
+
+param_loopmaxlim.txt                  Limit of DM actuators (direct write only)
+
+
+------------------------------------- ----------------------------------------
 
 
 ## Stream Links
@@ -1638,7 +1758,7 @@ RMpokeCube.fits.gz                    Current poke modes
 
 # REFERENCE: Content of ./status directory
 
-The status directories contrains the current state of the AOCCE processes
+The status directories contrains the current state of the AOCCE processes.
 
 ------------------------------------- ----------------------------------------
 File                                  Description

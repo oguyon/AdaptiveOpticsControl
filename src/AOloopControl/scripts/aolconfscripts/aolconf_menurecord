@@ -97,14 +97,9 @@ fi
 
 
 
-file="./conf/conf_logmode.txt"
-logMode=$( cat $file )
-if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logMode=0
-fi
+ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
+
+
 
 stringcenter "DATA LOGGING MODE: $logMode"
 menuitems+=( " " "\Zb\Zr$string\Zn" )

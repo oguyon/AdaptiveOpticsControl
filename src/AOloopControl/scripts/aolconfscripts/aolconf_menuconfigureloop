@@ -44,13 +44,19 @@ menuitems+=( " " " " )
 stringcenter "HARDWARE INFO AND I/O LINKS [shared memory sim links]"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
-
+ConfReadParam loopfrequ "1000.0"; loopfrequ="$paramvalue"
 menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ} Hz" )
 
+ConfReadParam hardwlatency "0.001"; hardwlatency="$paramvalue"
+ConfReadParam hardwlatency_frame "2.0"; hardwlatency_frame="$paramvalue"
 menuitems+=( "lhlat" "            Hardware Latency                  ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
 
+ConfReadParam complatency "0.0003"; complatency="$paramvalue"
+ConfReadParam complatency_frame "0.4"; complatency_frame="$paramvalue"
 menuitems+=( "lclat" "            Computing Latency                 ${complatency} sec -> ${complatency_frame} frame" )
 
+ConfReadParam wfsmextrlatency "0.0004"; wfsmextrlatency="$paramvalue"
+ConfReadParam wfsmextrlatency_frame "0.5"; wfsmextrlatency_frame="$paramvalue"
 menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrlatency} sec -> ${wfsmextrlatency_frame} frame" )
 
 
@@ -220,7 +226,7 @@ confOK=0
 fi
 
 
-
+ConfReadParam wfslambdanm "800"; wfslambdanm="$paramvalue"
 menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
 
 
@@ -241,7 +247,7 @@ menuitems+=( "wfsdark" "$menustring" )
 
 menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<date>.fits" )
 
-
+menuitems+=( "updark"   "             Load Dark to SHM" )
 
 if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( " " " " )
@@ -250,6 +256,7 @@ menuitems+=( " " " " )
 menuitems+=( "smlock" "Set locked masks to current ./conf/shmim_<mask>.name.txt masks (dmmaskRM, dmmask, dmslaved, wfsmask)")
 
 
+ConfReadParam MASKS_LOCK "0"; MASKS_LOCK="$paramvalue"
 if [ "$MASKS_LOCK" -eq "1" ]; then
 menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
@@ -270,19 +277,22 @@ stringcenter "AUTOMATIC SYSTEM CALIBRATION"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-
+ConfReadParam ACzrmtime "10"; ACzrmtime="$paramvalue"
 menuitems+=( "sACzrmt" "            Zonal RM maximum running time          ${ACzrmtime} sec" )
 
-
+ConfReadParam ACzrmNBcycle "10"; ACzrmNBcycle="$paramvalue"
 menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACzrmNBcycle} cycle(s)" )
 
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
+ConfReadParam ACmrmtime "10"; ACmrmtime="$paramvalue"
 menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
 
+ConfReadParam ACmrmNBcycle "10"; ACmrmNBcycle="$paramvalue"
 menuitems+=( "sACmrmN" "            Modal RM maximum number of Cycles      ${ACmrmNBcycle} cycle(s)" )
+
 fi
 
 
@@ -290,13 +300,15 @@ fi
 
 
 
-
+ConfReadParam RMfrave "0"; RMfrave="$paramvalue"
+ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 
 
 
 if [ -f "runproc/function_nAUTOC.runproc" ]; then
-menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
+menuitems+=( "nAUTOCk" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING - Press to KILL\Zn")
 else
+RMacqTimeZ=$( echo $loopfrequ $RMfrave $RMexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 fi
 
@@ -306,46 +318,34 @@ menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
 
-
-file="conf/param_conflastloaded_name.txt"
-if [ -f "$file" ]; then
-confnameloaded=$( cat $file )
-else
-confnameloaded=" "
-fi
-
-file="conf/param_conflastloaded_time.txt"
-if [ -f "$file" ]; then
-confloadedtime=$( cat $file )
-else
-confloadedtime=" "
-fi
-
+ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
+ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
 
 menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
 menuitems+=( " " " " )
 
 
 
-
+#ConfReadParam  "0"; ="$paramvalue"
 
 stringcenter "ACQUISITION TIMING"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-
+ConfReadParam RMamplum "0.1"; RMamplum="$paramvalue"
 menuitems+=( "rmamp" "            RM amplitude                    ${RMamplum} um" )
+
+ConfReadParam RMdelayfr "0"; RMdelayfr="$paramvalue"
 menuitems+=( "rmdelay" "            RM time delay                   ${RMdelayfr} frame(s)" )
 
 
-
+ConfReadParam delayRM1us "0"; delayRM1us="$paramvalue"
 menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
 
 menuitems+=( "rmnbfr" "            RM frame averaging              ${RMfrave} frame(s)" )
 
-
 menuitems+=( "rmexfr" "            RM excluded frames              ${RMexfr} frame(s)" )
 
-
+ConfReadParam nblatm "100"; nblatm="$paramvalue"
 menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
 
 
@@ -362,7 +362,7 @@ menuitems+=( "zrespM" "$menustring" )
 
 
 
-
+ConfReadParam RMpokeMode "1"; RMpokeMode="$paramvalue"
 if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
 	else
@@ -371,7 +371,7 @@ fi
 
 
 
-
+ConfReadParam WFSnorm "1"; WFSnorm="$paramvalue"
 if [ "${WFSnorm}" -eq "0" ]; then
 menuitems+=( "WFSNon" "\ZbWFS normalize is OFF\ZB   press to turn on")
 else
@@ -414,14 +414,31 @@ menuitems+=(" " " ")
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
+ConfReadParam DMmaskRMp0 "0"; DMmaskRMp0="$paramvalue"
 menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
+
+ConfReadParam DMmaskRMc0 "0"; DMmaskRMc0="$paramvalue"
 menuitems+=( "DMmaskRMc0"  "            DM mask RM: low level coefficient                               ${DMmaskRMc0}" )
+
+ConfReadParam DMmaskRMp1 "0"; DMmaskRMp1="$paramvalue"
 menuitems+=( "DMmaskRMp1"  "            DM mask RM: high level percentile                               ${DMmaskRMp1}" )
+
+ConfReadParam DMmaskRMc1 "0"; DMmaskRMc1="$paramvalue"
 menuitems+=( "DMmaskRMc1"  "            DM mask RM: high level coefficient                              ${DMmaskRMc1}" )
+
+ConfReadParam WFSmaskRMp0 "0"; WFSmaskRMp0="$paramvalue"
 menuitems+=( "WFSmaskRMp0" "            WFS mask RM: low level percentile                               ${WFSmaskRMp0}" )
+
+ConfReadParam WFSmaskRMc0 "0"; WFSmaskRMc0="$paramvalue"
 menuitems+=( "WFSmaskRMc0" "            WFS mask RM: low level coefficient                              ${WFSmaskRMc0}" )
+
+ConfReadParam WFSmaskRMp1 "0"; WFSmaskRMp1="$paramvalue"
 menuitems+=( "WFSmaskRMp1" "            WFS mask RM: high level percentile                              ${WFSmaskRMp1}" )
+
+ConfReadParam WFSmaskRMc1 "0"; WFSmaskRMc1="$paramvalue"
 menuitems+=( "WFSmaskRMc1" "            WFS mask RM: high level coefficient                             ${WFSmaskRMc1}" )
+
+ConfReadParam WFSmaskSNRr "0"; WFSmaskSNRr="$paramvalue"
 menuitems+=( "WFSmaskSNRr" "            WFS mask RN: fraction of pixels rejected for poor SNR           ${WFSmaskSNRr}" )
 
 
@@ -448,11 +465,17 @@ then
     menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
 fi
 
+ConfReadParam RMmodal "OFF"; RMmodal="$paramvalue"
 if [ "${RMmodal}" = " ON" ];
 then
+   
     menuitems+=( "RMMoff" "           RM modal is currently ON. Select to toggle to OFF" )
-    menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
-    menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" )
+     
+ConfReadParam RMMamplum "0"; RMMamplum="$paramvalue"
+    menuitems+=( "rmMamp" "            Modal RM amplitude                ${RMMamplum} um" )
+
+ConfReadParam RMMcpa "0"; RMMcpa="$paramvalue"   
+    menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${RMMcpa}" )
 
     makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
     menuitems+=( "LOrespM" "$menustring" )
@@ -801,7 +824,6 @@ esac
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP5
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP6
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP7
-./auxscripts/shmimzero aol${LOOPNUMBER}_dmdisp
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 aoconflogext "Zero all DM arrays"
 ;;
@@ -867,8 +889,15 @@ aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
 
+	updark)
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
+menucontrolloop_default="updark"
+;;
 
-
+	zerodark)
+# TO BE WRITTEN
+menucontrolloop_default="zerodark"
+;;
 
 	smlock) # set masks lock files (from conf file)
 aoconflogext "Set masks lock files"
@@ -969,10 +998,19 @@ menucontrolloop_default="sACmrmN"
 nAUTOC)
 RMCalibReuseMasks=0
 echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
-
 function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
 
+nAUTOCk)
+tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
+tmux send-keys -t ${tmuxnameaWFSr} "" C-c
+tmux send-keys -t ${tmuxnameaWFSr} "" C-c
+tmux send-keys -t ${tmuxnameaWFSr} "exit" C-m
+tmux kill-session -t ${tmuxnameaWFSr}
+rm runproc/function_nAUTOC.runproc
+echo "OFF" > ./status/stat_acqWFSON.txt
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+;;
 
 
 	confUp)
@@ -1028,14 +1066,8 @@ echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 case $retval in
    0) # button
-# echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
-cp conf/* "${confname}/"
-#cp conf/RMpoke.fits "${confname}/"
-#cp conf/Hpoke.fits "${confname}/"
-#cp conf/RMmat.fits "${confname}/"
-#cp conf/RMpixindex.fits "${confname}/"
-#cp conf/RMpokeCube.fits "${confname}/"
+rsync -a --no-links conf/* ${confname}
 ;;
 esac
 ;;
@@ -1172,7 +1204,7 @@ exec 3>&1;
 RMfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$RMfrave" 2>&1 1>&3);
 exec 3>&-;
 echo "$RMfrave" > ./conf/param_RMfrave.txt
-aoconflogext "set RM NB frame average $rmfrave frames"
+aoconflogext "RMfrave = $RMfrave  # set RM NB frame average $RMfrave frames"
 ;;
 	rmexfr)
 exec 3>&1;
@@ -1262,11 +1294,11 @@ echo "1" > ./conf/param_RMpokeMode.txt
 ./auxscripts/mkHpoke 
 #fi
 mv Hpoke.fits.gz ./conf/Hpoke.fits.gz
-ln -s ./conf/Hpoke.fits.gz ./conf/RMpokeCube.fits.gz
+ln -s $PWD/conf/Hpoke.fits.gz $PWD/conf/RMpokeCube.fits.gz
 mv Hpixindex.fits.gz ./conf/
-ln -s ./conf/Hpixindex.fits.gz ./conf/RMpixindex.fits.gz
+ln -s $PWD/conf/Hpixindex.fits.gz $PWD/conf/RMpixindex.fits.gz
 mv Hmat.fits.gz ./conf/
-ln -s ./conf/Hmat.fits.gz ./conf/RMmat.fits.gz 
+ln -s $PWD/conf/Hmat.fits.gz $PWD/conf/RMmat.fits.gz 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
@@ -1728,18 +1760,18 @@ menucontrolloop_default="RMMon"
 
 	rmMamp)
 exec 3>&1;
-rmMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$rmMamplum" 2>&1 1>&3);
+RMMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$RMMamplum" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmMamplum" > ./conf/param_RMMamplum.txt
-aoconflogext "set LO RM amplitude $rmMamplum um"
+echo "$RMMamplum" > ./conf/param_RMMamplum.txt
+aoconflogext "set LO RM amplitude $RMMamplum um"
 ;;
 
 	rmMcpa)
 exec 3>&1;
-rmMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$rmMcpa" 2>&1 1>&3);
+RMMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$RMMcpa" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmMcpa" > ./conf/param_RMMcpa.txt
-aoconflogext "set LO RM CPA max $rmMcpa"
+echo "$RMMcpa" > ./conf/param_RMMcpa.txt
+aoconflogext "set LO RM CPA max $RMMcpa"
 ;;
 
 
@@ -1776,8 +1808,8 @@ tmuxname="aol${LOOPNUMBER}LOrepMc"
 sleep 0.2
 tmux new-session -d -s ${tmuxname}
 sleep 0.2
-tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
-echo "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" >> aolcmd.txt
+tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanLOrespmat ${RMMamplum} ${WFSnorm}" C-m
+echo "./auxscripts/aolCleanLOrespmat ${RMMamplum} ${WFSnorm}" >> aolcmd.txt
 mkdir -p LOrespM
 mkdir -p LODMmodes
 mkdir -p LOwfsref

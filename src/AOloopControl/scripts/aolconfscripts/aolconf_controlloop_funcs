@@ -8,775 +8,14 @@ exit
 fi
 
 
-# is the loop control in ZONAL CM or MODAL CM mode ?
-CMMODEfile="conf/conf_CMMODE.txt"
+# is the loop control in combined/ZONAL CM or MODAL CM mode ?
+CMMODEfile="conf/param_CMMODE.txt"
 if [ -f $CMMODEfile ]; then
 CMMODE=$( cat ${CMMODEfile} )
 else
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 fi
-
-
-
-
-function function_controlloop_readparams 
-{
-
-file="./conf/conf_loopgain.txt"
-if [ -f $file ]; then
-loopgain=$(echo "$(cat $file)")
-else
-echo "0.0" > $file
-loopgain="0.0"
-fi
-
-file="./conf/conf_loopmaxlim.txt"
-if [ -f $file ]; then
-loopmaxlim=$(echo "$(cat ./conf/conf_loopmaxlim.txt)")
-else
-echo "0.0" > $file
-loopmaxlim="0.0"
-fi
-
-
-
-file="./conf/conf_loopmultcoeff.txt"
-if [ -f $file ]; then
-loopmultcoeff=$(echo "$(cat ./conf/conf_loopmultcoeff.txt)")
-else
-echo "0.99" > $file
-loopmultcoeff="0.99"
-fi
-
-
-
-file="./conf/conf_ARPFgain.txt"
-if [ -f $file ]; then
-ARPFgain=$(echo "$(cat $file)")
-else
-echo "0.0" > $file
-ARPFgain="0.0"
-fi
-
-
-if [ -f "./conf/conf_WFSnormalize.txt" ]; then
-WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
-else
-WFSnorm="0" # default
-fi
-
-
-if [ -f "./conf/conf_GPUdm2wfsrefM.txt" ]; then
-GPUdm2wfsrefM=$( cat ./conf/conf_GPUdm2wfsrefM.txt )
-else
-GPUdm2wfsrefM="0" # default
-fi
-
-if [ -f "./conf/conf_GPUdm2wfsrefZ.txt" ]; then
-GPUdm2wfsrefZ=$( cat ./conf/conf_GPUdm2wfsrefZ.txt )
-else
-GPUdm2wfsrefZ="0" # default
-fi
-
-
-
-
-GPUmode=$( cat ./conf/conf_GPU.txt )
-if [[ -f "./conf/conf_GPU.txt" && ( "$GPUmode" = "0" || "$GPUmode" = "1" || "$GPUmode" = "2" || "$GPUmode" = "3" || "$GPUmode" = "4" || "$GPUmode" = "5" ) ]]; then
-echo "OK"
-else
-echo "0" > ./conf/conf_GPU.txt
-GPUmode=0
-fi
-
-
-if [ "0" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev0.txt"
-GPU0device=$( cat $file )
-if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPU0device="0"
-fi
-fi
-
-
-if [ "1" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev1.txt"
-GPU1device=$( cat $file )
-if [[ -f "$file" && ${GPU1device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "1" > $file
-GPU1device="1"
-fi
-fi
-
-if [ "2" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev2.txt"
-GPU2device=$( cat $file )
-if [[ -f "$file" && ${GPU2device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "2" > $file
-GPU2device="2"
-fi
-fi
-
-
-if [ "3" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev3.txt"
-GPU3device=$( cat $file )
-if [[ -f "$file" && ${GPU3device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "3" > $file
-GPU3device="3"
-fi
-fi
-
-if [ "4" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev4.txt"
-GPU4device=$( cat $file )
-if [[ -f "$file" && ${GPU4device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "4" >  $file
-GPU4device="4"
-fi
-fi
-
-if [ "5" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev5.txt"
-GPU5device=$( cat $file )
-if [[ -f "$file" && ${GPU5device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "5" > $file
-GPU5device="5"
-fi
-fi
-
-if [ "6" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev6.txt"
-GPU6device=$( cat $file )
-if [[ -f "$file" && ${GPU6device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "6" > $file
-GPU6device="6"
-fi
-fi
-
-if [ "7" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev7.txt"
-GPU7device=$( cat $file )
-if [[ -f "$file" && ${GPU7device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "7" > $file
-GPU7device="7"
-fi
-fi
-
-if [ "8" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev8.txt"
-GPU8device=$( cat $file )
-if [[ -f "$file" && ${GPU8device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "8" > $file
-GPU8device="8"
-fi
-fi
-
-if [ "9" -lt "$GPUmode" ]; then
-file="./conf/conf_GPUset0_dev9.txt"
-GPU9device=$( cat $file )
-if [[ -f "$file" && ${GPU9device} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "9" > $file
-GPU9device="9"
-fi
-fi
-
-
-
-
-GPUmodeARPF=$( cat ./conf/conf_GPU_ARPF.txt )
-if [[ -f "./conf/conf_GPU_ARPF.txt" && ( "$GPUmodeARPF" = "0" || "$GPUmodeARPF" = "1" || "$GPUmodeARPF" = "2" || "$GPUmodeARPF" = "3" || "$GPUmodeARPF" = "4" || "$GPUmodeARPF" = "5" ) ]]; then
-echo "OK"
-else
-echo "0" > ./conf/conf_GPU_ARPF.txt
-GPUmodeARPF=0
-fi
-
-
-if [ "0" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev0.txt"
-GPU0ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU0ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPU0ARPFdevice="0"
-fi
-fi
-
-
-if [ "1" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev1.txt"
-GPU1ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU1ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "1" > $file
-GPU1ARPFdevice="1"
-fi
-fi
-
-
-if [ "2" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev2.txt"
-GPU2ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU2ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "2" > $file
-GPU2ARPFdevice="2"
-fi
-fi
-
-
-if [ "3" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev3.txt"
-GPU3ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU3ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "3" > $file
-GPU3ARPFdevice="3"
-fi
-fi
-
-
-if [ "4" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev4.txt"
-GPU4ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU4ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "4" >  $file
-GPU4ARPFdevice="4"
-fi
-fi
-
-
-if [ "5" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev5.txt"
-GPU5ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU5ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "5" > $file
-GPU5ARPFdevice="5"
-fi
-fi
-
-
-if [ "6" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev6.txt"
-GPU6ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU6ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "6" > $file
-GPU6ARPFdevice="6"
-fi
-fi
-
-
-if [ "7" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev7.txt"
-GPU7ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU7ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "7" > $file
-GPU7ARPFdevice="7"
-fi
-fi
-
-
-if [ "8" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev8.txt"
-GPU8ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU8ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "8" > $file
-GPU8ARPFdevice="8"
-fi
-fi
-
-
-if [ "9" -lt "$GPUmodeARPF" ]; then
-file="./conf/conf_GPUsetARPF_dev9.txt"
-GPU9ARPFdevice=$( cat $file )
-if [[ -f "$file" && ${GPU9ARPFdevice} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "9" > $file
-GPU9ARPFdevice="9"
-fi
-fi
-
-
-
-if [ "${dm2dm_mode}" = "0" ]; then
-
-file="./conf/conf_GPUmodesextrwfs.txt"
-GPUmodesextrwfs=$( cat $file )
-if [[ -f "$file" && ${GPUmodesextrwfs} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "5" > $file
-GPUmodesextrwfs="5"
-fi
-
-file="./conf/conf_GPUdmfwb.txt"
-GPUdmfwb=$( cat $file )
-if [[ -f "$file" && ${GPUdmfwb} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPUdmfwb="0"
-fi
-
-
-
-file="./conf/conf_GPUzpoffsetZ.txt"
-GPUzpoffsetZ=$( cat $file )
-if [[ -f "$file" && ${GPUzpoffsetZ} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "8" > $file
-GPUzpoffsetZ="8"
-fi
-
-
-fi
-
-
-
-if [ "${dm2dm_mode}" = "1" ]; then
-
-file="./conf/conf_GPUzpoffsetM.txt"
-GPUzpoffsetM=$( cat $file )
-if [[ -f "$file" && ${GPUzpoffsetM} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "7" > $file
-GPUzpoffsetM="7"
-fi
-
-fi
-
-
-
-CMmode=$( cat ./conf/conf_CMmode.txt )
-
-
-if [[ "${GPUmode}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
- GPUallmode=$( cat ./conf/conf_GPUall.txt )
- if [[ -f "./conf/conf_GPUall.txt" && ( "$GPUallmode" = "1" || "$GPUallmode" = "0" ) ]]; then
- echo "OK"
- else
- echo "0" > ./conf/conf_GPUall.txt
- fi
-else
- echo "0" > ./conf/conf_GPUall.txt
-fi
-
-
-
-
-
-if [[ -f "./conf/conf_CMmode.txt" && ( "$CMmode" = "1" || "$CMmode" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > ./conf/conf_CMmode.txt
-CMmode="0"
-fi
-echo "CM mode = $CMmode"
-
-
-
-# PROCESSES
-
-procONstat=$( cat ./status/stat_procON.txt )
-if [[ -f "./status/stat_procON.txt" && ( "$procONstat" = " ON" || "$procONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_procON.txt
-procONstat="OFF"
-fi
-
-
-file="conf/conf_LOOPPROCESS_EXTRWFSMODES.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_EXTRWFSMODES=$(cat $file)
-	else
-	LOOPPROCESS_EXTRWFSMODES="0"
-	echo "0" > $file
-fi
-
-file="conf/conf_LOOPPROCESS_EXTROLMODES.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_EXTROLMODES=$(cat $file)
-	else
-	LOOPPROCESS_EXTROLMODES="0"
-	echo "0" > $file
-fi
-
-file="conf/conf_LOOPPROCESS_DMFILTWB.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_DMFILTWB=$(cat $file)
-	else
-	LOOPPROCESS_DMFILTWB="0"
-	echo "0" > $file
-fi
-
-file="conf/conf_LOOPPROCESS_ZPO.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_ZPO=$(cat $file)
-	else
-	LOOPPROCESS_ZPO="0"
-	echo "0" > $file
-fi
-
-file="conf/conf_LOOPPROCESS_DMCAVE.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_DMCAVE=$(cat $file)
-	else
-	LOOPPROCESS_DMCAVE="0"
-	echo "0" > $file
-fi
-
-file="conf/conf_LOOPPROCESS_WFSRESAVE.txt"
-if [ -a $file ]
-	then
-	LOOPPROCESS_WFSRESAVE=$(cat $file)
-	else
-	LOOPPROCESS_WFSRESAVE="0"
-	echo "0" > $file
-fi
-
-
-
-
-# LOOP CONTROL
-
-
-file="conf/conf_loopNBstep.txt"
-if [ -f "$file" ]; then
-  loopNBstep=$( cat $file )
-else
-  echo "1" > $file
-  loopNBstep=1
-fi
-
-
-file="./status/stat_procWFSres2refON.txt"
-procWFSres2refONstat=$( cat $file )
-if [[ -f "$file" && ( "$procWFSres2refONstat" = " ON" || "$procWFSres2refONstat" = "OFF" ) ]]; then
- echo "OK"
-else
- echo "OFF" > $file 
- procWFSres2refONstat="OFF"
-fi
-
-
-loopONstat=$( cat ./status/stat_loopON.txt )
-if [ "$procONstat" = " ON" ]; then
- if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
-   echo "OK"
- else
-   echo "OFF" > ./status/stat_loopON.txt
-   loopONstat="OFF"
- fi
-fi
-
-
-# LOOP SETTINGS
-
-file="./conf/conf_DMprimWriteON.txt"
-DMprimWriteON=$( cat $file )
-if [[ -f "$file" && ( "$DMprimWriteON" = "0" || "$DMprimWriteON" = "1" ) ]]; then
- echo "DMprimWriteON OK"
- DMprimWriteON=$( cat $file )
-else
- echo "1" > "$file"
- DMprimWriteON=$( cat $file )
-fi
-
-                          
-AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
-if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
-   echo "OK   $AUTOTUNELIMITS_ON"
-else
-   echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
-   AUTOTUNELIMITS_ON="OFF"
-fi
-
-
-AUTOTUNELIMITperc=1.0
-if [ -f "./conf/conf_AUTOTUNELIMITperc.txt" ]; then
- AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
-fi
-
-AUTOTUNELIMITmcoeff=1.0
-if [ -f "./conf/conf_AUTOTUNELIMITmcoeff.txt" ]; then
- AUTOTUNELIMITmcoeff=$( cat ./conf/conf_AUTOTUNELIMITmcoeff.txt )
-fi
-
-AUTOTUNELIMITdelta=0.001
-if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
- AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
-fi
-
-AUTOTUNEGAINS_ON=$( cat ./status/stat_AUTOTUNEGAINS_ON.txt )
-if [[ -f "./status/stat_AUTOTUNEGAINS_ON.txt" && ( "$AUTOTUNEGAINS_ON" = " ON" || "$AUTOTUNEGAINS_ON" = "OFF" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_AUTOTUNEGAINS_ON.txt
- AUTOTUNEGAINS_ON="OFF"
-fi
-
-# PREDICTIVE CONTROL
-
-file="./conf/conf_ARPFon.txt"
-if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
- echo "ARPFon OK"
- ARPFon=$( cat $file )
-else
- echo "OFF" > "$file"
- ARPFon=$( cat $file )
-fi
-
-
-
-# MODAL BLOCK GAINS AND LIMITS
-
-if [ "$CMMODE" = "MODAL" ]; then
- NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
- for i in `seq 0 $(( $NBblocks - 1 ))`;
- do
-  i2=$(printf "%02d" "$i")
-  NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
-  fname="conf/conf_gainb${i2}.txt"
-  if [ -f "$fname" ]; then
-   gainb[10#${i2}]=$( cat ${fname} )
-  else
-   gainb[10#${i2}]="1.000"
-  fi
-  
-  fname="conf/conf_limitb${i2}.txt"
-  if [ -f "$fname" ]; then
-   limitb[10#${i2}]=$( cat ${fname} )
-  else
-   limitb[10#${i2}]="1.00000"
-  fi
-
-  fname="conf/conf_multfb${i2}.txt"
-  if [ -f "$fname" ]; then
-   multfb[10#${i2}]=$( cat ${fname} )
-  else
-   multfb[10#${i2}]="1.000"
-  fi
- done
-fi
-
-
-# ZONAL ZERO POINT (slow CPU-BASED)
-
-
-zploopONstat0=$( cat ./status/stat_zploopON0.txt )
-if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploopONstat0" = "OFF" || "$zploopONstat0" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON0.txt
- zploopONstat0="OFF"
-fi
-
-
-zploopONstat1=$( cat ./status/stat_zploopON1.txt )
-if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploopONstat1" = "OFF" || "$zploopONstat1" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON1.txt
- zploopONstat1="OFF"
-fi
-
-
-
-zploopONstat2=$( cat ./status/stat_zploopON2.txt )
-if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" || "$zploopONstat2" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON2.txt
- zploopONstat2="OFF"
-fi
-
-
-zploopONstat3=$( cat ./status/stat_zploopON3.txt )
-if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" || "$zploopONstat3" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON3.txt
- zploopONstat3="OFF"
-fi
-
-zploopONstat4=$( cat ./status/stat_zploopON4.txt )
-if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploopONstat4" = "OFF" || "$zploopONstat4" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON4.txt
- zploopONstat4="OFF"
-fi
-
-zploopONstat5=$( cat ./status/stat_zploopON5.txt )
-if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" || "$zploopONstat5" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON5.txt
- zploopONstat5="OFF"
-fi
-
-zploopONstat6=$( cat ./status/stat_zploopON6.txt )
-if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" || "$zploopONstat6" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON6.txt
- zploopONstat6="OFF"
-fi
-
-zploopONstat7=$( cat ./status/stat_zploopON7.txt )
-if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" || "$zploopONstat7" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_zploopON7.txt
- zploopONstat7="OFF"
-fi
-
-
-
-
-
-
-GPUzploopONstat0=$( cat ./status/stat_GPUzploopON0.txt )
-if [[ -f "./status/stat_GPUzploopON0.txt" && ( "GPU$zploopONstat0" = " ON" || "$GPUzploopONstat0" = "OFF" || "$GPUzploopONstat0" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON0.txt
- GPUzploopONstat0="OFF"
-fi
-
-
-GPUzploopONstat1=$( cat ./status/stat_GPUzploopON1.txt )
-if [[ -f "./status/stat_GPUzploopON1.txt" && ( "$GPUzploopONstat1" = " ON" || "$GPUzploopONstat1" = "OFF" || "$GPUzploopONstat1" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON1.txt
- GPUzploopONstat1="OFF"
-fi
-
-
-
-GPUzploopONstat2=$( cat ./status/stat_GPUzploopON2.txt )
-if [[ -f "./status/stat_GPUzploopON2.txt" && ( "$GPUzploopONstat2" = " ON" || "$GPUzploopONstat2" = "OFF" || "$GPUzploopONstat2" = "WFS" ) ]]; then
- echo "OK" 
-else
- echo "OFF" > ./status/stat_GPUzploopON2.txt
- GPUzploopONstat2="OFF"
-fi
-
-
-GPUzploopONstat3=$( cat ./status/stat_GPUzploopON3.txt )
-if [[ -f "./status/stat_GPUzploopON3.txt" && ( "$GPUzploopONstat3" = " ON" || "$GPUzploopONstat3" = "OFF" || "$GPUzploopONstat3" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON3.txt
- GPUzploopONstat3="OFF"
-fi
-
-GPUzploopONstat4=$( cat ./status/stat_GPUzploopON4.txt )
-if [[ -f "./status/stat_GPUzploopON4.txt" && ( "$GPUzploopONstat4" = " ON" || "$GPUzploopONstat4" = "OFF" || "$GPUzploopONstat4" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON4.txt
- GPUzploopONstat4="OFF"
-fi
-
-GPUzploopONstat5=$( cat ./status/stat_GPUzploopON5.txt )
-if [[ -f "./status/stat_GPUzploopON5.txt" && ( "$GPUzploopONstat5" = " ON" || "$GPUzploopONstat5" = "OFF" || "$GPUzploopONstat5" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON5.txt
- GPUzploopONstat5="OFF"
-fi
-
-GPUzploopONstat6=$( cat ./status/stat_GPUzploopON6.txt )
-if [[ -f "./status/stat_GPUzploopON6.txt" && ( "$GPUzploopONstat6" = " ON" || "$GPUzploopONstat6" = "OFF" || "$GPUzploopONstat6" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON6.txt
- GPUzploopONstat6="OFF"
-fi
-
-GPUzploopONstat7=$( cat ./status/stat_GPUzploopON7.txt )
-if [[ -f "./status/stat_GPUzploopON7.txt" && ( "$GPUzploopONstat7" = " ON" || "$GPUzploopONstat7" = "OFF" || "$GPUzploopONstat7" = "WFS" ) ]]; then
- echo "OK"
-else
- echo "OFF" > ./status/stat_GPUzploopON7.txt
- GPUzploopONstat7="OFF"
-fi
-
-
-
-fname="./conf/conf_zpmultcoeff.txt"
-if [ -f "$fname" ]; then
- zpmultcoeff=$( cat ${fname} )
-else
- zpmultcoeff="1.000"
-fi
-
-
-
-# ZONAL ZERO POINT (fast GPU-BASED)
-
-
-
-file="./conf/conf_GPUdm2wfsref.txt"
-GPUdm2wfsref=$( cat $file )
-if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
- echo "OK"
-else
- echo "0" > $file
- GPUdm2wfsref=0
-fi
-
-
-}
-
 
 
 
@@ -881,39 +120,345 @@ echo "sleep 1" >> $scriptfile
 
 
 
-for i in `seq 0 $(( $NBblocks - 1 ))`;
-do
-	     gi=$(printf "%02d" "$i")
+if [ "0" -lt "$NBblocks" ]; then
 
-		file="./conf/conf_limitb${gi}.txt"
-		if [ ! -f "$file" ]; then
-		echo "1.0" > $file
-		fi
-	     limitb[10#${gi}]=$(cat $file )
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
+ConfReadParam gainb00 "1.0"; gainb00="$paramvalue"
+gainb[00]=${gainb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 00 ${gainb[00]}\" C-m" >> $scriptfile
 
-		file="./conf/conf_multfb${gi}.txt"
-		if [ ! -f "$file" ]; then
-		echo "1.0" > $file
-		fi
-	     multfb[10#${gi}]=$(cat $file )
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
-	     
-		file="./conf/conf_gainb${gi}.txt"
-		if [ ! -f "$file" ]; then
-		echo "1.0" > $file
-		fi
-	     gainb[10#${gi}]=$(cat $file )
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 0\" C-m" >> $scriptfile
-	 done
-gi="00"
-file="./conf/conf_gainb${gi}.txt"
-if [ ! -f "$file" ]; then
-echo "echo \"1.0\" > $file" >> $scriptfile
+ConfReadParam limitb00 "1.0"; limitb00="$paramvalue"
+limitb[00]=${limitb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 00 ${limitb[00]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb00 "1.0"; multfb00="$paramvalue"
+multfb[00]=${multfb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 00 ${multfb[00]}\" C-m" >> $scriptfile
+
 fi
-gainb[10#${gi}]=$(cat $file )
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 1\" C-m" >> $scriptfile
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"# test: ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+
+
+if [ "1" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb01 "1.0"; gainb01="$paramvalue"
+gainb[01]=${gainb01}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 01 ${gainb[01]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb01 "1.0"; limitb01="$paramvalue"
+limitb[01]=${limitb01}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 01 ${limitb[01]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb01 "1.0"; multfb01="$paramvalue"
+multfb[01]=${multfb01}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 01 ${multfb[01]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "2" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb02 "1.0"; gainb02="$paramvalue"
+gainb[02]=${gainb02}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 02 ${gainb[02]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb02 "1.0"; limitb02="$paramvalue"
+limitb[02]=${limitb02}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 02 ${limitb[02]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb02 "1.0"; multfb02="$paramvalue"
+multfb[02]=${multfb02}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 02 ${multfb[02]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "3" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb03 "1.0"; gainb03="$paramvalue"
+gainb[03]=${gainb03}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 03 ${gainb[03]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb03 "1.0"; limitb03="$paramvalue"
+limitb[03]=${limitb03}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 03 ${limitb[03]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb03 "1.0"; multfb03="$paramvalue"
+multfb[03]=${multfb03}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 03 ${multfb[03]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "4" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb04 "1.0"; gainb04="$paramvalue"
+gainb[04]=${gainb04}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 04 ${gainb[04]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb04 "1.0"; limitb04="$paramvalue"
+limitb[04]=${limitb04}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 04 ${limitb[04]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb04 "1.0"; multfb04="$paramvalue"
+multfb[04]=${multfb04}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 04 ${multfb[04]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "5" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb05 "1.0"; gainb05="$paramvalue"
+gainb[05]=${gainb05}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 05 ${gainb[05]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb05 "1.0"; limitb05="$paramvalue"
+limitb[05]=${limitb05}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 05 ${limitb[05]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb05 "1.0"; multfb05="$paramvalue"
+multfb[05]=${multfb05}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 05 ${multfb[05]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "6" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb06 "1.0"; gainb06="$paramvalue"
+gainb[06]=${gainb06}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 06 ${gainb[06]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb06 "1.0"; limitb06="$paramvalue"
+limitb[06]=${limitb06}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 06 ${limitb[06]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb06 "1.0"; multfb06="$paramvalue"
+multfb[06]=${multfb06}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 06 ${multfb[06]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "7" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb07 "1.0"; gainb07="$paramvalue"
+gainb[07]=${gainb07}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 07 ${gainb[07]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb07 "1.0"; limitb07="$paramvalue"
+limitb[07]=${limitb07}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 07 ${limitb[07]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb07 "1.0"; multfb07="$paramvalue"
+multfb[07]=${multfb07}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 07 ${multfb[07]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "8" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb08 "1.0"; gainb08="$paramvalue"
+gainb[10#08]=${gainb08}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 08 ${gainb[10#08]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb08 "1.0"; limitb08="$paramvalue"
+limitb[10#08]=${limitb08}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 08 ${limitb[10#08]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb08 "1.0"; multfb08="$paramvalue"
+multfb[10#08]=${multfb08}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 08 ${multfb[10#08]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "9" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb09 "1.0"; gainb09="$paramvalue"
+gainb[10#09]=${gainb09}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 09 ${gainb[10#09]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb09 "1.0"; limitb09="$paramvalue"
+limitb[10#09]=${limitb09}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 09 ${limitb[10#09]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb09 "1.0"; multfb09="$paramvalue"
+multfb[10#09]=${multfb09}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 09 ${multfb[10#09]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "10" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb10 "1.0"; gainb10="$paramvalue"
+gainb[10]=${gainb10}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 10 ${gainb[10]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb10 "1.0"; limitb10="$paramvalue"
+limitb[10]=${limitb10}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 10 ${limitb[10]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb10 "1.0"; multfb10="$paramvalue"
+multfb[10]=${multfb10}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 10 ${multfb[10]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "11" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb11 "1.0"; gainb11="$paramvalue"
+gainb[11]=${gainb11}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 11 ${gainb[11]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb11 "1.0"; limitb11="$paramvalue"
+limitb[11]=${limitb11}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 11 ${limitb[11]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb11 "1.0"; multfb11="$paramvalue"
+multfb[11]=${multfb11}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 11 ${multfb[11]}\" C-m" >> $scriptfile
+
+fi
+
+
+if [ "12" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb12 "1.0"; gainb12="$paramvalue"
+gainb[12]=${gainb12}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 12 ${gainb[12]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb12 "1.0"; limitb12="$paramvalue"
+limitb[12]=${limitb12}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 12 ${limitb[12]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb12 "1.0"; multfb12="$paramvalue"
+multfb[12]=${multfb12}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 12 ${multfb[12]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "13" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb13 "1.0"; gainb13="$paramvalue"
+gainb[13]=${gainb13}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 13 ${gainb[13]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb13 "1.0"; limitb13="$paramvalue"
+limitb[13]=${limitb13}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 13 ${limitb[13]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb13 "1.0"; multfb13="$paramvalue"
+multfb[13]=${multfb13}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 13 ${multfb[13]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "14" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb14 "1.0"; gainb14="$paramvalue"
+gainb[14]=${gainb14}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 14 ${gainb[14]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb14 "1.0"; limitb14="$paramvalue"
+limitb[14]=${limitb14}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 14 ${limitb[14]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb14 "1.0"; multfb14="$paramvalue"
+multfb[14]=${multfb14}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 14 ${multfb[14]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "15" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb15 "1.0"; gainb15="$paramvalue"
+gainb[15]=${gainb15}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 15 ${gainb[15]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb15 "1.0"; limitb15="$paramvalue"
+limitb[15]=${limitb15}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 15 ${limitb[15]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb15 "1.0"; multfb15="$paramvalue"
+multfb[15]=${multfb15}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 15 ${multfb[15]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+if [ "16" -lt "$NBblocks" ]; then
+
+ConfReadParam gainb16 "1.0"; gainb16="$paramvalue"
+gainb[16]=${gainb16}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 16 ${gainb[16]}\" C-m" >> $scriptfile
+
+ConfReadParam limitb16 "1.0"; limitb16="$paramvalue"
+limitb[16]=${limitb16}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 16 ${limitb[16]}\" C-m" >> $scriptfile
+
+ConfReadParam multfb16 "1.0"; multfb16="$paramvalue"
+multfb[16]=${multfb16}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 16 ${multfb[16]}\" C-m" >> $scriptfile
+
+fi
+
+
+
+
+#for i in `seq 0 $(( $NBblocks - 1 ))`;
+#do
+#	     gi=$(printf "%02d" "$i")
+
+#		ConfReadParam limitb${gi} "1.0"; limitb${gi}="$paramvalue"
+
+#		file="./conf/conf_limitb${gi}.txt"
+#		if [ ! -f "$file" ]; then
+#		echo "1.0" > $file
+#		fi
+#	     limitb[10#${gi}]=${limitb${gi}}
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
+
+
+#		ConfReadParam multfb${gi} "1.0"; multfb${gi}="$paramvalue"
+#		file="./conf/conf_multfb${gi}.txt"
+#		if [ ! -f "$file" ]; then
+#		echo "1.0" > $file
+#		fi
+#	     multfb[10#${gi}]=${multfb${gi}}
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
+
+#		ConfReadParam gainb${gi} "0.0"; gainb${gi}="$paramvalue"	     
+#		file="./conf/conf_gainb${gi}.txt"
+#		if [ ! -f "$file" ]; then
+#		echo "1.0" > $file
+#		fi
+#	     gainb[10#${gi}]=${gainb${gi}}
+	     
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 0\" C-m" >> $scriptfile
+#	 done
+
+#gi="00"
+#file="./conf/conf_gainb${gi}.txt"
+#if [ ! -f "$file" ]; then
+#echo "echo \"1.0\" > $file" >> $scriptfile
+#fi
+#gainb[10#${gi}]=$(cat $file )
+#echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 1\" C-m" >> $scriptfile
+#echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"# test: ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+
+
 
 
 #  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
@@ -946,8 +491,8 @@ echo "tmux send-keys -t $tmuxname \"aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol$
 fi
 
 
-
-if [ "$CMmode" -eq "0" ]; then  # if CM multiplication outputs modes
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue" # DM index 
+if [ "$CMMODE" = "0" ]; then  # if CM multiplication outputs modes
 #echo "Linking    /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm  - /tmp/aol${LOOPNUMBER}_modeval.im.shm"
 echo "rm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile
 echo "ln -s /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile
@@ -964,7 +509,7 @@ echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 logRunningProcessQ0 "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 echo "tmux send-keys -t ${tmuxname} \"mv runproc/modesextractwfs.runprocQ runproc/modesextractwfs.runproc\" C-m" >> $scriptfile
-if [ "$CMmode" -eq "1" ]; then
+if [ "$CMMODE" -eq "1" ]; then
 echo "tmux send-keys -t $tmuxname \"./auxscripts/modesextractwfs ${GPUmodesextrwfs}\" C-m" >> $scriptfile
 else
 echo "tmux send-keys -t $tmuxname \"./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}\" C-m" >> $scriptfile
@@ -1054,6 +599,10 @@ fi
 
 }
 
+ 
+ 
+ 
+ 
  
 
 
@@ -1180,24 +729,22 @@ echo "./setupAOloopON" >> $scriptfile
 
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
+
 loopONstat=" ON"
-file="./conf/conf_logmode.txt"
-logMode=$( cat $file )
-if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logMode=0
-fi
-if [ "$logMode" = "1" ] || [ "$logMode" =  "2" ] ;
-then
+
+
+ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
+if [ "$logMode" = "1" ]; then   # log when loop is closed
 start_Telemetrylog_all
 fi
+
 else
 tmux send-keys -t $1 "./$scriptfile" C-m
 fi
 
 }
+
+
 
 
 
@@ -1221,23 +768,16 @@ echo "./setupAOloopOFF" >> $scriptfile
 
 
 
-
-
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
 loopONstat="OFF"
-file="./conf/conf_logmode.txt"
-logMode=$( cat $file )
-if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logMode=0
-fi
-if [ "$logMode" = "0" ] || [ "$logMode" =  "1" ] ;
-then
+
+ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
+
+if [ "$logMode" =  "1" ]; then  # log when loop is closed
 stop_Telemetrylog_all
 fi
+
 else
 tmux send-keys -t $1 "./$scriptfile" C-m
 fi

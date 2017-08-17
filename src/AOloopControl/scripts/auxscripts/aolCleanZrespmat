@@ -107,6 +107,19 @@ fi
 
 
 
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
 
 
 

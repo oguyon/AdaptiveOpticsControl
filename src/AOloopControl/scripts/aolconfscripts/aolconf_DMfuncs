@@ -95,7 +95,7 @@ function initDMfunc {
     # if DM is modal, create simple "./conf/DMmodes.fits"
     if [ "$DMMODE" = "MODAL" ]; then
 ./AOloopControl << EOF
-aolmksimplezpM ${dmxsize} ${dmysize} DMmodes
+aolmksimplezpM ${DMxsize} ${DMysize} DMmodes
 savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes.fits"
 savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes_zonal.fits"
 exitCLI

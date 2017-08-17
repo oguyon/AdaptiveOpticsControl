@@ -53,9 +53,10 @@ menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
-dmxsize=$(cat "./conf/param_DMxsize.txt")
+ConfReadParam DMxsize "0"; DMxsize="$paramvalue"
 menuitems+=( "dmxs" "[${DMxsize}] Set DM x size (if modal control, = number of modes)" )
-dmysize=$(cat "./conf/param_DMysize.txt")
+
+ConfReadParam DMysize "0"; DMysize="$paramvalue"
 menuitems+=( "dmys" "[${DMysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
@@ -67,14 +68,7 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-file="conf/param_DMMODE.txt"
-if [ -f $file ]; then
-DMMODE=$( cat ${DMMODEfile} )
-else
-DMMODE="ZONAL"
-echo "$DMMODE" > $file
-fi
-
+ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue"
 if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( "DMmodeM" "\Zb\Zr DM is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
 else
@@ -84,15 +78,6 @@ fi
 
 
 
-file="./conf/param_DM2DM_mode.txt"
-DM2DM_mode=$( cat $file )
-if [[ -f "$file" && ( "$DM2DM_mode" = "1" || "$DM2DM_mode" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-DM2DM_mode=0
-fi
-
 file="./conf/conf_dm2dmModes_name.txt"
 dm2dmModesMast=$( cat $file )
 
@@ -100,7 +85,9 @@ dm2dmModesMast=$( cat $file )
 
 
 menuitems+=( " " " ")
-if [ "${dm2dm_mode}" = "0" ];
+
+ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue"
+if [ "${DM2DM_mode}" = "0" ];
 then
 menuitems+=( "dm2dmMode1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
 menuitems+=( " " " ")
@@ -111,31 +98,35 @@ then
 menuitems+=( "dm2dmMode0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
 
 
-Readdm2dmMname
-dm2dmMfile="/tmp/${dm2dmM}.im.shm"
-if [ -f $dm2dmMfile ]; then
-getshmimsize ${dm2dmM}
+
+dm2dmMfile="/tmp/aol${LOOPNUMBER}_dm2dmM.im.shm"
+if [ -f $dmd2dmMfile ]; then
+sizestring=$( cat conf/streamlink_dm2dmM.imsize.txt )
+streamname=$( cat conf/streamlink_dm2dmM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn] DM to DM output modes        \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[${OKstr}] DM to DM output modes        \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${streamname}\Zn" )
 fi
 
 
-Readdm2dmOname
-dm2dmOfile="/tmp/${dm2dmO}.im.shm"
-if [ -f $dm2dmOfile ]; then
-getshmimsize ${dm2dmO}
+dm2dmOfile="/tmp/aol${LOOPNUMBER}_dm2dmO.im.shm"
+if [ -f $dmd2dmMfile ]; then
+sizestring=$( cat conf/streamlink_dm2dmO.imsize.txt )
+streamname=$( cat conf/streamlink_dm2dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmO" "[${OKstr}]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[${OKstr}] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${streamname}\Zn" )
 fi
 
 
+
 fi
+
+
 
 
 
@@ -424,7 +415,7 @@ echo "$DMysize" > ./conf/param_DMysize.txt
 	dmxs)
 exec 3>&1;DMxsize=$(dialog --inputbox "DM xsize" 0 0 "$DMxsize" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmxsize" > ./conf/param_DMxsize.txt
+echo "$DMxsize" > ./conf/param_DMxsize.txt
 #aoconflog "set DMsize = $DMxsize"
 ;;
 
@@ -453,7 +444,7 @@ echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
 echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
 ./aolfuncs/aolfunc_StreamLink dmO
 
-echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0.name.txt
 ./aolfuncs/aolfunc_StreamLink dmZP0
 
 echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
@@ -521,12 +512,12 @@ dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 
 # set external loop DM modes controlled by this loop 
 $execname << EOF
-loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$dmxsize]" im
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$DMxsize]" im
 savefits im "!./conf/conf_dm2dmM.fits" 
-cpsh im aol${dmolinknb}_modes0_$dmxsize
+cpsh im aol${dmolinknb}_modes0_$DMxsize
 quit
 EOF
-dm2dmM="aol${dmolinknb}_modes0_$dmxsize"
+dm2dmM="aol${dmolinknb}_modes0_$DMxsize"
 echo "$dm2dmM" > ./conf/streamlink_dm2dmM.name.txt
 ./aolfuncs/aolfunc_StreamLink dm2dmM
 
@@ -541,12 +532,12 @@ echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
 
 # external loop WFS response of modes controlled by this loop
 $execname << EOF
-loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$dmxsize]" im
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$DMxsize]" im
 savefits im "!./conf/conf_dmwrefRM.fits" 
-cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
+cpsh im aol${dmolinknb}_modesWFS0_$DMxsize
 quit
 EOF
-dmwrefRM="aol${dmolinknb}_modesWFS0_$dmxsize"
+dmwrefRM="aol${dmolinknb}_modesWFS0_$DMxsize"
 echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefRM
 
@@ -869,14 +860,12 @@ tmux send-keys -t ${tmuxnameC0} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"Upda
 # zonal calib
 for imname in $RMZONALCALIBlist
 do
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m	
 done
 # modal calib
 for imname in $RMMODALCALIBlist
 do
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m	
 done
 
 

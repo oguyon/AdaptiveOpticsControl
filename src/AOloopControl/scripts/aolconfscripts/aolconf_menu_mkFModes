@@ -54,7 +54,7 @@ case $retval in
 echo "cpamax = $tempfile"
 echo "CPAmax = $cpamax"
 
-file="./conf/conf_cpamax.txt"
+file="./conf/param_cpamax.txt"
 echo "$cpamax" > $file
 
 ;; # button 1:

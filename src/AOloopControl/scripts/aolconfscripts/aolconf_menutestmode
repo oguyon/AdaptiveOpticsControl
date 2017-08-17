@@ -77,46 +77,6 @@ rm runproc/MeasLoopModeResp.runproc
 
 
 
-#########################################################################################
-##          LINEAR SIMULATOR  ON                                                       ##
-#########################################################################################
-
-function function_lsim_on {
-lsimONstat=" ON"
-tmuxname="aol${LOOPNUMBER}linsim"
-tmuxnameD="aol${LOOPNUMBER}linsimD"
-echo " ON" > ./status/stat_lsimON.txt
-logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
-logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
-sleep 0.2
-tmux new-session -d -s ${tmuxnameD}
-sleep 0.2
-tmux new-session -d -s ${tmuxname}
-sleep 0.2
-aoconflog "Start linear WFS simulator"
-tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
-cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
-echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
-
-# turn off DM voltage 
-$execname << EOF
-aoldmvoltOFF 0
-exit
-EOF
-
-# set dark to zero
-$execname << EOF
-readshmim aol${LOOPNUMBER_wfsdark
-imzero aol${LOOPNUMBER_wfsdark
-exit
-EOF
-
-dmdispzero 00 00
-
-Readwfsimcamname
-}
-
 
 
 
@@ -137,54 +97,32 @@ Readwfsimcamname
 
 if [ $state = "menutestmode" ]; then
 stateok=1
-lsimstatus="OFF"
-testloopstatus="OFF"
-testdmturbstatus="OFF"
-
-file="./status/stat_lsimON.txt"
-if [ -a $file ]
-	then
-	lsimstatus=$(echo "$(cat $file)")
-	else
-	lsimstatus="OFF"
-fi
 
 
-file="./status/testloopstatus.txt"
-if [ -a $file ]
-	then
-	testloopstatus=$(echo "$(cat $file)")
-	else
-	testloopstatus="OFF"
-fi
-
-file="./status/testdm${DMindex}turbstatus.txt"
-if [ -a $file ]
-	then
-	testdmturbstatus=$(echo "$(cat $file)")
-	else
-	testdmturbstatus="OFF"
-fi
 
 
-ReadTestDMsize
 
-ReadDMturbampl
-ReadDMturbws
-ReadDMturbtint
-ReadDMturblo
+#ReadTestDMsize
 
-ReadTMsync    # sync mode
-ReadTMdelayus # delay [us]
+#ReadDMturbampl
+#ReadDMturbws
+#ReadDMturbtint
+#ReadDMturblo
 
-menuname="TEST MODE [${testloopstatus}]"
+#ReadTMsync    # sync mode
+#ReadTMdelayus # delay [us]
+
+menuname="TEST MODE"
 
 stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr$string\Zn" )
 
 
 
-### LINEAR SIMULATOR
+
+##########################################
+# LINEAR SIMULATOR
+##########################################
 
 menuitems+=( "-" " " )
 stringcenter "LINEAR SIMULATOR"
@@ -197,44 +135,21 @@ menuitems+=( "zrespMlinsim" "$menustring" )
 makemenuitemstringaolshm "wfsref0linsim" "linear simulation WFS reference"
 menuitems+=( "wfsref0linsim" "$menustring" )
 
-file="./conf/conf_GPUlinsim.txt"
-GPUlinsim=$( cat $file )
-if [[ -f "$file" && ${GPUlinsim} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPUlinsim="0"
-fi
+
+
+ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
 menuitems+=( "GPUlinsim" "[ $GPUlinsim ]    Linear WFS simulation: GPU device" )
 
-
-
-
-file="./conf/conf_linsimdt.txt"
-if [ -a $file ]
-	then
-	linsimdt=$(echo "$(cat $file)")
-	else
-	linsimdt="10000"
-fi
+ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [us]
 menuitems+=( "linsimdt" "[${linsimdt}] Set Linear WFS update interval [us]" )
 
-
-
-file="./conf/conf_linsimDelay.txt"
-linsimDelay=$( cat $file )
-if [[ -f "$file" && ${linsimDelay} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-linsimDelay="0"
-fi
+ConfReadParam linsimDelay "3000"; linsimDelay="$paramvalue" # READ LHS hardware latency [us]
 menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop lag [us]" )
 
 
 
-
-if [ "${lsimstatus}" = "OFF" ];
+StatReadStat lsimON "OFF"; lsimONstat="$statusvalue"
+if [ "${lsimONstat}" = "OFF" ];
 then
 menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    \Zb\Zu ===== START linear simulator =====\ZB\ZU -> aol#_linsimWFS" )
 else
@@ -244,110 +159,88 @@ fi
 
 
 
+
+
+
+##########################################
+# TURBULENCE SIMULATOR
+##########################################
+
 menuitems+=( "-" " " )
 stringcenter "TURBULENCE  -> dm${DMindex}disp10  (tmux aosim${LOOPNUMBER}dm${DMindex}turb)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
+StatReadStat turbON "OFF"; turbONstat="$statusvalue"
+StatReadStat fturbON "OFF"; fturbONstat="$statusvalue"
 
-if [ "${testdmturbstatus}" = "OFF" ];
-then
+StatReadStat turb2fileWriteON "OFF"; turb2fileWriteONstat="$statusvalue"
+
+if [ "${turbONstat}" = "OFF" ]; then
 	menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
+else
+	menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
+fi
+	
+if [ "${fturbONstat}" = "OFF" ]; then
+	if [ "$turb2fileWriteONstat" = "OFF" ]; then
 	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
-else
-	if [ "${testdmturbstatus}" = " ON" ];
-	then
-		menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
-		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
-		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
 	else
+	menuitems+=( "" "\Zr\Z2[runnning]\Zn    \Zr\Z1 ==== WRITE simulated turbulence -> File ====\Zn ")
+	menuitems+=( "" "\Zr\Z2[runnning]\Zn    \Zr\Z1 WAIT UNTIL FILE WRITTEN TO START TURBULENCE\Zn ")
+	fi
+else
+#		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
+#		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
 		menuitems+=( "DMtf2sOFF" "\Z1\Zr             STOP turbulence streaming & zero              \Zn" )
 		menuitems+=( "DMtf2sFRE" "\Z1\Zr             STOP turbulence streaming                     \Zn" )
-		menuitems+=( "-" " " )
-	fi
+#		menuitems+=( "-" " " )
 fi
 
 
+ConfReadParam dmturbampl "0.01"; dmturbampl="$paramvalue"
 menuitems+=( "DMtamp" "DM turbulence amplitude      = ${dmturbampl} um" )
+
+ConfReadParam dmturbws "0"; dmturbws="$paramvalue"
 menuitems+=( "DMtws" "DM turbulence wind speed      = ${dmturbws} m/s" )
+
+ConfReadParam dmturblo "10"; dmturblo="$paramvalue"
 menuitems+=( "DMtlo" "DM turbulence low order coeff = ${dmturblo}" )
+
+ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
 menuitems+=( "DMttint" "DM turbulence interval  = ${dmturbtint} us" )
 
 menuitems+=( "dm1v" "View DM chan 10 (turbulence) stream" )
 menuitems+=( "dm1m" "Monitor DM chan 10 (turbulence) stream" )
 
-menuitems+=( "-" " " )
-stringcenter "START/STOP SIMULATOR   (tmux ao${LOOPNUMBER}test)"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
-
-
-if [ "${testloopstatus}" = "OFF" ];
-then
-menuitems+=( "Start" "             START simulated WFS               " )
-menuitems+=( "-" " ")
-else
-menuitems+=( "Stop" "\Z1\Zr             STOP simulated WFS                             \Zn" )
-menuitems+=( "tv" "view tmux session aol${LOOPNUMBER}test (type CTRL-B + D to exit)")
-fi
-#fi
-menuitems+=( "TMsync" "[${AOsystsimsync}] WFS sync mode")
-menuitems+=( "TMdelay" "[${AOsystsimWFSdelayus} us] WFS delay")
 
 
 
 
-
-
-
-
-
-
+##########################################
+# SINGLE ACTUATOR POKE
+##########################################
 
 menuitems+=( "-" " " )
 stringcenter "SINGLE ACTUATOR POKE"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-file="./conf/conf_testActx.txt"
-if [ -a $file ]
-	then
-	testActx=$(echo "$(cat $file)")
-	else
-	testActx="1"
-fi
+
+ConfReadParam testActx "1"; testActx="$paramvalue"
 menuitems+=( "settax" "[${testActx}] Set test actuator x coord" )
 
-file="./conf/conf_testActy.txt"
-if [ -a $file ]
-	then
-	testActy=$(echo "$(cat $file)")
-	else
-	testActy="1"
-fi
+ConfReadParam testActy "1"; testActy="$paramvalue"
 menuitems+=( "settay" "[${testActy}] Set test actuator y coord" )
 
-
-file="./conf/conf_testActa.txt"
-if [ -a $file ]
-	then
-	testActa=$(echo "$(cat $file)")
-	else
-	testActa="0.1"
-fi
+ConfReadParam testActa "0.1"; testActa="$paramvalue"
 menuitems+=( "settaa" "[${testActa}] Set test actuator Amplitude" )
 
 
 
 
-
-testactstat=$( cat ./status/stat_testact.txt )
-if [[ -f "./status/stat_testact.txt" && ( "$testactstat" = "1" || "$testactstat" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > ./status/stat_testact.txt
-fi
-
-if [ "${testactstat}" = "0" ];
+StatReadStat testactON "0"; testactONstat="$statusvalue"
+if [ "${testactONstat}" = "0" ];
 then
 menuitems+=( "testact1" "             Apply actuator command               " )
 else
@@ -358,23 +251,21 @@ fi
 
 
 
-
+##########################################
+# SYSTEM RESPONSE TEST / CALIBRATION
+##########################################
 
 
 menuitems+=( "-" " " )
 stringcenter "SYSTEM RESPONSE TEST / CALIBRATION"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( " "  " " ) 
 
-file="./conf/conf_mzRMsensAmpnm.txt"
-if [ -a $file ]
-	then
-	mzRMsensAmpnm=$(echo "$(cat $file)")
-	else
-	mzRMsensAmpnm="100"
-fi
+
+
+ConfReadParam mzRMsensAmpnm "100"; mzRMsensAmpnm="$paramvalue"
 menuitems+=( "mzRMsA" "[${mzRMsensAmpnm} nm] RM sensitivity measurement amplitude [nm]" )
 
 menuitems+=( "mzRMs"  "Measure current response matrix sensitivity (ampl = ${mzRMsensAmpnm} nm) -> perfMeas" ) 
@@ -383,40 +274,16 @@ menuitems+=( "mzRMs"  "Measure current response matrix sensitivity (ampl = ${mzR
 menuitems+=( " "  " " ) 
 
 
-file="./conf/conf_testModeNb.txt"
-if [ -a $file ]
-	then
-	testModeNb=$(echo "$(cat $file)")
-	else
-	testModeNb="1"
-fi
+ConfReadParam testModeNb "1"; testModeNb="$paramvalue"
 menuitems+=( "settmn" "[${testModeNb}] Set test mode number" )
 
-file="./conf/conf_testModeAmp.txt"
-if [ -a $file ]
-	then
-	testModeAmp=$(echo "$(cat $file)")
-	else
-	testModeAmp="0.1"
-fi
+ConfReadParam testModeAmp "0.1"; testModeAmp="$paramvalue"
 menuitems+=( "settma" "[${testModeAmp}] Set test mode amplitude" )
 
-file="./conf/conf_testModeDelay.txt"
-if [ -a $file ]
-	then
-	testModeDelay=$(echo "$(cat $file)")
-	else
-	testModeDelay="1000000"
-fi
+ConfReadParam testModeDelay "1000000"; testModeDelay="$paramvalue"
 menuitems+=( "settmd" "[${testModeDelay}] Set test mode delay [us]" )
 
-file="./conf/conf_testModeAve.txt"
-if [ -a $file ]
-	then
-	testModeAve=$(echo "$(cat $file)")
-	else
-	testModeAve="50"
-fi
+ConfReadParam testModeAve "50"; testModeAve="$paramvalue"
 menuitems+=( "setave" "[${testModeAve}] Number of WFS frames averaged" )
 
 
@@ -431,13 +298,7 @@ menuitems+=( "-" " STATIC TEST " )
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
 
 
-inj0pONstat=$( cat ./status/stat_inj0pON.txt )
-if [[ -f "./status/stat_inj0pON.txt" && ( "$inj0pONstat" = " ON" || "$inj0pONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_inj0pON.txt
-inj0pONstat="OFF"
-fi
+StatReadStat inj0pON "OFF"; inj0pONstat="$statusvalue"
 if [ "$inj0pONstat" = "OFF" ]; then
 menuitems+=( "inj0pON" "\Zb\Zu ==== START Test mode periodic inject ====\ZB\ZU" )
 else
@@ -447,14 +308,7 @@ fi
 menuitems+=( "inj" "Inject single mode ${testModeNb} (fmodesall basis), amplitude ${testModeAmp} to RM channel" )
 
 
-
-mrecONstat=$( cat ./status/stat_mrecON.txt )
-if [[ -f "./status/stat_mrecON.txt" && ( "$mrecONstat" = " ON" || "$mrecONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_mrecON.txt
-mrecONstat="OFF"
-fi
+StatReadStat mrecON "OFF"; mrecONstat="$statusvalue"
 if [ "$mrecONstat" = "OFF" ]; then
 menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 else
@@ -469,53 +323,23 @@ menuitems+=( "clr" "Clear RM channel" )
 menuitems+=( "-" " " )
 menuitems+=( "-" " DYNAMIC TEST" )
 menuitems+=( "-" " " )
-file="./conf/conf_testModefmin.txt"
-if [ -a $file ]
-	then
-	testModefmin=$(echo "$(cat $file)")
-	else
-	testModefmin="0.1"
-fi
+
+
+ConfReadParam testModefmin "0.1"; testModefmin="$paramvalue"
 menuitems+=( "settmf0" "[${testModefmin}] Set test mode min temporal frequ" )
 
-file="./conf/conf_testModefmax.txt"
-if [ -a $file ]
-	then
-	testModefmax=$(echo "$(cat $file)")
-	else
-	testModefmax="1.0"
-fi
+ConfReadParam testModefmax "1.0"; testModefmax="$paramvalue"
 menuitems+=( "settmf1" "[${testModefmax}] Set test mode max temporal frequ" )
 
-file="./conf/conf_testModefmstep.txt"
-if [ -a $file ]
-	then
-	testModefmstep=$(echo "$(cat $file)")
-	else
-	testModefmstep="1.5"
-fi
+ConfReadParam testModefmstep "1.5"; testModefmstep="$paramvalue"
 menuitems+=( "settmfs" "[${testModefmstep}] Set test mode mult frequ step" )
 
-
-file="./conf/conf_testModeetime.txt"
-if [ -a $file ]
-	then
-	testModeetime=$(echo "$(cat $file)")
-	else
-	testModeetime="2.0"
-fi
+ConfReadParam testModeetime "2.0"; testModeetime="$paramvalue"
 menuitems+=( "settmet" "[${testModeetime}] Set test mode measurement time per frequ" )
 
 
 
-
-dmmtrONstat=$( cat ./status/stat_dmmtrON.txt )
-if [[ -f "./status/stat_dmmtrON.txt" && ( "$dmmtrONstat" = " ON" || "$dmmtrONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_dmmtrON.txt
-dmmtrONstat="OFF"
-fi
+StatReadStat dmmtrON "OFF"; dmmtrONstat="$statusvalue"
 if [ "$dmmtrONstat" = "OFF" ]; then
 menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\ZB\ZU" )
 else
@@ -525,55 +349,20 @@ fi
 
 menuitems+=( " " " " )
 
-
-file="./conf/conf_testDMperMn.txt"
-if [ -a $file ]
-	then
-	testDMperMn=$(echo "$(cat $file)")
-	else
-	testDMperMn="100"
-fi
+ConfReadParam testDMperMn "100"; testDMperMn ="$paramvalue"
 menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
 
-file="./conf/conf_testDMperMdt.txt"
-if [ -a $file ]
-	then
-	testDMperMdt=$(echo "$(cat $file)")
-	else
-	testDMperMdt="10000"
-fi
+ConfReadParam testDMperMdt "10000"; testDMperMdt="$paramvalue"
 menuitems+=( "spmsdt" "[${testDMperMdt}] Set Periodic DM Modal Sequence update interval [us]" )
 
-
-file="./conf/conf_testDMperMfr.txt"
-if [ -a $file ]
-	then
-	testDMperMfr=$(echo "$(cat $file)")
-	else
-	testDMperMfr="10000"
-fi
+ConfReadParam testDMperMfr "10000"; testDMperMfr="$paramvalue"
 menuitems+=( "spmsfr" "[${testDMperMfr}] Set Periodic DM Modal Sequence frequency [Hz]" )
 
-
-file="./conf/conf_testDMperMamp.txt"
-if [ -a $file ]
-	then
-	testDMperMamp=$(echo "$(cat $file)")
-	else
-	testDMperMamp="0.001"
-fi
+ConfReadParam testDMperMamp "0.001"; testDMperMamp="$paramvalue"
 menuitems+=( "spmsamp" "[${testDMperMamp}] Set Periodic DM Modal Sequence amplitude per mode [um]" )
 
 
-
-file="./status/stat_testDMperM.txt"
-testDMperMstat=$( cat $file )
-if [[ -f "$file" && ( "$testDMperMstat" = " ON" || "$testDMperMstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > "$file"
-testDMperMstat="OFF"
-fi
+StatReadStat testDMperM "OFF"; testDMperMstat="$statusvalue"
 if [ "$testDMperMstat" = "OFF" ]; then
 menuitems+=( "spmsON" "Start Periodic DM Modal Sequence" )
 else
@@ -639,22 +428,20 @@ syncmode:\n
 zrespMlinsim)
 	exec 3>&1;
 	zrespMlinsimfname=$(dialog --title "linear simulation: Select Zonal RM" --stdout --title "linear simulation: select zonal RM" --fselect "${zrespMlinsimfname}" $nbwlines $nbwcols)
-	echo "$zrespMlinsimfname" > ./conf/conf_zrespMlinsim_name.txt
-	ReadConfFile "zrespMlinsim"
-	getshmimsize "aol${LOOPNUMBER}_zrespMlinsim"
+	echo "$zrespMlinsimfname" > ./conf/param_zrespMlinsim_name.txt
+	Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim
 ;;
 
 wfsref0linsim)
 	exec 3>&1;
 	wfsref0linsimfname=$(dialog --title "linear simulation: Select WFS ref" --stdout --title "linear simulation: select WFS ref" --fselect "${wfsref0linsimfname}" $nbwlines $nbwcols)
-	echo "$wfsref0linsimfname" > ./conf/conf_wfsref0linsim_name.txt
-	ReadConfFile "wfsref0linsim"
-	getshmimsize "aol${LOOPNUMBER}_wfsref0linsim"
+	echo "$wfsref0linsimfname" > ./conf/param_wfsref0linsim_name.txt
+	Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
 ;;
 
 
     GPUlinsim)
-file="./conf/conf_GPUlinsim.txt"
+file="./conf/param_GPUlinsim.txt"
 exec 3>&1;
 GPUlinsim=$(dialog --inputbox "linear WFS simulation GPU device" 0 0 "$GPUlinsim" 2>&1 1>&3);
 exec 3>&-;
@@ -664,7 +451,7 @@ menucontrolloop_default="GPUlinsim"
 ;;
 
 linsimdt)
-file="./conf/conf_linsimdt.txt"
+file="./conf/param_linsimdt.txt"
 exec 3>&1;
 linsimdt=$(dialog --inputbox "linear WFS simulation time interval [us]" 0 0 "$linsimdt" 2>&1 1>&3);
 exec 3>&-;
@@ -674,7 +461,7 @@ menucontrolloop_default="linsimdt"
 ;;
 
 linsimDelay)
-file="./conf/conf_linsimDelay.txt"
+file="./conf/param_linsimDelay.txt"
 exec 3>&1;
 linsimDelay=$(dialog --inputbox "linear WFS simulation DM lag [us]" 0 0 "$linsimDelay" 2>&1 1>&3);
 exec 3>&-;
@@ -686,14 +473,14 @@ menucontrolloop_default="linsimDelay"
 
 
 	lsimon)
-ReadConfFile "zrespMlinsim"
-ReadConfFile "wfsref0linsim"
-function_lsim_on
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
+./aolfuncs/aolfunc_LHSon
 menutestmode_default="lsimoff"
 ;;
 
 	lsimoff)
-function_lsim_off
+./aolfuncs/aolfunc_LHSoff
 menutestmode_default="lsimon"
 ;;
 
@@ -703,10 +490,12 @@ menutestmode_default="lsimon"
 	tv)
 tmux a -t aol${LOOPNUMBER}test
 ;;
+
 	DMton)
 TestStartTurb
 menutestmode_default="DMtoff"
 ;;
+
 	DMtoff)
 TestStopTurb
 menutestmode_default="DMton"
@@ -718,7 +507,7 @@ menutestmode_default="DMt2f"
 ;;
 
 	DMtf2sON)
-echo "SON" > ./status/testdm${DMindex}turbstatus.txt
+echo " ON" > ./status/stat_fturbON.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
 sleep 0.2
@@ -733,7 +522,7 @@ menutestmode_default="DMtf2sOFF"
 ;;
 
 	DMtf2sOFF)
-echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+echo "OFF" > ./status/stat_fturbON.txt
 tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
@@ -747,7 +536,7 @@ menutestmode_default="DMtf2sON"
 ;;
 
 	DMtf2sFRE)
-echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+echo "OFF" > ./status/stat_turbON.txt
 tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
@@ -766,25 +555,25 @@ tmux a -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 	DMtamp)
 exec 3>&1;dmturbampl=$(dialog --inputbox "DM turbulence amplitude [um]" 0 0 "$dmturbampl" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbampl" > ./conf/conf_dmturbampl.txt
+echo "$dmturbampl" > ./conf/param_dmturbampl.txt
 aoconflog "dmturbampl = ${dmturbampl}"
 ;;
 	DMtws)
 exec 3>&1;dmturbws=$(dialog --inputbox "DM turbulence wind speed [m/s]" 0 0 "$dmturbws" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbws" > ./conf/conf_dmturbws.txt
+echo "$dmturbws" > ./conf/param_dmturbws.txt
 aoconflog "dmturbws = $dmturbws"
 ;;
     DMtlo)
 exec 3>&1;dmturblo=$(dialog --inputbox "DM turbulence low order coeff" 0 0 "$dmturblo" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturblo" > ./conf/conf_dmturblo.txt
+echo "$dmturblo" > ./conf/param_dmturblo.txt
 aoconflog "dmturblo = $dmturblo"
 ;;
 	DMttint)
 exec 3>&1;dmturbtint=$(dialog --inputbox "DM turbulence interval [us]" 0 0 "$dmturbtint" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
+echo "$dmturbtint" > ./conf/param_dmturbtint.txt
 aoconflog "dmturbtint = $dmturbtint"
 ;;
 
@@ -798,33 +587,6 @@ $shmimmonexec dm${DMindex}disp10
 menutestmode_default="dm1m"
 ;;   
 
-   	 Start)
-#if [ $testloopstatus = "OFF" ]; then
-TestModeStart
-#fi
-menutestmode_default="Stop"
-;;   
-   	 Stop) 
-#if [ $testloopstatus = " ON" ]; then
-TestModeStop
-#fi
-menutestmode_default="Start"
-;;  
-	TMsync)
-exec 3>&1;AOsystsimsync=$(dialog --inputbox "Sync mode" 0 0 "$AOsystsimsync" 2>&1 1>&3);
-exec 3>&-;
-echo "$AOsystsimsync" > ./conf/conf_AOsystsimsync.txt
-aoconflog "AOsystsimsync = $AOsystsimsync"
-menutestmode_default="TMsync"
-;;
-	TMdelay)
-exec 3>&1;AOsystsimWFSdelayus=$(dialog --inputbox "WFS cam delay [us]" 0 0 "$AOsystsimWFSdelayus" 2>&1 1>&3);
-exec 3>&-;
-echo "$AOsystsimWFSdelayus" > ./conf/conf_AOsystsimWFSdelayus.txt
-aoconflog "AOsystsimWFSdelayus = $AOsystsimWFSdelayus"
-menutestmode_default="TMdelay"
-;;
-
 
 
 
@@ -832,21 +594,21 @@ menutestmode_default="TMdelay"
     settax)
 exec 3>&1; testActx=$(dialog --inputbox "Set test actuator x" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActx" > ./conf/conf_testActx.txt
+echo "$testActx" > ./conf/param_testActx.txt
 aoconflog "testActx = $testActx"
 ;;
 
     settay)
 exec 3>&1; testActy=$(dialog --inputbox "Set test actuator y" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActy" > ./conf/conf_testActy.txt
+echo "$testActy" > ./conf/param_testActy.txt
 aoconflog "testActy = $testActy"
 ;;
 
     settaa)
 exec 3>&1; testActa=$(dialog --inputbox "Set test actuator a" 0 0 "$testActa" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActa" > ./conf/conf_testActa.txt
+echo "$testActa" > ./conf/param_testActa.txt
 aoconflog "testActa = $testActa"
 ;;
 
@@ -867,7 +629,7 @@ exit
 EOF
 fi
 
-echo "1" > ./status/stat_testact.txt
+echo "1" > ./status/stat_testactON.txt
 aoconflog "testact = 1"
 menutestmode_default="testact0"
 ;;
@@ -887,7 +649,7 @@ setpix ${dmRM} 0.0 $testActx $testActy
 exit
 EOF
 fi
-echo "0" > ./status/stat_testact.txt
+echo "0" > ./status/stat_testactON.txt
 aoconflog "testact = 0"
 menutestmode_default="testact1"
 ;;
@@ -896,19 +658,14 @@ menutestmode_default="testact1"
 	mzRMsA)
 exec 3>&1;mzRMsensAmpnm=$(dialog --inputbox "Set zRM sensitivity measurement amplitude" 0 0 "$mzRMsensAmpnm" 2>&1 1>&3);
 exec 3>&-;
-echo "$mzRMsensAmpnm" > ./conf/conf_mzRMsensAmpnm.txt
+echo "$mzRMsensAmpnm" > ./conf/param_mzRMsensAmpnm.txt
 aoconflog "mzRMsensAmpnm = $mzRMsensAmpnm"
 ;;
 
 
 mzRMs)
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-
-wfslambdanm="800"
-if [ -f "./conf/conf_wfslambdanm.txt" ]; then
-wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
-fi
-
+ConfReadParam wfslambdanm "800"; wfslambdanm="$paramvalue"
 ./auxscripts/aolRMmeas_sensitivity ${mzRMsensAmpnm} ${wfslambdanm}
 
 file="conf/conf_conflastloaded_name.txt"
@@ -942,26 +699,26 @@ mv WFSmodesXP.fits ./perfMeas/${outfname}_WFSmodesXP.fits
 	settmn)
 exec 3>&1;testModeNb=$(dialog --inputbox "Set test DM mode number" 0 0 "$testModeNb" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeNb" > ./conf/conf_testModeNb.txt
+echo "$testModeNb" > ./conf/param_testModeNb.txt
 aoconflog "testModeNb = $testModeNb"
 ;;
 	settma)
 exec 3>&1;testModeAmp=$(dialog --inputbox "Set test DM mode amplitude" 0 0 "$testModeAmp" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeAmp" > ./conf/conf_testModeAmp.txt
+echo "$testModeAmp" > ./conf/param_testModeAmp.txt
 aoconflog "testModeAmp = $testModeAmp"
 ;;
 
 	settmd)
 exec 3>&1;testModeDelay=$(dialog --inputbox "Set test DM mode delay [us]" 0 0 "$testModeDelay" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeDelay" > ./conf/conf_testModeDelay.txt
+echo "$testModeDelay" > ./conf/param_testModeDelay.txt
 aoconflog "testModeDelay = $testModeDelay"
 ;;
 	setave)
 exec 3>&1;testModeAve=$(dialog --inputbox "Set number of frames averaged" 0 0 "$testModeAve" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeAve" > ./conf/conf_testModeAve.txt
+echo "$testModeAve" > ./conf/param_testModeAve.txt
 aoconflog "testModeAve = $testModeAve"
 ;;
 
@@ -1091,25 +848,25 @@ tmux send-keys -t $tmuxname "exit" C-m
 	settmf0)
 exec 3>&1;testModefmin=$(dialog --inputbox "Set test DM mode freq min" 0 0 "$testModefmin" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmin" > ./conf/conf_testModefmin.txt
+echo "$testModefmin" > ./conf/param_testModefmin.txt
 aoconflog "testModefmin = $testModefmin"
 ;;
 	settmf1)
 exec 3>&1;testModefmax=$(dialog --inputbox "Set test DM mode freq max" 0 0 "$testModefmax" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmax" > ./conf/conf_testModefmax.txt
+echo "$testModefmax" > ./conf/param_testModefmax.txt
 aoconflog "testModefmax = $testModefmax"
 ;;
 	settmfs)
 exec 3>&1;testModefmstep=$(dialog --inputbox "Set test DM mode freq mult step" 0 0 "$testModefmstep" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmstep" > ./conf/conf_testModefmstep.txt
+echo "$testModefmstep" > ./conf/param_testModefmstep.txt
 aoconflog "testModefmstep = $testModefmstep"
 ;;
 	settmet)
 exec 3>&1;testModeetime=$(dialog --inputbox "Set test DM mode measurement time" 0 0 "$testModeetime" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeetime" > ./conf/conf_testModeetime.txt
+echo "$testModeetime" > ./conf/param_testModeetime.txt
 aoconflog "testModeetime = $testModeetime"
 ;;
 
@@ -1130,7 +887,7 @@ menutestmode_default="dmmtr_on"
 exec 3>&1;
 testDMperMn=$(dialog --inputbox "set test DM periodic mode sequence number of modes" 0 0 "$testDMperMn" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMn" > ./conf/conf_testDMperMn.txt
+echo "$testDMperMn" > ./conf/param_testDMperMn.txt
 aoconflog "testDMperMn = $testDMperMn"
 menutestmode_default="spmsn"
 ;;
@@ -1139,7 +896,7 @@ menutestmode_default="spmsn"
 exec 3>&1;
 testDMperMdt=$(dialog --inputbox "set test DM periodic mode sequence dt [us]" 0 0 "$testDMperMdt" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMdt" > ./conf/conf_testDMperMdt.txt
+echo "$testDMperMdt" > ./conf/param_testDMperMdt.txt
 aoconflog "testDMperMdt = $testDMperMdt"
 menutestmode_default="spmsdt"
 ;;
@@ -1148,7 +905,7 @@ menutestmode_default="spmsdt"
 exec 3>&1;
 testDMperMfr=$(dialog --inputbox "set test DM periodic mode sequence frequency [Hz]" 0 0 "$testDMperMfr" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMfr" > ./conf/conf_testDMperMfr.txt
+echo "$testDMperMfr" > ./conf/param_testDMperMfr.txt
 aoconflog "testDMperMfr = $testDMperMfr"
 menutestmode_default="spmsfr"
 ;;
@@ -1157,7 +914,7 @@ menutestmode_default="spmsfr"
 exec 3>&1;
 testDMperMamp=$(dialog --inputbox "set test DM periodic mode sequence ampl [um]" 0 0 "$testDMperMamp" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMamp" > ./conf/conf_testDMperMamp.txt
+echo "$testDMperMamp" > ./conf/param_testDMperMamp.txt
 aoconflog "testDMperMamp = $testDMperMamp"
 menutestmode_default="spmsamp"
 ;;

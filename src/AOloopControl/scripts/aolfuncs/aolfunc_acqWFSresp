@@ -44,6 +44,9 @@ dir_conf_staged="conf_staged"
 
 
 
+##############################################
+# FUNCTION: READ PARAMETER FROM FILE
+##############################################
 # arg 1: parameter name
 # arg 2: default value
 # 
@@ -73,29 +76,21 @@ LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
 fi
 
-ConfReadParam DMMODE "0"
-DMMODE="$paramvalue"
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue"
 
-ConfReadParam ACzrmNBcycle "5"
-ACzrmNBcycle="$paramvalue"
+ConfReadParam ACzrmNBcycle "5"; ACzrmNBcycle="$paramvalue"
 
-ConfReadParam delayRM1us "0"
-delayRM1us="$paramvalue"
+ConfReadParam delayRM1us "0"; delayRM1us="$paramvalue"
 
-ConfReadParam RMamplum "0.05"
-RMamplum="$paramvalue"
+ConfReadParam RMamplum "0.05"; RMamplum="$paramvalue"
 
-ConfReadParam RMdelayfr "2"
-RMdelayfr="$paramvalue"
+ConfReadParam RMdelayfr "2"; RMdelayfr="$paramvalue"
 
-ConfReadParam RMfrave "5"
-RMfrave="$paramvalue"
+ConfReadParam RMfrave "5"; RMfrave="$paramvalue"
 
-ConfReadParam RMexfr "2"
-RMexfr="$paramvalue"
+ConfReadParam RMexfr "2"; RMexfr="$paramvalue"
 
-ConfReadParam WFSnorm "1"
-WFSnorm="$paramvalue"
+ConfReadParam WFSnorm "1"; WFSnorm="$paramvalue"
 
 
 ConfReadParam RMCalibReuseMasks "0"
@@ -109,11 +104,11 @@ if [ "$DMMODE" = "ZONAL" ]; then
 	ConfReadParam ACmrmNBcycle "5"
 	ACmrmNBcycle="$paramvalue"
 	
-    ConfReadParam rmMcpa "1.0"
-    rmMcpa="$paramvalue"
+    ConfReadParam RMMcpa "1.0"
+    RMMcpa="$paramvalue"
     
-	ConfReadParam rmMamplum "0.1"
-	rmMamplum="$paramvalue"
+	ConfReadParam RMMamplum "0.1"
+	RMMamplum="$paramvalue"
 fi
 
 
@@ -133,13 +128,13 @@ fi
 #
 function function_acqWFSresp_LOmodes {
 
-./auxscripts/aolmkLO_DMmodes ${rmMcpa}
+./auxscripts/aolmkLO_DMmodes ${RMMcpa}
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null # is aolrun running ?
 then # use option -r to re-use AO shared memory configuration
-    ./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+    ./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
 else
-    ./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+    ./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
 fi
 }
 
@@ -270,15 +265,17 @@ fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
 
 
 echo "####################################################"
-echo "# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask    "
+echo "# UPDATE wfsref00, zrespM TO NORMALIZE FLUX OVER wfsmask    "
 echo "####################################################"
 # 
 # INPUT
 #	wfsref00.fits
 #	wfsmask.fits
-#
+#   zrespM.fits
+#  
 # OUTPUT
 #	wfsref0.fits
+#   zrespM.fits
 #
 $execname << EOF
 loadfits wfsref00.fits im0
@@ -286,13 +283,18 @@ loadfits wfsmask.fits wfm
 a=itot(im0)/itot(im0*wfm)
 im1=im0*a
 savefits im1 "!wfsref0.fits"
+loadfits "zrespM.fits" zrespm
+zrespm1=zrespm*a
+savefits zrespm1 "!zrespM.fits"
 listim
 exitCLI
 EOF
 
 
+
+
 echo "####################################################"
-echo "# COPY TO ARCHIVE                                   "
+echo "# COPY TO ARCHIVE DIRECTORIES                                 "
 echo "####################################################"
 
 for imname in $RMZONALCALIBlist
@@ -318,7 +320,7 @@ echo "####################################################"
 #	respM_LOmodes.fits
 #
 # OUTPUT:
-#	LOzrespmat0.fits
+#	LOrespM.fits
 #	LOwfsref0.fits
 #
 
@@ -326,6 +328,43 @@ if [ "$RMCalibReuseMasks" = "0" ]; then
 # don't reuse modes
 function_acqWFSresp_LOmodes
 fi
+
+
+
+
+
+echo "####################################################"
+echo "# UPDATE LOwfsref0 LOrespmat0 TO NORMALIZE FLUX OVER wfsmask    "
+echo "####################################################"
+# 
+# INPUT
+#	LOrespM.fits
+#	wfsmask.fits
+#   LOwfsref0.fits
+#  
+# OUTPUT
+#	LOwfsref0.fits
+#   LOrespM.fits
+#
+$execname << EOF
+loadfits LOwfsref0.fits im0
+loadfits wfsmask.fits wfm
+a=itot(im0)/itot(im0*wfm)
+im1=im0*a
+savefits im1 "!LOwfsref0.fits"
+loadfits "LOrespM.fits" LOrespm
+LOrespm1=LOrespm*a
+savefits LOrespm1 "!LOrespM.fits"
+listim
+exitCLI
+EOF
+
+
+
+
+
+
+
 
 echo "####################################################"
 echo "# COPY LOW ORDER RESPONSE TO ARCHIVE                "

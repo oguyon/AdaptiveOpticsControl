@@ -492,6 +492,7 @@ long linopt_imtools_mask_to_pixtable(const char *IDmask_name, const char *IDpixi
 }
 
 
+
 //
 //
 //
@@ -548,6 +549,8 @@ long linopt_imtools_Image_to_vec(const char *ID_name, const char *IDpixindex_nam
 
     return(ID);
 }
+
+
 
 
 
@@ -1717,21 +1720,21 @@ long linopt_imtools_image_fitModes(const char *ID_name, const char *IDmodes_name
    
 
 	#ifdef HAVE_MAGMA
-		printf(" -> Entering CUDACOMP_magma_compute_SVDpseudoinverse \n");
-		fflush(stdout); 
+		//printf(" -> Entering CUDACOMP_magma_compute_SVDpseudoinverse \n");
+		//fflush(stdout); 
 		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat", 0);
-		printf(" -> Exiting  CUDACOMP_magma_compute_SVDpseudoinverse \n");
-		fflush(stdout);
+		//printf(" -> Exiting  CUDACOMP_magma_compute_SVDpseudoinverse \n");
+		//fflush(stdout);
 	#else
         linopt_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
    #endif
     }
 
-    printf(" -> Entering linopt_imtools_Image_to_vec \n");
-    fflush(stdout);
+    //printf(" -> Entering linopt_imtools_Image_to_vec \n");
+    //fflush(stdout);
     linopt_imtools_Image_to_vec(ID_name, "_fm_pixind", "_fm_pixmul", "_fm_measvec");
-    printf(" -> Exiting linopt_imtools_Image_to_vec \n");
-    fflush(stdout);
+    //printf(" -> Exiting linopt_imtools_Image_to_vec \n");
+    //fflush(stdout);
 
     IDmvec = image_ID("_fm_measvec");
     IDrecm = image_ID("_fm_recm");
@@ -1743,11 +1746,11 @@ long linopt_imtools_image_fitModes(const char *ID_name, const char *IDmodes_name
 
     IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
 
-	printf(" -> Entering cblas_sgemv \n");
-	fflush(stdout);
+	//printf(" -> Entering cblas_sgemv \n");
+	//fflush(stdout);
     cblas_sgemv (CblasRowMajor, CblasNoTrans, m, n, 1.0,  data.image[IDrecm].array.F, n, data.image[IDmvec].array.F, 1, 0.0, data.image[IDcoeff].array.F, 1);
-	printf(" -> Exiting cblas_sgemv \n");
-	fflush(stdout);
+	//printf(" -> Exiting cblas_sgemv \n");
+	//fflush(stdout);
 
     // for(ii=0;ii<m;ii++)
     //   printf("  coeff %03ld  =  %g\n", ii, data.image[IDcoeff].array.F[ii]);

@@ -22,13 +22,13 @@ Notations: \n
   \Z1missing file or stream\Zn\n
 \n
 For all configurations files (not including Hardware I/O links) :\n
-  File \Zbconf/conf_<name>_name.txt\Zn contains the original .fits file path and name\n
+  File \Zbconf/shmim_<name>.name.txt\Zn contains the original .fits file path and name\n
   A symbolic link to the FITS file is written as \Zuconf/aol${LOOPNUMBER}_<name>.fits\Zn\n
   File is loaded in shared memory as /tmp/\Z4aol${LOOPNUMBER}_<name>\Zn.im.shm\n
 "
 
 
-function_controlmatrix_readparams
+#function_controlmatrix_readparams
 
 confOK=1
 stringcenter "HELP"
@@ -36,72 +36,83 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
-
+ConfReadParam SVDlimall "0.01"; SVDlimall=${paramvalue}
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
 
 
 
-
-
+# to read variable:
+# ConfReadParam  ""; =${paramvalue}
 
 
 if [ "$DMMODE" = "MODAL" ]; then
 
-
+ConfReadParam NBmodeblocks "0"; NBmodeblocks=${paramvalue}
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
 if [ "0" -lt "$NBmodeblocks" ]; then
+ConfReadParam block00end "1"; block00end=${paramvalue}
 menuitems+=( "bl00e" "            [ $block00end ]    block 00:  000 -> $block00end" )
 fi
 
 
 if [ "1" -lt "$NBmodeblocks" ]; then
+ConfReadParam block01end "2"; block01end=${paramvalue}
 menuitems+=( "bl01e" "            [ $block01end ]    block 01:  $block00end -> $block01end" )
 fi
 
 
 if [ "2" -lt "$NBmodeblocks" ]; then
+ConfReadParam block02end "3"; block02end=${paramvalue}
 menuitems+=( "bl02e" "            [ $block02end ]    block 02:  $block01end -> $block02end" )
 fi
 
 
 if [ "3" -lt "$NBmodeblocks" ]; then
+ConfReadParam block03end "4"; block03end=${paramvalue}
 menuitems+=( "bl03e" "            [ $block03end ]    block 03:  $block02end -> $block03end" )
 fi
 
 
 if [ "4" -lt "$NBmodeblocks" ]; then
+ConfReadParam block04end "5"; block04end=${paramvalue}
 menuitems+=( "bl04e" "            [ $block04end ]    block 04:  $block03end -> $block04end" )
 fi
 
 
 if [ "5" -lt "$NBmodeblocks" ]; then
+ConfReadParam block05end "6"; block05end=${paramvalue}
 menuitems+=( "bl05e" "            [ $block05end ]    block 05:  $block04end -> $block05end" )
 fi
 
 
 if [ "6" -lt "$NBmodeblocks" ]; then
+ConfReadParam block06end "7"; block06end=${paramvalue}
 menuitems+=( "bl06e" "            [ $block06end ]    block 06:  $block05end -> $block06end" )
 fi
 
 
 if [ "7" -lt "$NBmodeblocks" ]; then
+ConfReadParam block07end "8"; block07end=${paramvalue}
 menuitems+=( "bl07e" "            [ $block07end ]    block 07:  $block06end -> $block07end" )
 fi
 
 
 if [ "8" -lt "$NBmodeblocks" ]; then
+ConfReadParam block08end "9"; block08end=${paramvalue}
 menuitems+=( "bl08e" "            [ $block08end ]    block 08:  $block07end -> $block08end" )
 fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
+ConfReadParam  block09end"10"; block09end=${paramvalue}
 menuitems+=( "bl09e" "            [ $block09end ]    block 09:  $block08end -> $block09end" )
 fi
 
 
 if [ "10" -lt "$NBmodeblocks" ]; then
+ConfReadParam block10end "11"; block10end=${paramvalue}
 menuitems+=( "bl10e" "            [ $block10end ]    block 10:  $block09end -> $block10end" )
 fi
 
@@ -124,25 +135,25 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM ZONAL RESPONSE -> CONTROL MATRIX"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
-makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
+makemenuitemstringaolshm "zrespM" "Zonal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
 
-
-menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]  (./conf_staged/aol${LOOPNUMBER}_zrespM.fits -> ./conf_staged/conf_contrM_name.txt)" )
-
-
+#Q? ConfReadParam SVDNBmodes "00"; SVDNBmodes=${paramvalue}
+menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]  (./conf_staged/aol${LOOPNUMBER}_zrespM.fits -> ./conf_staged/shmim_contrM.name.txt)" )
 
 
 
 
+
+ConfReadParam DMMODE "ZONAL"; DMMODE=${paramvalue}
 if [ "$DMMODE" = "ZONAL" ]; then
 
-
- if [ "$CMMODE" = "ZONAL" ]; then
- menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+ConfReadParam CMMODE "0"; CMMODE=${paramvalue}
+ if [ "$CMMODE" = "1" ]; then
+ menuitems+=( "CMmode0" "\Zb\Zrcurrent Combined mode is $CMMODE\Zn  WFSpix -> ACT                       (select to toggle)" )
  else
- menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+ menuitems+=( "CMmode1" "\Zb\Zrcurrent Combined mode is $CMMODE\Zn  WFSpix -> MODES                     (select to toggle)" )
  fi
 
 
@@ -157,30 +168,40 @@ if [ "$DMMODE" = "ZONAL" ]; then
  menuitems+=( " " " " )
 
 
+ConfReadParam extrablockIndex "5"; extrablockIndex=${paramvalue}
  menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
 
 
- if [ -f "./extrablockM.fits" ]; then
-	if [ -f "./conf/extrablockM.fits" ]; then
-	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
+ if [ -f "./extrablockM.fits.gz" ]; then
+	if [ -f "./conf/extrablockM.fits.gz" ]; then
+	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits.gz)" )
 	else
-	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
+	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits.gz)" )
 	fi
  else
- menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
+ menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits.gz does not exist)" )
  fi
 
 
 
 
  menuitems+=( " " " " )
+ 
+ConfReadParam cpamax "00"; cpamax=${paramvalue}
  menuitems+=( "modeCPA" "[$cpamax] Select maximum CPA" )
+
  menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
  #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
 fi 
 
 
+
+
+staged_mkmodesdatestr=$(stat -c %y ./conf_staged/param_NBmodeblocks.txt)
+staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
+staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
+staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
@@ -190,7 +211,14 @@ menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
 
 
+#mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
+#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 
+mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
+mkmodesdatestr=${mkmodesdatestr% *}
+
+ConfReadParam NBmodeblocks "00"; NBmodeblocks=${paramvalue}
+ConfReadParam NBmodes "00"; NBmodes=${paramvalue}
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
@@ -214,7 +242,6 @@ menuitems+=( "CM" "$menustring" )
 
 
 
-
 menuitems+=( " " " " )
 stringcenter " ACTIVE CONFIGURATION : BLOCK DECOMPOSITION (ACTIVE CONFIGURATION)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
@@ -226,6 +253,7 @@ i2=$(printf "%02d" "$i")
 
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
+SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
 
 makemenuitemstringaolshm "DMmodes${i2}" "DM control modes"
@@ -325,7 +353,7 @@ SYSTEM MODAL RESPONSE AND CONTROL:\n
 
 
      sNBb) 
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 menuitems1=( "01" "NBmodeblocks = 01" )
 for i in 02 03 04 05 06 07 08 09 10 11 12 13 14 15;
         do
@@ -334,58 +362,58 @@ done
 
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 NBmodeblocks=$("${cmd[@]}" 2>&1 >/dev/tty)
-echo "$NBmodeblocks" > ./conf/conf_NBmodeblocks.txt
+echo "$NBmodeblocks" > ./conf/param_NBmodeblocks.txt
 aoconflog "set NBmodeblocks = $NBmodeblocks"
 
 
 if [ "$NBmodeblocks" = "01" ]; then
 block00end="$mNBmodes"
-echo $block00end > ./conf/conf_block00end.txt
+echo $block00end > ./conf/param_block00end.txt
 fi
 
 if [ "$NBmodeblocks" = "02" ]; then
 block01end="$mNBmodes"
-echo "$block01end" > ./conf/conf_block01end.txt
+echo "$block01end" > ./conf/param_block01end.txt
 fi
 
 if [ "$NBmodeblocks" = "03" ]; then
 block02end="$mNBmodes"
-echo "$block02end" > ./conf/conf_block02end.txt
+echo "$block02end" > ./conf/param_block02end.txt
 fi
 
 if [ "$NBmodeblocks" = "04" ]; then
 block03end="$mNBmodes"
-echo "$block03end" > ./conf/conf_block03end.txt
+echo "$block03end" > ./conf/param_block03end.txt
 fi
 
 if [ "$NBmodeblocks" = "05" ]; then
 block04end="$mNBmodes"
-echo "$block04end" > ./conf/conf_block04end.txt
+echo "$block04end" > ./conf/param_block04end.txt
 fi
 
 if [ "$NBmodeblocks" = "06" ]; then
 block05end="$mNBmodes"
-echo "$block05end" > ./conf/conf_block05end.txt
+echo "$block05end" > ./conf/param_block05end.txt
 fi
 
 if [ "$NBmodeblocks" = "07" ]; then
 block06end="$mNBmodes"
-echo "$block06end" > ./conf/conf_block06end.txt
+echo "$block06end" > ./conf/param_block06end.txt
 fi
 
 if [ "$NBmodeblocks" = "08" ]; then
 block07end="$mNBmodes"
-echo "$block07end" > ./conf/conf_block07end.txt
+echo "$block07end" > ./conf/param_block07end.txt
 fi
 
 if [ "$NBmodeblocks" = "09" ]; then
 block08end="$mNBmodes"
-echo "$block08end" > ./conf/conf_block08end.txt
+echo "$block08end" > ./conf/param_block08end.txt
 fi
 
 if [ "$NBmodeblocks" = "10" ]; then
 block09end="$mNBmodes"
-echo "$block09end" > ./conf/conf_block09end.txt
+echo "$block09end" > ./conf/param_block09end.txt
 fi
 
 
@@ -400,7 +428,7 @@ exec 3>&1;
 block00end=$(dialog --inputbox "end of block 00" 0 0 "$block00end" 2>&1 1>&3);
 exec 3>&-;
 block00end=$( echo $block00end | awk '{ printf("%03d", $1)}' )
-echo "$block00end" > ./conf/conf_block00end.txt
+echo "$block00end" > ./conf/param_block00end.txt
 ;;
 
 	bl01e)
@@ -408,7 +436,7 @@ exec 3>&1;
 block01end=$(dialog --inputbox "end of block 01" 0 0 "$block01end" 2>&1 1>&3);
 exec 3>&-;
 block01end=$( echo $block01end | awk '{ printf("%03d", $1)}' )
-echo "$block01end" > ./conf/conf_block01end.txt
+echo "$block01end" > ./conf/param_block01end.txt
 ;;
 	
 	bl02e)
@@ -416,7 +444,7 @@ exec 3>&1;
 block02end=$(dialog --inputbox "end of block 02" 0 0 "$block02end" 2>&1 1>&3);
 exec 3>&-;
 block02end=$( echo $block02end | awk '{ printf("%03d", $1)}' )
-echo "$block02end" > ./conf/conf_block02end.txt
+echo "$block02end" > ./conf/param_block02end.txt
 ;;
 
 	bl03e)
@@ -424,7 +452,7 @@ exec 3>&1;
 block03end=$(dialog --inputbox "end of block 03" 0 0 "$block03end" 2>&1 1>&3);
 exec 3>&-;
 block03end=$( echo $block03end | awk '{ printf("%03d", $1)}' )
-echo "$block03end" > ./conf/conf_block03end.txt
+echo "$block03end" > ./conf/param_block03end.txt
 ;;
 
 	bl04e)
@@ -432,7 +460,7 @@ exec 3>&1;
 block04end=$(dialog --inputbox "end of block 04" 0 0 "$block04end" 2>&1 1>&3);
 exec 3>&-;
 block04end=$( echo $block04end | awk '{ printf("%03d", $1)}' )
-echo "$block04end" > ./conf/conf_block04end.txt
+echo "$block04end" > ./conf/param_block04end.txt
 ;;
 
 	bl05e)
@@ -440,7 +468,7 @@ exec 3>&1;
 block05end=$(dialog --inputbox "end of block 05" 0 0 "$block05end" 2>&1 1>&3);
 exec 3>&-;
 block05end=$( echo $block05end | awk '{ printf("%03d", $1)}' )
-echo "$block05end" > ./conf/conf_block05end.txt
+echo "$block05end" > ./conf/param_block05end.txt
 ;;
 
 	bl06e)
@@ -448,7 +476,7 @@ exec 3>&1;
 block06end=$(dialog --inputbox "end of block 06" 0 0 "$block06end" 2>&1 1>&3);
 exec 3>&-;
 block06end=$( echo $block06end | awk '{ printf("%03d", $1)}' )
-echo "$block06end" > ./conf/conf_block06end.txt
+echo "$block06end" > ./conf/param_block06end.txt
 ;;
 
 	bl07e)
@@ -456,7 +484,7 @@ exec 3>&1;
 block07end=$(dialog --inputbox "end of block 07" 0 0 "$block07end" 2>&1 1>&3);
 exec 3>&-;
 block07end=$( echo $block07end | awk '{ printf("%03d", $1)}' )
-echo "$block07end" > ./conf/conf_block07end.txt
+echo "$block07end" > ./conf/param_block07end.txt
 ;;
 
 	bl08e)
@@ -464,7 +492,7 @@ exec 3>&1;
 block08end=$(dialog --inputbox "end of block 08" 0 0 "$block08end" 2>&1 1>&3);
 exec 3>&-;
 block08end=$( echo $block08end | awk '{ printf("%03d", $1)}' )
-echo "$block08end" > ./conf/conf_block08end.txt
+echo "$block08end" > ./conf/param_block08end.txt
 ;;
 
 	bl09e)
@@ -472,7 +500,7 @@ exec 3>&1;
 block09end=$(dialog --inputbox "end of block 09" 0 0 "$block09end" 2>&1 1>&3);
 exec 3>&-;
 block09end=$( echo $block09end | awk '{ printf("%03d", $1)}' )
-echo "$block09end" > ./conf/conf_block09end.txt
+echo "$block09end" > ./conf/param_block09end.txt
 ;;
 
 	bl10e)
@@ -480,22 +508,22 @@ exec 3>&1;
 block10end=$(dialog --inputbox "end of block 10" 0 0 "$block10end" 2>&1 1>&3);
 exec 3>&-;
 block10end=$( echo $block10end | awk '{ printf("%03d", $1)}' )
-echo "$block10end" > ./conf/conf_block10end.txt
+echo "$block10end" > ./conf/param_block10end.txt
 ;;
 
 
-CMmodeM)
-CMMODE="MODAL"
-CMMODEfile="conf/conf_CMMODE.txt"
+CMmode0)
+CMMODE="0"
+CMMODEfile="conf/param_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolmatrix_default="CMmodeZ"
+menucontrolmatrix_default="CMmode1"
 ;;
 
-CMmodeZ)
-CMMODE="ZONAL"
-CMMODEfile="conf/conf_CMMODE.txt"
+CMmode1)
+CMMODE="1"
+CMMODEfile="conf/param_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolmatrix_default="CMmodeM"
+menucontrolmatrix_default="CMmode0"
 ;;
 
 
@@ -503,7 +531,7 @@ menucontrolmatrix_default="CMmodeM"
 exec 3>&1;
 SVDlimall=$(dialog --inputbox "SVD limit for full built" 0 0 "$SVDlimall" 2>&1 1>&3);
 exec 3>&-;
-echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
+echo "$SVDlimall" > ./conf/param_SVDlimall.txt
 aoconflogext "set SDVlimall ${SVDlimall}"
 ;;
 
@@ -523,8 +551,8 @@ mkdir -p contrM
 mkdir -p contrMc
 mkdir -p contrMcact
 
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"zrespM\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
+tmux send-keys -t $tmuxname "Fits2shm -c -p aol${LOOPNUMBER}_ zrespM" C-m
+tmux send-keys -t $tmuxname "Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask" C-m
 
 
 tmux send-keys -t $tmuxname "echo \"./auxscripts/aolmkmodesM -a 0 ${SVDlimall}\" >> aolcmd.txt" C-m
@@ -532,11 +560,11 @@ tmux send-keys -t $tmuxname "./auxscripts/aolmkmodesM -a 0 ${SVDlimall}" C-m
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf/conf_DMmodes_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf/shmim_DMmodes.name.txt" C-m
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"respM/respM_${datestr}.fits\" > ./conf/conf_respM_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"respM/respM_${datestr}.fits\" > ./conf/shmim_respM.name.txt" C-m
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"contrM/contrM_${datestr}.fits\" > ./conf/conf_contrM_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"contrM/contrM_${datestr}.fits\" > ./conf/shmim_contrM.name.txt" C-m
 
 
 for i in `seq 0 20`;
@@ -545,19 +573,19 @@ i2=$(printf "%02d" "$i")
 fname="mkmodestmp/fmodes_${i2}.fits"
 #if [ -e "$fname" ]; then
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf/conf_DMmodes${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf/shmim_DMmodes${i2}.name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf/conf_respM${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf/shmim_respM${i2}.name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf/conf_contrM${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf/shmim_contrM${i2}.name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf/conf_contrMc${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf/shmim_contrMc${i2}.name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf/conf_contrMcact${i2}_00_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf/shmim_contrMcact${i2}_00.name.txt; fi" C-m
 #fi
 done
 
@@ -573,10 +601,10 @@ menucontrolmatrix_default="RM2CMm"
 
 
 	zRM)
-fname=$( cat ./conf/conf_zrespM_name.txt )
+fname=$( cat ./conf/shmim_zrespM.name.txt )
 fname=$(dialog --title "Select zonal Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_zrespM_name.txt
-ReadConfFile "zrespM"
+echo "$fname" > ./conf/shmim_zrespM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespM
 menucontrolmatrix_default="zRM"
 ;;
 
@@ -589,19 +617,16 @@ menucontrolmatrix_default="zRM"
 #   ./conf_staged/zrespM.fits
 # OUTPUT
 #   ./zcontrM/zcontrM_<date>.fits
-#   ./conf/conf_contrM_name.txt
+#   ./conf/shmim_contrM.name.txt
 # -> 
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
-echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/conf_contrM_name.txt
+echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM.name.txt
 cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
-#ReadConfFile "contrM"
-#getshmimsize aol${LOOPNUMBER}_contrM
-
-CMMODE="ZONAL"
+CMMODE="1"
 echo "$CMMODE" > $CMMODEfile
 
 
@@ -626,7 +651,7 @@ setexbi)
 exec 3>&1;
 extrablockIndex=$(dialog --inputbox "extrablockIndex" 0 0 "$extrablockIndex" 2>&1 1>&3);
 exec 3>&-;
-echo "$extrablockIndex" > ./conf/conf_extrablockIndex.txt
+echo "$extrablockIndex" > ./conf/param_extrablockIndex.txt
 aoconflog "set extrablockIndex = ${extrablockIndex}"
 menucontrolmatrix_default="setexbi"
 ;;
@@ -641,7 +666,7 @@ state="menu_mkFModes"
 mkModesMODE=0; # full computation
 menucontrolmatrix_default="mkModes0"
 aoconflogext "START control matrix computation mkModesMODE 0"
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 function_computeModesCM
 ;;
@@ -650,7 +675,7 @@ function_computeModesCM
 mkModesMODE=1; # re-use previous DM modes
 menucontrolmatrix_default="mkModes1"
 aoconflogext "START control matrix computation mkModesMODE 1"
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 function_computeModesCM
 ;;
@@ -672,24 +697,24 @@ menucontrolmatrix_default="SMloadCM"
 
 
 	DMmodes)
-fname=$( cat ./conf/conf_DMmodes_name.txt )
+fname=$( cat ./conf/shmim_DMmodes.name.txt )
 fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_DMmodes_name.txt
-ReadConfFile "DMmodes"
+echo "$fname" > ./conf/shmim_DMmodes.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
 menucontrolmatrix_default="DMmodes"
 ;;
 	RM)
 fname=$( cat ./conf/conf_respM_name.txt )
 fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_respM_name.txt
-ReadConfFile "respM"
+echo "$fname" > ./conf/shmim_respM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ respM
 menucontrolmatrix_default="RM"
 ;;
 	CM)
 fname=$( cat ./conf/conf_contrM_name.txt )
 fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_contrM_name.txt
-ReadConfFile "contrM"
+echo "$fname" > ./conf/shmim_contrM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ contrM
 menucontrolmatrix_default="CM"
 ;;
 

@@ -49,34 +49,6 @@ fi
 
 
 
-# DM output of loop to another loop
-function Readdm2dmOname {
-file="./conf/conf_dm2dmO_name.txt"
-if [ -a $file ]
-	then
-	dm2dmO=$(echo "$(cat $file)")
-	else
-	dm2dmO="empty" #default
-fi
-# DM ouput to other loop
-aoconflog "linking dm2dmO to ${dm2dmO}"
-rm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm 
-ln -s /tmp/${dm2dmO}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
-}
-
-function Readdm2dmMname {
-file="./conf/conf_dm2dmM_name.txt"
-if [ -a $file ]
-	then
-	dm2dmM=$(echo "$(cat $file)")
-	else
-	dm2dmM="empty" #default
-fi
-aoconflog "linking dm2dmM to ${dm2dmM}"
-rm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm 
-ln -s /tmp/${dm2dmM}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm
-}
-
 
 function ReaddmwrefRMname {
 file="./conf/conf_dmwrefRM_name.txt"

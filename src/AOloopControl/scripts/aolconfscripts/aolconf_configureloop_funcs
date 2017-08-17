@@ -33,7 +33,7 @@ fi
 
 
 
-function function_configureloop_readparams {
+function RETIRED_function_configureloop_readparams {
 
 ConfReadParam DMMODE "0"
 DMMODE="$paramvalue"
@@ -206,11 +206,11 @@ fi
 if [ "${RMmodal}" = " ON" ];
 then
 
-    ConfReadParam rmMamplum "0.1"
-	rmMamplum="$paramvalue"
+    ConfReadParam RMMamplum "0.1"
+	RMMamplum="$paramvalue"
 
-    ConfReadParam rmMcpa "1.0"
-    rmMcpa="$paramvalue"
+    ConfReadParam RMMcpa "1.0"
+    RMMcpa="$paramvalue"
    
    
 
@@ -318,30 +318,8 @@ tmux new-session -d -s $1
 sleep 0.2
 logRunningProcess "SMloadzrm" "$1" "Load zonal response matrix files to shared memory"
 
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"zrespM\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $1 "./aolfuncs/aolfunc_SMload_zCalib" C-m
 
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsref0\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsref0" C-m
-
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmap\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmap" C-m
-
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmap\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmap" C-m
-
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmask" C-m
-
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
-
-if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmaskRM" C-m
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-m
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
-fi
 tmux send-keys -t $1 "rm runproc/SMloadzrm.runproc" C-m
 }
 
@@ -399,16 +377,16 @@ tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run" C-m
 waitforfile mkmodes.run
 
 
-ReadConfFile "DMmodes"
-ReadConfFile "respM"
-ReadConfFile "contrM"
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
+Fits2shm -c -p aol${LOOPNUMBER}_ respM
+Fits2shm -c -p aol${LOOPNUMBER}_ contrM
 
 i2="${mb}"
-ReadConfFile "DMmodes${i2}"
-ReadConfFile "respM${i2}"
-ReadConfFile "contrM${i2}"
-ReadConfFile "contrMc${i2}"
-ReadConfFile "contrMcact${i2}_00"
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ respM${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrM${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrMc${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrMcact${i2}_00
 }
 
 
@@ -487,16 +465,16 @@ sleep 0.2
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
 logRunningProcess "aolMeasureLOrespmat" "$1" "Acquiring LO modal response matrix"
-tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${RMMcpa}" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 fi
-echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
+aoconflogext "START LO RM acquisition   CPA=$RMMcpa  amp=$RMMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
 
 tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
 tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
@@ -521,7 +499,7 @@ tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
-tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
+tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${RMMamplum} ${WFSnorm}" C-m
 echo "./auxscripts/aolCleanLOrespmat ${RMamplum} ${WFSnorm}" >> aolcmd.txt
 logRunningProcess "aolCleanLOrespmat" "$1" "Process LO modal response matrix"
 
@@ -572,11 +550,9 @@ sleep 0.2
 tmux new-session -d -s $1
 sleep 0.2
 logRunningProcess "SMloadmrm" "$1" "Load LO modal response matrix files to shared memory"
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LOrespM" C-m
-tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
-tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LODMmodes" C-m
+tmux send-keys -t $1 "./aolfuncs/aolfunc_SMload_mCalib" C-m
 tmux send-keys -t $1 "rm runproc/SMloadmrm.runproc" C-m
+
 }
 
 

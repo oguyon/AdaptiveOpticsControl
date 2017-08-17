@@ -397,12 +397,14 @@ int data_type_code(int bitpix)
 /* 1. LOAD / SAVE                                                                                  */
 /*                                                                                                 */
 /* =============================================================================================== */
- 
+
+
 
 
 /// if errcode = 0, do not show error messages
 /// errcode = 1: print error, continue
 /// errcode = 2: exit program at error
+/// errcode = 3: do not show error message, try = 1, no wait
 long load_fits(const char *file_name, const char *ID_name, int errcode)
 {
     fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
@@ -420,10 +422,12 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
     long NDR=1; /* non-destructive reads */
 
 
-	int fileOK;
-	int try;
-	int NBtry = 3;
-	
+    int fileOK;
+    int try;
+    int NBtry = 3;
+    int PrintErrorMsg = 1;
+    int ExitOnErr = 0;
+
     nulval = 0;
     anynul = 0;
     bscale = 1;
@@ -436,50 +440,77 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
 
 
-	fileOK = 0;
-	
-	
-	for(try=0; try<NBtry; try++)
-	{
-    if(fileOK==0)
+    fileOK = 0;
+
+    if(errcode==0) {
+        PrintErrorMsg = 0;
+        ExitOnErr = 0;
+    }
+
+    if(errcode==1) {
+        PrintErrorMsg = 1;
+        ExitOnErr = 0;
+    }
+
+    if(errcode==2) {
+        PrintErrorMsg = 1;
+        ExitOnErr = 1;
+    }
+
+    if(errcode==3)
     {
-		if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
-		{
-		 if(errcode!=0)
-		 {
-			 if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
-			{
-                fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-                fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
-                fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-                list_image_ID();
-                
-                if(errcode>1)
-                    exit(0);
-            
-				usleep(10000);
-            }
-			}
-        ID = -1;
-		}
-		else
-			fileOK = 1;
+        NBtry = 1;
+        PrintErrorMsg = 0;
+        ExitOnErr = 0;
     }
-    }
-    
+
+
+
+    for(try=0; try<NBtry; try++)
+        {
+            if(fileOK==0)
+                {
+                    if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
+                        {
+                            if(check_FITSIO_status(__FILE__, __func__, __LINE__, PrintErrorMsg) != 0)
+                            {
+                                if(PrintErrorMsg==1)
+                                {
+                                    fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+                                    fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
+                                    fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+                                    list_image_ID();
+                                }
+
+                                if(ExitOnErr==1)
+                                    exit(0);
+
+                                if(try!=NBtry-1) // don't wait on last try
+                                        usleep(10000);
+                            }
+                        
+                      ID = -1;
+                    }
+                    else
+                        fileOK = 1;
+					}
+        }
+
+
+
     if(fileOK==1)
     {
-		char keyword[SBUFFERSIZE];
-		long  fpixel = 1;
-		long i;
-		long ii;
-	    char comment[SBUFFERSIZE];
-	    long  nelements;
-		
+        char keyword[SBUFFERSIZE];
+        long  fpixel = 1;
+        long i;
+        long ii;
+        char comment[SBUFFERSIZE];
+        long  nelements;
+
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
-       if(errcode!=0)
-            {
-				 if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
+        if(errcode!=0)
+        {
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
             {
                 fprintf(stderr, "%c[%d;%dm Error while calling \"fits_read_key\" NAXIS %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
                 fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
@@ -493,8 +524,8 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
         for(i=0; i<naxis; i++)
         {
-		    int n;
-			
+            int n;
+
             n = snprintf(keyword,SBUFFERSIZE,"NAXIS%ld",i+1);
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -633,17 +664,17 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
         /* bitpix = 16   TSHORT */
         if(bitpix == 16) {
-           // ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+            // ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
             ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_UINT16, data.SHARED_DFT, data.NBKEWORD_DFT);
-           
-           /* sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);
-            if(sarray==NULL)
-            {
-                printERROR(__FILE__, __func__, __LINE__, "malloc error");
-                exit(0);
-            }*/
 
- //           fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
+            /* sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);
+             if(sarray==NULL)
+             {
+                 printERROR(__FILE__, __func__, __LINE__, "malloc error");
+                 exit(0);
+             }*/
+
+            //           fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
             fits_read_img(fptr, 20, fpixel, nelements, &nulval, data.image[ID].array.UI16, &anynul, &FITSIO_status);
             if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
             {
@@ -673,10 +704,10 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
             }
 
             check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-    /*        for (ii = 0; ii < nelements; ii++)
-                data.image[ID].array.F[ii] = 1.0*sarray[ii];
-            free(sarray);
-            sarray = NULL;*/
+            /*        for (ii = 0; ii < nelements; ii++)
+                        data.image[ID].array.F[ii] = 1.0*sarray[ii];
+                    free(sarray);
+                    sarray = NULL;*/
         }
 
 
@@ -776,6 +807,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
     return(ID);
 }
+
 
 
 

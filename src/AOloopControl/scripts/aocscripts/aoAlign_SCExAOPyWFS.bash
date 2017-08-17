@@ -21,6 +21,27 @@ echo "$COLUMNS -> $nbwcols"
 LOOPNUMBER_file="LOOPNUMBER"
 
 
+##############################################
+# FUNCTION: READ INSTRUMENT CONG VAL FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "instconfvalue"
+function ConfReadInstConf {
+file="./conf/instconf_$1.txt"
+if [ -f "$file" ]; then
+instconfvalue=$( cat $file )
+else
+instconfvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+
 
 mkdir -p conf
 mkdir -p status
@@ -78,20 +99,20 @@ line=$1
 function recomputeLatency {
 frHz=$1
 # read latencies 
-hardwlatency1=$( cat conf/conf_hardwlatency1.txt )
-wfsmextrlatency=$( cat conf/conf_wfsmextrlatency.txt )
-complatency=$( cat conf/conf_complatency.txt )
+hardwlatency1=$( cat conf/param_hardwlatency1.txt )
+wfsmextrlatency=$( cat conf/param_wfsmextrlatency.txt )
+complatency=$( cat conf/param_complatency.txt )
 echo "$hardwlatency1 $wfsmextrlatency $complatency $frHz" > tmpfile.txt
 hardwlatency=$( awk '{ printf("%.6f\n", ($1*$4+0.5)/$4) }' tmpfile.txt )
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$4+0.5) }' tmpfile.txt )
 wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $2*$4) }' tmpfile.txt )
 complatency_frame=$( awk '{ printf("%05.3f\n", $3*$4) }' tmpfile.txt )
 
-echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
-echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
-echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
-echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
-echo "$frHz" > ./conf/conf_loopfrequ.txt
+echo "$hardwlatency" > ./conf/param_hardwlatency.txt
+echo "$hardwlatency_frame" > ./conf/param_hardwlatency_frame.txt
+echo "$wfsmextrlatency_frame" > ./conf/param_wfsmextrlatency_frame.txt
+echo "$complatency_frame" > ./conf/param_complatency_frame.txt
+echo "$frHz" > ./conf/param_loopfrequ.txt
 Cfits << EOF
 aolsethlat $hardwlatency_frame
 aolsetwlat $wfsmextrlatency_frame
@@ -160,7 +181,7 @@ Pcamloopstat="OFF"
 fi
 
 
-PyrFilter=$(cat ./conf/conf_pywfs_filter.txt)
+PyrFilter=$(cat ./conf/instconf_pywfs_filter.txt)
 
 if [ "$TTloopstat" = " ON" ]; then
 TTloopstat_C="\Zr\Z2 ON\Zn"
@@ -200,7 +221,7 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( "" "" )
-file="./conf/conf_pywfs_freq.txt"
+file="./conf/instconf_pywfs_freq.txt"
 if [ -f $file ]; then
 pyfreq=$(cat $file)
 else
@@ -262,7 +283,7 @@ fi
 
 menuitems+=( "" "" )
 
-file="./conf/conf_pywfs_modampl.txt"
+file="./conf/instconf_pywfs_modampl.txt"
 if [ -f $file ]; then
 pymodampl=$(cat $file)
 else
@@ -419,7 +440,7 @@ fi
 
 menuitems+=( "" "" )
 
-file="./conf/conf_pywfs_filter.txt"
+file="./conf/instconf_pywfs_filter.txt"
 if [ -f $file ]; then
 pyfilter=$(cat $file)
 else
@@ -474,7 +495,7 @@ fi
 
 menuitems+=( "" "" )
 
-file="./conf/conf_pywfs_pickoff.txt"
+file="./conf/instconf_pywfs_pickoff.txt"
 if [ -f $file ]; then
 pypickoff=$(cat $file)
 else
@@ -556,7 +577,7 @@ menuitems+=( "pypick12" " PyWFS pickoff 12  (Open)" )
 fi
 
 
-pymodampl10=$(sed 's/\.//' ./conf/conf_pywfs_modampl.txt)
+pymodampl10=$(sed 's/\.//' ./conf/instconf_pywfs_modampl.txt)
 loopconfname="fr${pyfreq}_mod${pymodampl10}_pf${pyfilter}_pp${pypickoff}_"
 echo "${loopconfname}" > ./conf/conf_loopconfname.txt
 
@@ -689,7 +710,7 @@ menualign_default="$choiceval"
 
 	pyfr05)
 pyfreq="0500"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -698,7 +719,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pyfr10)
 pyfreq="1000"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -707,7 +728,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pyfr15)
 pyfreq="1500"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -716,7 +737,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pyfr20)
 pyfreq="2000"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -725,7 +746,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pyfr25)
 pyfreq="2500"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -734,7 +755,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 	
 	pyfr30)
 pyfreq="3000"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -743,7 +764,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pyfr35)
 pyfreq="3500"
-echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
+echo "${pyfreq}" > ./conf/instconf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "freq" "${pyfreq}" &
 recomputeLatency ${pyfreq} &> $mesgfile &
@@ -755,7 +776,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> $mesgfile &
 
 	pymoda005)
 pymodampl="0.05"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas05" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -763,7 +784,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda010)
 pymodampl="0.10"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas10" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -771,7 +792,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda015)
 pymodampl="0.15"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas15" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -779,7 +800,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda020)
 pymodampl="0.20"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas20" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -787,7 +808,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda025)
 pymodampl="0.25"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas25" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -795,7 +816,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda030)
 pymodampl="0.30"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas30" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -803,7 +824,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda035)
 pymodampl="0.35"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas35" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -811,7 +832,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda040)
 pymodampl="0.40"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas40" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -819,7 +840,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda045)
 pymodampl="0.45"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas45" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -827,7 +848,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda050)
 pymodampl="0.50"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas50" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -835,7 +856,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda055)
 pymodampl="0.55"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas55" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -843,7 +864,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda060)
 pymodampl="0.60"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas60" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -851,7 +872,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda065)
 pymodampl="0.65"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas65" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -859,7 +880,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda070)
 pymodampl="0.70"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas70" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -867,7 +888,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda075)
 pymodampl="0.75"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas75" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -875,7 +896,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda080)
 pymodampl="0.80"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas80" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -883,7 +904,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda085)
 pymodampl="0.85"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas85" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -891,7 +912,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda090)
 pymodampl="0.90"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas90" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -899,7 +920,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda095)
 pymodampl="0.95"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas95" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -907,7 +928,7 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pymoda100)
 pymodampl="1.00"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "$pymodampl" > ./conf/instconf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> $mesgfile
 ./statusext "rad" "$pmodradmas00" &
 aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
@@ -918,42 +939,42 @@ aoconflogext "Set py modulation amplitude = $pymodampl" &> $mesgfile &
 
 	pyfilt1)
 pyfilter="1"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
 
 	pyfilt2)
 pyfilter="2"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
 
 	pyfilt3)
 pyfilter="3"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
 
 	pyfilt4)
 pyfilter="4"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
 
 	pyfilt5)
 pyfilter="5"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
 
 	pyfilt6)
 pyfilter="6"
-echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+echo "$pyfilter" > ./conf/instconf_pywfs_filter.txt
 pywfs_filter ${pyfilter} &> $mesgfile
 aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 ;;
@@ -963,84 +984,84 @@ aoconflogext "Set py filter = $pyfilter" &> $mesgfile &
 
 	pypick01)
 pypickoff="01"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick02)
 pypickoff="02"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick03)
 pypickoff="03"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick04)
 pypickoff="04"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick05)
 pypickoff="05"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick06)
 pypickoff="06"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick07)
 pypickoff="07"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick08)
 pypickoff="08"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick09)
 pypickoff="09"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick10)
 pypickoff="10"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick11)
 pypickoff="11"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick12)
 pypickoff="12"
-echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+echo "${pypickoff}" > ./conf/instconf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
 aoconflogext "Set py pickoff = $pypickoff"
 ;;

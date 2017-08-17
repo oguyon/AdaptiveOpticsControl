@@ -102,6 +102,23 @@ fi
 
 
 
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
 
 loopnb=$(cat LOOPNUMBER)
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -109,55 +126,29 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 
 
+ConfReadParam DMmaskRMp0 "0.2"
+DMmaskRMp0="$paramvalue"
 
-DMmaskRMp0=0.2
-if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
-DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
-fi
+ConfReadParam DMmaskRMc0 "1.0"
+DMmaskRMc0="$paramvalue"
 
+ConfReadParam DMmaskRMp1 "0.7"
+DMmaskRMp1="$paramvalue"
 
-DMmaskRMc0=1.0
-if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
-DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
-fi
+ConfReadParam DMmaskRMc1 "0.3"
+DMmaskRMc1="$paramvalue"
 
+ConfReadParam WFSmaskRMp0 "0.05"
+WFSmaskRMp0="$paramvalue"
 
-DMmaskRMp1=0.7
-if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
-DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
-fi
+ConfReadParam WFSmaskRMc0 "1.0"
+WFSmaskRMc0="$paramvalue"
 
+ConfReadParam WFSmaskRMp1 "0.65"
+WFSmaskRMp1="$paramvalue"
 
-DMmaskRMc1=0.3
-if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
-DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
-fi
-
-
-
-
-WFSmaskRMp0=0.05
-if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
-WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
-fi
-
-
-WFSmaskRMc0=1.0
-if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
-WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
-fi
-
-
-WFSmaskRMp1=0.65
-if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
-WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
-fi
-
-
-WFSmaskRMc1=0.3
-if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
-WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
-fi
+ConfReadParam WFSmaskRMc1 "0.3"
+WFSmaskRMc1="$paramvalue"
 
 
 
