@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+printhelp ()
+{
+echo "------------------------------------------------------------------------"
+echo "                 Create Hufnager-Valley turbulence profile"
+echo " "
+echo " Usage :"
+echo " $0 <windspeed [m/s]> <r0 [m]> <sitealt [m]> <NBlayer>"
+echo ""
+echo " input : "
+echo "     windspeed : High altitude component wind speed [m/s]"
+echo "     r0        : Fried parameter [m] at lambda=0.55um"
+echo "     sitealt   : Site altitude above see level [m]"
+echo "     NBlayer   : number of layers"
+echo ""
+echo " output : file turbHV.prof"
+echo " "
+echo " NOTES/DESCRIPTION:      "
+echo "      The high-level turbulence is set according to wind speed (param 1) "
+echo "      Ground-level turbulence is then adjusted to match desired r0"
+echo "      turbulence is discretized into a few layers"
+echo "      wind speed increases from 30% of specified high altitude WS at the ground"
+echo ""
+echo "      Inner and outer scales [alt in km]:"
+echo "         l0 = 0.008+0.072*(alt/20)**1.6"
+echo "         logL0 = 2.0 - 0.9*(alt/14)    for alt<14km"
+echo "         logL0 = 1.1 + 0.3*(alt-14)/6  for alt>14km"
+echo "ref: Preliminary estimates of the vertical profiles of inner and outer scales from White Sands Missile Range, New Mexico, VHF radar observations"
+echo "     Eaton, F.D. and Nastrom, G.D. (1998), Radio Science 33: doi: 10.1029/98RS01254. issn: 0048-6604." 
+echo " EXAMPLE : "
+echo "   $0 20.0 0.15 4200 50"
+echo "------------------------------------------------------------------------"
+}
+
+NBARGS=4
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+	printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+	exit
+fi
+
+
+AtmosphericTurbulenceSimul << EOF
+mkHVturbprof $1 $2 $3 $4 turbHV.prof
+exit
+EOF
+

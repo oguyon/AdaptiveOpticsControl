@@ -51,7 +51,8 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  /usr/include/x86_64-linux-gnu/bits/sigthread.h ImageStruct.h \
  cudacomp/cudacomp.h AtmosphericTurbulence/AtmosphericTurbulence.h \
  AtmosphereModel/AtmosphereModel.h psf/psf.h \
- AOloopControl/AOloopControl.h AOsystSim/AOsystSim.h \
+ AOloopControl/AOloopControl.h \
+ AOloopControl_IOtools/AOloopControl_IOtools.h AOsystSim/AOsystSim.h \
  AOloopControl_DM/AOloopControl_DM.h OptSystProp/OptSystProp.h \
  OpticsMaterials/OpticsMaterials.h ZernikePolyn/ZernikePolyn.h \
  WFpropagate/WFpropagate.h image_basic/image_basic.h \
@@ -213,6 +214,8 @@ AtmosphereModel/AtmosphereModel.h:
 psf/psf.h:
 
 AOloopControl/AOloopControl.h:
+
+AOloopControl_IOtools/AOloopControl_IOtools.h:
 
 AOsystSim/AOsystSim.h:
 
