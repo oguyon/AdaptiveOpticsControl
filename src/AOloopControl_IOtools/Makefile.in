@@ -129,10 +129,10 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libaoloopcontrolIOtools_la_LIBADD =
-am_libaoloopcontrolIOtools_la_OBJECTS = AOloopControl_IOtools.lo
-libaoloopcontrolIOtools_la_OBJECTS =  \
-	$(am_libaoloopcontrolIOtools_la_OBJECTS)
+libaoloopcontroliotools_la_LIBADD =
+am_libaoloopcontroliotools_la_OBJECTS = AOloopControl_IOtools.lo
+libaoloopcontroliotools_la_OBJECTS =  \
+	$(am_libaoloopcontroliotools_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -171,8 +171,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libaoloopcontrolIOtools_la_SOURCES)
-DIST_SOURCES = $(libaoloopcontrolIOtools_la_SOURCES)
+SOURCES = $(libaoloopcontroliotools_la_SOURCES)
+DIST_SOURCES = $(libaoloopcontroliotools_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -322,8 +322,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-lib_LTLIBRARIES = libaoloopcontrolIOtools.la
-libaoloopcontrolIOtools_la_SOURCES = AOloopControl_IOtools.c AOloopControl_IOtools.h
+lib_LTLIBRARIES = libaoloopcontroliotools.la
+libaoloopcontroliotools_la_SOURCES = AOloopControl_IOtools.c AOloopControl_IOtools.h
 EXTRA_DIST = doc scripts
 AM_CPPFLAGS = -I@abs_top_srcdir@/src -fopenmp
 all: all-am
@@ -395,8 +395,8 @@ clean-libLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libaoloopcontrolIOtools.la: $(libaoloopcontrolIOtools_la_OBJECTS) $(libaoloopcontrolIOtools_la_DEPENDENCIES) $(EXTRA_libaoloopcontrolIOtools_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libaoloopcontrolIOtools_la_OBJECTS) $(libaoloopcontrolIOtools_la_LIBADD) $(LIBS)
+libaoloopcontroliotools.la: $(libaoloopcontroliotools_la_OBJECTS) $(libaoloopcontroliotools_la_DEPENDENCIES) $(EXTRA_libaoloopcontroliotools_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libaoloopcontroliotools_la_OBJECTS) $(libaoloopcontroliotools_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

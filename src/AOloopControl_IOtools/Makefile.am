@@ -1,5 +1,5 @@
-lib_LTLIBRARIES = libaoloopcontrolIOtools.la
-libaoloopcontrolIOtools_la_SOURCES = AOloopControl_IOtools.c AOloopControl_IOtools.h
+lib_LTLIBRARIES = libaoloopcontroliotools.la
+libaoloopcontroliotools_la_SOURCES = AOloopControl_IOtools.c AOloopControl_IOtools.h
 
 EXTRA_DIST = doc scripts
 
