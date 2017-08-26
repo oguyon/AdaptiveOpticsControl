@@ -761,7 +761,7 @@ ALL commands are logged by the script :
 
 ### Automatically generated internal command log (very detailed)
 
-All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
+`aolconf` uses the script `aolconfscripts/aollog` to log commands and status into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
 
 ~~~~
 tail -f aolconf.log
@@ -779,17 +779,28 @@ function aoconflog {
 
 
 
-### External log (less verbose)
+### User-provided UsExternal log (less verbose)
 
-The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
+
+More important commands are logged simultaneously to the internal log and an external log. The user provides the command to externally log commands. The executable should be in the path, and named `aollogext`. The syntax is:
 
 ~~~
-dologext <string>
+./aollogext <string>
 ~~~
 
 The string usually consists of the loop name followed by comments.
 
-Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name.
+Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name, as defined in the main `aolconf` script:
+
+~~~
+# external log, use for less verbose log
+function aoconflogext {
+./aolconfscripts/aollog -e "$LOOPNAME" "$@"
+}
+~~~
+
+
+
 
 
 
@@ -809,6 +820,11 @@ It is also common practice to start a `MISC` log for misc comments, also to be i
 ./aolconfscripts/aollog -ie MISC NULL
 ~~~
 
+The corresponding log can be viewed by:
+
+~~~
+tail -f logdit/<UTDATE>/logging/MISC.log
+~~~
 
 
 

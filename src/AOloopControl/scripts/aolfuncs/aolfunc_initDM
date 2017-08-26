@@ -1,20 +1,221 @@
 #!/bin/bash
 
+NBARGS=0
 ERRORSTATUS="0"
 execname="./AOloopControl"
+statusfile="./status/stat_DMcombON.txt"
 
 
 
 
 
-# CHECK IF ALREADY RUNNING
-mkdir -p status
-file="./status/stat_DMcombON.txt"
-if [ -a $file ]; then
-	DMcombONstat=$( cat $file )
+
+
+
+
+printHELP ()
+{
+echo
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : START DM PROCESS $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo " "
+echo " "
+echo " "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [options]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "   --help -h             print (h)elp and exit"
+echo "   --help1               print 1 line summary" 
+echo "   -f                    force don't check status"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+	printf "%20s       Start DM process\n" "$0" 
+}
+
+
+
+
+EXITSTATUS=0
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] File $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
 else
-	DMcombONstat="OFF"
-	echo "$lsimONstat" > $file
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+}
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+### Start getopts code ###
+while getopts :hf FLAG; do
+  case $FLAG in
+    h)  #show help
+	if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    f)
+    echo "Removing $statusfile"
+    rm $statusfile
+    ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo -e \\n"Illegal number of parameters ($NBARGS params required, $# entered)"\\n
+fi
+printHELP
+        exit
+fi
+
+
+
+
+# ======================= CHECK REQUIRED DIRS & FILES =================================
+echo ""
+
+
+# ============================= CHECK IF COMMAND EXISTS ==========================
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+# FUNCTION: READ STATUS FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function StatReadStat {
+mkdir -p status
+file="./status/stat_$1.txt"
+if [ -f "$file" ]; then
+statusvalue=$( cat $file )
+else
+statusvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+##############################################
+# FUNCTION: READ PARAMETER FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########################################
+# CHECK IF ALREADY RUNNING
+##########################################
+
+
+StatReadStat DMcombON "OFF"; DMcombONstat="$statusvalue"
+
+if [ "$DMcombONstat" = " ON" ]; then
+echo ""
+echo "DMcomb already ON"
+echo "USE -f option to force (removes ./status/stat_DMcombON.txt)"
+echo ""
+exit
 fi
 
 
@@ -23,11 +224,7 @@ fi
 
 
 
-if [ "$DMcombONstat" = " ON" ]; then
 
-echo "DM process already running"
-
-else
 
 ##########################################
 # READ REQUIRED PARAMETERS
@@ -51,108 +248,16 @@ if [ -a $file ]
      echo "$CPUset_mode" > $file
 fi
 
-
-# READ DM INDEX
-file="./conf/param_DMindex.txt"
-if [ -a $file ]; then
-	DMindex=$( cat $file )
-else
-	DMindex="03"
-	echo "$DMindex" > $file
-fi
-
-
-# READ DM MODE (ZONAL or MODAL)
-file="./conf/param_DMMODE.txt"
-if [ -a $file ]; then
-	DMMODE=$( cat $file )
-else
-	DMMODE="ZONAL"
-	echo "$DMMODE" > $file
-fi
-
-
-
-
-# READ DM SIZE
-file="./conf/param_DMxsize.txt"
-if [ -a $file ]
-    then
-    DMxsize=$( cat $file )
-    else
-    DMxsize=32 #default
-    echo "$DMxsize" > $file
-fi
-
-file="./conf/param_DMysize.txt"
-if [ -a $file ]
-     then          
-     DMysize=$( cat $file ) 
-     else
-     DMysize=32 #default
-     echo "$DMysize" > $file
-fi
-
-
-# READ DM-to-DM mode
-file="./conf/param_DM2DM_mode.txt"
-if [ -a $file ]
-     then          
-     DM2DM_mode=$( cat $file )
-     else
-     DM2DM_mode=0 #default
-     echo "$DM2DM_mode" > $file
-fi
-
-
-# READ DMwfsref_mode (CPU-based dmcomb DM ouput applied as WFS offset)
-file="./conf/param_DMwfsref_mode.txt"
-if [ -a $file ]
-     then          
-     DMwfsref_mode=$( cat $file )
-     else
-     DMwfsref_mode=0 #default
-     echo "$DMwfsref_mode" > $file
-fi
-
-
-# READ DMcombave_mode
-file="./conf/param_DMcombave_mode.txt"
-if [ -a $file ]
-     then          
-     DMcombave_mode=$( cat $file )
-     else
-     DMcombave_mode=0 #default
-     echo "$DMcombave_mode" > $file
-fi
-
-
-# READ DMvolt_mode
-file="./conf/param_DMvolt_mode.txt"
-if [ -a $file ]
-     then          
-     DMvolt_mode=$( cat $file )
-     else
-     DMvolt_mode=0 #default
-     echo "$DMvolt_mode" > $file
-fi
-
-
-
-
-# READ DM delay (optional)
-if [ -f "./conf/param_DMdelayON.txt" ]; then
-	DMdelayON=$(cat ./conf/param_DMdelayON.txt)
-else
-	DMdelayON="OFF"
-fi
+ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
+ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue" # DM mode
+ConfReadParam DMxsize "32"; DMxsize="$paramvalue" # DM x size 
+ConfReadParam DMysize "32"; DMysize="$paramvalue" # DM y size 
+ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue" # DM-to-DM mode
+ConfReadParam DMwfsref_mode "0"; DMwfsref_mode="$paramvalue" # DMwfsref_mode (CPU-based dmcomb DM ouput applied as WFS offset)
+ConfReadParam DMcombave_mode "0"; DMcombave_mode="$paramvalue" # READ DMcombave_mode
+ConfReadParam DMvolt_mode "0"; DMvolt_mode="$paramvalue" # READ DMvolt_mode
+ConfReadParam DMdelayON "OFF"; DMdelayON="$paramvalue" # READ DM delay (optional)
 	
-if [ "$DMdelayON" = " ON" ]; then
-	if [ -f "./conf/param_DMdelayus.txt" ]; then
-	DMdelayus=$(cat ./conf/param_DMdelayus.txt)
-	tmux send-keys -t $tmuxname "DMTWAIT=${DMdelayus}" C-m
-	fi
-fi
 
 
 
@@ -243,6 +348,10 @@ if [ "${DMwfsref_mode}" = "1" ]; then
 fi
 
 
+if [ "$DMdelayON" = " ON" ]; then
+ConfReadParam DMdelayus "1000"; DMdelayus="$paramvalue"
+tmux send-keys -t $tmuxname "DMTWAIT=${DMdelayus}" C-m
+fi
 
 
   
@@ -279,5 +388,5 @@ NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 
 echo " ON" > ./status/stat_DMcombON.txt
 
-fi
+
 

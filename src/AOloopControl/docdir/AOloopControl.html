@@ -82,7 +82,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
 <li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a><ul>
 <li><a href="#automatically-generated-internal-command-log-very-detailed"><span class="toc-section-number">3.2.1</span> Automatically generated internal command log (very detailed)</a></li>
-<li><a href="#external-log-less-verbose"><span class="toc-section-number">3.2.2</span> External log (less verbose)</a></li>
+<li><a href="#user-provided-usexternal-log-less-verbose"><span class="toc-section-number">3.2.2</span> User-provided UsExternal log (less verbose)</a></li>
 <li><a href="#interactive-user-log"><span class="toc-section-number">3.2.3</span> Interactive user log</a></li>
 </ul></li>
 </ul></li>
@@ -1105,7 +1105,7 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <pre><code>./aolconfscripts/aollog</code></pre>
 <div id="automatically-generated-internal-command-log-very-detailed" class="section level3">
 <h3><span class="header-section-number">3.2.1</span> Automatically generated internal command log (very detailed)</h3>
-<p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
+<p><code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log commands and status into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
 <pre><code>tail -f aolconf.log</code></pre>
 <p>Inside the bash script, function <code>aoconflog</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name, as defined in the main <code>aolconf</code> script:</p>
 <pre><code># internal log - logs EVERYTHING
@@ -1113,12 +1113,16 @@ function aoconflog {
 ./aolconfscripts/aollog &quot;$LOOPNAME&quot; &quot;$@&quot;
 }</code></pre>
 </div>
-<div id="external-log-less-verbose" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> External log (less verbose)</h3>
-<p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
-<pre><code>dologext &lt;string&gt;</code></pre>
+<div id="user-provided-usexternal-log-less-verbose" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> User-provided UsExternal log (less verbose)</h3>
+<p>More important commands are logged simultaneously to the internal log and an external log. The user provides the command to externally log commands. The executable should be in the path, and named <code>aollogext</code>. The syntax is:</p>
+<pre><code>./aollogext &lt;string&gt;</code></pre>
 <p>The string usually consists of the loop name followed by comments.</p>
-<p>Inside the bash script, function <code>aoconflogext</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name.</p>
+<p>Inside the bash script, function <code>aoconflogext</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name, as defined in the main <code>aolconf</code> script:</p>
+<pre><code># external log, use for less verbose log
+function aoconflogext {
+./aolconfscripts/aollog -e &quot;$LOOPNAME&quot; &quot;$@&quot;
+}</code></pre>
 </div>
 <div id="interactive-user-log" class="section level3">
 <h3><span class="header-section-number">3.2.3</span> Interactive user log</h3>
@@ -1127,6 +1131,8 @@ function aoconflog {
 <p>Entries will be logged in the <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code> file (with sym link to <code>aolconf.log</code>).</p>
 <p>It is also common practice to start a <code>MISC</code> log for misc comments, also to be included in the external log:</p>
 <pre><code>./aolconfscripts/aollog -ie MISC NULL</code></pre>
+<p>The corresponding log can be viewed by:</p>
+<pre><code>tail -f logdit/&lt;UTDATE&gt;/logging/MISC.log</code></pre>
 </div>
 </div>
 </div>
