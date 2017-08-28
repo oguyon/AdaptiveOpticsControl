@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-
+#include <pthread.h>
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -66,6 +66,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_arith/COREMOD_arith.h"
+#include "info/info.h"
 
 #include "statistic/statistic.h"
 
@@ -82,6 +83,11 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 
+# ifdef _OPENMP
+# include <omp.h>
+#define OMP_NELEMENT_LIMIT 1000000
+# endif
+
 
 
 
@@ -90,6 +96,64 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 /*                                  GLOBAL DATA DECLARATION                                        */
 /* =============================================================================================== */
 /* =============================================================================================== */
+
+
+
+extern long aoconfID_wfsim;              // declared in AOloopControl.c
+extern long aoconfID_imWFS0;             // declared in AOloopControl.c
+extern long aoconfID_imWFS0tot;          // declared in AOloopControl.c
+extern long aoconfID_imWFS1;             // declared in AOloopControl.c
+extern long aoconfID_wfsdark;            // declared in AOloopControl.c
+extern long aoconfID_wfsmask;            // declared in AOloopControl.c
+
+extern uint8_t WFSatype;                 // declared in AOloopControl.c
+
+extern long aoconfID_looptiming;         // declared in AOloopControl.c
+
+
+
+static sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
+static float IMTOTAL = 0.0;
+
+static int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
+static int COMPUTE_DARK_SUBTRACT_NBTHREADS = 1;
+static sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name[32];
+static sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[32];
+
+
+static int avcamarraysInit = 0;
+static unsigned short *arrayutmp;
+
+static char Average_cam_frames_dname[200];
+static long Average_cam_frames_IDdark = -1;
+static long Average_cam_frames_nelem = 1;
+
+
+static float *arrayftmp;
+
+
+// TIMING
+static struct timespec tnow;
+static struct timespec tdiff;
+static double tdiffv;
+
+extern int PIXSTREAM_SLICE;
+
+static long ti; // thread index
+
+static int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
+static int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
+
+
+extern float normfloorcoeff;
+
+
+extern float GPU_alpha;
+extern float GPU_beta;
+
+
+
+
 
 
 
@@ -102,7 +166,7 @@ extern DATA data;
 
 extern long LOOPNUMBER; // current loop index
 
-extern AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
+extern AOLOOPCONTROL_CONF *AOconf; // declared in AOloopControl.c
 
 
 
@@ -133,22 +197,43 @@ extern AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl_IOtools - 1. CAMERA INPUT
+ *  Read camera imates */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+/** @brief CLI function for AOloopControl_camimage_extract2D_sharedmem_loop */
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
+        AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string , data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+        return 0;
+    }
+    else return 1;
+}
+
+
 
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
- *  Useful tools */
+/** @name AOloopControl_IOtools - 2. LOAD DATA STREAMS     
+ *  Load 2D and 3D shared memory images */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-/* =============================================================================================== */
-/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS */
-/* =============================================================================================== */
+// No command line hooks to functions in this section
+
 
 /* =============================================================================================== */
-/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING */
 /* =============================================================================================== */
+/** @name AOloopControl_IOtools - 3. DATA STREAMS PROCESSING      
+ *  Data streams real-time processing */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 /** @brief CLI function for AOloopControl_AveStream */
 int_fast8_t AOloopControl_AveStream_cli() {
@@ -199,7 +284,7 @@ int_fast8_t AOloopControl_stream3Dto2D_cli() {
 /*                                    FUNCTIONS SOURCE CODE                                        */
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl functions */
+/** @name AOloopControl_IOtools functions */
 
 
 
@@ -211,20 +296,26 @@ int_fast8_t init_AOloopControl_IOtools()
     data.NBmodule++;
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS                                           */
+/** @name AOloopControl_IOtools - 1. CAMERA INPUT
+ *  Read camera imates */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <optional dark> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin null imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, const char *dark_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
+
+
+
 
 /* =============================================================================================== */
-/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
+/* =============================================================================================== */
+/** @name AOloopControl_IOtools - 3. DATA STREAMS PROCESSING      
+ *  Data streams real-time processing */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
-/* =============================================================================================== */
-/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING               */
-/* =============================================================================================== */
 
     RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
 
@@ -259,7 +350,703 @@ int_fast8_t init_AOloopControl_IOtools()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl_IOtools - 1. CAMERA INPUT
+ *  Read camera imates */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
+
+
+
+
+
+
+//
+// every time im_name changes (counter increments), crop it to out_name in shared memory
+//
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
+{
+    long iiin,jjin, iiout, jjout;
+    long IDin, IDout, IDdark;
+    uint8_t atype;
+    uint8_t atypeout;
+    uint32_t *sizeout;
+    long long cnt0;
+    long IDmask;
+    long sizeoutxy;
+    long ii;
+
+
+    sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
+    sizeout[0] = size_x;
+    sizeout[1] = size_y;
+    sizeoutxy = size_x*size_y;
+
+    IDin = image_ID(in_name);
+    atype = data.image[IDin].md[0].atype;
+
+
+
+    // Check if there is a mask
+    IDmask = image_ID("csmask");
+    if(IDmask!=-1)
+        if((data.image[IDmask].md[0].size[0]!=size_x)||(data.image[IDmask].md[0].size[1]!=size_y))
+        {
+            printf("ERROR: csmask has wrong size\n");
+            exit(0);
+        }
+
+    // Check dark
+    IDdark = image_ID(dark_name);
+
+    if(IDdark!=-1)
+    {
+        if((data.image[IDdark].md[0].size[0]!=data.image[IDin].md[0].size[0])||(data.image[IDdark].md[0].size[1]!=data.image[IDin].md[0].size[1]))
+        {
+            printf("ERROR: csmask has wrong size\n");
+            exit(0);
+        }
+        if(data.image[IDdark].md[0].atype != _DATATYPE_FLOAT)
+        {
+            printf("ERROR: csmask has wrong type\n");
+            exit(0);
+        }
+        atypeout = _DATATYPE_FLOAT;
+    }
+    else
+        atypeout = atype;
+
+
+    // Create shared memory output image
+    IDout = create_image_ID(out_name, 2, sizeout, atypeout, 1, 0);
+
+    cnt0 = -1;
+
+    switch (atype) {
+    case _DATATYPE_UINT16 :
+        while(1)
+        {
+            usleep(10); // OK FOR NOW (NOT USED BY FAST WFS)
+            if(data.image[IDin].md[0].cnt0!=cnt0)
+            {
+                data.image[IDout].md[0].write = 1;
+                cnt0 = data.image[IDin].md[0].cnt0;
+                if(atypeout == _DATATYPE_UINT16)
+                {
+                    for(iiout=0; iiout<size_x; iiout++)
+                        for(jjout=0; jjout<size_y; jjout++)
+                        {
+                            iiin = xstart + iiout;
+                            jjin = ystart + jjout;
+                            data.image[IDout].array.UI16[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
+                        }
+                    if(IDmask!=-1)
+                        for(ii=0; ii<sizeoutxy; ii++)
+                            data.image[IDout].array.UI16[ii] *= (int) data.image[IDmask].array.F[ii];
+                }
+                else // FLOAT
+                {
+                    if(IDdark==-1)
+                    {
+                        for(iiout=0; iiout<size_x; iiout++)
+                            for(jjout=0; jjout<size_y; jjout++)
+                            {
+                                iiin = xstart + iiout;
+                                jjin = ystart + jjout;
+                                data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
+                            }
+                    }
+                    else
+                    {
+                        for(iiout=0; iiout<size_x; iiout++)
+                            for(jjout=0; jjout<size_y; jjout++)
+                            {
+                                iiin = xstart + iiout;
+                                jjin = ystart + jjout;
+                                data.image[IDout].array.F[jjout*size_x+iiout] = 1.0*data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDdark].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
+                            }
+                    }
+
+                    if(IDmask!=-1)
+                        for(ii=0; ii<sizeoutxy; ii++)
+                            data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
+                }
+                data.image[IDout].md[0].cnt0 = cnt0;
+                data.image[IDout].md[0].write = 0;
+            }
+        }
+        break;
+    case _DATATYPE_FLOAT :
+        while(1)
+        {
+            usleep(50); // OK FOR NOW (NOT USED BY FAST WFS)
+            if(data.image[IDin].md[0].cnt0!=cnt0)
+            {
+                data.image[IDout].md[0].write = 1;
+                cnt0 = data.image[IDin].md[0].cnt0;
+                if(IDdark==-1)
+                {
+                    for(iiout=0; iiout<size_x; iiout++)
+                        for(jjout=0; jjout<size_y; jjout++)
+                        {
+                            iiin = xstart + iiout;
+                            jjin = ystart + jjout;
+                            data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
+                        }
+                }
+                else
+                {
+                    for(iiout=0; iiout<size_x; iiout++)
+                        for(jjout=0; jjout<size_y; jjout++)
+                        {
+                            iiin = xstart + iiout;
+                            jjin = ystart + jjout;
+                            data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDdark].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
+                        }
+                }
+
+                if(IDmask!=-1)
+                    for(ii=0; ii<sizeoutxy; ii++)
+                        data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
+
+                data.image[IDout].md[0].cnt0 = cnt0;
+                data.image[IDout].md[0].write = 0;
+            }
+        }
+        break;
+    default :
+        printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+        exit(0);
+        break;
+    }
+    free(sizeout);
+
+    return(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+static void *compute_function_imtotal( void *ptr )
+{
+    long ii;
+    long nelem;
+    int semval;
+
+
+
+    nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
+
+    while(1)
+    {
+        sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        IMTOTAL = 0.0;
+        if(aoconfID_wfsmask!=-1)
+        {
+            for(ii=0; ii<nelem; ii++)
+                IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii]*data.image[aoconfID_wfsmask].array.F[ii];
+        }
+        else
+        {
+            for(ii=0; ii<nelem; ii++)
+                IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii];
+        }
+        data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
+    }
+
+}
+
+
+
+
+static void *compute_function_dark_subtract( void *ptr )
+{
+    long ii, iistart, iiend;
+    long nelem;
+    long *index;
+    int sval;
+    long threadindex;
+    int semval;
+
+
+    nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
+    index = (long*) ptr;
+    threadindex = *index;
+
+    iistart = (long) ((threadindex)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iiend = (long) ((threadindex+1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+
+    while(1)
+    {
+        sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[threadindex]);
+
+        switch ( WFSatype ) {
+        case _DATATYPE_UINT16 :
+            for(ii=iistart; ii<iiend; ii++)
+                data.image[aoconfID_imWFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+            break;
+        case _DATATYPE_FLOAT :
+            for(ii=iistart; ii<iiend; ii++)
+                data.image[aoconfID_imWFS0].array.F[ii] = ((float) arrayftmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+            break;
+        default :
+            printf("ERROR: WFS data type not recognized\n");
+            exit(0);
+            break;
+        }
+
+        sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[threadindex], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[threadindex]);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/** @brief Read image from WFS camera
+ *
+ * supports ring buffer
+ * puts image from camera buffer aoconfID_wfsim into aoconfID_imWFS1 (supplied by user)
+ *
+ * RM = 1 if response matrix
+ *
+ * if normalize == 1, image is normalized by dividing by (total + AOconf[loop].WFSnormfloor)*AOconf[loop].WFSsize
+ * if PixelStreamMode = 1, read on semaphore 1, return slice index
+ *
+ */
+
+int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem)
+{
+    long imcnt;
+    long ii;
+    double totalinv;
+    char name[200];
+    int slice;
+    char *ptrv;
+    long double tmplv1;
+    double tmpf;
+    long IDdark;
+    char dname[200];
+    long nelem;
+    pthread_t thread_computetotal_id;
+    pthread_t thread_dark_subtract[20];
+    float resulttotal;
+    int sval0, sval;
+    void *status = 0;
+    long i;
+    int semval;
+    int s;
+
+    int semindex = 0;
+
+
+
+
+    if(RM==0)
+        semindex = 0;
+    else
+        semindex = 1;
+
+
+    WFSatype = data.image[aoconfID_wfsim].md[0].atype;
+
+    if(avcamarraysInit==0)
+    {
+        arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
+        arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
+
+        if(sprintf(Average_cam_frames_dname, "aol%ld_wfsdark", loop) < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+        Average_cam_frames_IDdark = image_ID(Average_cam_frames_dname);
+        Average_cam_frames_nelem = AOconf[loop].sizeWFS;
+
+        // set semaphore to 0
+        sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+        printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[aoconfID_wfsim].md[0].name, semval);
+        for(i=0; i<semval; i++)
+            sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
+
+        //PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;    // set semaphore 1 to 0
+
+        avcamarraysInit = 1;
+    }
+
+    if(InitSem==1)
+    {
+        sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+        printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[aoconfID_wfsim].md[0].name, semval);
+        for(i=0; i<semval; i++)
+            sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
+    }
+
+#ifdef _PRINT_TEST
+    printf("TEST - SEMAPHORE INITIALIZED\n");
+    fflush(stdout);
+#endif
+
+    if(RM==0)
+    {
+        AOconf[loop].status = 20;  // 020: WAIT FOR IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[20] = tdiffv;
+    }
+    else
+        data.status1 = 2;
+
+    //   usleep(20);
+
+#ifdef _PRINT_TEST
+    printf("TEST - WAITING FOR IMAGE %s\n", data.image[aoconfID_wfsim].md[0].name);
+    fflush(stdout);
+#endif
+
+    if(data.image[aoconfID_wfsim].md[0].sem==0)
+    {
+        if(RM==0)
+            while(AOconf[loop].WFScnt==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
+                usleep(5);
+        else
+            while(AOconf[loop].WFScntRM==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
+                usleep(5);
+    }
+    else
+    {
+#ifdef _PRINT_TEST
+        printf("TEST - waiting on semindex = %d\n", semindex);
+        fflush(stdout);
+#endif
+
+        sem_wait(data.image[aoconfID_wfsim].semptr[semindex]);
+
+        sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+        for(i=0; i<semval; i++)
+            sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
+
+
+#ifdef _PRINT_TEST
+        printf("TEST - semaphore posted\n");
+        fflush(stdout);
+#endif
+    }
+
+    if(RM==0)
+        AOconf[loop].status = 0;  // LOAD IMAGE
+
+    AOconf[loop].statusM = 0;
+
+
+    slice = 0;
+    if(data.image[aoconfID_wfsim].md[0].naxis==3) // ring buffer
+    {
+        slice = data.image[aoconfID_wfsim].md[0].cnt1;
+        if(slice==-1)
+            slice = data.image[aoconfID_wfsim].md[0].size[2];
+    }
+
+    switch (WFSatype) {
+    case _DATATYPE_FLOAT :
+        ptrv = (char*) data.image[aoconfID_wfsim].array.F;
+        ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
+        memcpy(arrayftmp, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
+        break;
+    case _DATATYPE_UINT16 :
+        ptrv = (char*) data.image[aoconfID_wfsim].array.UI16;
+        ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
+        memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
+        break;
+    default :
+        printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+        exit(0);
+        break;
+    }
+    if(RM==0)
+        AOconf[loop].WFScnt = data.image[aoconfID_wfsim].md[0].cnt0;
+    else
+        AOconf[loop].WFScntRM = data.image[aoconfID_wfsim].md[0].cnt0;
+
+
+    //   if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
+    PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
+
+
+    // THIS IS THE STARTING POINT FOR THE LOOP
+    if(RM==0)
+    {
+        AOconf[loop].status = 1;  // 3->001: DARK SUBTRACT
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[0] = tdiffv;
+
+        data.image[aoconfID_looptiming].md[0].atime.ts = tnow;
+    }
+
+#ifdef _PRINT_TEST
+    printf("TEST - DARK SUBTRACT\n");
+    fflush(stdout);
+#endif
+
+    // Dark subtract and compute total
+
+    if((loop==0)||(RM == 1)) // single thread, in CPU
+    {
+        switch ( WFSatype ) {
+        case _DATATYPE_UINT16 :
+# ifdef _OPENMP
+            #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+        {
+# endif
+
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for(ii=0; ii<Average_cam_frames_nelem; ii++)
+                data.image[aoconfID_imWFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+# ifdef _OPENMP
+        }
+# endif
+        break;
+        case _DATATYPE_FLOAT :
+# ifdef _OPENMP
+            #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+        {
+# endif
+
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for(ii=0; ii<Average_cam_frames_nelem; ii++)
+                data.image[aoconfID_imWFS0].array.F[ii] = arrayftmp[ii] - data.image[Average_cam_frames_IDdark].array.F[ii];
+# ifdef _OPENMP
+        }
+# endif
+        break;
+        default :
+            printf("ERROR: WFS data type not recognized\n");
+            exit(0);
+            break;
+        }
+
+        for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
+        {
+            sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[aoconfID_imWFS0].semptr[s]);
+        }
+    }
+    else
+    {
+#ifdef _PRINT_TEST
+        printf("TEST - DARK SUBTRACT - START  (init = %d, %d threads)\n", AOLCOMPUTE_DARK_SUBTRACT_THREADinit, COMPUTE_DARK_SUBTRACT_NBTHREADS);
+        fflush(stdout);
+#endif
+
+        if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
+        {
+#ifdef _PRINT_TEST
+            printf("TEST - DARK SUBTRACT - CREATE %d THREADS\n", COMPUTE_DARK_SUBTRACT_NBTHREADS);
+            fflush(stdout);
+#endif
+
+            ti = 0;
+
+            while(ti<COMPUTE_DARK_SUBTRACT_NBTHREADS)
+            {
+                pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
+                sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], 0, 0);
+                sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti], 0, 0);
+                usleep(100);
+                ti++;
+            }
+            AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
+        }
+
+
+        for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
+        {
+            sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval0);
+            if(sval0<SEMAPHORE_MAXVAL)
+                sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
+
+            sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
+
+#ifdef _PRINT_TEST
+            printf("TEST - DARK SUBTRACT - WAITING ON THREAD %ld\n", ti);
+            fflush(stdout);
+#endif
+            sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
+        }
+
+        for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
+        {
+            sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[aoconfID_imWFS0].semptr[s]);
+        }
+#ifdef _PRINT_TEST
+        printf("TEST - DARK SUBTRACT - END\n");
+        fflush(stdout);
+#endif
+    }
+
+    //  if(IDdark!=-1)
+    // {
+    //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+    //       data.image[aoconfID_imWFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
+    //}
+    AOconf[loop].statusM = 2;
+    if(RM==0)
+    {
+        AOconf[loop].status = 2; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[2] = tdiffv;
+    }
+
+#ifdef _PRINT_TEST
+    printf("TEST - NORMALIZE\n");
+    fflush(stdout);
+#endif
+
+
+    // Normalize
+    if(normalize==1)
+    {
+        if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RM == 1)) // do it in main thread
+        {
+            nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
+            IMTOTAL = 0.0;
+            if(aoconfID_wfsmask!=-1)
+            {
+                for(ii=0; ii<nelem; ii++)
+                    IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii]*data.image[aoconfID_wfsmask].array.F[ii];
+            }
+            else
+            {
+                for(ii=0; ii<nelem; ii++)
+                    IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii];
+            }
+
+            //            AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_imWFS0].name);
+            AOconf[loop].WFStotalflux = IMTOTAL;
+
+            AOLCOMPUTE_TOTAL_INIT = 1;
+            //            IMTOTAL = AOconf[loop].WFStotalflux;
+            if(aoconfID_imWFS0tot!=-1)
+            {
+                data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+                COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
+                //                sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
+                //               if(semval<SEMAPHORE_MAXVAL)
+                //                  sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
+            }
+        }
+        else  // do it in other threads
+        {
+            AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
+            if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
+            {
+                pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+                AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
+                sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
+            }
+            sem_getvalue(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        }
+    }
+
+
+    if(RM==0)
+    {
+        AOconf[loop].status = 3;  // 5 -> 003: NORMALIZE WFS IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[3] = tdiffv;
+    }
+
+    data.image[aoconfID_imWFS0].md[0].cnt0 ++;
+
+    nelem = AOconf[loop].sizeWFS;
+
+    if(normalize==1)
+    {
+        totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+        normfloorcoeff = AOconf[loop].WFStotalflux / (AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    }
+    else
+    {
+        totalinv = 1.0;
+        normfloorcoeff = 1.0;
+    }
+
+    GPU_alpha = totalinv;
+
+    GPU_beta = -normfloorcoeff;
+
+
+
+
+
+    if( ((AOconf[loop].GPUall==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
+    {
+#ifdef _PRINT_TEST
+        printf("TEST - Normalize [%d]: totalinv = %f\n", AOconf[loop].WFSnormalize, totalinv);
+        fflush(stdout);
+#endif
+
+        data.image[aoconfID_imWFS1].md[0].write = 1;
+# ifdef _OPENMP
+        #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+        {
+# endif
+
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for(ii=0; ii<nelem; ii++)
+                data.image[aoconfID_imWFS1].array.F[ii] = data.image[aoconfID_imWFS0].array.F[ii]*totalinv;
+# ifdef _OPENMP
+        }
+# endif
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS1, -1);
+        data.image[aoconfID_imWFS1].md[0].cnt0 ++;
+        data.image[aoconfID_imWFS1].md[0].write = 0;
+    }
+
+#ifdef _PRINT_TEST
+    printf("TEST - READ CAM DONE\n");
+    fflush(stdout);
+#endif
+
+
+    return(0);
+}
 
 
 
@@ -273,26 +1060,21 @@ int_fast8_t init_AOloopControl_IOtools()
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS                                           */
+/** @name AOloopControl_IOtools - 2. LOAD DATA STREAMS     
+ *  Load 2D and 3D shared memory images */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
 
 
 
-/* =============================================================================================== */
-/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
-/* =============================================================================================== */
-
-
-
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize)
+long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue)
 {
     long ID;
     int CreateSMim = 0;
     int sizeOK;
     uint32_t *sizearray;
-
+	long ii;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -350,6 +1132,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
             sizearray[1] =  ysize;
             if(xsize*ysize>0)
                 ID = create_image_ID(name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
+            for(ii=0;ii<xsize*ysize;ii++)
+				data.image[ID].array.F[ii] = DefaultValue;
         }
     }
     free(sizearray);
@@ -435,7 +1219,10 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
+
+
+
+long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue)
 {
     long ID;
     int CreateSMim;
@@ -443,6 +1230,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     uint32_t *sizearray;
     long ID1;
     int creashmimfromFITS = 0;
+    long ii;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -462,8 +1250,10 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 #endif
 
 
-    printf("-------- ENTERING AOloopControl_3Dloadcreate_shmim ----------\n");
+    printf("-------- ENTERING AOloopControl_3Dloadcreate_shmim   name = %s ----------\n", name);
     fflush(stdout);
+    
+    list_image_ID();
 
 
     ID = image_ID(name);
@@ -528,6 +1318,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
                 printf("        AOloopControl_3Dloadcreate_shmim: ===== create_image_ID\n");
                 fflush(stdout);
                 ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
+                for(ii=0;ii<xsize*ysize*zsize;ii++)
+					data.image[ID].array.F[ii] = DefaultValue;
                 creashmimfromFITS = 0;
             }
             else
@@ -654,14 +1446,12 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 
-
 /* =============================================================================================== */
-/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING               */
 /* =============================================================================================== */
-
-
-
-
+/** @name AOloopControl_IOtools - 3. DATA STREAMS PROCESSING      
+ *  Data streams real-time processing */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 /**
  * ## Purpose
@@ -756,6 +1546,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
 
     return(0);
 }
+
+
 
 
 

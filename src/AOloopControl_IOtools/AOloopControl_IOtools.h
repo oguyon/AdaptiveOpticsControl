@@ -1,11 +1,11 @@
 /**
- * @file    AOloopControl.h
+ * @file    AOloopControl_IOtools.h
  * @brief   Function prototypes for Adaptive Optics Control loop engine I/O tools
  * 
  * AO engine uses stream data structure
  * 
  * @author  O. Guyon
- * @date    22 Aug 2017
+ * @date    25 Aug 2017
  *
  * @bug No known bugs. 
  * 
@@ -21,27 +21,57 @@ int_fast8_t init_AOloopControl_IOtools();
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
- *  Useful tools */
+/** @name AOloopControl_IOtools - 1. CAMERA INPUT
+ *  Read camera imates */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
 
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
+
+/** @brief compute sum of image pixels */
+static void *compute_function_imtotal( void *ptr );
+
+/** @brief Subtract dark */
+static void *compute_function_dark_subtract( void *ptr );
+
+/** @brief Read image from WFS camera */
+int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
+
+
+
+
+
+
+
 /* =============================================================================================== */
-/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
 /* =============================================================================================== */
+/** @name AOloopControl_IOtools - 2. LOAD DATA STREAMS     
+ *  Load 2D and 3D shared memory images */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 /** @brief Load 2D image in shared memory */
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize);
+long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue);
 
 /** @brief Load 3D image in shared memory */
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize);
+long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue);
+
+
+
+
+
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING               */
+/* =============================================================================================== */
+/** @name AOloopControl_IOtools - 3. DATA STREAMS PROCESSING      
+ *  Data streams real-time processing */
+/* =============================================================================================== */
 /* =============================================================================================== */
 
 /** @brief Average data stream */

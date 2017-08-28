@@ -1,0 +1,523 @@
+#!/bin/bash
+
+
+# number of arguments to script
+NBARGS=1
+
+# link to executable - change as needed
+execname="AtmosphericTurbulenceSimul"
+
+
+## OPTIONAL : refractive index / absorption coefficients files (RIA files)
+RIAfile_dir="/data/WORK/2014-AtmTurb/RefractiveIndices"
+RIAfile_N2="${RIAfile_dir}/R300000/RIA_N2.dat"
+RIAfile_O2="${RIAfile_dir}/R300000/RIA_O2.dat"
+RIAfile_Ar="${RIAfile_dir}/R30000/RIA_Ar.dat"
+RIAfile_H2O="${RIAfile_dir}/R300000/RIA_H2O.dat"
+RIAfile_CO2="${RIAfile_dir}/R300000/RIA_CO2.dat"
+RIAfile_Ne="${RIAfile_dir}/R30000/RIA_Ne.dat"
+RIAfile_He="${RIAfile_dir}/R30000/RIA_He.dat"
+RIAfile_CH4="${RIAfile_dir}/R300000/RIA_CH4.dat"
+RIAfile_Kr="${RIAfile_dir}/R30000/RIA_Kr.dat"
+RIAfile_H2="${RIAfile_dir}/R30000/RIA_H2.dat"
+RIAfile_O3="${RIAfile_dir}/R300000/RIA_O3.dat"
+
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+NBlayers=20 # default
+PRECISION="0" #default 0: single
+COMPmode="1" # default: compute wavefronts
+
+printHELP ()
+{
+echo
+echo "------------------------------------------------------------------------"
+echo   "$(tput bold) $pname :  ATMOSPHERIC TURBULENCE SCRIPT $(tput sgr0)"
+echo " "
+echo " Edit script to set atmosphere and turbulence parameters"
+echo " Execute script without to compute atmospheric wavefronts"
+echo ""
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "      $0 [-hNdT] <slambdaum>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)             help"
+echo "     $(tput bold)-e$(tput sgr0) <execname>  use executable <execname>"
+echo "     $(tput bold)-d$(tput sgr0)             double precision (default: single)"
+echo "     $(tput bold)-a$(tput sgr0)             Compute atmosphere properties only, no wavefronts"
+echo "     $(tput bold)-T$(tput sgr0)  <case>     Adopt turbulence profile case (default: custom 7-layer)"
+echo "                            HVbad : Hufnager-Valley, 20m/s, 1.30 arcsec seeing"
+echo "                            HVmed : Hufnager-Valley, 20m/s, 0.65 arcsec seeing"
+echo "                            HVgood: Hufnager-Valley, 10m/s, 0.40 arcsec seeing"
+echo "     $(tput bold)-N$(tput sgr0)             Number of layer for Hufnager-Valley cases (default : 20)"
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "          slambdaum       Wavelength [um]"
+echo ""
+echo "------------------------------------------------------------------------"
+echo "     $(tput bold)                OVERVIEW $(tput sgr0)"
+echo ""
+echo "Main steps are: "
+echo "   Build atmospheric composition/density model"
+echo "      function call: AtmosphereModel_Create_from_CONF(CONFFILE)"
+echo "      INPUT: "
+echo "           ./RefractiveIndices/RIA_xx.dat, where xx = N2, O2, Ar, H2O, CO2, Ne, He, CH4, Kr, H2, O3, N, O, H"
+echo "           (if RIA file does not exist, uses Sellmeier equations in module OpticsMaterials)"
+echo "      OUTPUT:"
+echo "          atm.txt               :  atmospheric vertical composition/density profile"
+echo "          RindexSite.txt        : refractive index at site, as a function of wavelength (lambda[um] rindex abs)"
+echo "          RefractAngle.dat      : refraction angle as a function of wavelength"
+echo ""
+echo "          refractpath_0550.txt  : geometric light ray path at  550 nm "
+echo "          refractpath_1650.txt  : geometric light ray path at 1650 nm "
+echo "              columns: "
+echo "                1:h0              altitude above sea level"
+echo "                2:x0              x coordinate"
+echo "                3:y0              y coordinate (aligned with altitude vector at sea level"
+echo "                4:alpha           ray angle [rad]"
+echo "                5:alpha-Zangle    atm refraction: ray angle - Zenith angle [rad]"
+echo "                6:alpha-Zangle    atm refraction: ray angle - Zenith angle [arcsec]"
+echo "                7:offset          atm refraction geometric shear [m]"
+echo "------------------------------------------------------------------------"
+}
+
+
+EXITSTATUS=0
+
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+
+}
+
+
+
+# ================= OPTIONS =============================
+while getopts :hT:dN:ae: FLAG; do
+  case $FLAG in
+    h)  #show help
+      printHELP
+      exit
+      ;;
+    T) # set loop name
+    turbprofcase=$OPTARG
+    echo "ADOPTING TURBULENCE PROFILE CASE = $turbprofcase"
+    ;;
+    d) # double precision
+	PRECISION="1" 
+    ;;
+    N) # number of layers
+	NBlayers=$OPTARG
+    ;;
+    a)
+    COMPmode="0"
+    ;;
+    e)
+    execname=$OPTARG
+    ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  
+
+
+
+
+# ============================= CHECK IF COMMAND EXISTS ==========================
+
+checkCommand $execname
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+
+
+function linkRIA {
+if [ -f "RefractiveIndices/RIA_$2.dat" ]
+then
+echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)RefractiveIndices/RIA_$2.dat$(tput sgr0) already present"
+else
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) linked"
+	ln -s $1 $PWD/RefractiveIndices/RIA_$2.dat
+   else
+    echo "[$(tput setaf 5)$(tput bold) FAILED $(tput sgr0)] WARNING: File $(tput bold)$1$(tput sgr0) not found"
+fi
+fi
+}
+
+
+mkdir -p RefractiveIndices
+linkRIA ${RIAfile_N2} N2
+linkRIA ${RIAfile_O2} O2
+linkRIA ${RIAfile_Ar} Ar
+linkRIA ${RIAfile_H2O} H2O
+linkRIA ${RIAfile_CO2} CO2
+linkRIA ${RIAfile_Ne} Ne
+linkRIA ${RIAfile_He} He
+linkRIA ${RIAfile_CH4} CH4
+linkRIA ${RIAfile_Kr} Kr
+linkRIA ${RIAfile_H2} H2
+linkRIA ${RIAfile_O3} O3
+
+
+
+
+
+slambdaum="$1"
+
+#turbprofcase="HVmed"
+# choose a pre-defined turbulence profile model
+# <default> : Mauna Kea median
+# HVbad : Hufnager-Valley, 20m/s, 1.30 arcsec seeing
+# HVmed : Hufnager-Valley, 20m/s, 0.65 arcsec seeing
+# HVgood: Hufnager-Valley, 10m/s, 0.40 arcsec seeing
+
+
+
+
+# IMPORTANT NOTES :
+# - the output wavefronts are atmospheric refraction compensated for tip tilt: the average tip-tilt at each wavelength is zero for long time series
+# - a pure frozen flow model is assumed per layer
+# - the simulator first computes "master screens" which are then allocated to layers and translated (pushed by wind) prior to chromatic diffraction propagation between layers
+
+
+
+
+# ====================================================================================================
+# =================================== DEFAULT VALUES =================================================
+# ====================================================================================================
+
+# ------------ TURBULENCE AND ATMOSPHERE PARAMETERS -------------------------------------------
+#
+
+# turbulence strength is given as seeing at zenith (TURBULENCE_SEEING) at a specific wavelength (TURBULENCE_REF_WAVEL)
+
+TURBULENCE_REF_WAVEL=0.5                  # Reference wavelength for wavefronts [micron]
+TURBULENCE_SEEING=0.6                     # Zenith seeing at the reference wavelenght [arcsec]
+
+# the CN2 profile is given as a ASCII file, 1 line per turbulent layer
+# col 1: altitude from sea level [m]
+# col 2: relative CN2 value, unitless
+# col 3: speed [m/s]
+# col 4: wind direction [rad]
+# col 5: outer scale [m], according to von Karman model
+
+# note that outerscale values can be overridden by creating a variable named OUTERSCALE in the command line interface
+
+TURBULENCE_PROF_FILE="turbul.prof"        # File name for turbulence vertical profile
+
+
+ZENITH_ANGLE="0.5"                        # zenith angle [rad] - prior to atmospheric refraction
+
+# wavefronts can be computed for multiple directions in a consistent way
+# to compute multiple directions, launch the program with different values of these 2 parameters (in different directories)
+SOURCE_XPOS="0.0"                         # source X position offset [rad]
+SOURCE_YPOS="0.0"                         # source Y position offset [rad]
+
+
+TIME_DAY_OF_YEAR="150"                    # day of year [0-365]
+TIME_LOCAL_SOLAR_TIME="0.0"               # local solar time [hr]
+
+
+
+SITE_ALT="4200"                           # Site altitude from sea level [m]
+SITE_LATITUDE="50.0"                      # Site latitude [deg]
+SITE_LONGITUDE="-155.5"                   # Site longitude [deg]
+
+
+# CO2
+CO2_PPM="400.0"                           # ground level CO2 concentration [ppm]
+
+
+
+# --------------- temperature and pressure ---------------------------
+# if SITE_TP_AUTO = 1, adopt default temperature and pressure computed from site location and time
+SITE_TP_AUTO=1
+# otherwise, force following values
+SITE_TEMP="273.15"                       # [K]
+SITE_PRESS="0.6"                         # [atm] = [101325 Pa]
+
+
+# ------------ Water vapor -------------------------------------
+# There are 3 ways to specify the water vapor content vertical distribution
+
+# Method 1: specify total precipitable water and precipitable water scale height
+# the relative humitidy vertical distribution will be computed and given in file atm.txt 
+
+# Method 2: specify relative humidity at site altitude and precipitable water scale height
+# the total precipitable water will be computed 
+
+# Method 3: specify relatice humidity and total precipitable water
+# the precipitable water scale height will be adjusted automaticallyq
+
+SITE_H2O_METHOD=1                       # Method chosen to input water vapor content
+SITE_RH="30.0"                          # site relative humidity [%]
+SITE_TPW="0.01"                          # Site total precitipable water [mm] (only takes into account PW above SITE_ALT)
+SITE_PW_SCALEH="2000.0"                 # water vapor relative concentration scale height [m]
+
+# IMPORTANT NOTE: 
+# software will issue an error if the input parameters yield RH>100% at any altitude above site
+
+
+
+# ------------ LOW_FIDELITY OUTPUT AT REF LAMBDA ------------------------------------------------
+# this is the wavelength at which the turbulence screens are computed
+# wavefronts (phase only) can be computed with high speed with geometrical shift & add (no diffraction propagation)
+# Does not include amplitude or phase unwrapping (not needed)
+# this is optional, enter 2 in WFOUTPUT if not needed
+
+WFOUTPUT=2                                # 0:empty files created; 1:data cubes, 2:nothing
+WF_FILE_PREFIX="./WF_files/wf_"           # file prefix for wavefronts at the reference wavelength specified by TURBULENCE_REF_WAVEL
+SHM_OUTPUT=0                              # shared memory output (phase only)
+
+# ------------- HIGH FIDELITY OUTPUT WAVELENGTH ---------------------------------
+# enter here parameters for the high fidelity diffractive propagation
+# 
+
+MAKE_SWAVEFRONT=1                   # 1 if the high fidelity wavefront series needs to be made
+SLAMBDA="1.600"                     # wavelength for high fidelity simulation [micron] - DEFAULT VALUE
+SWF_WRITE2DISK=1                    # if writing to disk
+WFoutdir="WFout"
+mkdir -p $WFoutdir
+SWF_FILE_PREFIX="./${WFoutdir}/wf_"   # file prefix for science wavefronts
+
+# if shared memory output, amplitude and phase files will be written in shared memory files
+SHM_SOUTPUT=0                       # shared memory output (phase and amp)
+SHM_SPREFIX="outwf"                 # high fidelity wavefront shared memory file prefix
+SHM_SOUTPUTM=2                      # output shared memory phase unit. 0:rad, 1:meter, 2:um
+     
+
+
+# ------------ OUTPUT PARAMETERS --------------------------------------------
+# these parameters apply to both the REF LAMBDA output and the SCIENCE LAMBDA ouput
+
+# pixel size, scale -----------------------------------------------
+WFsize=512                          # pixel size of output images
+PUPIL_SCALE="0.02"                  # pupil scale - m per pixel 
+
+
+
+# NOTE:
+# All output wavefront frames are square: xsize = ysize = AOsize
+# The spatial size of the frames will be AOsize x PUPIL_SCALE
+
+
+
+
+
+# ------------- TIMING ---------------------------------------
+
+REALTIME=0                          # 1 if simulation is real time
+REALTIMEFACTOR="1.0"                # time dilatation factor for realtime mode (<1.0 to slow down turbulence)
+# if realtime flag = 0, compute wavefront according to time step specified below (WFTIME_STEP): physical time in the simulation is incremented by WFTIME_STEP between each wavefront computation
+# if realtime flat = 1, use computer clock as physical time in the simulation, multiplied by REALTIMEFACTOR
+# for example, REALTIME=1 and REALTIMEFACTOR=1.0 computes turbulence at real time speed
+# if REALTIMEFACTOR=0.1, turbulence will be computed at 0.1x real speed
+# note that if REALTIME=1, multiple instances of the program are syncronized 
+# The realtime mode is typically used when output is shared memory for another real-time program
+
+WFTIME_STEP="0.001"                 # time step in seconds between wavefront frames
+TIME_SPAN="0.1"                     # time span for one continuous WF cube file 
+NB_TSPAN="100000000"                # total number of consecutive wavefront cubes to compute
+SIMTDELAY=0                         # additional time delay [us] between frames (used to limit CPU load)
+# NOTE:
+# The total simulation time will be NB_TSPAN x TIME_SPAN
+# There will be NB_TSPAN consecutive files, each of them a data cube with TIME_SPAN/WFTIME_STEP frames
+
+WAITFORSEM=0                       # 1 if wait for semaphore to advance to next WF
+WAITSEMIMNAME="wfsimwait"          # semaphore name
+
+
+
+
+# ------------ COMPUTATION PARAMETERS, MODES --------------------------------
+
+SKIP_EXISTING=1                     # set to 1 if the code should skip existing output files, otherwise, the code will start at t=0 and overwrite any existing file. This feature is useful if the code needs to be stopped and re-started later
+WF_RAW_SIZE=1024                    # size of the raw wavefronts used internally in the code (can be bigger than the output pixel size)
+MASTER_SIZE=4096                    # size in pixel of master turbulence screens - names should be t<n>_<MASTER_SIZE>
+
+# make sure MASTER_SIZE is significantly larger than the pupil to avoid wavefront repetition and low frequency attenuation 
+
+
+
+
+# ------------ WAVEFRONT AMPLITUDE -------------------------------------------
+
+WAVEFRONT_AMPLITUDE=1               # 1 if Wavefront amplitude is computed in addition to phase
+FRESNEL_PROPAGATION=1               # 1 if diffraction propagation between layers (ignored if WAVEFRONT_AMPLITUDE = 0)
+FRESNEL_PROPAGATION_BIN="1000.0"    # vertical distance within which layers will be binned together prior to diffraction propagation [m]
+
+
+
+
+
+
+
+
+
+
+# ====================================================================================================
+# =================================== CN2 PROFILE ====================================================
+# ====================================================================================================
+
+
+# default atmospheric turbulence profile 
+
+TURBULENCE_SEEING=0.6 
+echo "# altitude(m)   relativeCN2     speed(m/s)      direction(rad)   outerscale[m]	innerscale[m]	sigmawsp[m/s]	windOuterScale[m]" > turbul.prof
+echo "" >> turbul.prof
+echo " 4215     5.32        6.5     1.47     2.0        0.01    1.0     10.0" >> turbul.prof
+echo " 4230     1.47        6.55    1.57    20.0        0.01    4.0     20.0" >> turbul.prof
+echo " 4349     1.08        6.6     1.67    20.0        0.01    4.0     50.0" >> turbul.prof
+echo " 5007     2.11        6.7     1.77    20.0        0.01    3.0     80.0" >> turbul.prof
+echo "12000     1.83       22.0     3.1     30.0        0.02    3.0     80.0" >> turbul.prof
+echo "16200     1.48        9.5     3.2     40.0        0.03    3.0     80.0" >> turbul.prof
+echo "23701     0.697       5.6     3.3     40.0        1.0     2.0     80.0" >> turbul.prof
+
+
+
+
+
+if [ "$turbprofcase" = "HVbad" ]; then
+# HV model, bad seeing 1.3", 20 m/s 
+./mkHVturbprof 20.0 0.087 $SITE_ALT $NBlayers
+TURBULENCE_SEEING=$( cat conf_turb.txt )
+mv turbHV.prof turbul.prof
+fi
+
+
+if [ "$turbprofcase" = "HVmed" ]; then
+# HV model, median seeing 0.65" , 20 m/s
+./mkHVturbprof 20.0 0.175 $SITE_ALT $NBlayers
+TURBULENCE_SEEING=$( cat conf_turb.txt )
+mv turbHV.prof turbul.prof
+fi
+
+
+if [ "$turbprofcase" = "HVgood" ]; then
+# HV model, good seeing 0.4", 20 m/s
+./mkHVturbprof 20.0 0.284 $SITE_ALT $NBlayers
+TURBULENCE_SEEING=$( cat conf_turb.txt )
+mv turbHV.prof turbul.prof
+fi
+
+
+
+
+
+# WRITE CONFIGURATION FILE
+conffilename="WFsim.conf"
+printf "\n# CONFIGURATION FILE AUTOMATICALLY WRITTEN BY SCRIPT $0\n\n\n" > $conffilename
+
+printf "TURBULENCE_REF_WAVEL      %20f  # Reference wavelength for wavefronts [micron]\n" $TURBULENCE_REF_WAVEL >> $conffilename
+printf "TURBULENCE_SEEING         %20f  # Zenith seeing at the reference wavelength [arcsec]\n" $TURBULENCE_SEEING >> $conffilename
+
+printf "TURBULENCE_PROF_FILE      %20s  # File name for turbulence vertical profile\n" "$TURBULENCE_PROF_FILE" >> $conffilename
+printf "ZENITH_ANGLE              %20s  # zenith angle [rad]\n" $ZENITH_ANGLE >> $conffilename
+
+printf "SOURCE_XPOS               %20s  # source X position offset [rad]\n" $SOURCE_XPOS >> $conffilename
+printf "SOURCE_YPOS               %20s  # source Y position offset [rad]\n" $SOURCE_YPOS >> $conffilename
+
+printf "TIME_DAY_OF_YEAR          %20d  # day of year [0-365]\n" $TIME_DAY_OF_YEAR >> $conffilename
+printf "TIME_LOCAL_SOLAR_TIME     %20f  # local solar time [hr]\n" $TIME_LOCAL_SOLAR_TIME >> $conffilename
+printf "SITE_ALT                  %20f  # Site altitude from sea level [m]\n" $SITE_ALT >> $conffilename
+printf "SITE_LATITUDE             %20f  # Site latitude [deg]\n" $SITE_LATITUDE >> $conffilename
+printf "SITE_LONGITUDE            %20f  # Site longitude [deg]\n" $SITE_LONGITUDE >> $conffilename
+
+printf "CO2_PPM                   %20f  # ground level CO2 concentration [ppm]\n" $CO2_PPM >> $conffilename
+
+printf "SITE_TP_AUTO              %20d  #\n" $SITE_TP_AUTO >> $conffilename
+printf "SITE_TEMP                 %20f  # [K]\n" $SITE_TEMP >> $conffilename
+printf "SITE_PRESS                %20f  # [atm] = [101325 Pa]\n" $SITE_PRESS >> $conffilename
+
+
+
+printf "SITE_H2O_METHOD           %20d  #\n" $SITE_H2O_METHOD >> $conffilename
+printf "SITE_RH                   %20f  # site relative humidity [percent]\n" $SITE_RH >> $conffilename
+printf "SITE_TPW                  %20f  # Site total precitipable water [mm] (only takes into account PW above SITE_ALT)\n" $SITE_TPW >> $conffilename
+printf "SITE_PW_SCALEH            %20f  # water vapor relative concentration scale height [m]\n" $SITE_PW_SCALEH  >> $conffilename
+
+printf "WFOUTPUT                  %20d  # 0:empty files created; 1:data cubes, 2:nothing\n" $WFOUTPUT >> $conffilename
+printf "WF_FILE_PREFIX            %20s  # file prefix for wavefronts at the reference wavelength specified by TURBULENCE_REF_WAVEL\n" "$WF_FILE_PREFIX" >> $conffilename
+printf "SHM_OUTPUT                %20d  # shared memory output (phase only)\n" $SHM_OUTPUT >> $conffilename
+
+printf "MAKE_SWAVEFRONT           %20d  # 1 if the wavefront series needs to be made at the science wavelength\n" $MAKE_SWAVEFRONT >> $conffilename
+printf "SLAMBDA                   %20f  # wavelength for defaut science acquisition [micron]\n" $SLAMBDA >> $conffilename
+printf "SWF_WRITE2DISK            %20d  # if writing to disk\n" $SWF_WRITE2DISK >> $conffilename
+printf "SWF_FILE_PREFIX           %20s  # file prefix for science wavefronts\n" $SWF_FILE_PREFIX >> $conffilename
+
+printf "SHM_SOUTPUT               %20d  # 1 if shared memory output (phase and amp)\n" $SHM_SOUTPUT >> $conffilename
+printf "SHM_SPREFIX               %20s  # science wavelength shared memory file prefix\n" "$SHM_SPREFIX" >> $conffilename
+printf "SHM_SOUTPUTM              %20d  # output shared memory phase unit. 0:rad, 1:meter, 2:um\n" $SHM_SOUTPUTM >> $conffilename
+
+printf "WFsize                    %20d  # pixel size of output images\n" $WFsize >> $conffilename
+printf "PUPIL_SCALE               %20f  # pupil scale - m per pixel\n" $PUPIL_SCALE >> $conffilename
+
+printf "REALTIME                  %20d  # 1 if simulation is real time\n" $REALTIME >> $conffilename
+printf "REALTIMEFACTOR            %20f  # time dilatation factor for realtime mode (<1.0 to slow down turbulence)\n" $REALTIMEFACTOR >> $conffilename
+printf "WFTIME_STEP               %20f  # time step in seconds between wavefront frames\n" $WFTIME_STEP >> $conffilename
+printf "TIME_SPAN                 %20f  # time span for one continuous WF cube file\n" $TIME_SPAN >> $conffilename
+printf "NB_TSPAN                  %20d  # total number of consecutive wavefront cubes to compute\n" $NB_TSPAN >> $conffilename
+printf "SIMTDELAY                 %20d  # additional time delay [us] between frames (used to limit CPU load)\n" $SIMTDELAY >> $conffilename
+printf "WAITFORSEM                %20d  # wait for semaphore to advance to next WF\n" $WAITFORSEM >> $conffilename
+printf "WAITSEMIMNAME             %20s  # semaphore name\n" $WAITSEMIMNAME >> $conffilename
+
+printf "SKIP_EXISTING             %20d  # set to 1 if the code should skip existing output files\n" $SKIP_EXISTING >> $conffilename
+printf "WF_RAW_SIZE               %20d  # size of the raw wavefronts used internally in the code (can be bigger than the output pixel size)\n" $WF_RAW_SIZE >> $conffilename
+printf "MASTER_SIZE               %20d  # size in pixel of master turbulence screens - names should be t<n>_<MASTER_SIZE>\n" $MASTER_SIZE >> $conffilename
+printf "WAVEFRONT_AMPLITUDE       %20d  # 1 if Wavefront amplitude is computed in addition to phase\n" $WAVEFRONT_AMPLITUDE >> $conffilename
+printf "FRESNEL_PROPAGATION       %20d  # 1 if diffraction propagation between layers (ignored if WAVEFRONT_AMPLITUDE = 0)\n" $FRESNEL_PROPAGATION >> $conffilename
+printf "FRESNEL_PROPAGATION_BIN   %20f  # vertical distance within which layers will be binned together prior to diffraction propagation [m]\n" $FRESNEL_PROPAGATION_BIN >> $conffilename
+printf "\n\n" >> $conffilename
+
+
+
+$execname << EOF
+mkwfs ${slambdaum} ${PRECISION} ${COMPmode}
+exit
+EOF
+

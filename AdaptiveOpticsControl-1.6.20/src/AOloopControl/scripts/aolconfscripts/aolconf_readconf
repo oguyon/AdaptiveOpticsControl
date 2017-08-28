@@ -1,0 +1,490 @@
+#!/bin/bash
+
+echo "accessing aolconf_readconf"
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+# ============== LOOPNUMBER (loop number)
+LOOPNUMBER_file="LOOPNUMBER"
+if [ ! -f $LOOPNUMBER_file ]
+then
+	aoconflog "creating loop number $LOOPNUMBER_default"
+	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
+	LOOPNUMBER=$LOOPNUMBER_default
+else
+	LOOPNUMBER=$(cat $LOOPNUMBER_file)
+	aoconflog "LOOPNUMBER = $LOOPNUMBER"
+fi
+
+
+# ============= loop name
+LOOPNAME_file="LOOPNAME"
+if [ ! -f $LOOPNAME_file ]
+then
+	aoconflog "creating loop name loop$LOOPNUMBER"
+	echo "loop$LOOPNUMBER" > $LOOPNAME_file
+else
+	LOOPNAME=$(cat $LOOPNAME_file)
+	aoconflog "LOOPNAME = $LOOPNAME"
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ReaddmwrefRMname {
+file="./conf/conf_dmwrefRM_name.txt"
+if [ -a $file ]
+	then
+	dmwrefRM=$(echo "$(cat $file)")
+	else
+	dmwrefRM="empty" #default
+fi
+aoconflog "linking dmwfrefRM to ${dmwrefRM}"
+rm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm 
+aoconflog "ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm"
+ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
+}
+
+function ReaddmwrefOname {
+file="./conf/conf_dmwrefO_name.txt"
+if [ -a $file ]
+	then
+	dmwrefO=$(echo "$(cat $file)")
+	else
+	dmwrefO="empty" #default
+fi
+aoconflog "linking dmwfrefO to ${dmwrefO}"
+rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
+ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
+}
+
+
+
+
+function ReaddmOname {
+file="./conf/conf_dmO_name.txt"
+if [ -a $file ]
+	then
+	dmO=$(echo "$(cat $file)")
+	else
+	dmO="dmO" #default
+fi
+# DM offset channel
+echo "linking to dm offset channel"
+aoconflog "linking dmO to ${dmO}"
+rm /tmp/aol${LOOPNUMBER}_dmO.im.shm 
+ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
+}
+
+
+
+function Readwfsimcamname {
+file="./conf/conf_wfsim_name.txt"
+if [ -a $file ]
+	then
+	wfsimcam=$(echo "$(cat $file)")
+	else
+	wfsimcam="wfsimcam" #default
+fi
+# WFS raw image
+aoconflog "linking wfsim to ${wfsimcam}"
+ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
+}
+
+
+function Readwfsdarkname {
+file="./conf/conf_wfsdark_name.txt"
+if [ -a $file ]
+	then
+	wfsdark=$(echo "$(cat $file)")
+	else
+	wfsdark="wfsdark" #default
+fi
+# WFS raw image
+aoconflog "linking wfsdark to ${wfsdark}"
+ln -sf /tmp/${wfsdark}.im.shm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+}
+
+
+
+
+
+#function ReadWFSdarkfname {
+#file="./conf/conf_wfsdark_name.txt"
+#if [ -a $file ]
+#	then
+#	wfsdarkfname=$(echo "$(cat $file)")
+#	else
+#	wfsdarkfname="wfsdark.fits" #default
+#fi
+#aoconflog "linking wfsdark to file ${wfsdarkfname}"
+#if [ -f $wfsdarkfname ];then
+#rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+#Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
+#ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
+#else
+#printWARNING "File $wfsdarkfname does not exist: no WFS dark frame"
+#fi
+#}
+
+
+
+function ReadzrespMfname {
+file="./conf/conf_zrespM_name.txt"
+if [ -a $file ]
+	then
+	zrespMfname=$(echo "$(cat $file)")
+	else
+	zrespMfname="zrespM.fits" #default
+fi
+aoconflog "linking zrespM to file ${zrespMfname}"
+rm /tmp/aol${LOOPNUMBER}_zrespM.im.shm
+Fits2shm ${zrespMfname} aol${LOOPNUMBER}_zrespM
+ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
+}
+
+
+function ReadLOrespMfname {
+file="./conf/conf_LOrespM_name.txt"
+if [ -a $file ]
+	then
+	LOrespMfname=$(echo "$(cat $file)")
+	else
+	LOrespMfname="LOrespM.fits" #default
+fi
+aoconflog "linking LOrespM to file ${LOrespMfname}"
+rm /tmp/aol${LOOPNUMBER}_LOrespM.im.shm
+Fits2shm ${LOrespMfname} aol${LOOPNUMBER}_LOrespM
+ln -s $PWD/${LOrespMfname} conf/aol${LOOPNUMBER}_LOrespM.fits
+}
+
+
+function ReadWFSmaskfname {
+file="./conf/conf_wfsmask_name.txt"
+if [ -a $file ]
+	then
+	wfsmaskfname=$(echo "$(cat $file)")
+	else
+	wfsmaskfname="wfsmask.fits" #default
+fi
+aoconflog "linking wfsmask to file ${wfsmaskfname}"
+rm /tmp/aol${LOOPNUMBER}_wfsmask.im.shm
+Fits2shm ${wfsmaskfname} aol${LOOPNUMBER}_wfsmask
+ln -s $PWD/${wfsmaskfname} conf/aol${LOOPNUMBER}_wfsmask.fits
+}
+
+
+
+function ReadDMmaskfname {
+file="./conf/conf_dmmask_name.txt"
+if [ -a $file ]
+	then
+	dmmaskfname=$(echo "$(cat $file)")
+	else
+	dmmaskfname="dmmask.fits" #default
+fi
+aoconflog "linking dmmask to file ${dmmaskfname}"
+rm /tmp/aol${LOOPNUMBER}_dmmask.im.shm
+Fits2shm ${dmmaskfname} aol${LOOPNUMBER}_dmmask
+ln -s $PWD/${dmmaskfname} conf/aol${LOOPNUMBER}_dmmask.fits
+}
+
+
+function ReadDMmaskRMfname {
+file="./conf/conf_dmmaskRM_name.txt"
+if [ -a $file ]
+	then
+	dmmaskRMfname=$(echo "$(cat $file)")
+	else
+	dmmaskRMfname="dmmaskRM.fits" #default
+fi
+aoconflog "linking dmmaskRM to file ${dmmaskRMfname}"
+rm /tmp/aol${LOOPNUMBER}_dmmaskRM.im.shm
+Fits2shm ${dmmaskRMfname} aol${LOOPNUMBER}_dmmaskRM
+ln -s $PWD/${dmmaskRMfname} conf/aol${LOOPNUMBER}_dmmaskRM.fits
+}
+
+
+
+#function ReadDMmapfname {
+#file="./conf/conf_dmmap_name.txt"
+#if [ -a $file ]
+#	then
+#	dmmapfname=$(echo "$(cat $file)")
+#	else
+#	dmmapfname="dmmap.fits" #default
+#fi
+#aoconflog "linking dmmap to file ${dmmapfname}"
+#rm /tmp/aol${LOOPNUMBER}_dmmap.im.shm
+#Fits2shm ${dmmapfname} aol${LOOPNUMBER}_dmmap
+#ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
+#}
+
+
+function ReadWFSref0fname {
+file="./conf/conf_wfsref0_name.txt"
+if [ -a $file ]
+	then
+	wfsreffname=$(echo "$(cat $file)")
+	else
+	wfsreffname="wfsref0.fits" #default
+fi
+aoconflog "linking wfsref0 to file ${wfsreffname}"
+rm /tmp/aol${LOOPNUMBER}_wfsref0.im.shm
+Fits2shm ${wfsreffname} aol${LOOPNUMBER}_wfsref0
+ln -s $PWD/${wfsreffname} conf/aol${LOOPNUMBER}_wfsref0.fits
+}
+
+
+
+
+
+
+
+
+
+#  System response and controlReadCon
+
+function ReadCPAmax {
+file="./conf/conf_cpamax.txt"
+if [ -a $file ]
+	then
+	cpamax=$(echo "$(cat $file)")
+	else
+	cpamax="10.0" #default
+    log "cpamax = ${cpamax}"
+fi
+}
+
+function ReadDMmodesfname {
+file="./conf/conf_DMmodes_name.txt"
+if [ -a $file ]
+	then
+	DMmodesfname=$(echo "$(cat $file)")
+	else
+	DMmodesfname="DMmodes.fits" #default
+fi
+aoconflog "linking DMmodes to file ${DMmodesfname}"
+rm /tmp/aol${LOOPNUMBER}_DMmodes.im.shm
+Fits2shm ${DMmodesfname} aol${LOOPNUMBER}_DMmodes
+rm conf/aol${LOOPNUMBER}_DMmodes.fits
+ln -s $PWD/${DMmodesfname} conf/aol${LOOPNUMBER}_DMmodes.fits
+}
+
+
+function ReadrespMfname {
+file="./conf/conf_respM_name.txt"
+if [ -a $file ]
+	then
+	respMfname=$(echo "$(cat $file)")
+	else
+	respMfname="respM.fits" #default
+fi
+aoconflog "linking respM to file ${respMfname}"
+rm /tmp/aol${LOOPNUMBER}_respM.im.shm
+Fits2shm ${respMfname} aol${LOOPNUMBER}_respM
+rm conf/aol${LOOPNUMBER}_respM.fits
+ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
+}
+
+
+
+
+
+
+
+
+
+
+function SelectConfFile {
+name="$1"
+ffname="./conf/conf_${name}_name.txt"
+fname=$( cat $ffname )
+echo "fname = $fname"
+fname=$(dialog --title "Select  Matrix" --stdout --title "Select ${name}" --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > $ffname
+aoconflog "select configuration file ${name} : ${fname}"
+ReadConfFile "$name"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ReadLoopGain {
+file="./conf/conf_loopgain.txt"
+if [ -a $file ]
+	then
+	loopgain=$(echo "$(cat $file)")
+	else
+	loopgain="0.000" #default
+    aoconflog "loopgain = ${loopgain}"
+fi
+}
+
+
+function ReadLoopMaxLim {
+file="./conf/conf_loopmaxlim.txt"
+if [ -a $file ]
+	then
+	loopmaxlim=$(echo "$(cat $file)")
+	else
+	loopmaxlim="0.100"
+    aoconflog "loopmaxlim = ${loopmaxlim}"
+fi
+}
+
+
+function ReadLoopMultCoeff {
+file="./conf/conf_loopmultcoeff.txt"
+if [ -a $file ]
+	then
+	loopmultcoeff=$(echo "$(cat $file)")
+	else
+	loopmultcoeff="0.999"
+    aoconflog "loopmultcoeff = ${loopmultcoeff}"
+fi
+}
+
+
+
+function ReadDMturbampl {
+file="./conf/conf_dmturbampl.txt"
+if [ -a $file ]
+	then
+	dmturbampl=$(echo "$(cat $file)")
+	else
+	dmturbampl=0.1 #default
+fi
+aoconflog "dmturbampl = $dmturbampl"
+sleep 0.2
+tmux new-session -d -s DMturbamp
+sleep 0.2
+tmux send-keys -t DMturbamp "$execname " C-m
+if [ "$CPUconfRT" -eq "1" ]; then
+tmux send-keys -t DMturbamp "csetpmove system" C-m
+fi
+tmux send-keys -t DMturbamp "aoloopcontroldmturampl ${DMindex} $dmturbampl" C-m
+tmux send-keys -t DMturbamp "exit" C-m
+tmux send-keys -t DMturbamp "exit" C-m
+}
+
+
+function ReadDMturbws {
+file="./conf/conf_dmturbws.txt"
+if [ -a $file ]
+	then
+	dmturbws=$(echo "$(cat $file)")
+	else
+	dmturbws=1.0 #default
+fi
+aoconflog "dmturbws = $dmturbws"
+sleep 0.2
+tmux new-session -d -s DMturbws
+sleep 0.2
+tmux send-keys -t DMturbws "$execname " C-m
+if [ "$CPUconfRT" -eq "1" ]; then
+tmux send-keys -t DMturbws "csetpmove system" C-m
+fi
+tmux send-keys -t DMturbws "aoloopcontroldmturws ${DMindex} $dmturbws" C-m
+tmux send-keys -t DMturbws "exit" C-m
+tmux send-keys -t DMturbws "exit" C-m
+}
+
+
+function ReadDMturblo {
+file="./conf/conf_dmturblo.txt"
+if [ -a $file ]
+	then
+	dmturblo=$(echo "$(cat $file)")
+	else
+	dmturblo=1.0 #default
+fi
+sleep 0.2
+tmux new-session -d -s DMturblo
+sleep 0.2
+tmux send-keys -t DMturblo "$execname " C-m
+if [ "$CPUconfRT" -eq "1" ]; then
+tmux send-keys -t DMturblo "csetpmove system" C-m
+fi
+tmux send-keys -t DMturblo "aoloopcontroldmturlo ${DMindex} $dmturblo" C-m
+tmux send-keys -t DMturblo "exit" C-m
+#tmux send-keys -t DMturblo "exit" C-m
+}
+
+
+function ReadDMturbtint {
+    file="./conf/conf_dmturbtint.txt"
+    if [ -a $file ]
+        then
+        dmturbtint=$(echo "$(cat $file)")
+        else
+        dmturbtint=80 #default
+    fi
+    aoconflog "dmturbtint = ${dmturbtint}"
+    sleep 0.2
+    tmux new-session -d -s DMturbtint
+    sleep 0.2
+    tmux send-keys -t DMturbtint "$execname " C-m
+    if [ "$CPUconfRT" -eq "1" ]; then
+    tmux send-keys -t DMturbtint "csetpmove system" C-m
+    fi
+    tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
+}
+
+
+
+function ReadTMsync {
+    file="./conf/conf_AOsystsimsync.txt"
+    if [ -a $file ]
+        then
+        AOsystsimsync=$(echo "$(cat $file)")
+        else
+        AOsystsimsync=2 #default
+    fi
+    aoconflog "AOsystsimsync = ${AOsystsimsync}"
+}
+
+
+function ReadTMdelayus {
+    file="./conf/conf_AOsystsimWFSdelayus.txt"
+    if [ -a $file ]
+        then
+        AOsystsimWFSdelayus=$(echo "$(cat $file)")
+        else
+        AOsystsimWFSdelayus=100000 #default
+    fi
+    aoconflog "AOsystsimWFSdelayus = ${AOsystsimWFSdelayus}"
+}
+
+
+

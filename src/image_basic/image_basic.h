@@ -100,7 +100,9 @@ long basic_2Dextrapolate_nearestpixel(const char *IDin_name, const char *IDmask_
 double basic_measure_transl( const char *ID_name1, const char *ID_name2, long tmax);
 
 // Operations on image streams
-long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode);
+
+/** @brief Average an image stream */
+long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode, int semindex);
 
 long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float frequ);
 

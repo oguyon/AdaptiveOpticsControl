@@ -1,0 +1,180 @@
+#! /bin/bash
+
+NBARGS=2
+pname=`echo "$0" | sed "s/\.\///g"`
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : Copy FITS files to shared memory $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "  Copy FITS file to shared memory"
+echo "  Writes into ./loadedSM/ what has been loaded"
+echo "  unless -f option, will not re-load unchanged files"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-hf] <FITS file> <shared memory stream name>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)         help"
+echo "     $(tput bold)-f$(tput sgr0)         force load (even if unchanged file)"
+echo "     $(tput bold)-c$(tput sgr0)         "
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
+echo "   <FITS file>    filesystem FITS file"
+echo "   <stream>       shared memory stream name"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%25s       Copy FITS files to shared memor\n" "$0" 
+}
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+FORCE=1
+while getopts :hf FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    c) 
+	  
+	  
+    ;;
+    f)
+    FORCE="1"
+    ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+mkdir -p loadedSM
+
+LOADfile="0"
+
+# has the file changed since last request ?
+
+cp ./loadedSM/$2.FITSinfo ./loadedSM/$2.FITSinfo.old
+stat -L --format "%n %s %y" $1 > ./loadedSM/$2.FITSinfo
+
+str1=$(cat ./loadedSM/$2.FITSinfo.old)
+str2=$(cat ./loadedSM/$2.FITSinfo)
+if [ "$str1" = "$str2" ]; then
+touch ./loadedSM/$2.FITSsame
+rm ./loadedSM/$2.FITSchanged &> /dev/null
+NEW="0"
+else
+rm ./loadedSM/$2.FITSsame &> /dev/null
+touch ./loadedSM/$2.FITSchanged
+NEW="1"
+LOADfile="1"
+fi
+rm ./loadedSM/$2.SMloaded.old &> /dev/null
+
+
+# has shared memory changed since last request ?
+
+cp ./loadedSM/$2.SMinfo ./loadedSM/$2.SMinfo.old
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMinfo
+str1=$(cat ./loadedSM/$2.SMinfo.old)
+str2=$(cat ./loadedSM/$2.SMinfo)
+
+if [ "$str1" = "$str2" ]; then
+touch ./loadedSM/$2.SMsame
+rm ./loadedSM/$2.SMchanged &> /dev/null
+NEW_SM="0"
+else
+rm ./loadedSM/$2.SMsame &> /dev/null
+touch ./loadedSM/$2.SMchanged
+NEW_SM="1"
+LOADfile="1"
+fi
+rm ./loadedSM/$2.SMinfo.old &> /dev/null
+
+
+
+
+
+if [ ! -f "/tmp/$2.im.shm" ]; then
+touch ./loadedSM/$2.missing
+LOADfile="1"
+else
+rm ./loadedSM/$2.missing &> /dev/null
+fi
+
+
+if [ "$FORCE" = "1" ]; then
+LOADfile="1"
+fi
+
+
+if [ "$LOADfile" = "1" ]; then
+
+./AOloopControl -n pname << EOF
+loadfits "$1" im
+readshmim "$2"
+cpsh im "$2"
+readshmimsize $2 "./loadedSM/$2.imsize"
+exitCLI
+EOF
+
+# write SM stat AFTER it has been updated
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMinfo
+rm ./loadedSM/$2.kept &> /dev/null
+touch ./loadedSM/$2.changed
+
+else
+
+touch ./loadedSM/$2.kept
+rm ./loadedSM/$2.changed &> /dev/null
+
+fi
+
+
