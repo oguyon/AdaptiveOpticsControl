@@ -56,7 +56,8 @@ AdaptiveOpticsControl-initmodules.o: initmodules.c \
  AOloopControl_acquireCalib/AOloopControl_acquireCalib.h \
  AOloopControl_computeCalib/AOloopControl_computeCalib.h \
  AOloopControl_PredictiveControl/AOloopControl_PredictiveControl.h \
- AOsystSim/AOsystSim.h AOloopControl_DM/AOloopControl_DM.h \
+ AOloopControl_perfTest/AOloopControl_perfTest.h \
+ AOloopControl_DM/AOloopControl_DM.h AOsystSim/AOsystSim.h \
  OptSystProp/OptSystProp.h OpticsMaterials/OpticsMaterials.h \
  ZernikePolyn/ZernikePolyn.h WFpropagate/WFpropagate.h \
  image_basic/image_basic.h image_filter/image_filter.h kdtree/kdtree.h \
@@ -226,9 +227,11 @@ AOloopControl_computeCalib/AOloopControl_computeCalib.h:
 
 AOloopControl_PredictiveControl/AOloopControl_PredictiveControl.h:
 
-AOsystSim/AOsystSim.h:
+AOloopControl_perfTest/AOloopControl_perfTest.h:
 
 AOloopControl_DM/AOloopControl_DM.h:
+
+AOsystSim/AOsystSim.h:
 
 OptSystProp/OptSystProp.h:
 

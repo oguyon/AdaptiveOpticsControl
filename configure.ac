@@ -363,14 +363,14 @@ LIBS="$LIBS -lpthread"
 #	LIBS="$LIBS -lcuda -lcudart -lcufft"
 #fi
 
-AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/ImageStreamIO/Makefile src/COREMOD_tools/Makefile src/COREMOD_memory/Makefile src/COREMOD_iofits/Makefile src/COREMOD_arith/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/AOsystSim/Makefile src/AOloopControl_DM/Makefile src/AOloopControl_perfTest/Makefile src/AOloopControl_PredictiveControl/Makefile src/AOloopControl_computeCalib/Makefile src/AOloopControl_acquireCalib/Makefile src/AOloopControl_IOtools/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphereModel/Makefile src/AtmosphericTurbulence/Makefile src/cudacomp/Makefile )
+AC_CONFIG_FILES(Makefile \
 src/Makefile \
-src/ImageStreamIO/Makefile \
 src/00CORE/Makefile \
-src/COREMOD_arith/Makefile \
-src/COREMOD_iofits/Makefile \
-src/COREMOD_memory/Makefile \
+src/ImageStreamIO/Makefile \
 src/COREMOD_tools/Makefile \
+src/COREMOD_memory/Makefile \
+src/COREMOD_iofits/Makefile \
+src/COREMOD_arith/Makefile \
 src/info/Makefile \
 src/fft/Makefile \
 src/statistic/Makefile \
@@ -381,29 +381,21 @@ src/image_filter/Makefile \
 src/image_basic/Makefile \
 src/WFpropagate/Makefile \
 src/ZernikePolyn/Makefile \
-src/coronagraphs/Makefile \
 src/OpticsMaterials/Makefile \
 src/OptSystProp/Makefile \
-src/PIAACMCsimul/Makefile \
-src/image_format/Makefile \
-src/img_reduce/Makefile \
-src/AOloopControl_DM/Makefile \
 src/AOsystSim/Makefile \
-src/AOloopControl/Makefile \
-src/AOloopControl_IOtools/Makefile \
-src/AOloopControl_PredictiveControl/Makefile \
-src/AOloopControl_acquireCalib/Makefile \
-src/AOloopControl_computeCalib/Makefile \
+src/AOloopControl_DM/Makefile \
 src/AOloopControl_perfTest/Makefile \
-src/AOloopControl_compTools/Makefile \
-src/FPAOloopControl/Makefile \
+src/AOloopControl_PredictiveControl/Makefile \
+src/AOloopControl_computeCalib/Makefile \
+src/AOloopControl_acquireCalib/Makefile \
+src/AOloopControl_IOtools/Makefile \
+src/AOloopControl/Makefile \
 src/psf/Makefile \
 src/AtmosphereModel/Makefile \
 src/AtmosphericTurbulence/Makefile \
 src/cudacomp/Makefile \
-src/SCExAO_control/Makefile \
-src/TransitLC/Makefile \
-src/linARfilterPred/Makefile)
+)
 
 
 AC_OUTPUT
