@@ -193,9 +193,9 @@ loggainbstat="0"
 fi
 if [ "${loggainbstat}" = "0" ];
 then
-menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                 Block gain" )
+menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                Block gain" )
 else
-menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                 Block gain\Zn" )
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                Block gain\Zn" )
 fi
 
 
@@ -210,9 +210,9 @@ logDMmodeGAINstat="0"
 fi
 if [ "${logDMmodeGAINstat}" = "0" ];
 then
-menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN            DM mode gain" )
+menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN          DM mode gain" )
 else
-menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn           DM mode gain\Zn" )
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn         DM mode gain\Zn" )
 fi
 
 
@@ -244,9 +244,9 @@ logmultfbstat="0"
 fi
 if [ "${logmultfbstat}" = "0" ];
 then
-menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb                 Block mult factor" )
+menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb               Block mult factor" )
 else
-menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn                 Block mult factor\Zn" )
+menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn               Block mult factor\Zn" )
 fi
 
 
@@ -261,16 +261,15 @@ logDMmodeMULTFstat="0"
 fi
 if [ "${logDMmodeMULTFstat}" = "0" ];
 then
-menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF            DM mode mult factor" )
+menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF         DM mode mult factor" )
 else
-menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn           DM mode mult factor\Zn" )
+menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn        DM mode mult factor\Zn" )
 fi
 
 
 
 
 menuitems+=( " " " " )
-
 
 
 
@@ -485,7 +484,9 @@ fi
 
 menuitems+=( " " " " )
 
-if [ "${dm2dm_mode}" = "0" ]; then
+
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
+if [ "$CMMODE" = "0" ]; then
 
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
@@ -502,6 +503,22 @@ else
 menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS mode values" )
 fi
 
+file="./status/stat_log_modeval_dm_corr.txt"
+logmodevaldmcorrstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevaldmcorrstat" = "0" || "$logmodevaldmcorrstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevaldmcorrstat=0
+fi
+if [ "${logmodevaldmcorrstat}" = "0" ];
+then
+menuitems+=( "lmodevaldmcorr1" "START logging aol${LOOPNUMBER}_modeval_dm_corr       DM mode values" )
+else
+menuitems+=( "lmodevaldmcorr0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_corr\Zn        DM mode values" )
+fi
+
+
 file="./status/stat_log_modeval_dm_now.txt"
 logmodevaldmnowstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevaldmnowstat" = "0" || "$logmodevaldmnowstat" = "1" ) ]]; then
@@ -517,6 +534,8 @@ else
 menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
 fi
 
+
+
 file="./status/stat_log_modeval_dm_now_filt.txt"
 logmodevaldmnowfiltstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevaldmnowfiltstat" = "0" || "$logmodevaldmnowfiltstat" = "1" ) ]]; then
@@ -531,6 +550,8 @@ menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now
 else
 menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
 fi
+
+
 
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )

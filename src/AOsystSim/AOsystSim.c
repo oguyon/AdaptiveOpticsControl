@@ -313,7 +313,6 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
     long IDpupm;
     int elem;
     long IDdm0shape;
-    long IDfocmask;
     double r;
     double dftzoomfact = 2.0;
     long IDturb;
@@ -324,10 +323,9 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
     long iter;
 
     uint32_t *dhsizearray;
-    long IDdh, IDdhmask;
+    long IDdhmask;
     long dhxsize, dhysize, dhsize;
     long dhxoffset, dhyoffset;
-    long IDre, IDim;
     char imdhname[200];
     char name[200];
     int COROmode = 0; // 1 if coronagraph
@@ -338,7 +336,6 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 
     char imnameamp[200];
     char imnamepha[200];
-    int ret;
     long index;
 
     puprad = pupradcoeff*arraysize;
@@ -348,7 +345,8 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 
 	if(WDIR_INIT==0)
 	{
-		ret = system("mkdir -p AOsystSim_wdir");
+		if(system("mkdir -p AOsystSim_wdir") != 0)
+            printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
 		WDIR_INIT = 1;
 	}
 
@@ -539,6 +537,8 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 
     if(COROmode==1)    // FOCAL PLANE MASK
     {
+		long IDfocmask;
+		
         IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
         for(ii=0; ii<arraysize; ii++)
             for(jj=0; jj<arraysize; jj++)
@@ -620,8 +620,11 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
     save_fits("dhmask", "!AOsystSim_wdir/dhmask.fits");
 
     iter = 0;
-    while(1)
+    for(;;)
     {
+		long IDdh;
+		long IDre, IDim;
+		
         //        printf("ITERATION %6ld   \n", iter);
         //      fflush(stdout);
         sprintf(name, "dm%02lddisp", DMindex);
@@ -639,8 +642,13 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 
         // PYWFS code
         index = 2;
-        ret = sprintf(imnameamp, "WFamp0_%03ld", index);
-        ret = sprintf(imnamepha, "WFpha0_%03ld", index);
+        
+        if(sprintf(imnameamp, "WFamp0_%03ld", index) < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
+        if(sprintf(imnamepha, "WFpha0_%03ld", index) < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        
         mk_complex_from_amph(imnameamp, imnamepha, "_tmpwfc", 0);
         AOsystSim_WFSsim_Pyramid("_tmpwfc", "aosimwfsim", 0.0, 1);
         delete_image_ID("_tmpwfc");
@@ -757,7 +765,7 @@ int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)
     double WFrms = 0.0;
     long WFrmscnt = 0;
 
-    double noiselevel = 0.3; // noise level per WFS measurement [um] - only white noise is currently supported
+  //  double noiselevel = 0.3; // noise level per WFS measurement [um] - only white noise is currently supported
 
     /** wavefront correction buffer to implement time delay */
     long IDwfcbuff;
@@ -765,7 +773,7 @@ int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)
     double *wfcbuff_time;
     long *wfcbuff_status; // 1 : waiting to be applied
     long k, k0, k1;
-    long wfsecnt1;
+  //  long wfsecnt1;
 
     double dmmovetime = 0.001; /**< time it takes for DM to move */
     long dmmoveNBpt = 10;
@@ -849,8 +857,8 @@ int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)
     cnt0 = -1;
     time_wfse0 = data.image[IDin].kw[0].value.numf; /** start of WFS exposure */
     wfsecnt = 0;
-    wfsecnt1 = 0;
-    while(1)
+  //  wfsecnt1 = 0;
+    for(;;)
     {
         usleep(10);
         if(data.image[IDin].md[0].cnt0!=cnt0)
@@ -931,7 +939,7 @@ int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)
                     data.image[IDwfe].array.F[ii] = 0.0;
                 time_wfse0 += wfsetime;
                 wfsecnt = 0;
-                wfsecnt1++;
+                //wfsecnt1++;
             }
 
 
@@ -972,27 +980,27 @@ int_fast8_t AOsystSim_extremeAO_contrast_sim()
     double tmpv1, tmpv2, tmpv3, tmpv4;
     double tmpC;
 
-    double lambda_V = 0.545e-6;
+/*    double lambda_V = 0.545e-6;
     double zeropt_V = 9.9690e10;
 
     double lambda_R = 0.638e-6;
     double zeropt_R = 7.2384e10;
-
+*/
     double lambda_I = 0.797e-6;
     double zeropt_I = 4.5825e10;
-
+/*
     double lambda_J = 1.22e-6;
     double zeropt_J = 1.9422e10;
-
+*/
     double lambda_H = 1.63e-6;
     double zeropt_H = 9.4440e9;
-
+/*
     double lambda_K = 2.19e-6;
     double zeropt_K = 4.3829e9;
 
     double lambda_L = 3.45e-6;
     double zeropt_L = 1.2292e9;
-
+*/
     double zeroptWFS;
     double zeroptWFSsci;
 
@@ -1004,7 +1012,6 @@ int_fast8_t AOsystSim_extremeAO_contrast_sim()
 
     double coeff;
     FILE *fp;
-    double tmpA, tmpB;
     double dsa;
 
     double nwfs,nsci; // refractive indices
@@ -1015,8 +1022,6 @@ int_fast8_t AOsystSim_extremeAO_contrast_sim()
     double WFStlim = 0.0000; // WFS min exposure time
     double sciWFStlim = 0.0000; // sci WFS min exposure time
     double IWAld = 1.3;
-    int OK;
-    double att2;
 
 
     exaosimconf = (EXAOSIMCONF*) malloc(sizeof(EXAOSIMCONF));
@@ -1074,7 +1079,12 @@ int_fast8_t AOsystSim_extremeAO_contrast_sim()
 
     for(exaosimconf[0].alpha_arcsec=0.010; exaosimconf[0].alpha_arcsec<0.25; exaosimconf[0].alpha_arcsec+=0.001)
     {
-        OK = 0;
+		double tmpA, tmpB;
+		int OK = 0;
+        double att2;
+        
+        
+        
         while(OK==0)
         {
             exaosimconf[0].alpha = exaosimconf[0].alpha_arcsec/3600/180*M_PI;
@@ -1447,7 +1457,6 @@ long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name)
     long nbstep = 2;
     double rms1;
 
-    double xc_range, yc_range, pupPA_range, rout_range, stretchx_range, spiderPA_range, spideroffset_range;
     long iter;
     long NBiter = 5;
 
@@ -1576,6 +1585,9 @@ long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name)
     rms1 = 1000000000000000000000.0;
     for(iter=0; iter<NBiter; iter++)
     {
+		double xc_range, yc_range, pupPA_range, rout_range, stretchx_range, spiderPA_range, spideroffset_range;
+		
+		
         for(spiderPA=spiderPA_min; spiderPA<spiderPA_max+eps; spiderPA += (spiderPA_max-spiderPA_min)/nbstep)
             for(spideroffset=spideroffset_min; spideroffset<spideroffset_max+eps; spideroffset += (spideroffset_max-spideroffset_min)/nbstep)
                 for(stretchx=stretchx_min; stretchx<stretchx_max+eps; stretchx += (stretchx_max-stretchx_min)/nbstep)
@@ -1802,7 +1814,6 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     float PUPDIAM;
 	char PUPILFILE[200];
 	long IDpupil, pupilsize;
-	float x, y;
 
     int DM0MODE;
     char DM0NAME[200];
@@ -1835,19 +1846,16 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 
     long IDwf0, IDwf1;
     long IDwf0amp, IDwf1amp;
-    long ID0, ID1, ID0amp, ID1amp, kk0, kk1;
-    float alpha;
+    long kk0, kk1;
 
     double phystime;
     float frame_f;
-    long frame_n;
     long NBframes;
     char command[200];
     int ret;
 
     long IDopd0, IDamp0, IDopd1, IDamp1;
     long iioffset, jjoffset;
-    long iistart, iiend, jjstart, jjend, iisize, jjsize, csize;
     long IDbin_re, IDbin_im, IDbin_amp, IDbin_opd;
     long i, j;
     float opd, amp, re, im;
@@ -2082,6 +2090,8 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     
     if(IDpupil != -1)
     {
+		float x, y;
+		
 		printf("LOADED %s\n", PUPILFILE);
 		pupilsize = data.image[IDpupil].md[0].size[0];
 		for(ii=0; ii<ARRAYSIZE; ii++)
@@ -2126,8 +2136,16 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 
 
 	
-    while(1)
+    for(;;)
     {
+		long ID0, ID1;
+		long ID0amp, ID1amp;
+		float alpha;
+		long frame_n;
+		long iistart, iiend, jjstart, jjend, iisize, jjsize, csize;
+		
+		
+		
         frame_f = (phystime - wfin_TIME_SPAN*k1)/wfin_TIME_STEP;
         frame_n = (long) frame_f;
         alpha = frame_f-frame_n;
@@ -2569,7 +2587,6 @@ int AOsystSim_WFSsim_Pyramid(const char *inWFc_name, const char *outWFSim_name, 
     long ID_inWFc, ID_outWFSim;
     long arraysize;
     uint32_t *imsize;
-    long IDa, IDp;
     long ID_inWFccp;
     long arraysize2;
     long IDpyramp, IDpyrpha;
@@ -2584,7 +2601,7 @@ int AOsystSim_WFSsim_Pyramid(const char *inWFc_name, const char *outWFSim_name, 
 
     long PYRMOD_nbpts = 16;
     long pmodpt;
-    double PYRMOD_rad = 5.0;
+    double PYRMOD_rad;
     double xc, yc, PA;
     long ID_outWFSim_tmp;
     
@@ -2692,6 +2709,9 @@ int AOsystSim_WFSsim_Pyramid(const char *inWFc_name, const char *outWFSim_name, 
 
     for(pmodpt=0; pmodpt<PYRMOD_nbpts; pmodpt++)
     {
+		long IDa, IDp;
+		
+		
         memcpy(data.image[ID_inWFccp].array.CF, data.image[ID_inWFc].array.CF, sizeof(complex_float)*arraysize*arraysize);
 
 
@@ -2827,6 +2847,9 @@ int AOsystSim_PyrWFS_mkCONF(const char *fname)
 
 
 
+
+
+
 int AOsystSim_PyrWFS(const char *CONF_FNAME)
 {
     FILE *fp;
@@ -2869,16 +2892,16 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     long ii, jj, ii1, jj1;
     long IDout;
     int OKf;
-    long IDpupamp, IDpuppha, IDfoca, IDfocp, IDfocamp, IDfocpha;
+    long IDpupamp, IDpuppha, IDfocamp, IDfocpha;
     long offset;
 
     long pmodpt;
     long IDpyr_amp, IDpyr_pha;
     float pcoeff = 100.0*M_PI;
-    float x, y, PA, xc, yc;
+    float x, y;
 
     float fpscale = 1.0; // pix per l/D
-    long IDpyrpupi, IDpupa;
+    long IDpyrpupi;
     long i, j;
     long outoffset;
     int WRITEOUT;
@@ -2959,6 +2982,9 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
 
     for(pmodpt=0; pmodpt<PYRMODNBPT; pmodpt++)
     {
+		float PA;
+		float xc, yc;
+		
         PA = 2.0*M_PI*pmodpt/PYRMODNBPT;
         xc = PYRMODAMP * cos(PA);
         yc = PYRMODAMP * sin(PA);
@@ -3045,6 +3071,10 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     k = 0;
     while(k<kmax)
     {
+		long IDfoca, IDfocp;
+		long IDpupa;
+		
+		
         // compute focal plane CA
         for(ii=0; ii<wfinsize; ii++)
             for(jj=0; jj<wfinsize; jj++)
@@ -3219,7 +3249,6 @@ int AOsystSim_DMshape(const char *IDdmctrl_name, const char *IDdmifc_name, const
     long IDdmctrl, IDdmifc, IDdm;
     long dmsizex, dmsizey, DMnbact;
     long ii, jj;
-    long dmact;
     double eps=1.0e-12;
     long k;
     long kk;
@@ -3234,6 +3263,8 @@ int AOsystSim_DMshape(const char *IDdmctrl_name, const char *IDdmifc_name, const
   
     if(DMifpixarray_init==0)
     {
+		long dmact;
+		
         DMifpixarray_NBpix = 0.0;
         for(dmact=0; dmact<DMnbact; dmact++)
             for(ii=0; ii<dmsizex*dmsizey; ii++)

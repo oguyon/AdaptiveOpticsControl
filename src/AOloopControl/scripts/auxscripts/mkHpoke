@@ -99,13 +99,13 @@ DMysize=$(cat conf/param_DMysize.txt)
 echo "DM size = $DMxsize $DMysize"
 
 # DM mode
-# ZONAL : physical actuators on spatial coordinates
-# MODAL : each DM actuiator represents a single WF mode
+# 0=ZONAL : physical actuators on spatial coordinates
+# 1=MODAL : each DM actuiator represents a single WF mode
 DMMODEfile="conf/param_DMMODE.txt"
 if [ -f $DMMODEfile ]; then
 DMMODE=$( cat ${DMMODEfile} )
 else
-DMMODE="ZONAL"
+DMMODE="0"
 echo "$DMMODE" > $DMMODEfile
 fi
 
@@ -114,7 +114,7 @@ echo "DM mode = $DMMODE"
 
 if [ ! -f "./conf/RM_DMmask.fits" ]; then
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 ./AOloopControl << EOF
 cx=0.5*${DMxsize}-0.5
 cy=0.5*${DMysize}-0.5

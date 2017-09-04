@@ -45,9 +45,9 @@ menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall
 # ConfReadParam  ""; =${paramvalue}
 
 
-if [ "$DMMODE" = "MODAL" ]; then
+if [ "$DMMODE" = "1" ]; then
 
-ConfReadParam NBmodeblocks "0"; NBmodeblocks=${paramvalue}
+ConfReadParam NBmodeblocks "01"; NBmodeblocks="${paramvalue}"
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
@@ -127,7 +127,7 @@ fi
 menuitems+=( "RM2CMm" "Compute Modes and Control matrix" )
 
 
-fi  # end of:  if [ "$DMMODE" = "MODAL" ]; then
+fi  # end of:  if [ "$DMMODE" = "1" ]; then
 
 
 
@@ -146,8 +146,8 @@ menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVD
 
 
 
-ConfReadParam DMMODE "ZONAL"; DMMODE=${paramvalue}
-if [ "$DMMODE" = "ZONAL" ]; then
+ConfReadParam DMMODE "0"; DMMODE=${paramvalue}
+if [ "$DMMODE" = "0" ]; then
 
 ConfReadParam CMMODE "0"; CMMODE=${paramvalue}
  if [ "$CMMODE" = "1" ]; then
@@ -217,8 +217,8 @@ menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, respo
 mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 
-ConfReadParam NBmodeblocks "00"; NBmodeblocks=${paramvalue}
-ConfReadParam NBmodes "00"; NBmodes=${paramvalue}
+ConfReadParam NBmodeblocks "01"; NBmodeblocks="${paramvalue}"
+ConfReadParam NBmodes "01"; NBmodes="${paramvalue}"
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
@@ -539,7 +539,7 @@ aoconflogext "set SDVlimall ${SVDlimall}"
 
 
 
-RM2CMm)
+RM2CMm) # Does modal decomposition - DO NOT RUN IF DM IS MODAL
 tmuxname="aol${LOOPNUMBER}mkmodesM"
 sleep 0.2
 tmux new-session -d -s $tmuxname
@@ -610,7 +610,10 @@ menucontrolmatrix_default="zRM"
 
 
 
-	RM2CM)
+	RM2CM)  
+# COMPUTE SINGLE MATRIX (no block decomposition, don't comput modes) : this is a straight pseudo-inverse of the resp matrix
+# USED FOR MODAL CONTROL (assumes 1 act = mode)
+
 #
 # INPUT
 #   ./conf_staged/wfsmask.fits
@@ -619,11 +622,20 @@ menucontrolmatrix_default="zRM"
 #   ./zcontrM/zcontrM_<date>.fits
 #   ./conf/shmim_contrM.name.txt
 # -> 
+
+# set NBmodeblocks to 1
+echo "01" > conf_staged/param_NBmodeblocks.txt
+
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
 echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM.name.txt
+echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM00.name.txt
+echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes.name.txt
+echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes00.name.txt
+cp conf_staged/shmim_zrespM.name.txt conf_staged/shmim_respM.name.txt
+cp conf_staged/shmim_zrespM.name.txt conf_staged/shmim_respM00.name.txt
 cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
 CMMODE="1"

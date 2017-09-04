@@ -64,6 +64,7 @@ aoconflog "ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm"
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
 
+
 function ReaddmwrefOname {
 file="./conf/conf_dmwrefO_name.txt"
 if [ -a $file ]

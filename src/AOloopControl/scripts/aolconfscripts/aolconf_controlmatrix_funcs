@@ -18,7 +18,7 @@ SVDlimall=$( cat ./conf/param_SVDlimall.txt )
 fi
 
 
-if [ "$DMMODE" = "MODAL" ]; then
+if [ "$DMMODE" = "1" ]; then # modal DM
 
 getshmimsize aol${LOOPNUMBER}_zrespM
 mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
@@ -151,13 +151,13 @@ fi
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal DM
 
  CMMODEfile="conf/param_CMMODE.txt"
  if [ -f $CMMODEfile ]; then
  CMMODE=$( cat ${CMMODEfile} )
  else
- CMMODE="MODAL"
+ CMMODE="1"
  echo "$CMMODE" > $CMMODEfile
  fi
  

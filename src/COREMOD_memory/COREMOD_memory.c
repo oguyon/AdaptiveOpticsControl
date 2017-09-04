@@ -4227,8 +4227,9 @@ long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
     return(ID);
 }
 
-
-// if index < 0, post all semaphores
+//
+// if index = -1, post all semaphores
+//
 long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 {
     long s;
@@ -4257,6 +4258,30 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 
     return(ID);
 }
+
+
+//
+// post all semaphores except one
+//
+long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index)
+{
+    long s;
+    int semval;
+
+
+    for(s=0; s<data.image[ID].md[0].sem; s++)
+        {
+			if(s!=index)
+			{
+				sem_getvalue(data.image[ID].semptr[s], &semval);
+				if(semval<SEMAPHORE_MAXVAL)
+					sem_post(data.image[ID].semptr[s]);
+			}
+        }
+
+    return(ID);
+}
+
 
 
 
@@ -4783,22 +4808,22 @@ long COREMOD_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, co
 
 
 /** @brief takes a 3Dimage(s) (circular buffer(s)) and writes slices to a 2D image with time interval specified in us
- * 
- * 
- * 
+ *
+ *
+ *
  */
 long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)
 {
     long *IDin;
     long cubeindex;
-    char imname[200]; 
+    char imname[200];
     long IDsync;
     long long cntsync;
     long pcnt = 0;
     long offsetfr = 0;
     long offsetfrcnt = 0;
     int cntDelayMode = 0;
-    
+
     long IDout;
     long kk;
     uint32_t *arraysize;
@@ -4808,55 +4833,67 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
     char *ptr0; // source
     char *ptr1; // dest
     long framesize;
-    int semval;      
-    
+    int semval;
+
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-	long twait1;
+    long twait1;
     struct timespec t0;
     struct timespec t1;
-	double tdiffv;
+    double tdiffv;
     struct timespec tdiff;
-	
-	
-	
-	
+
+    int SyncSlice = 0;
+
+
+
+
     schedpar.sched_priority = RT_priority;
-    #ifndef __MACH__
+#ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    #endif
+#endif
 
 
-	if(NBcubes<1)
-	{
-		printf("ERROR: invalid number of input cubes, needs to be >0");
-		return(-1);
-	}
-		
-	
+    if(NBcubes<1)
+    {
+        printf("ERROR: invalid number of input cubes, needs to be >0");
+        return(-1);
+    }
 
-	IDin = (long*) malloc(sizeof(long)*NBcubes);
-	if(NBcubes==1)
-		IDin[0] = image_ID(IDinname);
-	else
-	{
-		IDsync = image_ID(IDsync_name);
-		
-		for(cubeindex=0; cubeindex<NBcubes; cubeindex++)
-		{
-			sprintf(imname, "%s_%03ld", IDinname, cubeindex);
-			IDin[cubeindex] = image_ID(imname);
-		}
-		offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
-	
-		printf("FRAMES OFFSET = %ld\n", offsetfr);
-	}
+
+
+    IDin = (long*) malloc(sizeof(long)*NBcubes);
+    SyncSlice = 0;
+    if(NBcubes==1)
+    {
+        IDin[0] = image_ID(IDinname);
+
+        // in single cube mode, optional sync stream drives updates to next slice within cube
+        IDsync = image_ID(IDsync_name);
+        if(IDsync!=-1)
+            SyncSlice = 1;
+    }
+    else
+    {
+        IDsync = image_ID(IDsync_name);
+
+        for(cubeindex=0; cubeindex<NBcubes; cubeindex++)
+        {
+            sprintf(imname, "%s_%03ld", IDinname, cubeindex);
+            IDin[cubeindex] = image_ID(imname);
+        }
+        offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
+
+        printf("FRAMES OFFSET = %ld\n", offsetfr);
+    }
+
+    printf("SyncSlice = %d\n", SyncSlice);
 
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
 
- 
+
     naxis = data.image[IDin[0]].md[0].naxis;
     arraysize = (uint32_t*) malloc(sizeof(uint32_t)*3);
     if(naxis != 3)
@@ -4872,164 +4909,173 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
     atype = data.image[IDin[0]].md[0].atype;
 
-	IDout = image_ID(IDoutname);
-	if(IDout == -1)
-	{
-		IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
-		COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
-	}
-	
-	cubeindex = 0;
-	pcnt = 0;
-	if(NBcubes>1)
-		cntsync = data.image[IDsync].md[0].cnt0;
-	
-   twait1 = usperiod;
-	kk = 0;
-	cntDelayMode = 0;
-	
-	while(1)
+    IDout = image_ID(IDoutname);
+    if(IDout == -1)
     {
-	
-	if(NBcubes>1)
-	{
-		if(cntsync != data.image[IDsync].md[0].cnt0)
-		{
-			pcnt++;
-			cntsync = data.image[IDsync].md[0].cnt0;
-		}
-		if(pcnt==period)
-		{
-			pcnt = 0;
-			offsetfrcnt = 0;
-			cntDelayMode = 1;
-		}
-		
-		if(cntDelayMode == 1)
-		{
-			if(offsetfrcnt < offsetfr)
-			{
-				offsetfrcnt++;
-			}
-			else
-			{
-				cntDelayMode = 0;
-				cubeindex++;
-				kk = 0;
-			}
-		}
-		if(cubeindex==NBcubes)
-			cubeindex = 0;
-	}
-	
-	
-    switch ( atype ) {
-		
-    case _DATATYPE_INT8:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.SI8;
-        ptr1 = (char*) data.image[IDout].array.SI8;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT8;
-        break;
-
-    case _DATATYPE_UINT8:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.UI8;
-        ptr1 = (char*) data.image[IDout].array.UI8;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT8;
-        break;
-
-    case _DATATYPE_INT16:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.SI16;
-        ptr1 = (char*) data.image[IDout].array.SI16;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT16;
-        break;
-
-    case _DATATYPE_UINT16:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.UI16;
-        ptr1 = (char*) data.image[IDout].array.UI16;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT16;
-        break;
-
-    case _DATATYPE_INT32:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.SI32;
-        ptr1 = (char*) data.image[IDout].array.SI32;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT32;
-        break;
-
-    case _DATATYPE_UINT32:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.UI32;
-        ptr1 = (char*) data.image[IDout].array.UI32;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT32;
-        break;
-
-    case _DATATYPE_INT64:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.SI64;
-        ptr1 = (char*) data.image[IDout].array.SI64;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT64;
-        break;
-
-    case _DATATYPE_UINT64:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.UI64;
-        ptr1 = (char*) data.image[IDout].array.UI64;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT64;
-        break;
-
-
-    case _DATATYPE_FLOAT:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.F;
-        ptr1 = (char*) data.image[IDout].array.F;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(float);
-        break;
-
-    case _DATATYPE_DOUBLE:
-        ptr0s = (char*) data.image[IDin[cubeindex]].array.D;
-        ptr1 = (char*) data.image[IDout].array.D;
-        framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(double);
-        break;
-
+        IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
     }
 
+    cubeindex = 0;
+    pcnt = 0;
+    if(NBcubes>1)
+        cntsync = data.image[IDsync].md[0].cnt0;
+
+    twait1 = usperiod;
+    kk = 0;
+    cntDelayMode = 0;
+
+    for(;;)
+    {
+
+        if(NBcubes>1)
+        {
+            if(cntsync != data.image[IDsync].md[0].cnt0)
+            {
+                pcnt++;
+                cntsync = data.image[IDsync].md[0].cnt0;
+            }
+            if(pcnt==period)
+            {
+                pcnt = 0;
+                offsetfrcnt = 0;
+                cntDelayMode = 1;
+            }
+
+            if(cntDelayMode == 1)
+            {
+                if(offsetfrcnt < offsetfr)
+                {
+                    offsetfrcnt++;
+                }
+                else
+                {
+                    cntDelayMode = 0;
+                    cubeindex++;
+                    kk = 0;
+                }
+            }
+            if(cubeindex==NBcubes)
+                cubeindex = 0;
+        }
 
 
-  
-		clock_gettime(CLOCK_REALTIME, &t0);
-		
+        switch ( atype ) {
+
+        case _DATATYPE_INT8:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.SI8;
+            ptr1 = (char*) data.image[IDout].array.SI8;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT8;
+            break;
+
+        case _DATATYPE_UINT8:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.UI8;
+            ptr1 = (char*) data.image[IDout].array.UI8;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT8;
+            break;
+
+        case _DATATYPE_INT16:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.SI16;
+            ptr1 = (char*) data.image[IDout].array.SI16;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT16;
+            break;
+
+        case _DATATYPE_UINT16:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.UI16;
+            ptr1 = (char*) data.image[IDout].array.UI16;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT16;
+            break;
+
+        case _DATATYPE_INT32:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.SI32;
+            ptr1 = (char*) data.image[IDout].array.SI32;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT32;
+            break;
+
+        case _DATATYPE_UINT32:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.UI32;
+            ptr1 = (char*) data.image[IDout].array.UI32;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT32;
+            break;
+
+        case _DATATYPE_INT64:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.SI64;
+            ptr1 = (char*) data.image[IDout].array.SI64;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_INT64;
+            break;
+
+        case _DATATYPE_UINT64:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.UI64;
+            ptr1 = (char*) data.image[IDout].array.UI64;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*SIZEOF_DATATYPE_UINT64;
+            break;
+
+
+        case _DATATYPE_FLOAT:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.F;
+            ptr1 = (char*) data.image[IDout].array.F;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(float);
+            break;
+
+        case _DATATYPE_DOUBLE:
+            ptr0s = (char*) data.image[IDin[cubeindex]].array.D;
+            ptr1 = (char*) data.image[IDout].array.D;
+            framesize = data.image[IDin[cubeindex]].md[0].size[0]*data.image[IDin[cubeindex]].md[0].size[1]*sizeof(double);
+            break;
+
+        }
+
+
+
+
+        clock_gettime(CLOCK_REALTIME, &t0);
+
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
-		data.image[IDout].md[0].cnt1 = kk;
+        data.image[IDout].md[0].cnt1 = kk;
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
-		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
-		
+        COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+
         kk++;
         if(kk==data.image[IDin[0]].md[0].size[2])
             kk = 0;
 
-       
-		
-		usleep(twait1);
-			
-		clock_gettime(CLOCK_REALTIME, &t1);
-        tdiff = info_time_diff(t0, t1);
-        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-	
-		if(tdiffv<1.0e-6*usperiod) 
-			twait1 ++;
-		else
-			twait1 --;
-		
-		if(twait1<0)
-			twait1 = 0;
-		if(twait1>usperiod)
-			twait1 = usperiod;
+
+
+        if(SyncSlice==0)
+        {
+            usleep(twait1);
+
+            clock_gettime(CLOCK_REALTIME, &t1);
+            tdiff = info_time_diff(t0, t1);
+            tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+            if(tdiffv<1.0e-6*usperiod)
+                twait1 ++;
+            else
+                twait1 --;
+
+            if(twait1<0)
+                twait1 = 0;
+            if(twait1>usperiod)
+                twait1 = usperiod;
+        }
+        else
+        {
+            sem_wait(data.image[IDsync].semptr[semtrig]);
+        }
 
 
     }
-	
-	free(IDin);
+
+    free(IDin);
 
     return(IDout);
 }
+
+
 
 
 

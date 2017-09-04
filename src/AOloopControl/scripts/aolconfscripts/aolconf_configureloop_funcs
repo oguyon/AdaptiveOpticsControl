@@ -10,23 +10,9 @@ fi
 
 
 # DM mode
-# ZONAL : physical actuators on spatial coordinates
-# MODAL : each DM actuiator represents a single WF mode
-DMMODEfile="conf/param_DMMODE.txt"
-if [ -f $DMMODEfile ]; then
-DMMODE=$( cat ${DMMODEfile} )
-else
-DMMODE="ZONAL"
-echo "$DMMODE" > $DMMODEfile
-fi
-
-
-
-
-
-
-
-
+# 0 = zonal : physical actuators on spatial coordinates
+# 1 = modal : each DM actuiator represents a single WF mode
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue"
 
 
 
@@ -78,7 +64,7 @@ ACzrmNBcycle="$paramvalue"
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 	ConfReadParam ACmrmtime "60.0"
 	ACmrmtime="$paramvalue"
 
@@ -143,7 +129,7 @@ WFSnorm="$paramvalue"
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 
 
 ConfReadParam DMmaskRMp0 "0.2"
@@ -184,7 +170,7 @@ fi
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 
 
 RMmodal=$( cat ./conf/param_RMmodal.txt )
@@ -416,7 +402,7 @@ mv dmmap.fits ./${dir}/
 echo "wfsmask/wfsmask_${zCALIBdatestr}.fits" > ./${dir}/shmim_wfsmask.name.txt
 mv wfsmap.fits ./${dir}/
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 echo "dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits" > ./${dir}/shmim_dmmaskRM.name.txt
 mv dmmaskRM.fits ./${dir}/
 echo "dmslaved/dmslaved_${zCALIBdatestr}.fits" > ./${dir}/shmim_dmslaved.name.txt
@@ -442,7 +428,7 @@ tmux send-keys -t $1 "mv dmmap.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"wfsmask/wfsmask_${zCALIBdatestr}.fits\" > ./${dir}/shmim_wfsmask.name.txt" C-m
 tmux send-keys -t $1 "mv wfsmap.fits ./${dir}/" C-m
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 tmux send-keys -t $1 "echo \"dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits\" > ./${dir}/shmim_dmmaskRM.name.txt" C-m
 tmux send-keys -t $1 "mv dmmaskRM.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"dmslaved/dmslaved_${zCALIBdatestr}.fits\" > ./${dir}/shmim_dmslaved.name.txt" C-m

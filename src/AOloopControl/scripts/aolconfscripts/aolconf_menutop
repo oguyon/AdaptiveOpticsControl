@@ -68,8 +68,8 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue"
-if [ "$DMMODE" = "ZONAL" ]; then
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue"
+if [ "$DMMODE" = "0" ]; then
 menuitems+=( "DMmodeM" "\Zb\Zr DM is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
 else
 menuitems+=( "DMmodeZ" "\Zb\Zr DM is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
@@ -129,48 +129,56 @@ fi
 
 
 
-
-file="./conf/conf_dmwfsref_mode.txt"
-dmwfsrefmode=$( cat $file )
-if [[ -f "$file" && ( "$dmwfsrefmode" = "1" || "$dmwfsrefmode" = "0" ) ]]; then
+ConfReadParam DMwfsref_mode "0"; DMwfsref_mode="$paramvalue"
+if [[ -f "$file" && ( "$DMwfsref_mode" = "1" || "$DMwfsref_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmwfsrefmode=0
+DMwfsref_mode=0
 fi
 
 menuitems+=( " " " ")
-if [ "${dmwfsrefmode}" = "0" ];
+if [ "${DMwfsref_mode}" = "0" ];
 then
 menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
 fi
-if [ "${dmwfsrefmode}" = "1" ];
+if [ "${DMwfsref_mode}" = "1" ];
 then
 menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
 fi
 
-ReaddmwrefRMname
-dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
+
+
+./aolfuncs/aolfunc_StreamLink dmwrefRM
+
+dmwrefRMfile="/tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm"
 if [ -f $dmwrefRMfile ]; then
-getshmimsize ${dmwrefRM}
+sizestring=$( cat conf/streamlink_dmwrefRM.imsize.txt )
+streamname=$( cat conf/streamlink_dmwrefRM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix            \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix            \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${streamname}\Zn" )
+confOK=0
 fi
 
 
-ReaddmwrefOname
-dmwrefOfile="/tmp/${dmwrefO}.im.shm"
+
+./aolfuncs/aolfunc_StreamLink dmwrefO
+
+dmwrefOfile="/tmp/aol${LOOPNUMBER}_dmwrefO.im.shm"
 if [ -f $dmwrefOfile ]; then
-getshmimsize ${dmwrefO}
+sizestring=$( cat conf/streamlink_dmwrefO.imsize.txt )
+streamname=$( cat conf/streamlink_dmwrefO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${streamname}\Zn" )
+confOK=0
 fi
+
 
 
 
@@ -224,7 +232,7 @@ fi
 
 
 menuitems+=( " " " ")
-file="$HOME/status/stat_initdm${DMindex}.txt"
+file="status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
@@ -429,7 +437,7 @@ echo "$DMysize" > ./conf/param_DMysize.txt
     nolink)
 aoconflog "set DM nolink"
 
-DMMODE="ZONAL"
+DMMODE="0"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
@@ -478,7 +486,7 @@ echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation chann
     dmolink)
 aoconflog "set DM link"
 
-DMMODE="MODAL"
+DMMODE="1"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
@@ -493,13 +501,12 @@ menuitems1+=( "$i" "loop $i (directory ../AOloop$i/)" )
 done 
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
-
+dmnb=$( cat ../AOloop${dmolinknb}/conf/param_DMindex.txt )
 
 
 menuitems1=( " " " " )
 for i in 0 1 2 3 4 5 6 7;
         do
-dmnb=$( cat ../AOloop${dmolinknb}/conf/param_DMindex.txt )
 dmolinkchan="$i"
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 menuitems1+=( "$i" "offset channel $i  ( dm${dmnb}disp${dmolinkchan1} )" )
@@ -523,7 +530,6 @@ echo "$dm2dmM" > ./conf/streamlink_dm2dmM.name.txt
 
 
 # symbolic link to dm channel in external loop
-dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 dm2dmO="dm${dmnb}disp${dmolinkchan1}"
 echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
@@ -538,11 +544,12 @@ cpsh im aol${dmolinknb}_modesWFS0_$DMxsize
 quit
 EOF
 dmwrefRM="aol${dmolinknb}_modesWFS0_$DMxsize"
-echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
+echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM.name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefRM
 
+
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
-echo "$dmwrefO" > ./conf/streamlink_dmwrefO_name.txt
+echo "$dmwrefO" > ./conf/streamlink_dmwrefO.name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefO
 
 
@@ -588,14 +595,14 @@ echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation chann
 
 
 DMmodeM)
-DMMODE="MODAL"
+DMMODE="1"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeZ"
 ;;
 
 DMmodeZ)
-DMMODE="ZONAL"
+DMMODE="0"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeM"

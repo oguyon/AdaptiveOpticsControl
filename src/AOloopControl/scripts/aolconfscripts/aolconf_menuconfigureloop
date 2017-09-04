@@ -45,19 +45,19 @@ stringcenter "HARDWARE INFO AND I/O LINKS [shared memory sim links]"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 ConfReadParam loopfrequ "1000.0"; loopfrequ="$paramvalue"
-menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ} Hz" )
+menuitems+=( "lfreq" "            Loop Frequ                            ${loopfrequ} Hz" )
 
 ConfReadParam hardwlatency "0.001"; hardwlatency="$paramvalue"
 ConfReadParam hardwlatency_frame "2.0"; hardwlatency_frame="$paramvalue"
-menuitems+=( "lhlat" "            Hardware Latency                  ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
+menuitems+=( "lhlat" "            Hardware Latency                      ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
 
 ConfReadParam complatency "0.0003"; complatency="$paramvalue"
 ConfReadParam complatency_frame "0.4"; complatency_frame="$paramvalue"
-menuitems+=( "lclat" "            Computing Latency                 ${complatency} sec -> ${complatency_frame} frame" )
+menuitems+=( "lclat" "            Primary DM write computing Latency    ${complatency} sec -> ${complatency_frame} frame" )
 
 ConfReadParam wfsmextrlatency "0.0004"; wfsmextrlatency="$paramvalue"
 ConfReadParam wfsmextrlatency_frame "0.5"; wfsmextrlatency_frame="$paramvalue"
-menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrlatency} sec -> ${wfsmextrlatency_frame} frame" )
+menuitems+=( "lslat" "            Filtered DM write computing Latency   ${wfsmextrlatency} sec -> ${wfsmextrlatency_frame} frame" )
 
 
 
@@ -249,7 +249,7 @@ menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<dat
 
 menuitems+=( "updark"   "             Load Dark to SHM" )
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal
 menuitems+=( " " " " )
 
 
@@ -285,7 +285,7 @@ menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACz
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 
 ConfReadParam ACmrmtime "10"; ACmrmtime="$paramvalue"
 menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
@@ -392,7 +392,7 @@ menuitems+=( "wfsM" "$menustring" )
 makemenuitemstringaolshm "dmmap" "DM influence map"
 menuitems+=( "dmmap" "$menustring" )
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 makemenuitemstringaolshm "dmmaskRM" "DM actuator mask"
 menuitems+=( "dmMrm" "$menustring" )
 
@@ -412,7 +412,7 @@ menuitems+=( "wfsref0" "$menustring" )
 
 menuitems+=(" " " ")
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 
 ConfReadParam DMmaskRMp0 "0"; DMmaskRMp0="$paramvalue"
 menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
@@ -454,7 +454,7 @@ fi
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL) : $RMMODALCALIBlist"
@@ -1115,11 +1115,11 @@ done
 
 
 # blocks: set up symbolic links to FITS files in conf directory
-NBblocks=$( cat ./conf/param_NBmodeblocks.txt )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 for namet in contrM contrMc contrMcact DMmodes respM
 do
 
-for i in `seq 0 $(( $NBblocks - 1 ))`;
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 	if [ "$namet" = "contrMcact" ]; then
@@ -1137,7 +1137,7 @@ i2=$(printf "%02d" "$i")
 	fi
 done
 
-for i in `seq $NBblocks 20`;
+for i in `seq $NBmodeblocks 20`;
 do
 i2=$(printf "%02d" "$i")
 if [ "$namet" = "contrMcact" ]; then
@@ -1152,7 +1152,7 @@ done
 
 done
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 cp "${confname}/RMpoke.fits" ./conf/
 cp "${confname}/Hpoke.fits" ./conf/
 cp "${confname}/RMmat.fits" ./conf/
@@ -1345,13 +1345,13 @@ mkdir -p wfsmap
 mkdir -p dmmap
 mkdir -p wfsmask
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
 fi
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 if [ "$MASKS_LOCK" -eq "1" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
@@ -1368,7 +1368,7 @@ tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmap.fits wfsmap/wfsmap_${zCALIB
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmap.fits dmmap/dmmap_${zCALIBdatestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${zCALIBdatestr}.fits" C-m
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmask.fits dmmask/dmmask_${zCALIBdatestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmslaved.fits dmslaved/dmslaved_${zCALIBdatestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${zCALIBdatestr}.fits" C-m
@@ -1505,7 +1505,7 @@ mkdir -p wfsmap
 mkdir -p dmmap
 mkdir -p wfsmask
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
@@ -1519,7 +1519,7 @@ tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmap.fits wfsmap/wfsmap_${datest
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
@@ -1532,7 +1532,7 @@ echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/shmim_wfsmap.name.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/shmim_dmmap.name.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/shmim_wfsmask.name.txt
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/shmim_dmmaskRM.name.txt
 echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/shmim_dmslaved.name.txt
 echo "dmmaskRM/dmmask_${datestr}.fits" > ./conf/shmim_dmmask.name.txt

@@ -384,6 +384,9 @@ int templatemodule_examplefunc01(float val1, int n1, float *farray)
 	
 	
 	// code here
+	for(;;) // preferred way to write infinite loop
+	{
+	}
 	
 	
 	return(Niteration);

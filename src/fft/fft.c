@@ -2142,9 +2142,11 @@ int test_fftspeed(int nmax)
 
 /* ----------------- CUSTOM DFT ------------- */
 
+//
 // Zfactor is zoom factor
 // dir = -1 for FT, 1 for inverse FT
-// k in selects slice in IDin_name if this is a cube
+// kin in selects slice in IDin_name if this is a cube
+//
 long fft_DFT( const char *IDin_name, const char *IDinmask_name, const char *IDout_name, const char *IDoutmask_name, double Zfactor, int dir, long kin)
 {
     long IDin;
@@ -2606,7 +2608,7 @@ long fft_DFTinsertFPM( const char *pupin_name, const char *fpmz_name, double zfa
 
     IDout = create_3DCimage_ID(pupout_name, xsize, ysize, zsize);
 
-    for(k=0; k<zsize; k++)
+    for(k=0; k<zsize; k++) // increment slice (= wavelength)
     {
         IDpupin_mask = create_2Dimage_ID("_DFTpupmask", xsize, ysize);
         for(ii=0; ii<xsize*ysize; ii++)

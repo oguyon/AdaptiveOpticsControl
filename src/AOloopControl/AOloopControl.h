@@ -19,7 +19,8 @@
 
 
 
-#define maxNBMB 100
+#define maxNBMB 100			// maximum number of mode blocks
+#define MAXNBMODES 10000	// maximum number of control modes
 #define MAX_NUMBER_TIMER 100
 
 
@@ -116,7 +117,6 @@ typedef struct
     int_fast8_t WFSnormalize;                 /**< 1 if each WFS frame should be normalized to 1 */
     float WFSnormfloor;                       /**< normalized by dividing by (total + AOconf[loop].WFSnormfloor)*AOconf[loop].WFSsize */
     float WFStotalflux;                       /**< Total WFS flux after dark subtraction */
- 
     /* =============================================================================================== */
 
 
@@ -129,6 +129,7 @@ typedef struct
     char dmCname[80];
     char dmdispname[80];
     char dmRMname[80];
+    uint_fast8_t DMMODE;                      /**< 0: zonal DM, 1: modal DM */
     uint_fast32_t sizexDM;                    /**< DM x size*/
     uint_fast32_t sizeyDM;                    /**< DM y size*/
     uint_fast32_t sizeDM;                     /**< DM total image (= x size * y size) */
@@ -146,8 +147,9 @@ typedef struct
 
     char DMmodesname[80];
      // BLOCKS OF MODES
-    uint_fast16_t DMmodesNBblock;       // number of mode blocks
-    uint_fast16_t NBmodes_block[100];   // number of modes within each block
+    uint_fast16_t DMmodesNBblock;             /**< number of mode blocks (read from parameter) */
+    uint_fast16_t NBmodes_block[100];         /**< number of modes within each block (computed from files by AOloopControl_loadconfigure) */
+    uint_fast16_t modeBlockIndex[MAXNBMODES]; /**< block index to which each mode belongs (computed by AOloopControl_loadconfigure) */
     uint_fast16_t indexmaxMB[maxNBMB]; 
 
 	uint_fast16_t NBDMmodes;
@@ -167,11 +169,12 @@ typedef struct
 	 * 
 	 */
 		
-    int_fast8_t on;  // goes to 1 when loop starts, put to 0 to turn loop off
-    float gain; // overall loop gain
-    uint_fast16_t framesAve; // number of frames to average
-	int_fast8_t DMprimaryWrite_ON; // primary DM write
-	int_fast8_t CMMODE;
+    int_fast8_t on;                           /**< goes to 1 when loop starts, put to 0 to turn loop off */
+    float gain;                               /**< overall loop gain */
+    uint_fast16_t framesAve;                  /**< number of WFS frames to average */
+	int_fast8_t DMprimaryWriteON;             /**< primary DM write */
+	int_fast8_t CMMODE;                       /**< Combined matrix. 0: matrix is WFS pixels -> modes, 1: matrix is WFS pixels -> DM actuators */
+	int_fast8_t DMfilteredWriteON;            /**< Filtered write to DM */
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -181,8 +184,9 @@ typedef struct
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 
 	int_fast8_t AUTOTUNE_GAINS_ON;
-	float AUTOTUNE_GAINS_gain; // averaging coefficient (usually about 0.1)
-	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
+	float AUTOTUNEGAINS_updateGainCoeff;      /**< Averaging coefficient (usually about 0.1) */
+	float AUTOTUNEGAINS_evolTimescale;        /**< Evolution timescale, beyond which errors stop growing */
+	long AUTOTUNEGAINS_NBsamples;            /**< Number of samples */
    
 	/* =============================================================================================== */
 
@@ -235,6 +239,7 @@ typedef struct
     uint_fast64_t RMSmodesCumulcnt;
 
 	// block statistics (instantaneous)
+	double block_PFresrms[100]; // Prediction residual, meas RMS
 	double block_OLrms[100]; // open loop RMS
 	double block_Crms[100]; // correction RMS
 	double block_WFSrms[100]; // WFS residual RMS
@@ -247,6 +252,7 @@ typedef struct
 	
 	// averaged
 	uint_fast32_t AveStats_NBpt; // averaging interval
+	double blockave_PFresrms[100]; // open loop RMS
 	double blockave_OLrms[100]; // open loop RMS
 	double blockave_Crms[100]; // correction RMS
 	double blockave_WFSrms[100]; // WFS residual RMS
@@ -259,9 +265,7 @@ typedef struct
 
 	/* =============================================================================================== */
     
-
-
-
+   
 
     // semaphores for communication with GPU computing threads
     //sem_t *semptr; // semaphore for this image
@@ -324,31 +328,6 @@ int_fast8_t AOloopControl_InitializeMemory();
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
- *  Useful tools */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
-/* =============================================================================================== */
-// NOTE: -> AOloopControl_COMPtools
-
-/** @brief compute cross product between two 3D arrays */
-static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_name, const char *IDout_name);
-
-
-/** @brief Create simple zonal poke cube */
-long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
-
-
-
-
-
-
 
 
 
@@ -362,18 +341,24 @@ long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
 int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name);
+
 
 int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *ID_WFSzp_name, int NBzp, const char *IDwfsref0_name, const char *IDwfsref_name);
 
+/** @brief Main loop function */
 int_fast8_t AOloopControl_run();
+
 
 int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 
+/** @brief Sends modal commands to DM by matrix-vector multiplication */
 int_fast8_t set_DM_modes(long loop);
 
 int_fast8_t set_DM_modesRM(long loop);
 
+/** @brief Main computation function, runs once per loop iteration */
 int_fast8_t AOcompute(long loop, int normalize);
 
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name);
@@ -382,11 +367,11 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_name, const char *WFSmodes_name, const char *outname);
 
-long AOloopControl_computeWFSresidualimage(long loop, float alpha);
+long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name);
 
 long AOloopControl_ComputeOpenLoopModes(long loop);
 
-int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name);
+int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float GainCoeff, long NBsamples);
 
 long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff);
 
@@ -433,12 +418,16 @@ int_fast8_t AOloopControl_logoff();
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY AND FILTERED DM WRITE              */
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_DMprimaryWrite_on();
 
 int_fast8_t AOloopControl_DMprimaryWrite_off();
+
+int_fast8_t AOloopControl_DMfilteredWrite_on();
+
+int_fast8_t AOloopControl_DMfilteredWrite_off();
 
 
 /* =============================================================================================== */
@@ -502,38 +491,6 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT
- *  Measure loop behavior */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
-
-int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
-
-int_fast8_t AOloopControl_statusStats(int updateconf);
-
-int_fast8_t AOloopControl_resetRMSperf();
-
-int_fast8_t AOloopControl_showparams(long loop);
-
-int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBpts, float ampl);
-
-int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, float OPDamp, long NBiter);
-
-long AOloopControl_blockstats(long loop, const char *IDout_name);
-
-int_fast8_t AOloopControl_InjectMode( long index, float ampl );
-
-long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, const char *DMmask_name, const char *DMstream_in_name, const char *DMstream_out_name, const char *IDout_name);
-
-long AOloopControl_TestDMmodes_Recovery(const char *DMmodes_name, float ampl, const char *DMmask_name, const char *DMstream_in_name, const char *DMstream_out_name, const char *DMstream_meas_name, long tlagus, long NBave, const char *IDout_name, const char *IDoutrms_name, const char *IDoutmeas_name, const char *IDoutmeasrms_name);
-
-long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long NBmodes);
-
-int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname);
 
 
 

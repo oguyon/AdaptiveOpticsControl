@@ -4018,7 +4018,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 			while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
 	}
 		
-    printf("\n\n");
+   // printf("\n\n");
     k = 0;
 
     while ((k<NBcoadd)&&(data.signal_USR1==0))
@@ -4132,8 +4132,8 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 
         k++;
     }
-    printf("\n Processing...\n");
-    fflush(stdout);
+  //  printf("\n Processing...\n");
+  //  fflush(stdout);
 
 
 

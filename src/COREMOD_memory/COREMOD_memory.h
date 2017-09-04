@@ -353,6 +353,7 @@ long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int cnt1);
 long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem);
 long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index);
 long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index);
+long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index);
 
 long COREMOD_MEMORY_image_set_sempost_loop(const char *IDname, long index, long dtus);
 long COREMOD_MEMORY_image_set_semwait(const char *IDname, long index);

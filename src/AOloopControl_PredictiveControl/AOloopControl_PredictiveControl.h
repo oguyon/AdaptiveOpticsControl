@@ -34,8 +34,8 @@ double AOloopControl_PredictiveControl_testPredictiveFilter(const char *IDtrace_
 
 long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblock);
 
-
-
+/** @brief Set predictive filter to simple average of previous measures */
+long AOloopControl_PredictiveControl_setPFsimpleAve(char *IDPF_name, float DecayCoeff);
 
 
 #endif

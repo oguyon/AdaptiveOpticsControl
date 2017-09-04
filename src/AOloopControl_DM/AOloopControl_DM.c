@@ -1099,7 +1099,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
    if(dm2dm_mode == 1) 
    {
-        printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE\n");
+        printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE ...\n");
         fflush(stdout);
 
         dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
@@ -1135,13 +1135,24 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
    
    
    
+	list_image_ID(); //TEST
+	
     dmdispcombconf[DMindex].wfsrefmode = wfsrefmode;
     if(wfsrefmode == 1) 
     {
-        printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE\n");
+        printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE ...\n");
         fflush(stdout);
     
+		printf("wfsref_WFSRespMat = %s\n", wfsref_WFSRespMat);
+		fflush(stdout);
+		
         dmdispcombconf[DMindex].ID_wfsref_RespMat = image_ID(wfsref_WFSRespMat);
+        if(dmdispcombconf[DMindex].ID_wfsref_RespMat==-1)
+			{
+				printf("ERROR: cannot find image \"%s\"\n", wfsref_WFSRespMat);
+				exit(0);
+			}
+        
         if(data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].naxis != 3)
             {
                 sprintf(errstr, "image \"%s\" should have naxis = 3", wfsref_WFSRespMat);
@@ -1150,6 +1161,10 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             }
         dmdispcombconf[DMindex].xsizewfsref = data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].size[0];
         dmdispcombconf[DMindex].ysizewfsref = data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].size[1];
+		
+		printf("xsizewfsref = %ld\n", dmdispcombconf[DMindex].xsizewfsref);
+		printf("ysizewfsref = %ld\n", dmdispcombconf[DMindex].ysizewfsref);
+		fflush(stdout);
 
         dmdispcombconf[DMindex].ID_wfsref_out = image_ID(wfsref_out);
         if(data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].size[0] != dmdispcombconf[DMindex].xsizewfsref)
@@ -1164,9 +1179,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 printERROR(__FILE__,__func__,__LINE__, errstr);
                 exit(0);
             }
+        printf("Creating image %s   %ld x %ld\n", "_tmpoutref", dmdispcombconf[DMindex].xsizewfsref, dmdispcombconf[DMindex].ysizewfsref);
+        fflush(stdout);
         IDtmpoutref = create_2Dimage_ID("_tmpoutref", dmdispcombconf[DMindex].xsizewfsref, dmdispcombconf[DMindex].ysizewfsref);
         sizexywfsref = dmdispcombconf[DMindex].xsizewfsref*dmdispcombconf[DMindex].ysizewfsref;
-
+		
        COREMOD_MEMORY_image_set_createsem(wfsref_out, 10);
 
         printf("done\n\n");

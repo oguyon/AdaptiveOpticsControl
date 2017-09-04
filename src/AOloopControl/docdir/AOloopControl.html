@@ -50,7 +50,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Aug 15, 2017</h3>
+<h3 class="date">Aug 28, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -114,30 +114,29 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#compute-and-average-wfsres"><span class="toc-section-number">8.4</span> Compute and average wfsres</a></li>
 </ul></li>
 <li><a href="#offsetting"><span class="toc-section-number">9</span> Offsetting</a><ul>
-<li><a href="#overview-2"><span class="toc-section-number">9.1</span> Overview</a></li>
-<li><a href="#dm-offsets"><span class="toc-section-number">9.2</span> DM offsets</a><ul>
-<li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">9.2.1</span> Zonal CPU-based zero point offset</a></li>
-<li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">9.2.2</span> GPU-based zero point offset</a></li>
-</ul></li>
-<li><a href="#wfs-average-offset"><span class="toc-section-number">9.3</span> WFS average offset</a></li>
+<li><a href="#converting-dm-offsets-to-wfs-offsets-zonal-cpu-mode"><span class="toc-section-number">9.1</span> Converting DM offsets to WFS offsets (zonal, CPU mode)</a></li>
+<li><a href="#converting-dm-offsets-to-wfs-offsets-zonal-gpu-mode"><span class="toc-section-number">9.2</span> Converting DM offsets to WFS offsets (zonal, GPU mode)</a></li>
+<li><a href="#modal-offsetting-from-another-loop"><span class="toc-section-number">9.3</span> Modal offsetting from another loop</a></li>
+<li><a href="#summing-and-applying-wfs-offsets-to-aoln_wfsref"><span class="toc-section-number">9.4</span> Summing and applying WFS offsets to aolN_wfsref</a></li>
+<li><a href="#wfs-average-offset"><span class="toc-section-number">9.5</span> WFS average offset</a></li>
 </ul></li>
 <li><a href="#controlling-offsets-from-another-loop"><span class="toc-section-number">10</span> Controlling offsets from another loop</a><ul>
 <li><a href="#running-the-loop"><span class="toc-section-number">10.1</span> Running the loop</a></li>
 </ul></li>
 <li><a href="#predictive-control-experimental"><span class="toc-section-number">11</span> Predictive control (experimental)</a><ul>
-<li><a href="#overview-3"><span class="toc-section-number">11.1</span> Overview</a></li>
+<li><a href="#overview-2"><span class="toc-section-number">11.1</span> Overview</a></li>
 <li><a href="#scripts"><span class="toc-section-number">11.2</span> Scripts</a></li>
 <li><a href="#data-flow"><span class="toc-section-number">11.3</span> Data flow</a></li>
 </ul></li>
 <li><a href="#reference-conventions"><span class="toc-section-number">12</span> REFERENCE, CONVENTIONS</a><ul>
 <li><a href="#linking-to-existing-stream"><span class="toc-section-number">12.1</span> Linking to existing stream</a></li>
 <li><a href="#loading-images-from-fits-to-shared-memory-stream"><span class="toc-section-number">12.2</span> Loading images from FITS to shared memory stream</a><ul>
-<li><a href="#overview-4"><span class="toc-section-number">12.2.1</span> Overview</a></li>
+<li><a href="#overview-3"><span class="toc-section-number">12.2.1</span> Overview</a></li>
 <li><a href="#detailed-description"><span class="toc-section-number">12.2.2</span> Detailed description</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#reference-content-of-.conf-directory"><span class="toc-section-number">13</span> REFERENCE: Content of ./conf directory</a><ul>
-<li><a href="#overview-5"><span class="toc-section-number">13.1</span> Overview</a></li>
+<li><a href="#overview-4"><span class="toc-section-number">13.1</span> Overview</a></li>
 <li><a href="#parameters"><span class="toc-section-number">13.2</span> Parameters</a><ul>
 <li><a href="#overall-and-misc"><span class="toc-section-number">13.2.1</span> Overall and misc</a></li>
 <li><a href="#linear-hardware-simulator"><span class="toc-section-number">13.2.2</span> Linear Hardware Simulator</a></li>
@@ -2221,7 +2220,6 @@ EOF</code></pre></td></tr></table></div>
 104
 105
 106
-107
 </pre></td><td class="sourceCode"><pre><code class="sourceCode">#!/bin/bash
 
 
@@ -2323,45 +2321,65 @@ fi
 loopnb=$(cat LOOPNUMBER)
 
 ./AOloopControl -n aol${loopnb}latency &lt;&lt; EOF
-#readshmim aol${loopnb}_imWFS0
-#readshmim aol${loopnb}_wfsref
-#readshmim aol${loopnb}_imWFS0tot
-aolmkwfsres ${loopnb} $1
+creaimshm aol${loopnb}_wfsavecoeff 1 1
+setpix aol${loopnb}_wfsavecoeff $1 0 0
+aolmkwfsres ${loopnb} aol${loopnb}_wfsavecoeff
 exitCLI
 EOF</code></pre></td></tr></table></div>
 </div>
 </div>
 <div id="offsetting" class="section level1">
 <h1><span class="header-section-number">9</span> Offsetting</h1>
-<div id="overview-2" class="section level2">
-<h2><span class="header-section-number">9.1</span> Overview</h2>
-<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP7</code>.</p>
+<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04-11 can be dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP7</code>.</p>
 <div class="figure">
 <img src="./figures/aoloopctr_offset.jpg" title="WFS zero point offsetting" alt="WFS zero point offsetting" />
 <p class="caption">WFS zero point offsetting</p>
 </div>
+<p>Zero-point offsetting relies on two separate processes :</p>
+<ul>
+<li>Converting DM offsets to WFS offsets (can be done by CPU or GPU): aolN_dmZP -&gt; aolN_wfszpo</li>
+<li>Summing and applying WFS offsets aolN_wfszpo to aolN_wfsref</li>
+</ul>
+<div id="converting-dm-offsets-to-wfs-offsets-zonal-cpu-mode" class="section level2">
+<h2><span class="header-section-number">9.1</span> Converting DM offsets to WFS offsets (zonal, CPU mode)</h2>
+<p>CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-11) and apply them to the <code>aolN_wfszpo#</code> stream.</p>
+<ul>
+<li><strong>Activate CPU individual zero point offset channels</strong> (<code>zplon0</code> to <code>zplon7</code>) to convert dm zero point displacements to wfs offsets.</li>
+</ul>
+<p>Every time one of the activated DM channel changes, the corresponding wfs <code>aolN_wfszpo#</code> zero point offset is CPU-computed.</p>
+<p>The process runs inside tmux session <code>aolNzploop#</code></p>
 </div>
-<div id="dm-offsets" class="section level2">
-<h2><span class="header-section-number">9.2</span> DM offsets</h2>
-<div id="zonal-cpu-based-zero-point-offset" class="section level3">
-<h3><span class="header-section-number">9.2.1</span> Zonal CPU-based zero point offset</h3>
-<p>CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-11) and apply them to the <code>aolN_wfsref</code> stream. To activate this features, the user needs to :</p>
+<div id="converting-dm-offsets-to-wfs-offsets-zonal-gpu-mode" class="section level2">
+<h2><span class="header-section-number">9.2</span> Converting DM offsets to WFS offsets (zonal, GPU mode)</h2>
+<p>A faster GPU-based zero point offset from DM to WFS is provided for each of the 8 offset channels. GPU-based and CPU-based offsetting for a single channel are mutually exclusive.</p>
+<ul>
+<li><strong>Activate GPU individual zero point offset channels</strong> (<code>GPUzplon0</code> to <code>GPUzplon7</code>) to convert dm zero point displacements to wfs offsets.</li>
+</ul>
+<p>Every time one of the activated DM channel changes, the corresponding wfs <code>aolN_wfszpo#</code> zero point offset is GPU-computed.</p>
+<p>The process runs inside tmux session <code>aolNGPUzploop#</code></p>
+</div>
+<div id="modal-offsetting-from-another-loop" class="section level2">
+<h2><span class="header-section-number">9.3</span> Modal offsetting from another loop</h2>
+<p>The two methods above are zonal offsetting: the DM map is multiplied by the zonal WFS response to compute WFS offset.</p>
+<p>Modal offsetting, instead, relies on a pre-computed set of WFS modal offets. This is most useful when a separate control loop is driving modal offsets to the current loop.</p>
+<p>To implement modal offsetting from a separate loop (refered to as the offsetting loop) :</p>
+<ul>
+<li><p>Configure the DM of the offsetting loop to write WFS zero point offsets to the current loop (see setting up DM section)</p></li>
+<li><p>Do not activate either of the previous two zonal offsetting schemes</p></li>
+<li><p>Activate the WFS offsets process (see next subsection)</p></li>
+</ul>
+</div>
+<div id="summing-and-applying-wfs-offsets-to-aoln_wfsref" class="section level2">
+<h2><span class="header-section-number">9.4</span> Summing and applying WFS offsets to aolN_wfsref</h2>
+<p>To activate WFS offsets to aolN_wfsref, the user needs to :</p>
 <ul>
 <li><strong>Toggle the zero point offset loop process ON</strong> (<code>LPzpo</code>) prior to starting the loop.</li>
 </ul>
-<p>Cfits command <code>aolzpwfscloop</code> (C function <code>AOloopControl_WFSzeropoint_sum_update_loop</code>) launches a loop that monitors shared memory streams <code>aolN_wfszpo0</code> to <code>aolN_wfszpo3</code>, and updates the WFS reference when one of these has changed. The loop is running insite tmux session <code>aolNwfszpo</code>, and is launched when the loop is closed (<code>Floopon</code>) if the loop zero point offset flag is toggled on (<code>LPzpo</code>)</p>
-<ul>
-<li><strong>Activate individual zero point offset channels</strong> (<code>zplon0</code> to <code>zplon4</code>).</li>
-</ul>
-<p>Every time one of the activated DM channel changes, the corresponding wfs <code>aolN_wfszpo#</code> zero point offset is CPU-computed.</p>
-</div>
-<div id="gpu-based-zero-point-offset" class="section level3">
-<h3><span class="header-section-number">9.2.2</span> GPU-based zero point offset</h3>
-<p>A faster GPU-based zero point offset from DM to WFS is provided for each of the 8 offset channels. GPU-based and CPU-based offsetting for a single channel are mutually exclusive.</p>
-</div>
+<p>Command <code>aolzpwfscloop</code> (C function <code>AOloopControl_WFSzeropoint_sum_update_loop</code>) launches a loop that monitors shared memory streams <code>aolN_wfszpo0</code> to <code>aolN_wfszpo7</code>, and updates the WFS reference when one of these has changed.</p>
+<p>The loop is running inside tmux session <code>aolNwfszpo</code>, and is launched when the loop is closed (<code>Floopon</code>) if the loop zero point offset flag is toggled on (<code>LPzpo</code>)</p>
 </div>
 <div id="wfs-average-offset" class="section level2">
-<h2><span class="header-section-number">9.3</span> WFS average offset</h2>
+<h2><span class="header-section-number">9.5</span> WFS average offset</h2>
 <p>Measures average WFS residual with script :</p>
 <pre><code>./auxscripts/aolmkWFSres 0.0005</code></pre>
 <p>Running average is in stresm aol_wfsres_ave</p>
@@ -2379,7 +2397,7 @@ EOF</code></pre></td></tr></table></div>
 </div>
 <div id="predictive-control-experimental" class="section level1">
 <h1><span class="header-section-number">11</span> Predictive control (experimental)</h1>
-<div id="overview-3" class="section level2">
+<div id="overview-2" class="section level2">
 <h2><span class="header-section-number">11.1</span> Overview</h2>
 <p>Predictive control is implemented in two processes:</p>
 <ul>
@@ -2445,7 +2463,7 @@ ln -s /tmp/imcam.im.shm /tmp/aol8_wfsim.im.shm</code></pre>
 </div>
 <div id="loading-images-from-fits-to-shared-memory-stream" class="section level2">
 <h2><span class="header-section-number">12.2</span> Loading images from FITS to shared memory stream</h2>
-<div id="overview-4" class="section level3">
+<div id="overview-3" class="section level3">
 <h3><span class="header-section-number">12.2.1</span> Overview</h3>
 <p>Loading FITS file into a new or existing stream.</p>
 <p>The recommended command to load a FITS image to shared memory in AOCCE is for example:</p>
@@ -2582,7 +2600,7 @@ Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0</code></pre>
 </div>
 <div id="reference-content-of-.conf-directory" class="section level1">
 <h1><span class="header-section-number">13</span> REFERENCE: Content of ./conf directory</h1>
-<div id="overview-5" class="section level2">
+<div id="overview-4" class="section level2">
 <h2><span class="header-section-number">13.1</span> Overview</h2>
 <table>
 <colgroup>

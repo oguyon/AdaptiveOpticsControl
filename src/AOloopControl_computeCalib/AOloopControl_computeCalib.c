@@ -82,6 +82,12 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 #include "AOloopControl_acquireCalib/AOloopControl_acquireCalib.h"
 #include "AOloopControl_computeCalib/AOloopControl_computeCalib.h"
 
+
+#ifdef HAVE_CUDA
+#include "cudacomp/cudacomp.h"
+#endif
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                      DEFINES, MACROS                                            */
@@ -1901,7 +1907,6 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
     long ii, jj;
 
     long IDmaskRM; // DM mask
-    long IDmask; // DM mask
 
     double totm;
 
@@ -1918,7 +1923,7 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
     long MBLOCK_NBmode[MAX_MBLOCK]; // number of blocks
     long MBLOCK_ID[MAX_MBLOCK];
-    long MBLOCK_IDwfs[MAX_MBLOCK];
+//    long MBLOCK_IDwfs[MAX_MBLOCK];
     float MBLOCK_CPA[MAX_MBLOCK];
 
 
@@ -1938,6 +1943,8 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
     long m0, mblock0;
 
     long iter;
+
+	long IDmask;
 
     long IDzrespM;
     long wfsxsize, wfsysize, wfssize;
@@ -2134,16 +2141,15 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
         long NBZ = 0;
         long IDmfcpa;
         float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
-
-        long IDmask;
         long IDslaved;
-        long IDmaskRMedge;
 
 
 
         if(MODAL==0)
         {
             long IDmaskRMin;
+            long IDmaskRMedge;
+            
 
             // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
             //NBZ = 5; /// 3: tip, tilt, focus
@@ -2201,6 +2207,7 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
+				
                 // set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
@@ -2415,7 +2422,6 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
             }
 
             // Compute total of image over mask -> totvm
-            double ave = 0.0;
             double totvm = 0.0;
             totm = 0.0;
             for(ii=0; ii<msizex*msizey; ii++)
@@ -3104,6 +3110,9 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
         char imnameDM[200];
         char imnameDM1[200];
+        long MBLOCK_IDwfs[MAX_MBLOCK];
+
+
 
         if(BlockNB<0)
         {   // check size
@@ -3224,7 +3233,6 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
                             delete_image_ID("testrc");
 
-                            LOcoeff = 1.0;
 
                             LOcoeff = 1.0/(1.0+pow(10.0*res, 4.0));
 
@@ -3588,6 +3596,8 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+			long IDmask;
+			
             if(BlockNB>-1) // LOAD & VERIFY SIZE
             {
                 if(sprintf(imname1, "fmodesWFS1_%02ld", mblock) < 1)
@@ -3619,7 +3629,9 @@ long AOloopControl_computeCalib_mkModes(const char *ID_name, long msizex, long m
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
-                char command[1000];
+				char command[1000];
+                
+                
                 if(sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 

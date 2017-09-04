@@ -8,6 +8,7 @@ fi
 
 
 
+
 function startstreamlog {
 aoconflog "log $1 ON"
 echo "1" > ./status/stat_log$1.txt
@@ -51,6 +52,10 @@ tmuxnameC="logC_$1"
 tmux kill-session -t $tmuxnameC
 echo "0" > ./status/stat_log$1.txt
 }
+
+
+
+
 
 
 function start_Telemetrylog_all {
@@ -123,12 +128,15 @@ echo "1" > "./status/stat_log_dm${DMindex}disp10.txt"
 startstreamlog dm${DMindex}disp11
 echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
 
-
-if [ "${dm2dm_mode}" = "0" ];
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
+if [ "${CMMODE}" = "0" ];
 then
 
 startstreamlog aol${LOOPNUMBER}_modeval
 echo "1" > "./status/stat_log_modeval.txt"
+
+startstreamlog aol${LOOPNUMBER}_modeval_dm_corr
+echo "1" > "./status/stat_log_modeval_dm_corr.txt"
 
 startstreamlog aol${LOOPNUMBER}_modeval_dm_now
 echo "1" > "./status/stat_log_modeval_dm_now.txt"
@@ -141,6 +149,12 @@ echo "1" > "./status/stat_log_modeval_ol.txt"
 
 fi
 }
+
+
+
+
+
+
 
 
 function stop_Telemetrylog_all {
@@ -213,11 +227,15 @@ echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
 
 log "stop ALL telemetry logging"
 
-if [ "${dm2dm_mode}" = "0" ];
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
+if [ "${CMMODE}" = "0" ];
 then
 
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
+
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_corr
+echo "0" > "./status/stat_log_modeval_dm_corr.txt"
 
 stopstreamlog aol${LOOPNUMBER}_modeval_dm_now
 echo "0" > "./status/stat_log_modeval_dm_now.txt"
@@ -230,6 +248,15 @@ echo "0" > "./status/stat_log_modeval_ol.txt"
 
 fi
 }
+
+
+
+
+
+
+
+
+
 
 
 function kill_Telemetrylog_all {
@@ -302,11 +329,15 @@ echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
 
 log "kill ALL telemetry logging"
 
-if [ "${dm2dm_mode}" = "0" ];
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
+if [ "${CMMODE}" = "0" ];
 then
 
 killstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
+
+killstreamlog aol${LOOPNUMBER}_modeval_dm_corr
+echo "0" > "./status/stat_log_modeval_dm_corr.txt"
 
 killstreamlog aol${LOOPNUMBER}_modeval_dm_now
 echo "0" > "./status/stat_log_modeval_dm_now.txt"

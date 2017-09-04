@@ -97,7 +97,7 @@ ConfReadParam RMCalibReuseMasks "0"
 RMCalibReuseMasks="$paramvalue"
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 	ConfReadParam ACmrmtime "60.0"
 	ACmrmtime="$paramvalue"
 
@@ -111,6 +111,17 @@ if [ "$DMMODE" = "ZONAL" ]; then
 	RMMamplum="$paramvalue"
 fi
 
+
+# IF MODAL DM, SET MODES TO SIMPLE IDENTITY MATRIX
+if [ "$DMMODE" = "1" ]; then
+DMxsize=$( cat ./conf/param_DMxsize.txt )
+DMysize=$( cat ./conf/param_DMysize.txt )
+./AOloopControl << EOF
+aolmksimplezpM ${DMxsize} ${DMysize} pokeM
+savefits pokeM "!./conf/"
+exitCLI
+EOF
+fi
 
 
 
@@ -166,11 +177,11 @@ fi
 
 
 
+
+if [ "$DMMODE" = "0" ]; then
 echo "##########################################"
 echo "# ACQUIRE MODAL LO RESPONSE MATRIX        "
 echo "##########################################"
-
-if [ "$DMMODE" = "ZONAL" ]; then
 	if [ "$RMCalibReuseMasks" = "1" ]; then
 	# reuse modes
 	function_acqWFSresp_LOmodes
@@ -229,13 +240,14 @@ echo "##########################################"
 #
 ./auxscripts/aolmkMasks
 
-if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
-$execname
+if [ "$DMMODE" = "1" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
+$execname << EOF
 readshmim aol${LOOPNUMBER}_dmC
 im0=0*aol${LOOPNUMBER}_dmC
 dmmaskRM=1.0+im0
 savefits dmmaskRM "!dmmaskRM.fits"
 exitCLI
+EOF
 fi
 
 # MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
@@ -247,7 +259,7 @@ fi
 #	dmmask.fits    (overwrite)
 #
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 ./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 else # set dmmask to 1, dmslaved to 0
 $execname << EOF
@@ -310,7 +322,7 @@ done
 
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then # zonal DM
 
 echo "####################################################"
 echo "# ACQUIRE LOW ORDER RESPONSE                        "
@@ -375,7 +387,7 @@ do
 	cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits
 done
 
-fi # end of if [ "$DMMODE" = "ZONAL" ]; then
+fi # end of if [ "$DMMODE" = "0" ]; then
 
 
 
@@ -390,7 +402,7 @@ echo "######################################################################"
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-if [ "$DMMODE" = "ZONAL" ]; then
+if [ "$DMMODE" = "0" ]; then
 	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
 	do
 		echo "${imname}/${imname}_${aCALIBdatestr}.fits" > ./${dir}/shmim_${imname}.name.txt

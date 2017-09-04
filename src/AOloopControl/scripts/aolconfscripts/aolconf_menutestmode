@@ -295,7 +295,13 @@ menuitems+=( "resan" "Analyze current residual" )
 
 menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
+
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue" 
+if [ "$DMMODE" = "0" ]; then # zonal DM
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
+else
+menuitems+=( "inj0" "Inject single mode ${testModeNb} (single modal DM pixel), amplitude ${testModeAmp} to RM channel" )
+fi
 
 
 StatReadStat inj0pON "OFF"; inj0pONstat="$statusvalue"
@@ -739,6 +745,8 @@ EOF
 
     inj0)
 tmuxname="aol${LOOPNUMBER}modeinj0"
+
+if [ "$DMMODE" = "0" ]; then # zonal
 aoconflog "inject mode from fmodes0all basis"
 sleep 0.2
 tmux new-session -d -s ${tmuxname}
@@ -754,6 +762,20 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "dmo=${testModeAmp}*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "exit" C-m
+else
+aoconflog "inject mode into modal DM"
+sleep 0.2
+tmux new-session -d -s ${tmuxname}
+sleep 0.2
+modenb=$( printf "%05ld" ${testModeNb} )
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj0" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "setpix aol${LOOPNUMBER}_dmRM ${testModeAmp} $modenb 0" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+fi
 	;;
 
 

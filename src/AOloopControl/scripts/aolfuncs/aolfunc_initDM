@@ -249,7 +249,7 @@ if [ -a $file ]
 fi
 
 ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
-ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue" # DM mode
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue" # DM mode: 0=zonal, 1=modal
 ConfReadParam DMxsize "32"; DMxsize="$paramvalue" # DM x size 
 ConfReadParam DMysize "32"; DMysize="$paramvalue" # DM y size 
 ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue" # DM-to-DM mode
@@ -270,16 +270,16 @@ ConfReadParam DMdelayON "OFF"; DMdelayON="$paramvalue" # READ DM delay (optional
 
 
 # creates shmim aol#_dm2dmM if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dm2dmM
+./aolfuncs/aolfunc_StreamLink dm2dmM
 
 # creates shmim aol#_dm2dmO if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dm2dmO
+./aolfuncs/aolfunc_StreamLink dm2dmO
 
 # creates shmim aol#_dmwrefRM if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dmwrefRM
+./aolfuncs/aolfunc_StreamLink dmwrefRM
 
 # creates shmim aol#_dmwrefO if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dmwrefO
+./aolfuncs/aolfunc_StreamLink dmwrefO
 
 
 
@@ -371,13 +371,16 @@ tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${DMxsize} ${DMysize} 1
     
     
 # if DM is modal, create simple "./conf/DMmodes.fits"
-if [ "$DMMODE" = "MODAL" ]; then
+if [ "$DMMODE" = "1" ]; then
 $execname << EOF
 aolmksimplezpM ${DMxsize} ${DMysize} DMmodes
 savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes.fits"
 savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes_zonal.fits"
 exitCLI
 EOF
+echo "${DMxsize}" > ./conf/param_NBmodes.txt
+echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf/shmim_DMmodes.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
 fi
     
 

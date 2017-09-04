@@ -30,7 +30,7 @@ int_fast8_t init_AOloopControl_IOtools();
 /* =============================================================================================== */
 
 
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
+int_fast8_t AOloopControl_IOtools_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
 
 /** @brief compute sum of image pixels */
 static void *compute_function_imtotal( void *ptr );
@@ -56,10 +56,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 /** @brief Load 2D image in shared memory */
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue);
+long AOloopControl_IOtools_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue);
 
 /** @brief Load 3D image in shared memory */
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue);
+long AOloopControl_IOtools_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue);
 
 
 
@@ -74,14 +74,15 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
 /** @brief Average data stream */
-int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS);
+int_fast8_t AOloopControl_IOtools_AveStream(const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS);
 
 /** @brief Induces temporal offset between input and output streams */
-long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem);
+long AOloopControl_IOtools_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem);
 
 /** @brief Re-arrange a 3D cube into an array of images into a single 2D frame */
-long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem);
+long AOloopControl_IOtools_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem);
 
 
 

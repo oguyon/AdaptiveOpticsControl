@@ -199,6 +199,20 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 
+
+./AOloopControl << EOF
+readshmim aol${loopnb}_mode_ARPFgain
+loadfits "${outmaskname}" outmask
+im1=aol${loopnb}_mode_ARPFgain+outmask
+cpsh im1 aol${loopnb}_mode_ARPFgain
+exitCLI
+EOF
+
+
+TESTMODE="1"
+
+#if [ "$TESTMODE" = "0" ]; then
+
 if [ "$MASTEROUTPUT" = "0" ]; then
 
 ./AOloopControl << EOF
@@ -220,6 +234,10 @@ loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 
+#
+# copy aol_modeval to aol_modevalPF (initialization)
+# we initialize the prediction with the last reading from the WFS
+#
 readshmim aol${loopnb}_modeval
 im1=aol${loopnb}_modeval+0
 cpsh im1 aol${loopnb}_modevalPF
@@ -233,6 +251,9 @@ EOF
 
 
 fi
+
+
+#fi
 
 
 
