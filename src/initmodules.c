@@ -9,8 +9,9 @@
 #include "AOloopControl_acquireCalib/AOloopControl_acquireCalib.h"
 #include "AOloopControl_computeCalib/AOloopControl_computeCalib.h"
 #include "AOloopControl_PredictiveControl/AOloopControl_PredictiveControl.h"
-#include "AOsystSim/AOsystSim.h"
+#include "AOloopControl_perfTest/AOloopControl_perfTest.h"
 #include "AOloopControl_DM/AOloopControl_DM.h"
+#include "AOsystSim/AOsystSim.h"
 #include "OptSystProp/OptSystProp.h"
 #include "OpticsMaterials/OpticsMaterials.h"
 #include "ZernikePolyn/ZernikePolyn.h"
@@ -44,8 +45,9 @@ int init_modules()
   init_AOloopControl_acquireCalib();
   init_AOloopControl_computeCalib();
   init_AOloopControl_PredictiveControl();
-  init_AOsystSim();
+  init_AOloopControl_perfTest();
   init_AOloopControl_DM();
+  init_AOsystSim();
   init_OptSystProp();
   init_OpticsMaterials();
   init_ZernikePolyn();

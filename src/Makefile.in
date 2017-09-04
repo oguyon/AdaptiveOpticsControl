@@ -119,9 +119,9 @@ AdaptiveOpticsControl_DEPENDENCIES = cudacomp/libcudacomp.la \
 	AOloopControl_acquireCalib/libaoloopcontrolacquirecalib.la \
 	AOloopControl_computeCalib/libaoloopcontrolcomputecalib.la \
 	AOloopControl_PredictiveControl/libaoloopcontrolpredictivecontrol.la \
-	AOsystSim/libaosystsim.la \
+	AOloopControl_perfTest/libaoloopcontrolperftest.la \
 	AOloopControl_DM/libaoloopcontroldm.la \
-	OptSystProp/liboptsystprop.la \
+	AOsystSim/libaosystsim.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \
@@ -396,8 +396,9 @@ AdaptiveOpticsControl_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-I@abs_top_srcdir@/src/AOloopControl_acquireCalib \
 	-I@abs_top_srcdir@/src/AOloopControl_computeCalib \
 	-I@abs_top_srcdir@/src/AOloopControl_PredictiveControl \
-	-I@abs_top_srcdir@/src/AOsystSim \
+	-I@abs_top_srcdir@/src/AOloopControl_perfTest \
 	-I@abs_top_srcdir@/src/AOloopControl_DM \
+	-I@abs_top_srcdir@/src/AOsystSim \
 	-I@abs_top_srcdir@/src/OptSystProp \
 	-I@abs_top_srcdir@/src/OpticsMaterials \
 	-I@abs_top_srcdir@/src/ZernikePolyn \
@@ -422,11 +423,11 @@ BUILT_SOURCES = calc_bison.h
 SUBDIRS = cudacomp AtmosphericTurbulence AtmosphereModel psf \
 	AOloopControl AOloopControl_IOtools AOloopControl_acquireCalib \
 	AOloopControl_computeCalib AOloopControl_PredictiveControl \
-	AOsystSim AOloopControl_DM OptSystProp OpticsMaterials \
-	ZernikePolyn WFpropagate image_basic image_filter kdtree \
-	image_gen linopt_imtools statistic fft info COREMOD_arith \
-	COREMOD_iofits COREMOD_memory COREMOD_tools ImageStreamIO \
-	00CORE
+	AOloopControl_perfTest AOloopControl_DM AOsystSim OptSystProp \
+	OpticsMaterials ZernikePolyn WFpropagate image_basic \
+	image_filter kdtree image_gen linopt_imtools statistic fft \
+	info COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
+	ImageStreamIO 00CORE
 AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
 	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
@@ -435,9 +436,9 @@ AdaptiveOpticsControl_LDADD = cudacomp/libcudacomp.la \
 	AOloopControl_acquireCalib/libaoloopcontrolacquirecalib.la \
 	AOloopControl_computeCalib/libaoloopcontrolcomputecalib.la \
 	AOloopControl_PredictiveControl/libaoloopcontrolpredictivecontrol.la \
-	AOsystSim/libaosystsim.la \
+	AOloopControl_perfTest/libaoloopcontrolperftest.la \
 	AOloopControl_DM/libaoloopcontroldm.la \
-	OptSystProp/liboptsystprop.la \
+	AOsystSim/libaosystsim.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_basic/libimagebasic.la image_filter/libimagefilter.la \

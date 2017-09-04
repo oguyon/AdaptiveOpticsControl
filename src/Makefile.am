@@ -52,13 +52,17 @@ SUBDIRS += AOloopControl_PredictiveControl
 AdaptiveOpticsControl_LDADD += AOloopControl_PredictiveControl/libaoloopcontrolpredictivecontrol.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_PredictiveControl
 
-SUBDIRS += AOsystSim
-AdaptiveOpticsControl_LDADD += AOsystSim/libaosystsim.la
-AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
+SUBDIRS += AOloopControl_perfTest
+AdaptiveOpticsControl_LDADD += AOloopControl_perfTest/libaoloopcontrolperftest.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_perfTest
 
 SUBDIRS += AOloopControl_DM
 AdaptiveOpticsControl_LDADD += AOloopControl_DM/libaoloopcontroldm.la
 AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
+
+SUBDIRS += AOsystSim
+AdaptiveOpticsControl_LDADD += AOsystSim/libaosystsim.la
+AdaptiveOpticsControl_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
 
 SUBDIRS += OptSystProp
 AdaptiveOpticsControl_LDADD += OptSystProp/liboptsystprop.la
