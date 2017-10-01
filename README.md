@@ -58,9 +58,6 @@ See [coding standards]( http://oguyon.github.io/AdaptiveOpticsControl/html/page_
 
 
 
-## Documentation
-
-[Full online documentation]( http://oguyon.github.io/AdaptiveOpticsControl/ ) 
 
 
 

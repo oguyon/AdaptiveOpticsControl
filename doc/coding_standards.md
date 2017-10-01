@@ -83,7 +83,7 @@ Additional documentation that is not meant to be processed by doxygen (but can b
 | ./src/docdir/*.md              |        |             | non-doxygen documentation                 |
 | ./src/<modulename>/doc/*.md    |        |   X         | Module documentation files                |
 | ./src/<modulename>/docdir/*.md |        |             | Extended application documentation        |
-
+|--------------------------------|--------|-------------|-------------------------------------------|
 
 Additional details:
 
