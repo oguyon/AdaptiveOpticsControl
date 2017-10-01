@@ -76,6 +76,7 @@ typedef struct {
     
     double CN2layer_h[20]; // [m]
     double CN2layer_coeff[20]; // sum of coeffs = 1
+    double CN2layer_Chrom_disp[20]; // chromatic displacement [m]
     
     double D; // telescope aperture [m]
     double r0; // Fried parameter at lambda0 [m]
@@ -87,22 +88,44 @@ typedef struct {
     double Fwfs; // source flux [ph.s-1.m-2]
     double Fsci;
     
-    double framedelay; // delay in unit of frames
+    double framedelayMult; // delay in unit of frames
     
-    double f_wfs; // spatial frequency
-    double f_0; // spatial frequency
-    double f; // spatial frequency
+    double f; // spatial frequency [m^{-1}]
     double hf; // sine wave component amplitude
     double X;
+    double Xwfs;
     double Y;
+    double Ywfs;
     double dX;
     double dY;
-    double C0;
-    double C1;
-    double twfs;
+    
+    double CP_UOPD;     // uncorrected OPD
+    double CP_OPHN;    // photon noise error corrected OPD
+    double CP_OTEM;    // temporal error corrected OPD
+
+    double CP_UAMP;     // uncorrected AMP
+    double CP_APHN;    // photon noise error corrected AMP
+    double CP_ATEM;    // temporal error corrected AMP    
+    
+    double CC_OMUL;
+    double CC_OPRO;
+    double CC_ORPA;
+    
+    double CC_AMUL;
+    double CC_APRO;
+    double CC_ARPA;
+    
+    
+    
+    double twfs;       // WFS effective exposure time for OPD correction
+	double twfs_opt; // optimal WFS exposure time - OPD
+
+    double twfs_A;       // WFS effective exposure time for AMP correction
+	double twfs_Aopt; // optimal WFS exposure time - AMP
+	
+    
     double twfssci;
     double hfc; // corrected sine wave component amplitude
-    double twfs_opt; // optimal WFS exposure time - phase
     double twfssci_opt; // optimal WFS exposure time - phase
     double twfs_opt_amp; // optimal WFS exposure time - amplitude
     double hfca; // time lag term

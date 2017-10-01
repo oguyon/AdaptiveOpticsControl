@@ -29,7 +29,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Run AO control loop\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Run AO control loop\n" "$0" 
 }
 
 

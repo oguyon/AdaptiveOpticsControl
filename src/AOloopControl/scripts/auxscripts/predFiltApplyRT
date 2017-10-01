@@ -26,7 +26,7 @@ echo "     $(tput bold)-s$(tput sgr0)            save ascii and FITS output"
 echo "     $(tput bold)-r$(tput sgr0)            replace measurements by predictions -> FITS output"
 echo "     $(tput bold)-i$(tput sgr0) <index>    read inmask<index>.fits and outmask<index>.fits"
 echo "     $(tput bold)-g$(tput sgr0) <nbGPU>    number of GPUs"
-echo "     $(tput bold)-o$(tput sgr0)            Write results in master output stream aol${loopnb}_modevalPF requires outmask"
+echo "     $(tput bold)-o$(tput sgr0)            Write results in master output stream aol${loopnb}_modevalPF. Requires outmask"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "      <instream>     input stream"
@@ -42,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Apply predictive filter to stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Apply predictive filter to stream\n" "$0" 
 }
 
 
@@ -209,9 +209,9 @@ exitCLI
 EOF
 
 
-TESTMODE="1"
 
-#if [ "$TESTMODE" = "0" ]; then
+
+
 
 if [ "$MASTEROUTPUT" = "0" ]; then
 
@@ -221,7 +221,8 @@ loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 listim
-linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
+semt=10+${PFINDEX}
+linARapplyRT $1 0 semt $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exitCLI
 EOF
@@ -240,20 +241,19 @@ readshmim $2
 #
 readshmim aol${loopnb}_modeval
 im1=aol${loopnb}_modeval+0
+readshmim aol${loopnb}_modevalPF
 cpsh im1 aol${loopnb}_modevalPF
 
 readshmim aol${loopnb}_modevalPF
 listim
-linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
+semt=10+${PFINDEX}
+linARapplyRT $1 0 semt $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exitCLI
 EOF
 
-
 fi
 
-
-#fi
 
 
 

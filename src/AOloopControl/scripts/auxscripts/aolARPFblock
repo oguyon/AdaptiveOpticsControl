@@ -54,7 +54,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       AO find optimal AR linear predictive filter (single block)\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       AO find optimal AR linear predictive filter (single block)\n" "$0" 
 }
 
 

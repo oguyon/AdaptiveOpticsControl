@@ -251,9 +251,9 @@ fi
 
 
 
-##########################################
-# SYSTEM RESPONSE TEST / CALIBRATION
-##########################################
+#####################################################################################
+# SYSTEM RESPONSE TEST / CALIBRATION - SYSTEM RESPONSE TEST / CALIBRATION
+#####################################################################################
 
 
 menuitems+=( "-" " " )
@@ -293,6 +293,12 @@ menuitems+=( "-" " INSPECT CURRENT LOOP STATE " )
 menuitems+=( "resan" "Analyze current residual" )
 
 
+
+
+#####################################################################################
+# SYSTEM RESPONSE TEST / CALIBRATION - STATIC TEST
+#####################################################################################
+
 menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
 
@@ -326,9 +332,15 @@ fi
 menuitems+=( "clr" "Clear RM channel" )
 
 
+#####################################################################################
+# SYSTEM RESPONSE TEST / CALIBRATION - DYNAMIC TEST
+#####################################################################################
+
 menuitems+=( "-" " " )
 menuitems+=( "-" " DYNAMIC TEST" )
+
 menuitems+=( "-" " " )
+menuitems+=( "-" "  --------------- Frequency ramp, single mode" )
 
 
 ConfReadParam testModefmin "0.1"; testModefmin="$paramvalue"
@@ -343,8 +355,6 @@ menuitems+=( "settmfs" "[${testModefmstep}] Set test mode mult frequ step" )
 ConfReadParam testModeetime "2.0"; testModeetime="$paramvalue"
 menuitems+=( "settmet" "[${testModeetime}] Set test mode measurement time per frequ" )
 
-
-
 StatReadStat dmmtrON "OFF"; dmmtrONstat="$statusvalue"
 if [ "$dmmtrONstat" = "OFF" ]; then
 menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\ZB\ZU" )
@@ -352,10 +362,10 @@ else
 menuitems+=( "dmmtr_off" "\Z1\Zr    STOP DM mode temporal response test \Zn" )
 fi
 
+menuitems+=( "-" " " )
+menuitems+=( " " "  --------------- Single Frequency, single or multiple modes" )
 
-menuitems+=( " " " " )
-
-ConfReadParam testDMperMn "100"; testDMperMn ="$paramvalue"
+ConfReadParam testDMperMn "100"; testDMperMn="$paramvalue"
 menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
 
 ConfReadParam testDMperMdt "10000"; testDMperMdt="$paramvalue"
@@ -942,6 +952,8 @@ menutestmode_default="spmsamp"
 ;;
 
 
+ 
+
 	spmsON)
 echo " ON" > ./status/stat_testDMperM.txt
 tmuxname="aol${LOOPNUMBER}testpms"
@@ -952,8 +964,9 @@ tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
 tmux send-keys -t $tmuxname "nbfr=1000000/${testDMperMdt}/${testDMperMfr}" C-m
 tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq nbfr ${testDMperMn}" C-m
 tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}" C-m
+tmux send-keys -t $tmuxname "savefits outDMmseqn \"!tmp/outDMmseqn.fits\"" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
-tmux send-keys -t $tmuxname "creaimstream outDMmseqn aol${LOOPNUMBER}_dmRM ${testDMperMdt}" C-m
+tmux send-keys -t $tmuxname "creaimstream outDMmseqn aol${LOOPNUMBER}_dmRM ${testDMperMdt} 1 0 0 null 0 0" C-m
 menutestmode_default="spmsOFF"	
 ;;
 

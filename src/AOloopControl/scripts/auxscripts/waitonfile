@@ -28,7 +28,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Wait for file to disappear\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Wait for file to disappear\n" "$0" 
 }
 
 

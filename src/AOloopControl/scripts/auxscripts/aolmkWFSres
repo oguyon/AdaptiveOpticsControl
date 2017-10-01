@@ -11,7 +11,7 @@ function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Compute real-time WFS residual image $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Align Pyramid camera"
+echo "  Compute real-time residual image"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <averaging coeff>"
@@ -34,7 +34,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Compute real-time WFS residual image\n" "$0" 
 }
 
 

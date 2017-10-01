@@ -40,7 +40,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Create DM slaved actuators map\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Create DM slaved actuators map\n" "$0" 
 }
 
 

@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Aug 28, 2017
+% Oct 1, 2017
 
 
 
@@ -13,7 +13,7 @@
 
 ## Scope
 
-AO loop control package
+AO loop control package. Includes high-performance CPU/GPU computation engine and higher level scripts.
 
 ## Pre-requisites
 
@@ -69,266 +69,164 @@ Conventions:
 - `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
 - `<workdir>` is the work directory where the program and scripts will be executed. Note that the full path should end with `.../AOloop<#>` where `<#>` ranges from 0 to 9. For example, `AOloop2`.
 
-The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
+The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory.
+
+First, execute from the source directory the 'syncscript -e' command to export key install scripts:
 
 	mkdir /<workdir>
 	cd <srcdir>/src/AOloopControl/scripts
 	./syncscripts -e /<workdir>
+
+The 'syncscript' script should now be in the work directory. Execute it to copy all scripts to the work directory:
+
 	cd /<workdir>
 	./syncscripts
 
-Symbolic links to the source scripts and executable are now installed in the work directory :
+Symbolic links to the source scripts and executable are now installed in the work directory (exact links / directories may vary) :
 
-	olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
-	total 28
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aocustomscripts
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aohardsim
-	lrwxrwxrwx 1 olivier olivier   57 Feb 21 18:14 aolconf -> /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aolconfscripts
-	lrwxrwxrwx 1 olivier olivier   70 Feb 21 19:08 AOloopControl -> /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
-	lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
+	olivier@ubuntu:/data/AOloopControl/AOloopTest$ ls -l
+	total 32
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aocscripts
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aohardsim
+	lrwxrwxrwx 1 olivier olivier   57 Sep 29 19:27 aolconf -> /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aolconfscripts
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aolfuncs
+	lrwxrwxrwx 1 olivier olivier   70 Sep 29 19:26 AOloopControl -> /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aosetup
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 auxscripts
+	lrwxrwxrwx 1 olivier olivier   61 Sep 29 19:26 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
 
 If new scripts are added in the source directory, running `./syncscripts` again from the work directory will add them to the work directory.
 
 
-The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions.
 
-~~~
-olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
-type "help" for instructions
-Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
-LOADED: 21 modules, 269 commands
-./AOloopControl > m?
-    0            cudacomp.c    CUDA wrapper for AO loop
-    1  AtmosphericTurbulence.c    Atmospheric Turbulence
-    2     AtmosphereModel.c    Atmosphere Model
-    3                 psf.c    memory management for images and variables
-    4       AOloopControl.c    AO loop control
-    5           AOsystSim.c    conversion between image format, I/O
-    6    AOloopControl_DM.c    AO loop Control DM operation
-    7         OptSystProp.c    Optical propagation through system
-    8        ZernikePolyn.c    create and fit Zernike polynomials
-    9         WFpropagate.c    light propagation
-   10         image_basic.c    basic image routines
-   11        image_filter.c    image filtering
-   12           image_gen.c    creating images (shapes, useful functions and patterns)
-   13      linopt_imtools.c    image linear decomposition and optimization tools
-   14           statistic.c    statistics functions and tools
-   15                 fft.c    FFTW wrapper
-   16                info.c    image information and statistics
-   17       COREMOD_arith.c    image arithmetic operations
-   18      COREMOD_iofits.c    FITS format input/output
-   19      COREMOD_memory.c    memory management for images and variables
-   20       COREMOD_tools.c    image information and statistics
-./AOloopControl > exit
-Closing PID 5291 (prompt process)
-~~~
 
+
+
+
+# Software Overview
+
+
+At the low level, most operations are performed by calls to the [main executable](#main-executable) which is precompiled C code. The user interacts with a [high level ASCII-based GUI](#high-level-GUI), which performs calls to individual [scripts](#supporting-scripts) or directly execute instances of the main executable. 
+
+The standard code layers are : [GUI](#high-level-gui) calls [SCRIPT](#supporting-scripts) calls [PRECOMPILED EXECUTABLE](#main-executable)
+
+
+
+## High-level GUI
 
 
 The top level script is `aolconf`. Run it with `-h` option for a quick help
 
 	./aolconf -h
 
+The `aolconf` script starts the main GUI screen from which sub-screens can be accessed. ASCII control GUI scripts are in the `aolconfscripts` directory. 
 
+The scripts are listed below in the order they appear in the GUI menu. Boldface scripts corresponds to GUI screens. Supporting scripts (holding frequently used functions) are boldface italic.
 
+------------------------------------ -----------------------------------------------------------
+Script                               Description
+------------------------------------ -----------------------------------------------------------
+**aolconf_menutop**                  **GUI**: Top level menu
 
+***aolconf_funcs***                  Misc functions
 
-## Supporting scripts, aolconfscripts directory
+***aolconf_DMfuncs***                DM Functions
 
-Scripts in the `aolconfscripts` directory are part of the high-level ASCII control GUI
+***aolconf_readconf***               Configuration read functions
+
+***aolconf_menuview***               **GUI**: Data view menu
+
+***aolconf_template***               Template (use to create additional GUI screens)
+
+----CONFIGURATION------------------- setup configuration, links to hardware
+
+**aolconf_menuconfigureloop**        **GUI**: Configure loop menu. Called from main menu
+
+***aolconf_configureloop_funcs***    Functions used within the configureloop GUI screen
+
+----CONTROL MATRIX------------------ compute control matrix
+
+**aolconf_menucontrolmatrix**        **GUI**: Control matrix menu. Called from main menu
+
+***aolconf_controlmatrix_funcs***    Functions used within the controlmatrix GUI screen
+
+***aolconf_menu_mkFModes***          Make modes
+
+----LOOP CONTROL-------------------- control AO loop
+
+**aolconf_menucontrolloop**          **GUI**: Control loop menu. Called from main menu
+
+***aolconf_controlloop_funcs***      Functions used within the controlloop GUI screen
+
+----PREDICTIVE CONTROL-------------- WFS telemetry prediction and related AO control
+
+***aolconf_menupredictivecontrol***  **GUI**:Predictive control
+
+----TESTING------------------------- AO loop tests
+
+**aolconf_menutestmode**             **GUI**: test mode menu
+
+***aolconf_DMturb***                 DM turbulence functions
+
+----LOGGING------------------------- Log telemetry
+
+**aolconf_menurecord**               **GUI**: Record / log telemetry
+
+***aolconf_logfuncs***               Data and command logging
 
 ------------------------------ -----------------------------------------------------------
-Script                         Description
+
+
+## Supporting Scripts
+
+Scripts are organized in directories according to their purpose 
+
+
 ------------------------------ -----------------------------------------------------------
-**aolconf_DMfuncs**            DM functions 
+Directory                      Description
+------------------------------ -----------------------------------------------------------
+aolconfscripts                 GUI scripts (see previous section)
 
-**aolconf_DMturb**             DM turbulence functions
+aolfuncs                       Frequently used functions
 
-**aolconf_funcs**              Misc functions
+auxscripts                     Auxillary scripts. Essential high level scripts in this directory.
 
-**aolconf_logfuncs**           data and command logging
+aohardsim                      Hardware simulation
 
-**aolconf_menuconfigureloop**  configure loop menu
-
-**aolconf_menucontrolloop**    control loop menu
-
-**aolconf_menucontrolmatrix**  control matrix menu
-
-**aolconf_menu_mkFModes**      Make modes
-
-**aolconf_menurecord**         
-
-**aolconf_menutestmode**       Test mode menu
-
-**aolconf_menutop**            Top level menu
-
-**aolconf_menuview**           Data view menu
-
-**aolconf_readconf**           Configuration read functions
-
-**aolconf_template**           Template (not used)
+aocscripts                     Custom user-provided scripts to interact with non real-time hardware
 ------------------------------ -----------------------------------------------------------
 
 
-## Supporting scripts (./auxscripts directory)
-
-Scripts in the `auxscripts` directory are called by aolconf to perform various tasks. To list all commands, type in the `auxscripts` directory :
+The `auxscripts` directory are called by aolconf to perform various tasks. To list all commands, type in the `auxscripts` directory :
 
 	./listcommands
 	
+For each script, the `-h` option will print help.
 
-The available commands are listed in the table below. Running the command with the `-h` option prints a short help.
 
------------------------------- -----------------------------------------------------------
-Script                         Description
------------------------------- -----------------------------------------------------------
-       ./mkDMslaveActprox       Create DM slaved actuators map
 
-                 ./aolctr       AO control process
 
-      ./aolPFcoeffs2dmmap       GPU-based predictive filter coeffs -> DM MAP
+## Main executable
 
-        ./aolInspectDMmap       Inspect DM map
+The main precompiled executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions, and `exit` or `exitCLI` to exit the command line.
 
-              ./acquRespM       Acquire response matrix
+~~~
+olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl 
+type "help" for instructions
+Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
+LOADED: 21 modules, 269 commands
+./AOloopControl > exitCLI
+Closing PID 5291 (prompt process)
+~~~
 
-             ./waitonfile       Wait for file to disappear
 
-               ./aolRM2CM       Align Pyramid camera
 
-    ./aolMeasureLOrespmat       Acquire modal response matrix
+## Memory storage and Configuration Parameters
 
-         ./aollinsimDelay       Introduce DM delay
+AOCCE adopts a common shared memory data format for all data streams. The data structure is defined in file `<srcdir>/src/ImageStruct.h`. 
 
-                 ./aolrun       Run AO control loop
-
-     ./aolMeasureZrespmat       Acquire zonal response matrix
-
-              ./shmimzero       Set shared memory image stream to zero
-
-              ./aolLinSim       AO Linear Simulator
-
-       ./aolmcoeffs2dmmap       GPU-based  MODE COEFFS -> DM MAP
-
-         ./MeasDMmodesRec       Measure AO loop DM modes recovery
-
-                ./xp2test       Compute cross-product of two data cubes
-
-        ./aolmkLO_DMmodes       Create LO DM modes for AO loop
-
-                 ./xptest       Compute cross-product of a data cube
-
-          ./aolblockstats       Extract mode values from WFS images, sort per block
-
-          ./aolMergeRMmat       Merge HO and LO resp matrices
-
-            ./aolscangain       AO scan gain for optimal value
-
-      ./aolARPFautoUpdate       Automatic update of AR linear predictive filter
-
-   ./aolMeasureLOrespmat2       Acquire modal response matrix
-
-        ./aolgetshmimsize       Get shared memory image size
-
-   ./aolWFSresoffloadloop       Compute real-time WFS residual image
-
-             ./alignPyrTT       Align Pyramid TT
-
-            ./aolmkmodes2       Create modes for AO loop
-
-             ./aolmkMasks       Create AO wfs and DM masks
-
-        ./modesextractwfs       Extract mode values from WFS images
-
-       ./aolARPFautoApply       Apply real-time AR linear predictive filter
-
-                 ./aolmon       Display AO loop stats
-
-  ./aolRMmeas_sensitivity       Measure photon sensitivity of zonal response matrix
-
-                ./mkHpoke       Compute real-time WFS residual image
-
-         ./aoloffloadloop       DM offload loop
-
-               ./Fits2shm       Copy FITS files to shared memor
-
-    ./aolMeasureZrespmat2       Acquire zonal response matrix
-
-           ./aolApplyARPF       Apply AR linear predictive filter
-
-  ./selectLatestTelemetry       Compute real-time WFS residual image
-
-        ./aolReadConfFile       AOloop load file to stream
-
-        ./predFiltApplyRT       Apply predictive filter to stream
-
-      ./aolCleanZrespmat2       Cleans zonal resp matrix
-
-   ./processTelemetryPSDs       Process telemetry: create open and closed loop PSDs
-
-            ./listrunproc       List running AOloop processes
-
-            ./aolmkmodesM       CREATE CM MODES FOR AO LOOP, MODAL DM
-
-       ./aolCleanZrespmat       Cleans zonal resp matrix
-
-           ./waitforfilek       Wait for file to appear and then remove it
-
-       ./aolMeasureTiming       Measure loop timing
-
-          ./aolSetmcLimit       Compute real-time WFS residual image
-
-              ./alignPcam       Align Pyramid camera
-
-            ./aolmkWFSres       Compute real-time WFS residual image
-
-         ./MeasureLatency       Measure AO system response latency
-
-         ./aollindm2wfsim       Convert DM stream to WFS image stream
-
-      ./aolCleanLOrespmat       Measure zonal resp matrix
-
-           ./mkDMslaveAct       Create DM slaved actuators map
-
-       ./aolautotunegains       Automatic gain tuning
-
-                ./aolARPF       AO find optimal AR linear predictive filter
-
-            ./aolzploopon       WFS zero point offset loop 
-
-      ./aolApplyARPFblock       Apply AR linear predictive filter (single block)
-
-             ./aolmkmodes       Create modes for AO loop
-
-           ./aolARPFblock       AO find optimal AR linear predictive filter (single block)
-
-       ./MeasLoopModeResp       Measure AO loop temporal response
-
-             ./aol_dmCave       dmC temporal averaging
------------------------------- -----------------------------------------------------------
-
-
-
-## Hardware simulation scripts
-
-Scripts in the `aohardsim` directory are called to simulate hardware for testing / simulations.
-
-
------------------------------- -----------------------------------------------------------
-Script                         Description
------------------------------- -----------------------------------------------------------
-**aosimDMstart**               Start simulation DM shared mem 
-
-**aosimDMrun**                 Simulates physical deformable mirror (DM)
-
-**aosimmkWF**                  creates properly sized wavefronts from pre-computed wavefronts
-
-**aosimWPyrFS**                Simulates WFS
------------------------------- -----------------------------------------------------------
-
+Configurations parameters are stored in directory `<workdir>/conf` as ASCII files. When AOCCEE is launched, it can load all required parameters and populate required shared memory streams from information contained in the `<workdir>/conf` directory.
 
 
 
@@ -1331,7 +1229,7 @@ All 3 processes work in a chain, and can be turned on/off from the GUI.
 
 
 
-# REFERENCE, CONVENTIONS
+# APPENDIX A: SHARED MEMORY STREAMS
 
 
 
@@ -1470,7 +1368,11 @@ When loading :
 
 
 
-# REFERENCE: Content of ./conf directory
+
+
+
+
+# REFERENCE: CONF DIRECTORY
 
 ## Overview
 

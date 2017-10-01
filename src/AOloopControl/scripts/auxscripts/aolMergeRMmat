@@ -34,7 +34,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Merge HO and LO resp matrices\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Merge HO and LO resp matrices\n" "$0" 
 }
 
 

@@ -465,9 +465,12 @@ echo "OFF" > ./status/testloopstatus.txt
 
 function AOloadMem {
 
+# set up symbolic links to streams
 # Custom hardware I/O functions [shared memory]
 ./aolfuncs/aolfunc_StreamLink dmC
 ./aolfuncs/aolfunc_StreamLink dmO
+./aolfuncs/aolfunc_StreamLink dmdisp
+./aolfuncs/aolfunc_StreamLink dmRM
 ./aolfuncs/aolfunc_StreamLink dmZP0
 ./aolfuncs/aolfunc_StreamLink dmZP1
 ./aolfuncs/aolfunc_StreamLink dmZP2
@@ -476,13 +479,10 @@ function AOloadMem {
 ./aolfuncs/aolfunc_StreamLink dmZP5
 ./aolfuncs/aolfunc_StreamLink dmZP6
 ./aolfuncs/aolfunc_StreamLink dmZP7
-./aolfuncs/aolfunc_StreamLink dmdisp
-./aolfuncs/aolfunc_StreamLink dmRM
 ./aolfuncs/aolfunc_StreamLink wfsim  # WFS image
 
 
 # LOAD SYSTEM CALIBRATION (FITS -> shared mem)
-
 Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
 
 for imname in $RMZONALCALIBlist; do
@@ -504,8 +504,8 @@ Fits2shm -c -p aol${LOOPNUMBER}_ contrM
 
 
 if [ "$1" -eq 1 ];then
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/conf_NBmodes.txt )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+NBmodes=$( cat ./conf/param_NBmodes.txt )
 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
@@ -516,6 +516,33 @@ Fits2shm -c -p aol${LOOPNUMBER}_ contrMc${i2}
 Fits2shm -c -p aol${LOOPNUMBER}_ contrMcact${i2}_00
 done
 fi
+
+# remove links/names for files beyond number of blocks
+for i in `seq $NBmodeblocks 20`;
+do
+i2=$(printf "%02d" "$i")
+
+rm "./conf/shmim_DMmodes${i2}.fits" &> /dev/null
+rm "./conf/shmim_DMmodes${i2}.name.txt" &> /dev/null
+rm "./conf/shmim_DMmodes${i2}.imsize.txt" &> /dev/null
+
+rm "./conf/shmim_respM${i2}.fits" &> /dev/null
+rm "./conf/shmim_respM${i2}.name.txt" &> /dev/null
+rm "./conf/shmim_respM${i2}.imsize.txt" &> /dev/null
+
+rm "./conf/shmim_contrM${i2}.fits" &> /dev/null
+rm "./conf/shmim_contrM${i2}.name.txt" &> /dev/null
+rm "./conf/shmim_contrM${i2}.imsize.txt" &> /dev/null
+
+rm "./conf/shmim_contrMc${i2}.fits" &> /dev/null
+rm "./conf/shmim_contrMc${i2}.name.txt" &> /dev/null
+rm "./conf/shmim_contrMc${i2}.imsize.txt" &> /dev/null
+
+rm "./conf/shmim_contrMcact${i2}_00.fits" &> /dev/null
+rm "./conf/shmim_contrMcact${i2}_00.name.txt" &> /dev/null
+rm "./conf/shmim_contrMcact${i2}_00.imsize.txt" &> /dev/null
+done
+
 
 ReadLoopGain
 ReadLoopMaxLim

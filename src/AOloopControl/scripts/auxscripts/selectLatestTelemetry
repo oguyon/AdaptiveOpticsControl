@@ -38,7 +38,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr 0)       Compute real-time WFS residual image\n" "$0" 
 }
 
 

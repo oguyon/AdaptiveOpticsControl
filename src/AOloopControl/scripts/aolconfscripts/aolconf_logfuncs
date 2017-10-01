@@ -13,27 +13,30 @@ function startstreamlog {
 aoconflog "log $1 ON"
 echo "1" > ./status/stat_log$1.txt
 tmuxnameC="logC_$1"
-sleep 0.2
+sleep 0.1
 tmux new-session -d -s $tmuxnameC
-sleep 0.2
+sleep 0.1
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/$1/
-tmux send-keys -t $tmuxnameC "logshim -c aol${LOOPNUMBER}log $1 30000 $savedir/$datestr/$1/" C-m
+ConfReadParam LogCubeSize "1000"; LogCubeSize="$paramvalue"
+tmux send-keys -t $tmuxnameC "logshim -c aol${LOOPNUMBER}log $1 $2 $savedir/$datestr/$1/" C-m
 tmuxname="log_$1"
-sleep 0.2
+sleep 0.1
 tmux new-session -d -s $tmuxname
-sleep 0.2
+sleep 0.1
 tmux send-keys -t $tmuxname "logshimon $1" C-m
 }
+
+
 
 function stopstreamlog {
 aoconflog "log $1 OFF"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
-sleep 0.2
+sleep 0.1
 tmux new-session -d -s $tmuxname
-sleep 0.2
+sleep 0.1
 tmux send-keys -t $tmuxname "logshimoff $1" C-m
 echo "0" > ./status/stat_log$1.txt
 }
@@ -43,9 +46,9 @@ function killstreamlog {
 aoconflog "log $1 KILL"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
-sleep 0.2
+sleep 0.1
 tmux new-session -d -s $tmuxname
-sleep 0.2
+sleep 0.1
 tmux send-keys -t $tmuxname "logshimkill $1" C-m
 tmux kill-session -t $tmuxname
 tmuxnameC="logC_$1"
@@ -54,6 +57,11 @@ echo "0" > ./status/stat_log$1.txt
 }
 
 
+ConfReadParam DMindex "00"; DMindex="$paramvalue"
+
+TELEMETRY_aol_streams="wfsim wfsref0 wfsref gainb DMmode_GAIN limitb DMmode_LIMIT multfb DMmode_MULTF"
+TELEMETRY_hardw_streams="dm${DMindex}disp dm${DMindex}disp00 dm${DMindex}disp01 dm${DMindex}disp02 dm${DMindex}disp03 dm${DMindex}disp04 dm${DMindex}disp05 dm${DMindex}disp06 dm${DMindex}disp07 dm${DMindex}disp08 dm${DMindex}disp09 dm${DMindex}disp10 dm${DMindex}disp11"
+TELEMETRY_modes_streams="modeval modeval_dm_corr modeval_dm_now modeval_dm_now_filt modeval_ol modevalPF modevalPFsync modevalPFres outPFb0 outPFb1 outPFb2 outPFb3"
 
 
 
@@ -62,92 +70,32 @@ function start_Telemetrylog_all {
 
 aoconflog "start ALL telemetry logging"
 
-startstreamlog aol${LOOPNUMBER}_wfsim
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 
-startstreamlog aol${LOOPNUMBER}_wfsref0
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
-
-startstreamlog aol${LOOPNUMBER}_wfsref
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
-
-
-startstreamlog aol${LOOPNUMBER}_gainb
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
-
-startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
-
-startstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
-
-startstreamlog aol${LOOPNUMBER}_multfb
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
-
-startstreamlog aol${LOOPNUMBER}_DMmode_MULTF
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+for aolstreamname in $TELEMETRY_aol_streams; do
+	streamname="aol${LOOPNUMBER}_${aolstreamname}"
+	startstreamlog ${streamname}
+	echo "startstreamlog ${streamname}"
+	echo "1" > "./status/stat_log_${streamname}.txt"
+done
 
 
+for streamname in $TELEMETRY_hardw_streams; do
+	startstreamlog $streamname
+	echo "startstreamlog ${streamname}"
+	echo "1" > "./status/stat_log_${streamname}.txt"
+done
 
-startstreamlog dm${DMindex}disp
-echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
-
-startstreamlog dm${DMindex}disp00
-echo "1" > "./status/stat_log_dm${DMindex}disp00.txt"
-
-startstreamlog dm${DMindex}disp01
-echo "1" > "./status/stat_log_dm${DMindex}disp01.txt"
-
-startstreamlog dm${DMindex}disp02
-echo "1" > "./status/stat_log_dm${DMindex}disp02.txt"
-
-startstreamlog dm${DMindex}disp03
-echo "1" > "./status/stat_log_dm${DMindex}disp03.txt"
-
-startstreamlog dm${DMindex}disp04
-echo "1" > "./status/stat_log_dm${DMindex}disp04.txt"
-
-startstreamlog dm${DMindex}disp05
-echo "1" > "./status/stat_log_dm${DMindex}disp05.txt"
-
-startstreamlog dm${DMindex}disp06
-echo "1" > "./status/stat_log_dm${DMindex}disp06.txt"
-
-startstreamlog dm${DMindex}disp07
-echo "1" > "./status/stat_log_dm${DMindex}disp07.txt"
-
-startstreamlog dm${DMindex}disp08
-echo "1" > "./status/stat_log_dm${DMindex}disp08.txt"
-
-startstreamlog dm${DMindex}disp09
-echo "1" > "./status/stat_log_dm${DMindex}disp09.txt"
-
-startstreamlog dm${DMindex}disp10
-echo "1" > "./status/stat_log_dm${DMindex}disp10.txt"
-
-startstreamlog dm${DMindex}disp11
-echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
-if [ "${CMMODE}" = "0" ];
-then
-
-startstreamlog aol${LOOPNUMBER}_modeval
-echo "1" > "./status/stat_log_modeval.txt"
-
-startstreamlog aol${LOOPNUMBER}_modeval_dm_corr
-echo "1" > "./status/stat_log_modeval_dm_corr.txt"
-
-startstreamlog aol${LOOPNUMBER}_modeval_dm_now
-echo "1" > "./status/stat_log_modeval_dm_now.txt"
-
-startstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
-echo "1" > "./status/stat_log_modeval_dm_now_filt.txt"
-
-startstreamlog aol${LOOPNUMBER}_modeval_ol
-echo "1" > "./status/stat_log_modeval_ol.txt"
-
+if [ "${CMMODE}" = "0" ]; then
+for aolstreamname in $TELEMETRY_modes_streams; do
+	streamname="aol${LOOPNUMBER}_${aolstreamname}"
+	startstreamlog $streamname
+	echo "startstreamlog ${streamname}"
+	echo "1" > "./status/stat_log_${streamname}.txt"
+done
 fi
+
 }
 
 
@@ -160,92 +108,27 @@ fi
 function stop_Telemetrylog_all {
 aoconflog "stop ALL telemetry logging"
 
-stopstreamlog aol${LOOPNUMBER}_wfsim
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 
-stopstreamlog aol${LOOPNUMBER}_wfsref0
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
-
-stopstreamlog aol${LOOPNUMBER}_wfsref
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+for aolstreamname in $TELEMETRY_aol_streams; do
+	streamname="aol${LOOPNUMBER}_$aolstreamname"
+	stopstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 
 
-stopstreamlog aol${LOOPNUMBER}_gainb
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+for streamname in $TELEMETRY_hardw_streams; do
+	stopstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 
-stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
-
-stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
-
-stopstreamlog aol${LOOPNUMBER}_multfb
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
-
-stopstreamlog aol${LOOPNUMBER}_DMmode_MULTF
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
-
-
-stopstreamlog dm${DMindex}disp
-echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
-
-stopstreamlog dm${DMindex}disp00
-echo "0" > "./status/stat_log_dm${DMindex}disp00.txt"
-
-stopstreamlog dm${DMindex}disp01
-echo "0" > "./status/stat_log_dm${DMindex}disp01.txt"
-
-stopstreamlog dm${DMindex}disp02
-echo "0" > "./status/stat_log_dm${DMindex}disp02.txt"
-
-stopstreamlog dm${DMindex}disp03
-echo "0" > "./status/stat_log_dm${DMindex}disp03.txt"
-
-stopstreamlog dm${DMindex}disp04
-echo "0" > "./status/stat_log_dm${DMindex}disp04.txt"
-
-stopstreamlog dm${DMindex}disp05
-echo "0" > "./status/stat_log_dm${DMindex}disp05.txt"
-
-stopstreamlog dm${DMindex}disp06
-echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
-
-stopstreamlog dm${DMindex}disp07
-echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
-
-stopstreamlog dm${DMindex}disp08
-echo "0" > "./status/stat_log_dm${DMindex}disp08.txt"
-
-stopstreamlog dm${DMindex}disp09
-echo "0" > "./status/stat_log_dm${DMindex}disp09.txt"
-
-stopstreamlog dm${DMindex}disp10
-echo "0" > "./status/stat_log_dm${DMindex}disp10.txt"
-
-stopstreamlog dm${DMindex}disp11
-echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
-
-log "stop ALL telemetry logging"
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
-if [ "${CMMODE}" = "0" ];
-then
-
-stopstreamlog aol${LOOPNUMBER}_modeval
-echo "0" > "./status/stat_log_modeval.txt"
-
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_corr
-echo "0" > "./status/stat_log_modeval_dm_corr.txt"
-
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_now
-echo "0" > "./status/stat_log_modeval_dm_now.txt"
-
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
-echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
-
-stopstreamlog aol${LOOPNUMBER}_modeval_ol
-echo "0" > "./status/stat_log_modeval_ol.txt"
-
+if [ "${CMMODE}" = "0" ]; then
+for aolstreamname in $TELEMETRY_modes_streams; do
+	streamname="aol${LOOPNUMBER}_$aolstreamname"
+	stopstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 fi
 }
 
@@ -262,93 +145,30 @@ fi
 function kill_Telemetrylog_all {
 aoconflog "kill ALL telemetry logging"
 
-killstreamlog aol${LOOPNUMBER}_wfsim
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
-
-killstreamlog aol${LOOPNUMBER}_wfsref0
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
-
-killstreamlog aol${LOOPNUMBER}_wfsref
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 
 
-killstreamlog aol${LOOPNUMBER}_gainb
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
-
-killstreamlog aol${LOOPNUMBER}_DMmode_GAIN
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
-
-killstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
-
-killstreamlog aol${LOOPNUMBER}_multfb
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
-
-killstreamlog aol${LOOPNUMBER}_DMmode_MULTF
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+for aolstreamname in $TELEMETRY_aol_streams; do
+	streamname="aol${LOOPNUMBER}_$aolstreamname"
+	killstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 
 
-killstreamlog dm${DMindex}disp
-echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
+for streamname in $TELEMETRY_hardw_streams; do
+	killstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 
-killstreamlog dm${DMindex}disp00
-echo "0" > "./status/stat_log_dm${DMindex}disp00.txt"
-
-killstreamlog dm${DMindex}disp01
-echo "0" > "./status/stat_log_dm${DMindex}disp01.txt"
-
-killstreamlog dm${DMindex}disp02
-echo "0" > "./status/stat_log_dm${DMindex}disp02.txt"
-
-killstreamlog dm${DMindex}disp03
-echo "0" > "./status/stat_log_dm${DMindex}disp03.txt"
-
-killstreamlog dm${DMindex}disp04
-echo "0" > "./status/stat_log_dm${DMindex}disp04.txt"
-
-killstreamlog dm${DMindex}disp05
-echo "0" > "./status/stat_log_dm${DMindex}disp05.txt"
-
-killstreamlog dm${DMindex}disp06
-echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
-
-killstreamlog dm${DMindex}disp07
-echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
-
-killstreamlog dm${DMindex}disp08
-echo "0" > "./status/stat_log_dm${DMindex}disp08.txt"
-
-killstreamlog dm${DMindex}disp09
-echo "0" > "./status/stat_log_dm${DMindex}disp09.txt"
-
-killstreamlog dm${DMindex}disp10
-echo "0" > "./status/stat_log_dm${DMindex}disp10.txt"
-
-killstreamlog dm${DMindex}disp11
-echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
-
-log "kill ALL telemetry logging"
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
-if [ "${CMMODE}" = "0" ];
-then
-
-killstreamlog aol${LOOPNUMBER}_modeval
-echo "0" > "./status/stat_log_modeval.txt"
-
-killstreamlog aol${LOOPNUMBER}_modeval_dm_corr
-echo "0" > "./status/stat_log_modeval_dm_corr.txt"
-
-killstreamlog aol${LOOPNUMBER}_modeval_dm_now
-echo "0" > "./status/stat_log_modeval_dm_now.txt"
-
-killstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
-echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
-
-killstreamlog aol${LOOPNUMBER}_modeval_ol
-echo "0" > "./status/stat_log_modeval_ol.txt"
-
+if [ "${CMMODE}" = "0" ]; then
+for aolstreamname in $TELEMETRY_modes_streams; do
+	streamname="aol${LOOPNUMBER}_$aolstreamname"
+	killstreamlog $streamname
+	echo "0" > "./status/stat_log_${streamname}.txt"
+done
 fi
+
 }
 
 

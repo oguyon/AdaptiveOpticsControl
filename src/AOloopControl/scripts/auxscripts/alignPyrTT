@@ -25,7 +25,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Align Pyramid TT\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Align Pyramid TT\n" "$0" 
 }
 
 

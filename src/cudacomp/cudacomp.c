@@ -58,9 +58,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/mman.h>
-
-#include <assert.h>
-
+#include <sys/types.h>
 
 
 #ifdef HAVE_CUDA
@@ -142,7 +140,6 @@ static long IDtiming = -1; // index to image where timing should be written
 static int deviceCount;
 
 GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations per process
-
 
 static cudaError_t error;
 static cublasStatus_t stat;
@@ -379,7 +376,7 @@ int_fast8_t init_cudacomp()
 {
     long i;
 #ifdef HAVE_CUDA
-    for(i=0; i<10; i++) {
+    for(i=0; i<20; i++) {
         gpumatmultconf[i].init = 0;
         gpumatmultconf[i].alloc = 0;
     }
@@ -540,6 +537,88 @@ int_fast8_t CUDACOMP_init()
 
 
 
+
+
+int CUDACOMP_printGPUMATMULTCONF(int index)
+{
+	printf("\n");
+	printf("============= GPUMATMULTCONF %d ======================\n", index);
+	printf(" init              = %20d\n", (int) gpumatmultconf[index].init);
+	printf(" refWFSinit        = %p\n", (void*) gpumatmultconf[index].refWFSinit);
+	
+	if(gpumatmultconf[index].refWFSinit != NULL)
+		printf("     refWFSinit[0]     = %20d\n", (int) gpumatmultconf[index].refWFSinit[0]); 
+
+	printf(" alloc             = %20d\n", (int) gpumatmultconf[index].alloc);
+	printf(" CM_ID             = %20ld\n", gpumatmultconf[index].CM_ID);
+	printf(" CM_cnt            = %20ld\n", gpumatmultconf[index].CM_cnt);
+	printf(" timerID           = %20ld\n", gpumatmultconf[index].timerID);
+	printf(" M                 = %20d\n", (int) gpumatmultconf[index].M);
+	printf(" N                 = %20d\n", (int) gpumatmultconf[index].N);
+
+    /// synchronization
+	printf(" sem               = %20d\n", (int) gpumatmultconf[index].sem);
+	printf(" gpuinit           = %20d\n", (int) gpumatmultconf[index].gpuinit);
+    
+    /// one semaphore per thread
+/* 
+    sem_t **semptr1;   
+    sem_t **semptr2;             
+    sem_t **semptr3;            
+    sem_t **semptr4;            
+    sem_t **semptr5;              
+*/
+
+    printf(" cMat              = %20p\n", (void*) gpumatmultconf[index].cMat);
+    printf(" cMat_part         = %20p\n", (void*) gpumatmultconf[index].cMat_part);
+    printf(" wfsVec            = %20p\n", (void*) gpumatmultconf[index].wfsVec);    
+    printf(" wfsVec_part       = %20p\n", (void*) gpumatmultconf[index].wfsVec_part);
+    printf(" wfsRef            = %20p\n", (void*) gpumatmultconf[index].wfsRef);
+    printf(" wfsRef_part       = %20p\n", (void*) gpumatmultconf[index].wfsRef_part);    
+    printf(" dmVec             = %20p\n", (void*) gpumatmultconf[index].dmVec);
+    printf(" dmVecTMP          = %20p\n", (void*) gpumatmultconf[index].dmVecTMP);
+    printf(" dmVec_part        = %20p\n", (void*) gpumatmultconf[index].dmVec_part);    
+    printf(" dmRef_part        = %20p\n", (void*) gpumatmultconf[index].dmRef_part);
+    
+    
+    
+    printf(" d_cMat            = %20p\n", (void*) gpumatmultconf[index].d_cMat);
+    printf(" d_wfsVec          = %20p\n", (void*) gpumatmultconf[index].d_wfsVec);    
+    printf(" d_dmVec           = %20p\n", (void*) gpumatmultconf[index].d_dmVec);
+    printf(" d_wfsRef          = %20p\n", (void*) gpumatmultconf[index].d_wfsRef);
+    printf(" d_dmRef           = %20p\n", (void*) gpumatmultconf[index].d_dmRef);    
+    
+
+    // threads
+    printf(" thdata            = %20p\n", (void*) gpumatmultconf[index].thdata);    
+    printf(" threadarray       = %20p\n", (void*) gpumatmultconf[index].threadarray);    
+    printf(" NBstreams         = %20d\n", (int) gpumatmultconf[index].NBstreams);    
+    printf(" stream            = %20p\n", (void*) gpumatmultconf[index].stream);    
+    printf(" handle            = %20p\n", (void*) gpumatmultconf[index].handle);  
+    
+      
+    printf(" Nsize             = %20p\n", (void*) gpumatmultconf[index].Nsize);    
+    printf(" Noffset           = %20p\n", (void*) gpumatmultconf[index].Noffset);    
+    printf(" GPUdevice         = %20p\n", (void*) gpumatmultconf[index].GPUdevice);    
+
+    printf(" orientation       = %20d\n", (int) gpumatmultconf[index].orientation);    
+    int_fast8_t orientation;
+
+
+
+	printf("======================================================\n");
+	printf("\n");
+}
+
+
+
+
+
+
+
+
+
+
 int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 {
     long ID_contrM;
@@ -650,7 +729,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     for(iter=0; iter<NBiter; iter++)
     {
         status = 0;
-        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
+        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1, 0);
     }
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
@@ -789,7 +868,7 @@ void *compute_function( void *ptr )
     device = thdata->thread_no;
     index = thdata->cindex;
 
-    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
+    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device); // + sizeof(int)*10*index);  //TBR
 
     *ptrstat = 1;
 
@@ -801,8 +880,9 @@ void *compute_function( void *ptr )
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
     ptr0f = (float*) ptr0;
 
-    if((index==0)||(index==2))
-        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
+// TBR: why include this line ?
+  //  if((index==0)||(index==2))
+    cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
@@ -968,7 +1048,7 @@ void *compute_function( void *ptr )
 
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                printf("cublasSgemv returned error code %d, line(%d), index=%d\n", stat, __LINE__, index);
                 fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
@@ -981,7 +1061,6 @@ void *compute_function( void *ptr )
 
                 printf("device %d of index %d\n", device, index);
                 printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
-
                 printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
                 printf("alpha                               = %f\n", cublasSgemv_alpha);
                 printf("alpha                               = %f\n", cublasSgemv_beta);
@@ -1108,24 +1187,25 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 {
     int device;
 
-
-
+	//CUDACOMP_printGPUMATMULTCONF(index);
 
 
     if(gpumatmultconf[index].init == 0)
     {
+		int pid;		
         struct cudaDeviceProp deviceProp;
         int n, m;
         char sname[200];
         int ptn;
  
         long IDcontrM, IDwfsim, IDwfsref;
-        
+		
 
 
         printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
 
+		pid = getpid();
 
         if(IDtimerinit == 0)
         {
@@ -1346,69 +1426,203 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         // device (GPU)
         gpumatmultconf[index].d_cMat = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_cMat == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
         gpumatmultconf[index].d_wfsVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_wfsVec == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
+
         gpumatmultconf[index].d_dmVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_dmVec == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].d_wfsRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        if( gpumatmultconf[index].d_wfsRef == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].d_dmRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference
+        if( gpumatmultconf[index].d_dmRef == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
         gpumatmultconf[index].stream = (cudaStream_t*) malloc(sizeof(cudaStream_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].stream == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].handle = (cublasHandle_t*) malloc(sizeof(cublasHandle_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].handle == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
 
         // host (computer)
         gpumatmultconf[index].cMat_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].cMat_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].wfsVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].wfsVec_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].dmVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].dmVec_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        if( gpumatmultconf[index].wfsRef_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].dmRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference (for checking only)
+        if( gpumatmultconf[index].dmRef_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
         gpumatmultconf[index].refWFSinit = (int_fast8_t*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].refWFSinit == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
 
         gpumatmultconf[index].semptr1 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr2 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr1 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
+        gpumatmultconf[index].semptr2 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr2 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
+        gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr3 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
+        gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr4 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}        
+        
+        gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr5 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
             gpumatmultconf[index].cMat_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].cMat_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].wfsVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].wfsVec_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].wfsRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].wfsRef_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
+            if( gpumatmultconf[index].dmVec_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+            
             gpumatmultconf[index].dmRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
+			if( gpumatmultconf[index].dmRef_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1", loopnb, index, GPUdevice[device]);
+			
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr1[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem2", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem2_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr2[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr2[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem3", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem3_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr3[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr3[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem4", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem4_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr4[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr4[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem5", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem5_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr5[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
@@ -1532,8 +1746,27 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].iret == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+        
+        // thread data
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].thdata == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}        
+        
         gpumatmultconf[index].threadarray = (pthread_t*) malloc(sizeof(pthread_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].threadarray == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
 
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] = 0.0;
@@ -1552,6 +1785,9 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
     // printf("CONFIGURATION DONE \n");
     // fflush(stdout);
 
+
+//	CUDACOMP_printGPUMATMULTCONF(index);
+
     return(0);
 }
 
@@ -1561,17 +1797,21 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
 
 
-
+//
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing)
+// 
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing, int TimerOffsetIndex)
 {
     int m;
     int ptn;
     int statustot;
     int semval;
     long cnt;
+	int TimerIndex;
 
 
+	TimerIndex = TimerOffsetIndex;
+	
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
@@ -1606,7 +1846,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+        TimerIndex++;
     }
 
 //    if((index==0)||(index==2)) /// main CM multiplication loop
@@ -1658,7 +1899,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
 
 
@@ -1697,7 +1939,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 1;
@@ -1713,7 +1956,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+
 
 
     /*  if(data.image[gpumatmultconf[index].IDout].md[0].sem > 0)
@@ -1733,17 +1976,23 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     */
 
 
-    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
-    data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     if(timing == 1)
     {
+		data.image[gpumatmultconf[index].IDout].md[0].cnt1 = data.image[IDtiming].md[0].cnt1;
+				
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
+    
+    data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
+    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+
 
     return(0);
 }
@@ -2439,7 +2688,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-
     if(MAGMAloop_iter == 0) /// memory is only allocated on first pass
     {
         if(MAGMAfloat==0)
@@ -2471,11 +2719,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
+
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 	{
 		printf("MAGMA READY\n");
 		fflush(stdout);
 	}
+
+
 
 
    // if(timing==1)
@@ -2513,6 +2764,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
+
     if(testmode==1)
     {
 		long ID_A;
@@ -2543,8 +2795,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	
 
 
-
-
 	// ****************************************************
 	// STEP 2 :   Copy input data from CPU to GPU   
 	// ****************************************************
@@ -2556,6 +2806,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_ssetmatrix( M, N, magmaf_h_A, M, magmaf_d_A, M, magmaqueue);
     else
         magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
+
+
 
 
     if(LOOPmode==0) /// if pseudo-inverse is only computed once, these arrays can be freed
@@ -2577,12 +2829,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		fflush(stdout);
     }
     
+
+
     
 	// ****************************************************    
     // STEP 3 :   Compute trans(A) x A    : magmaf_d_A x magmaf_d_A      -> magmaf_d_AtA      (NxN matrix on device)
 	// ****************************************************
 	
-	    
+	// -> magma_ssyrk / magma_dsyrk / blas 3 routine for *2
     if(MAGMAfloat==1)
         magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_A, M, magmaf_d_A, M, 0.0,  magmaf_d_AtA, N, magmaqueue);
     else
@@ -2613,9 +2867,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
 
-
     //if(timing==1)
     clock_gettime(CLOCK_REALTIME, &t3);
+
 
 
 	// ****************************************************    
@@ -2626,8 +2880,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	// 
 	//
 	// ****************************************************    
-
-
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 	{
@@ -2646,6 +2898,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 				magma_ssyevdx_gpu( MagmaVec, MagmaRangeI, MagmaLower, N, NULL, N, 0.0, 1.0, N-MaxNBmodes, N, NULL, NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
 			else
 				magma_ssyevd_gpu(  MagmaVec,              MagmaLower, N, NULL, N,                       NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
+            // -> change to 2-stage magma SVD
+            // evd -> evr
+            // PALSMA
+            
+            // alt -> LQ reduction -> SVD magma_dgsvd (more stable numerically)
             
             magma_lwork  = (magma_int_t) MAGMA_S_REAL( auxf_work[0] );
         }
@@ -2692,11 +2949,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
    
-    
-    
+
     
     if(MAGMAfloat==1)
     {
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" -> magma_ssyevd_gpu -> ");
@@ -2709,6 +2969,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		else
 			magma_ssyevd_gpu( MagmaVec,               MagmaLower, N, magmaf_d_AtA, N,                        magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
 				
+			printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 		
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
@@ -2717,7 +2979,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		}
 	}
     else
-    {
+    {			
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" -> magma_dsyevd_gpu -> ");  
@@ -2727,7 +2989,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         
         // SSYEVD computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A
         magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
-		
+	
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" DONE\n");
@@ -2786,6 +3048,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	/// Note: w1 values are the SQUARE of the singular values of A 
 
 
+
 	// ****************************************************    
 	// STEP 5 :   Set eigenvalue limit
 	// ****************************************************    
@@ -2826,6 +3089,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     //printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
 
+
 	// ****************************************************    
 	// STEP 6 :   Write eigenvectors to VT matrix
 	// ****************************************************    
@@ -2853,6 +3117,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             for(jj=0; jj<N; jj++)
                 data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
     }
+
 
 
 	// ****************************************************    
@@ -2901,7 +3166,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             TESTING_FREE_CPU( magma_h_AtA );
         }
     }
-
 
 
     //if(timing==1)
@@ -3002,7 +3266,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
  
 
-
 	// ****************************************************    
 	// STEP 9 :   Compute Ainv = M2 A = (AT A)^-1 A 
 	// ****************************************************    
@@ -3086,8 +3349,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 			TESTING_FREE_DEV( magma_d_M2 );
 		}
     }
-
-
 
 
     //if(timing==1)
@@ -3260,6 +3521,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		fflush(stdout);
     }
     //}
+
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)

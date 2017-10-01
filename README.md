@@ -12,9 +12,9 @@
 
 ## Overview
 
-Adaptive Optics Wavefront control tools for high contrast imaging
+Adaptive Optics Wavefront control tools.
 
-Uses shared memory for fast low-latency communication to hardware
+Uses shared memory for fast low-latency communication to hardware.
 
 Includes a simulator of hardware (DM, Camera): the same code can be tested on actual hardware or in a simulation mode.
 

@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       GPU-based predictive filter coeffs -> DM MAP\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       GPU-based predictive filter coeffs -> DM MAP\n" "$0" 
 }
 
 
@@ -114,12 +114,13 @@ fi
 
 ./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_modevalPF
-loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
+readshmim aol${loopnb}_DMmodes
+#loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 
 readshmim aol${loopnb}_dmC
 im=aol${loopnb}_dmC+0
-cpsh im aol${loopnb}_dmPFout
-
-aolmc2dmfilt aol${loopnb}_modevalPF DMmodes 2 ${OUTCNAME} $1 ${loopnb} 0
+cpsh im ${OUTCNAME}
+listim
+aolmc2dmfilt 0 aol${loopnb}_modevalPF aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} 0
 exitCLI
 EOF

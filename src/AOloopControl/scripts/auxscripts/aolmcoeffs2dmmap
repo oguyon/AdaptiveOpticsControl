@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
 }
 
 
@@ -137,7 +137,7 @@ listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
-aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt 0 aol${loopnb}_modeval_dm_now_filt aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exitCLI
 EOF
 
@@ -153,7 +153,7 @@ listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
-aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt 0 aol${loopnb}_modeval_dm_now_filt aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exitCLI
 EOF
 

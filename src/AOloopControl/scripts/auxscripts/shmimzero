@@ -28,7 +28,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Set shared memory image stream to zero\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr 0)       Set shared memory image stream to zero\n" "$0" 
 }
 
 

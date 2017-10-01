@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Inspect DM map\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Inspect DM map\n" "$0" 
 }
 
 

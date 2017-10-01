@@ -41,7 +41,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Convert DM stream to WFS image stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Convert DM stream to WFS image stream\n" "$0" 
 }
 
 

@@ -198,7 +198,7 @@ fi
 
 
 
-staged_mkmodesdatestr=$(stat -c %y ./conf_staged/param_NBmodeblocks.txt)
+staged_mkmodesdatestr=$(TZ=utc stat -c %y ./conf_staged/param_NBmodeblocks.txt)
 staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
 staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
 staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
@@ -214,7 +214,7 @@ menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, respo
 #mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
 #NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 
-mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
+mkmodesdatestr=$(TZ=utc stat -c %y ./conf/param_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 
 ConfReadParam NBmodeblocks "01"; NBmodeblocks="${paramvalue}"

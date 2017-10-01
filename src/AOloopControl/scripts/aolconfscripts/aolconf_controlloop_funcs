@@ -509,7 +509,9 @@ fi
 
 
 # EXTRACT WFS MODES
-# process runs in GPU set aol#RT1
+# process runs in first of GPU set0 aol#RT1
+ConfReadParam GPUset0dev0 "0"; GPUset0dev0="$paramvalue"
+GPUmodesextrwfs="$GPUset0dev0"
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile

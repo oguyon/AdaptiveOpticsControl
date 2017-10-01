@@ -35,7 +35,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Measure AO system response latency\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Measure AO system response latency\n" "$0" 
 }
 
 

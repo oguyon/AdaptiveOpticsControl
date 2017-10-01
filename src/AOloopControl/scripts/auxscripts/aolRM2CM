@@ -42,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Align Pyramid camera\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Align Pyramid camera\n" "$0" 
 }
 
 

@@ -11,7 +11,7 @@ pname=`echo "$0${loopnb}" | sed "s/\.\///g"`
 
 
 
-
+CNTMAX=10000000000
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -20,10 +20,11 @@ echo "------------------------------------------------------------------------"
 echo "offloads aol#_wfsres_ave to aol#_wfszpoX"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <time interval> <averaging coeff> <wfszpo channel>"
+echo "     $0 [-ch] <time interval> <averaging coeff> <wfszpo channel>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-h$(tput sgr0)             help"
+echo "     $(tput bold)-c$(tput sgr0) <cnt>       number of steps executed (default: $CNTMAX)"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <time interval>       time between updates [sec]"
@@ -36,7 +37,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Compute real-time WFS residual image\n" "$0" 
 }
 
 
@@ -60,7 +61,7 @@ done
 
 
 
-while getopts :h FLAG; do
+while getopts :hc: FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -70,6 +71,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    c)
+    CNTMAX="$OPTARG"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -102,16 +106,19 @@ loopnb=$(cat LOOPNUMBER)
 
 cnt=0
 
-while true
+while [ $cnt -lt $CNTMAX ] 
 do
 
 echo "$cnt   WFS residual offset to WFS ref"
 ./AOloopControl -n $pname << EOF > /dev/null
 readshmim aol${loopnb}_wfsres_ave
-readshmim aol${loopnb}_wfsref
+# readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfszpo$3
+savefits aol${loopnb}_wfsres_ave "!test_aol${loopnb}_wfsres_ave.fits"
+savefits aol${loopnb}_wfszpo$3 "test_aol${loopnb}_wfszpo$3.fits"
 im=aol${loopnb}_wfszpo$3+$2*aol${loopnb}_wfsres_ave
 cpsh im aol${loopnb}_wfszpo$3	
+savefits aol${loopnb}_wfszpo$3 "test_aol${loopnb}_wfszpo$3.1.fits"
 exitCLI
 EOF
 let cnt=cnt+1

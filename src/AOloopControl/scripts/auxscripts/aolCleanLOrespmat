@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Measure zonal resp matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Measure zonal resp matrix\n" "$0" 
 }
 
 

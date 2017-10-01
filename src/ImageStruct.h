@@ -218,9 +218,6 @@ typedef struct
 
 
 
-
-
-
 /** @brief Image metadata
  * 
  * This structure has a fixed size regardless of implementation

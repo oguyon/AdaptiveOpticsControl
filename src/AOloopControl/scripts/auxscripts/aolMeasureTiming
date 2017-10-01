@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NBARGS=0
+NBARGS=1
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
@@ -11,7 +11,7 @@ echo "------------------------------------------------------------------------"
 echo "  Measures loop timing"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h]"
+echo "     $0 [-h] <NBsamples>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
@@ -29,7 +29,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Measure loop timing\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Measure loop timing\n" "$0" 
 }
 
 
@@ -97,6 +97,6 @@ pname=${pname0#"./"}-$loopnb
 
 
 ./AOloopControl -n pname << EOF
-aolstatusstats $UPDATECONF
+aolstatusstats $UPDATECONF $1
 exitCLI
 EOF

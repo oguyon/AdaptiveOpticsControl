@@ -46,7 +46,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Measure photon sensitivity of zonal response matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Measure photon sensitivity of zonal response matrix\n" "$0" 
 }
 
 

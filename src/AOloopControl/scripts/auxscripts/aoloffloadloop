@@ -35,7 +35,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       DM offload loop\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       DM offload loop\n" "$0" 
 }
 
 

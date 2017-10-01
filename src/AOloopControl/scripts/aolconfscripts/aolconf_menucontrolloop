@@ -516,7 +516,7 @@ menuitems+=( "gainreset" "Reset individual mode gains to 1.0" )
 ConfReadParam AUTOTUNEGAINS_ON "OFF"; AUTOTUNEGAINS_ON="$paramvalue"
 if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
   then
-  menuitems+=( "ONatgain" "  \Zb\Zu ==== START AUTOTUNE GAINS loop ====\ZB\ZU" )
+  menuitems+=( "ONatgain" "  \Zb\Zu ==== START AUTOTUNE GAINS loop ====\ZB\ZU (applies aol${LOOPNUMBER}_autogain)" )
   else
   menuitems+=( "OFFatgain" "\Z1\ZrAUTOTUNE GAINS running, press to STOP\Zn" )
 fi
@@ -528,8 +528,13 @@ ConfReadParam AUTOTUNEGAIN_NBsamples "10000"; AUTOTUNEGAIN_NBsamples="$paramvalu
 menuitems+=( "atgnbs" "AUTOTUNE GAIN number of samples    =   ${AUTOTUNEGAIN_NBsamples}" )
 
 
-menuitems+=( "agrun" "AutoGain run -> aol${LOOPNUMBER}_autogain" )
-
+ConfReadParam AUTOTUNEGAINSCOMP_ON "OFF"; AUTOTUNEGAINSCOMP_ON="$paramvalue"
+if [ "${AUTOTUNEGAINSCOMP_ON}" = "OFF" ];
+then
+menuitems+=( "agrunS" "AutoGain computation process -> aol${LOOPNUMBER}_autogain" )
+else
+menuitems+=( "agrunK" "\Z1\ZrAUTOGAIN PROCESS running, press to STOP\Zn" )
+fi
 
 menuitems+=( " " " " )
 
@@ -1348,7 +1353,7 @@ menucontrolloop_default="CMm1"
 
 # LOOP PROCESSES
    	 S)  	 
-function_AOloopProcess_ON "NULL"
+function_AOloopProcess_ON "NULL" # in aolconf_controlloop_funcs
 menucontrolloop_default="K"
 ;; 
 
@@ -1443,7 +1448,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "setpix aol${LOOPNUMBER}_wfsavecoeff $WFS
 
 
    	 Nloopon)
-function_LOOP_ON "NULL"
+function_LOOP_ON "NULL" # in aolconf_controlloop_funcs
 menucontrolloop_default="Floopoff"
 ;; 
 
@@ -1521,7 +1526,7 @@ echo "WFS" > ./status/stat_zploopON6.txt
 tmuxname="aol${LOOPNUMBER}zploop6"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon6"
-aoconflogext "stop zero-point offset loop 6"
+aoconflogext "STARTING afterburner"
 menucontrolloop_default="wresolOFF"
 ;;
 
@@ -1533,6 +1538,7 @@ echo "OFF" > $file
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
 echo "OFF" > ./status/stat_zploopON6.txt
+aoconflogext "STOPPING afterburner"
 menucontrolloop_default="wresolON"
 ;;
 
@@ -1733,15 +1739,22 @@ EOF
 
 
 
-	agrun) # run autogain command
+	agrunS) # start autogain compute process
 	tmuxname="aol${LOOPNUMBER}autogain"
 	tmux new-session -d -s ${tmuxname}
 	tmux send-keys -t ${tmuxname} "./auxscripts/aolautotunegains $AUTOTUNEGAINupdateCoeff $AUTOTUNEGAIN_NBsamples" C-m
+	echo " ON" > conf/param_AUTOTUNEGAINSCOMP_ON.txt
+	menucontrolloop_default="agrunK"
 	;;
 
 
-
-
+	agrunK) # kill autogain compute process
+	tmuxname="aol${LOOPNUMBER}autogain"
+	tmux send-keys -t ${tmuxname} "" C-c
+	tmux kill-session -t ${tmuxname}
+	echo "OFF" > conf/param_AUTOTUNEGAINSCOMP_ON.txt
+	menucontrolloop_default="agrunS"
+	;;
 
 
 	ARPFon)

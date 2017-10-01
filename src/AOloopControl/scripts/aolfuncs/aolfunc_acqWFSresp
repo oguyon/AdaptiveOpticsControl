@@ -154,6 +154,18 @@ fi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 echo "##########################################"
 echo "# ACQUIRE ZONAL RESPONSE MATRIX           "
 echo "##########################################"
@@ -276,6 +288,10 @@ fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
 
 
 
+
+
+
+
 echo "####################################################"
 echo "# UPDATE wfsref00, zrespM TO NORMALIZE FLUX OVER wfsmask    "
 echo "####################################################"
@@ -293,7 +309,8 @@ $execname << EOF
 loadfits wfsref00.fits im0
 loadfits wfsmask.fits wfm
 a=itot(im0)/itot(im0*wfm)
-im1=im0*a
+# a is fraction of flux inside mask
+im1=im0*a/itot(im0)
 savefits im1 "!wfsref0.fits"
 loadfits "zrespM.fits" zrespm
 zrespm1=zrespm*a
@@ -302,7 +319,7 @@ listim
 exitCLI
 EOF
 
-
+cp wfsref0.fits rmtest_wfsref0.fits
 
 
 echo "####################################################"

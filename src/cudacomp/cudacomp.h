@@ -143,6 +143,7 @@ int_fast8_t init_cudacomp();
  */
 int_fast8_t CUDACOMP_init();
 
+int CUDACOMP_printGPUMATMULTCONF(int index);
 
 int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
 
@@ -167,9 +168,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
 
 
 
-/**
- * @brief CPU-based matrix vector multiplication
- */
+/** @brief CPU-based matrix vector multiplication */
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N);
 
 
@@ -179,10 +178,11 @@ void *compute_function( void *ptr );
 int GPUloadCmat(int index);
 
 
+/** @brief Setup memory and process for GPU-based matrix-vector multiply */
 int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
 
 
-int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing);
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing, int TimerOffsetIndex);
 
 
 int GPU_loop_MultMat_free(int index);

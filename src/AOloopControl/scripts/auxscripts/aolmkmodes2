@@ -53,7 +53,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Create modes for AO loop\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Create modes for AO loop\n" "$0" 
 }
 
 

@@ -1151,7 +1151,7 @@ state="menualign"
 ;;
 
 
-	ts)
+	ts) # start TT align loop
 aoconflogext "TT align loop start" &> $mesgfile &
 rm stop_PyAlignTT.txt &> $mesgfile 
 rm status/pause_PyAlignTT.txt &> $mesgfile 
@@ -1168,10 +1168,10 @@ menualign_default="tk"
 state="menualign"
 ;; 
 
-  	 tr)
+  	 tr) # resume TT align loop
 aoconflogext "TT align loop resume" 
 rm status/pause_PyAlignTT.txt stop_PyAlignTT.txt
-if [ "$(cat ./status/status_alignTT.txt)" == "off" ]
+if [ "$(cat ./status/status_alignTT.txt)" = "OFF" ]
 then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
@@ -1180,6 +1180,7 @@ echo " ON" > ./status/status_alignTT.txt
 menualign_default="tp"
 state="menualign"
 ;; 
+
 	tg)
 dialog --title "PyTT loop gain" --inputbox "Enter loop gain" 8 40 ${pyTTloopgain} 2> $tempfile
 pyTTloopgain=$(cat $tempfile)
@@ -1188,6 +1189,7 @@ aoconflogext "TT align set gain ${pyTTloopgain}"
 menualign_default="tg"
 state="menualign"
 ;;
+
    	 tp)
 touch status/pause_PyAlignTT.txt
 aoconflogext "TT align loop pause"
@@ -1196,6 +1198,7 @@ echo "PAU" > ./status/status_alignTT.txt
 menualign_default="tr"
 state="menualign"
 ;;  
+
    	 tk) 
 touch status/stop_PyAlignTT.txt
 tmux kill-session -t alignPyrTT

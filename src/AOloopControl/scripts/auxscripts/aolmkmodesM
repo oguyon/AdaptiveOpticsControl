@@ -43,7 +43,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       CREATE CM MODES FOR AO LOOP, MODAL DM\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       CREATE CM MODES FOR AO LOOP, MODAL DM\n" "$0" 
 }
 
 

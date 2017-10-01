@@ -132,8 +132,8 @@ extern AOLOOPCONTROL_CONF *AOconf; // declared in AOloopControl.c
 
 /** @brief CLI function for AOloopControl_builPFloop_WatchInput */
 int_fast8_t AOloopControl_PredictiveControl_builPFloop_WatchInput_cli() {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
-        AOloopControl_PredictiveControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
+        AOloopControl_PredictiveControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
         return 0;
     } else return 1;
 }
@@ -193,7 +193,7 @@ int_fast8_t init_AOloopControl_PredictiveControl()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("aolPFwatchin",__FILE__, AOloopControl_PredictiveControl_builPFloop_WatchInput_cli, "watch telemetry for predictive filter input", "<loop #> <PFblock #>", "aolPFwatchin 0 2", "long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)");
+    RegisterCLIcommand("aolPFwatchin",__FILE__, AOloopControl_PredictiveControl_builPFloop_WatchInput_cli, "watch telemetry for predictive filter input", "<loop #> <PFblock #> <start> <end>", "aolPFwatchin 0 2", "long AOloopControl_builPFloop_WatchInput(long loop, long PFblock, long PFblockStart, long PFblockEnd)");
 
     RegisterCLIcommand("aolmappfilt", __FILE__, AOloopControl_PredictiveControl_mapPredictiveFilter_cli, "map/search predictive filter", "<input coeffs> <mode number> <delay [frames]>", "aolmkapfilt coeffim 23 2.4", "long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr)");
 
@@ -437,7 +437,7 @@ double AOloopControl_PredictiveControl_testPredictiveFilter(const char *IDtrace_
 
 
 
-long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblock)
+long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblock, long PFblockStart, long PFblockEnd)
 {
     long IDinb0;
     long IDinb1;
@@ -449,8 +449,7 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
 
     long twaitus = 100000; // 0.1 sec
 
-    long PFblockStart;
-    long PFblockEnd;
+
     long PFblockSize;
     long PFblockOrder;
     float PFblockLag;
@@ -479,21 +478,6 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
     long IDinmask;
 
 
-    // read PF block parameters
-    if(sprintf(fname, "conf/param_PFblock_%03ld.txt", PFblock) < 1)
-        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
-    if((fp = fopen(fname, "r"))==NULL)
-    {
-        printf("ERROR: File \"%s\" NOT FOUND\n", fname);
-        exit(0);
-    }
-    else
-    {
-        if(fscanf(fp, "%50ld %50ld %50ld %50f %50f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain) != 5)
-            printERROR(__FILE__, __func__, __LINE__, "Cannot read parameters from file");
-        fclose(fp);
-    }
     PFblockSize = PFblockEnd - PFblockStart;
 
 
@@ -561,7 +545,7 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
     fflush(stdout);
 
 
-    while(1)
+    for(;;)
     {
         cnt0 = data.image[IDinb0].md[0].cnt0;
         cnt1 = data.image[IDinb1].md[0].cnt0;
@@ -621,6 +605,10 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
 
     return (IDout);
 }
+
+
+
+
 
 /**
  * 

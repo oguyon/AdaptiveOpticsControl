@@ -32,7 +32,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Automatic gain tuning\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Automatic gain tuning\n" "$0" 
 }
 
 

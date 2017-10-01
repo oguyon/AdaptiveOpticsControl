@@ -307,7 +307,7 @@ stringcenter "PREDICTIVE CONTROL"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 menuitems+=( "P" "Predictive Control")
-menuitems+=( "Fi" "Filtering")
+# menuitems+=( "Fi" "Filtering")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
@@ -879,11 +879,8 @@ done
 # SAVE CONFIGURATION
 tmux send-keys -t ${tmuxnameC0} "mkdir -p \"${confname}\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/*.txt \"${confname}/\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/RMpoke.fits \"${confname}/\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/Hpoke.fits \"${confname}/\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/RMmat.fits \"${confname}/\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/RMpixindex.fits \"${confname}/\"" C-m	
-tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m	
+tmux send-keys -t ${tmuxnameC0} "cp conf/*.fits.gz \"${confname}/\"" C-m	
+
 
 
 confnameloaded=${confname}

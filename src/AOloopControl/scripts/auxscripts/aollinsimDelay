@@ -31,7 +31,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Introduce DM delay\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Introduce DM delay\n" "$0" 
 }
 
 

@@ -41,7 +41,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Process telemetry: create open and closed loop PSDs\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Process telemetry: create open and closed loop PSDs\n" "$0" 
 }
 
 

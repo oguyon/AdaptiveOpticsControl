@@ -42,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Create AO wfs and DM masks\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Create AO wfs and DM masks\n" "$0" 
 }
 
 

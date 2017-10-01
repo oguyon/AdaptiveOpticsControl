@@ -29,36 +29,11 @@ int_fast8_t init_AOloopControl_acquireCalib();
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-/**
- * @brief Acquire WFS response to a series of DM pattern.
- *
- * 
- * @param[in]  loop            Loop index
- * @param[in]  delayfr         Integer delay [frame]
- * @param[in]  delayRM1us      Fractional delay [us]
- * @param[in]  NBave           Number of frames averaged per DM state
- * @param[in]  NBexcl          Number of frames excluded
- * @param[in]  IDpokeC_name    Poke pattern
- * @param[out] IDoutC_name     Output cube
- * @param[in]  normalize       Normalize flag
- * @param[in]  AOinitMode      AO structure initialization flag
- * @param[in\  NBcycle         Number of cycles averaged
- * 
- * AOinitMode = 0:  create AO shared mem struct
- * AOinitMode = 1:  connect only to AO shared mem struct
- * 
- * INPUT : DMpoke_name : set of DM patterns
- * OUTPUT : WFSmap_name : WFS response maps
- * 
- * USR1 signal will stop acquisition immediately
- * USR2 signal completes current cycles and stops acquisition
- * 
- * @return IDoutC
- * 
- */
+/** @brief Acquire WFS response to a series of DM pattern */
 long AOloopControl_acquireCalib_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
 
 
+/** @brief Measure linear response to set of DM modes/patterns */
 long AOloopControl_acquireCalib_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDrespC_name, const char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle);
 
 

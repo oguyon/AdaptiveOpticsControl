@@ -307,21 +307,23 @@ ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 
 if [ -f "runproc/function_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOCk" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING - Press to KILL\Zn")
+menuitems+=( " " " " )
 else
 RMacqTimeZ=$( echo $loopfrequ $RMfrave $RMexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
-menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
+menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new modes)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
+menuitems+=( "nAUTOCr" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (same modes)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)")
 fi
 
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
-menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
+menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CONFIGURATION as...\Zn" )
 
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CONFIGURATION\Zn" )
 
 ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
 ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
 
-menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
+menuitems+=( " " " LAST LOADED:  \Zb${conflastloaded_name}\Zn   on   \Zb${conflastloaded_time}\Zn" )
 menuitems+=( " " " " )
 
 
@@ -998,8 +1000,57 @@ menucontrolloop_default="sACmrmN"
 nAUTOC)
 RMCalibReuseMasks=0
 echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
+#
+# Define Calibration name (updated on each call to function nAUTOC)
+# Calib name saved to conf/calib_lastTaken_name.txt
+#
+CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+CALIBname="${CALIBdatestr}_${loopconfname}"
+
+#
+# store calib name into conf_staged
+#
+echo "$CALIBname" > conf/calib_lastTaken_name.txt
+echo "$CALIBname" > conf_staged/calib_name.txt
+
 function_nAUTOC  # in aolconf_configureloop_funcs
+menucontrolloop_default="nAUTOCk"
 ;;
+
+
+
+nAUTOCr)
+RMCalibReuseMasks=1
+echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
+#
+# Define Calibration name (updated on each call to function nAUTOC)
+# Calib name saved to conf/calib_lastTaken_name.txt
+#
+CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+CALIBname="${CALIBdatestr}_${loopconfname}"
+
+#
+# store calib name into conf_staged
+#
+echo "$CALIBname" > conf/calib_lastTaken_name.txt
+echo "$CALIBname" > conf_staged/calib_name.txt
+
+function_nAUTOC  # in aolconf_configureloop_funcs
+menucontrolloop_default="nAUTOCk"
+;;
+
+
+
 
 nAUTOCk)
 tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
@@ -1010,6 +1061,7 @@ tmux kill-session -t ${tmuxnameaWFSr}
 rm runproc/function_nAUTOC.runproc
 echo "OFF" > ./status/stat_acqWFSON.txt
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+menucontrolloop_default="nAUTOC"
 ;;
 
 
@@ -1018,8 +1070,9 @@ aoconflogext "Update all configuration files"
 cp ./conf_staged/*.txt ./conf/
 ;;
 
+
 	calibL)
-aoconflogext "Update calibration configuration files"
+aoconflogext "Update configuration files"
 
 # zonal calib
 for imname in $RMZONALCALIBlist
@@ -1036,46 +1089,57 @@ done
 
 
 
-
-
-
+#
+# Save configuration (from ./conf/)
+# a configuration contains calibration + configuration parameters
+#
 	Sconf)
-mkdir -p ./CONF
-CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+#
+# CALIBname is the name of the calibration corresponding to the configuration
+# CALIBname can only be written by nAUTOC (auto calibration)
+#
+CALIBname="$(cat conf/calib_name.txt)"
 
-if [ -f "./conf/conf_loopconfname.txt" ]; then
-loopconfname=$(cat ./conf/conf_loopconfname.txt)
-else
-loopconfname=""
-fi
+#
+# CONFname is constructed by appending current date + user-provided string to CALIBname
+#
+CONFdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+CONFname="${CALIBname}[${CONFdatestr}]"
 
-dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
---cancel-label "Exit" --fselect "./CONF/${CALIBdatestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+mkdir -p ./CONF/
+dialog --title "Select configuration" --title "Select configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/${CONFname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-confname=$(cat $tempfile)
+CONFdir=$(cat $tempfile)
 
-aoconflogext "SAVE configuration to ${confname}"
-aoconflog "CONFIGURATION ${confname}"
-echo "${confname}" > ./status/confname.txt
-echo "saving to ${confname}   tempfile = $tempfile"
+aoconflogext "SAVE configuration to ${CONFdir}"
+aoconflog "CONFIGURATION save ${CONFdir}"
+echo "$CONFname" > confname.test.txt
 
-confnameloaded=${confname}
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
-confloadedtime=$( date -u )
-echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
+# update current conf and calib
+#CONFnameloaded=${CONFname}
+#echo "$CALIBname" > conf/calib_lastLoaded_name.txt
+#CALIBloadedtime=$( date -u )
+#echo "$CALIBloadedtime" > conf/calib_lastLoaded_time.txt
+
 
 case $retval in
    0) # button
-mkdir -p "${confname}"
-rsync -a --no-links conf/* ${confname}
+mkdir -p "${CONFdir}"
+rsync -a --no-links conf/*.txt ${CONFdir}/
+rsync -a --no-links conf/*.fits ${CONFdir}/
+rsync -a --no-links conf/*.fits.gz ${CONFdir}/
 ;;
 esac
 ;;
 
+
+
+
 	Lconf)
 mkdir -p ./CONF
 
-dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+dialog --title "Select cconfiguration" --title "Select configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
@@ -1086,81 +1150,83 @@ echo "${confname}" > ./status/confname.txt
 echo "confname = $confname"
 
 
-confnameloaded=${confname}
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt1
-confloadedtime=$( date -u )
-echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
+# overwrite conflastloaded 
+# set up .txt1 as temporary storage
+echo "$confname" > conf/param_conflastloaded_name.txt1
+conflastloaded_time=$( date -u )
+echo "$conflastloaded_time" > conf/param_conflastloaded_time.txt1
 
 case $retval in
    0) # button
    
 if [ -d ${confname} ]; then
 cp "${confname}"/*.txt ./conf/
+cp "${confname}"/*.fits.gz ./conf/
 
-mv conf/conf_conflastloaded_name.txt1 conf/conf_conflastloaded_name.txt
+cp conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
+cp conf/param_conflastloaded_time.txt1 conf/param_conflastloaded_time.txt
 
 
-# set up symbolic links to streams
-for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
-do
-	./aolfuncs/aolfunc_StreamLink ${name}
-done
+
 
 # set up symbolic links to FITS files in conf directory
-for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
-do
-	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
-done
+#for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
+#do
+#	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
+#done
+
 
 
 # blocks: set up symbolic links to FITS files in conf directory
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
-for namet in contrM contrMc contrMcact DMmodes respM
-do
+#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+#for namet in contrM contrMc contrMcact DMmodes respM
+#do
 
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
-	if [ "$namet" = "contrMcact" ]; then
-	name="${namet}${i2}_00"
-	else
-	name="${namet}${i2}"
-	fi
-	fname1="${confname}/shmim_${name}.name.txt"
-	if [ -f "$fname1" ]; then
-	cp ${confname}/shmim_${name}.name.txt ./conf/shmim_${name}.name.txt
-	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
-	else
-	echo "MISSING FILE: $fname1" 
-	#rm "./conf/conf_${name}_name.txt"
-	fi
-done
+#for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
+#do
+#i2=$(printf "%02d" "$i")
+#	if [ "$namet" = "contrMcact" ]; then
+#	name="${namet}${i2}_00"
+#	else
+#	name="${namet}${i2}"
+#	fi
+#	fname1="${confname}/shmim_${name}.name.txt"
+#	if [ -f "$fname1" ]; then
+#	cp ${confname}/shmim_${name}.name.txt ./conf/shmim_${name}.name.txt
+#	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
+#	else
+#	echo "MISSING FILE: $fname1" 
+#	fi
+#done
 
-for i in `seq $NBmodeblocks 20`;
-do
-i2=$(printf "%02d" "$i")
-if [ "$namet" = "contrMcact" ]; then
-	name="${namet}${i2}_00"
-	else
-	name="${namet}${i2}"
-	fi
-rm "./conf/aol${LOOPNUMBER}_${name}.fits"
-rm "./conf/shmim_${name}.name.txt"
-done
+#for i in `seq $NBmodeblocks 20`;
+#do
+#i2=$(printf "%02d" "$i")
+#if [ "$namet" = "contrMcact" ]; then
+#	name="${namet}${i2}_00"
+#	else
+#	name="${namet}${i2}"
+#	fi
+#rm "./conf/aol${LOOPNUMBER}_${name}.fits"
+#rm "./conf/shmim_${name}.name.txt"
+#done
+
+#done
+
+#if [ "$DMMODE" = "0" ]; then
+#cp "${confname}/RMpoke.fits" ./conf/
+#cp "${confname}/Hpoke.fits.gz" ./conf/
+#cp "${confname}/RMmat.fits" ./conf/
+#cp "${confname}/RMpixindex.fits" ./conf/
+#cp "${confname}/RMpokeCube.fits" ./conf/
+#fi
+
+AOloadMem 1  # in aolconf
 
 
-done
 
-if [ "$DMMODE" = "0" ]; then
-cp "${confname}/RMpoke.fits" ./conf/
-cp "${confname}/Hpoke.fits" ./conf/
-cp "${confname}/RMmat.fits" ./conf/
-cp "${confname}/RMpixindex.fits" ./conf/
-cp "${confname}/RMpokeCube.fits" ./conf/
-fi
 
-AOloadMem 1
+
 else
 dialog --title "ERROR" --msgbox "Directory ${confname} does not exit" 6 30
 fi;;
@@ -1171,6 +1237,8 @@ fi;;
 esac
 
 ;;
+
+
 
 
 
@@ -1288,7 +1356,7 @@ esac
 	Hon)
 echo "1" > ./conf/param_RMpokeMode.txt
 
-#if [ -f "./conf/Hpoke.fits" ]; then
+#if [ -f "./conf/Hpoke.fits.gz" ]; then
 #echo "OK"
 #else
 ./auxscripts/mkHpoke 

@@ -26,7 +26,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       AO Linear Simulator\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       AO Linear Simulator\n" "$0" 
 }
 
 

@@ -944,8 +944,8 @@ int AOloopControl_DM_disp2V(long DMindex)
 	data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
     
     
-    COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
-
+//    COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
+	COREMOD_MEMORY_image_set_sempost_byID(dmdispcombconf[DMindex].IDdisp, -1);
 
     return 0;
 }
@@ -1382,12 +1382,13 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].cnt0++;
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].write = 0;            
  
-            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem;semnb++)
+       /*     for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem;semnb++)
                {
                    sem_getvalue(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb], &semval);
                    if(semval<SEMAPHORE_MAXVAL)
                    sem_post(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb]);
-                }      
+                }*/
+            COREMOD_MEMORY_image_set_sempost_byID(dmdispcombconf[DMindex].IDdisp, -1);      
                    //      sem_post(data.image[dmdispcombconf[DMindex].IDdisp].semptr[0]);
  
  

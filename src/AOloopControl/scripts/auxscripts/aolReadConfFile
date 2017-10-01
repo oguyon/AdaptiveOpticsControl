@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       AOloop load file to stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       AOloop load file to stream\n" "$0" 
 }
 
 

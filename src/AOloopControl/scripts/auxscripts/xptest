@@ -32,7 +32,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute cross-product of a data cube\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Compute cross-product of a data cube\n" "$0" 
 }
 
 

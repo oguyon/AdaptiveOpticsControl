@@ -5,7 +5,7 @@
  * AO engine uses stream data structure
  * 
  * @author  O. Guyon
- * @date    26 Aug 2017
+ * @date    8 Sept 2017
  *
  * @bug No known bugs. 
  * 
@@ -40,6 +40,8 @@ static FILE *loadcreateshm_fplog;
  */
 typedef struct
 {	
+	uint64_t LOOPiteration;                   /**< Loop iteration - set to zero on creation on aolrun start */
+	
     /* =============================================================================================== */
 	/** @name AOLOOPCONTROL_CONF: TIMING 
 	 * LOOP Timing info
@@ -78,8 +80,8 @@ typedef struct
 	 */
 
     int_fast8_t init;                         /**< Has the structure been initialized ? */
-    uint_fast64_t cnt;                        /**<  */
-    uint_fast64_t cntmax;                     /**<  */
+    uint_fast64_t cnt;                        /**<  loop step counter, set to zero every time loop is stopped */
+    uint_fast64_t cntmax;                     /**<  max value of counter, used to step loop */
     uint_fast64_t DMupdatecnt;                /**<  */
     int_fast8_t kill;                         /**<  set to 1 to kill computation loop */
     char name[80];
@@ -199,6 +201,8 @@ typedef struct
 	///@{  	
     int_fast8_t ARPFon; // 1 if auto-regressive predictive filter is ON
 	float ARPFgain; 
+	float ARPFgainAutoMin;
+	float ARPFgainAutoMax;
     ///@}
 	/* =============================================================================================== */
 
@@ -243,11 +247,13 @@ typedef struct
 	double block_OLrms[100]; // open loop RMS
 	double block_Crms[100]; // correction RMS
 	double block_WFSrms[100]; // WFS residual RMS
+	double block_WFSnoise[100]; // WFS measurement noise
 	double block_limFrac[100]; // fraction of mode coefficients exceeding limit
 	
 	double ALL_OLrms; // open loop RMS
 	double ALL_Crms; // correction RMS
 	double ALL_WFSrms; // WFS residual RMS
+	double ALL_WFSnoise; // WFS noise
 	double ALL_limFrac; // fraction of mode coefficients exceeding limit
 	
 	// averaged
@@ -256,16 +262,17 @@ typedef struct
 	double blockave_OLrms[100]; // open loop RMS
 	double blockave_Crms[100]; // correction RMS
 	double blockave_WFSrms[100]; // WFS residual RMS
+	double blockave_WFSnoise[100]; // WFS noise
 	double blockave_limFrac[100]; // fraction of mode coefficients exceeding limit
 
 	double ALLave_OLrms; // open loop RMS
 	double ALLave_Crms; // correction RMS
 	double ALLave_WFSrms; // WFS residual RMS
+	double ALLave_WFSnoise; // WFS noise
 	double ALLave_limFrac; // fraction of mode coefficients exceeding limit
 
 	/* =============================================================================================== */
     
-   
 
     // semaphores for communication with GPU computing threads
     //sem_t *semptr; // semaphore for this image
@@ -319,192 +326,229 @@ int_fast8_t init_AOloopControl();
 /** @brief Load configuation parameters from disk */
 int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level);
 
-
 /** @brief Initialize memory - function called within C code only (no CLI call) */
 int_fast8_t AOloopControl_InitializeMemory();
 
 
 
-
-
-
-
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES
+/** @name AOloopControl - 2. REAL TIME COMPUTING ROUTINES
  *  calls CPU and GPU processing */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-
+/** @brief WFS zero point update */
 int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name);
 
-
+/** @brief WFS sum zero point update */
 int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *ID_WFSzp_name, int NBzp, const char *IDwfsref0_name, const char *IDwfsref_name);
 
 /** @brief Main loop function */
 int_fast8_t AOloopControl_run();
 
-
+/** @brief CPU based matrix-vector multiplication - when no GPU */
 int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 
 /** @brief Sends modal commands to DM by matrix-vector multiplication */
 int_fast8_t set_DM_modes(long loop);
 
+/** @brief Response Matrix DM-WFS */
 int_fast8_t set_DM_modesRM(long loop);
 
 /** @brief Main computation function, runs once per loop iteration */
 int_fast8_t AOcompute(long loop, int normalize);
 
+/** @brief Main computation function, runs once per loop iteration */
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name);
 
-int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode);
+/** @brief Matrix multiplication on GPU to transfom modes coefficients into DM shape */
+int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFindex, const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode);
 
+/** @brief CPU matrix multiplication to transfom WFS signal into modes coefficients */
 long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_name, const char *WFSmodes_name, const char *outname);
 
+/** @brief Compute WFS residual image */
 long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name);
 
+/** @brief Compute modes in open loop */
 long AOloopControl_ComputeOpenLoopModes(long loop);
 
+/** @brief Auto tune gains of the closed loop */
 int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float GainCoeff, long NBsamples);
 
+/** @brief Mixes streamin into streamout, in order to make streamout converge to streamin  */
 long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff);
 
 
 
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 8.   LOOP CONTROL INTERFACE
+/** @name AOloopControl - 3.   LOOP CONTROL INTERFACE
  *  Set parameters */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief Set loop number. Ex : for the Pyramid WFS, loop number = 0  */
 int_fast8_t AOloopControl_setLoopNumber(long loop);
 
+/** @brief Set one function for many parameters  */
 int_fast8_t AOloopControl_setparam(long loop, const char *key, double value);
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET
+/** @name AOloopControl - 3.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET
  *  Set parameters */
 /* =============================================================================================== */
 
+/** @brief Close AO loop : AO on */
 int_fast8_t AOloopControl_loopon();
 
+/** @brief  Open AO loop : AO off  */
 int_fast8_t AOloopControl_loopoff();
 
+/** @brief Kill AO loop : finish the process of the run */
 int_fast8_t AOloopControl_loopkill();
 
+/** @brief Close loop for finite number of steps */
 int_fast8_t AOloopControl_loopstep(long loop, long NBstep);
 
+/** @brief Reset the AO loop */
 int_fast8_t AOloopControl_loopreset();
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
+/** @name AOloopControl - 3.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
 /* =============================================================================================== */
 
+/** @brief Log on the AO interface */
 int_fast8_t AOloopControl_logon();
 
+/** @brief Log off AO interface */
 int_fast8_t AOloopControl_logoff();
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY AND FILTERED DM WRITE              */
+/** @name AOloopControl - 3.3. LOOP CONTROL INTERFACE - PRIMARY AND FILTERED DM WRITE              */
 /* =============================================================================================== */
 
+/** @brief Writing on DM, unfiltered actuators (primary) : on */
 int_fast8_t AOloopControl_DMprimaryWrite_on();
 
+/** @brief Writing on DM, unfiltered actuators (primary) : off */
 int_fast8_t AOloopControl_DMprimaryWrite_off();
 
+/** @brief Writing on DM, after filtering : on */
 int_fast8_t AOloopControl_DMfilteredWrite_on();
 
+/** @brief Writing on DM, after filtering : off */
 int_fast8_t AOloopControl_DMfilteredWrite_off();
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING                     */
+/** @name AOloopControl - 3.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING                     */
 /* =============================================================================================== */
 
+/** @brief Set limit auto tune : on */
 int_fast8_t AOloopControl_AUTOTUNE_LIMITS_on();
 
+/** @brief Set limit auto tune : off */
 int_fast8_t AOloopControl_AUTOTUNE_LIMITS_off();
 
+/** @brief Options auto tune limit 
+* The limit is fixed at the beginning. 
+* When the fraction of mode values higher than the current limit times mcoeff is larger than perc (percentile);
+* then the limit increases by delta. Otherwise, it decreases by delta.
+*/
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
-
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
-
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoeff);
 
+/** @brief Set gain auto tune : on */
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_on();
-
+ 
+/** @brief Set gain auto tune : off */
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_off();
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF                   */
+/** @name AOloopControl - 3.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF                   */
 /* =============================================================================================== */
 
+/** @brief ARPF = auto regressive predictive filter: on */
 int_fast8_t AOloopControl_ARPFon();
 
+/** @brief ARPF = auto regressive predictive filter: off */
 int_fast8_t AOloopControl_ARPFoff();
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS                          */
+/** @name AOloopControl - 3.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS                          */
 /* =============================================================================================== */
 
+/** @brief Set AO loop frequency */
 int_fast8_t AOloopControl_set_loopfrequ(float loopfrequ);
 
+/** @brief Set hardware latency in unity of frame */
 int_fast8_t AOloopControl_set_hardwlatency_frame(float hardwlatency_frame);
 
+/** @brief Set computation latency of primary DM write in unity of frame */
 int_fast8_t AOloopControl_set_complatency_frame(float complatency_frame);
 
+/** @brief Set computation latency of filtered DM write mode
+* time between the moment where the WF arrives at the WFS, and when it's written in the DM
+*/
 int_fast8_t AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
+/** @name AOloopControl - 3.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
 /* =============================================================================================== */
 
+/** @brief Set gain of the loop  */
 int_fast8_t AOloopControl_setgain(float gain);
 
+/** @brief Set ARPF gain (auto regressive predictive filter) 
+* Ex : a gain of 0.5 will correct 50% of the predicted WF
+*/
 int_fast8_t AOloopControl_setARPFgain(float gain);
 
+
+/** @brief Set ARPF */
+int_fast8_t AOloopControl_setARPFgainAutoMin(float val);
+
+/** @brief Set ARPF */
+int_fast8_t AOloopControl_setARPFgainAutoMax(float val);
+
+
+/** @brief Coefficient attenuates AO correction in low loght level */
 int_fast8_t AOloopControl_setWFSnormfloor(float WFSnormfloor);
 
+/** @brief Set the limit maximum */
 int_fast8_t AOloopControl_setmaxlimit(float maxlimit);
 
+/** @brief Multiplying coefficient, close to 1, in order to avoid divergence */
 int_fast8_t AOloopControl_setmult(float multcoeff);
 
+/** @brief Set an average of frames */
 int_fast8_t AOloopControl_setframesAve(long nbframes);
 
+/** @brief Set gain of block of modes */
 int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add);// modal blocks
 
+/** @brief Scan block gains */
 int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 
 
 
-
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 10. FOCAL PLANE SPECKLE MODULATION / CONTROL
+/** @name AOloopControl - 4. FOCAL PLANE SPECKLE MODULATION / CONTROL
  *  custom FP AO routines */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief Optimize PSF low order */
 int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char *IDmodes_name, const char *dmstream_name, long delayframe, long NBframes);
 
+/** @brief Experimental dm modulation  */
 int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *IDprobeB_name, const char *IDdmstream_name, const char *IDrespmat_name, const char *IDwfsrefstream_name, double delay, long NBprobes);
 
 
@@ -512,29 +556,20 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 11. PROCESS LOG FILES
+/** @name AOloopControl - 5. PROCESS LOG FILES
  *  process log files */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief Log the process of the mode evaluation  */
 int_fast8_t AOloopControl_logprocess_modeval(const char *IDname);
 
 
 
 
-
-
-
-
-
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 12. OBSOLETE ?                                                           */ 
+/** @name AOloopControl - 6. OBSOLETE ?                                                           */ 
 /* =============================================================================================== */
 /* =============================================================================================== */
 

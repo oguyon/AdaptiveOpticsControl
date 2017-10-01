@@ -37,7 +37,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Extract mode values from WFS images\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Extract mode values from WFS images\n" "$0" 
 }
 
 

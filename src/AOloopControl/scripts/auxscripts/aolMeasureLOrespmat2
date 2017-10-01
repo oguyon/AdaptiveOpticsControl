@@ -47,7 +47,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Acquire modal response matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Acquire modal response matrix\n" "$0" 
 }
 
 

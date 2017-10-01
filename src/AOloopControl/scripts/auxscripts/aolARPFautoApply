@@ -44,7 +44,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Apply real-time AR linear predictive filter\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Apply real-time AR linear predictive filter\n" "$0" 
 }
 
 
@@ -153,7 +153,8 @@ fi
 ./AOloopControl << EOF
 readshmim aol${loopnb}_modeval_ol
 readshmim ${PFmatname}
-linARApplyRT aol${loopnb}_modeval_ol ${offset} ${semtrig} ${PFmatname} ${PForder} ${outPFmodevalname} ${nbGPU} ${loopnb}
+semt=${semtrig}+${block}
+linARApplyRT aol${loopnb}_modeval_ol ${offset} semt ${PFmatname} ${PForder} ${outPFmodevalname} ${nbGPU} ${loopnb}
 exitCLI
 EOF
 

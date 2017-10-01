@@ -34,7 +34,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 
 int_fast8_t AOloopControl_perfTest_loopMonitor(long loop, double frequ, long nbcol);
 
-int_fast8_t AOloopControl_perfTest_statusStats(int updateconf);
+int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample);
 
 int_fast8_t AOloopControl_perfTest_resetRMSperf();
 
@@ -57,5 +57,7 @@ long AOloopControl_perfTesT_mkTestDynamicModeSeq(const char *IDname_out, long NB
 int_fast8_t AOloopControl_perfTest_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname);
 
 long AOloopControl_perfTest_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long NBmodes);
+
+long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfname);
 
 #endif

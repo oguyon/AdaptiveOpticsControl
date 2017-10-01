@@ -12,8 +12,8 @@
  */
 
 
-#ifndef _IMAGECREATE_H
-#define _IMAGECREATE_H
+#ifndef _IMAGESTREAMIO_H
+#define _IMAGESTREAMIO_H
  
 
 int_fast8_t init_ImageStreamIO();

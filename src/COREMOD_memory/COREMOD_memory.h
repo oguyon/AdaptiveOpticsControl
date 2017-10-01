@@ -402,22 +402,7 @@ long COREMOD_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, co
 
 
 /**
- * @brief takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
- * 
- * If NBcubes=1, then the circular buffer named IDinname is sent to IDoutname at a frequency of 1/usperiod MHz
- * If NBcubes>1, several circular buffers are used, named ("%S_%03ld", IDinname, cubeindex). Semaphore semtrig of image IDsync_name triggers switch between circular buffers, with a delay of offsetus. The number of consecutive sem posts required to advance to the next circular buffer is period
- * 
- * @param IDinname      Name of DM circular buffer (appended by _000, _001 etc... if NBcubes>1)
- * @param IDoutname     Output DM channel stream
- * @param usperiod      Interval between consecutive frames [us]
- * @param NBcubes       Number of input DM circular buffers
- * @param period        If NBcubes>1: number of input triggers required to advance to next input buffer
- * @param offsetus      If NBcubes>1: time offset [us] between input trigger and input buffer switch
- * @param IDsync_name   If NBcubes>1: Stream used for synchronization
- * @param semtrig       If NBcubes>1: semaphore used for synchronization
- * @param timingmode    Not used
- * 
- */ 
+ * @brief takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us */
 long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode);
 
 

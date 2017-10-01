@@ -29,7 +29,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Get shared memory image size\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Get shared memory image size\n" "$0" 
 }
 
 

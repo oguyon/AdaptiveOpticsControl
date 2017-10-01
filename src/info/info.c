@@ -366,7 +366,7 @@ int printstatus(long ID)
     printw("[write %d] ", data.image[ID].md[0].write);
     printw("[status %2d] ", data.image[ID].md[0].status);
     printw("[cnt0 %8d] [%6.2f Hz] ", data.image[ID].md[0].cnt0, frequ);
-    printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
+    printw("[cnt1 %8d]\n", data.image[ID].md[0].cnt1);
    // printw("[logstatus %2d] ", data.image[ID].logstatus[0]);
  
     printw("[%ld sems ", data.image[ID].md[0].sem);
@@ -376,6 +376,11 @@ int printstatus(long ID)
         printw(" % 3d ", semval);
     }
     printw("]");
+    
+    
+    sem_getvalue(data.image[ID].semlog, &semval);   
+        printw(" [semlog % 3d] ", semval);
+    
     //TEST
     /*
     if(data.image[ID].md[0].shared == 1)
@@ -1018,18 +1023,65 @@ int info_image_stats(const char *ID_name, const char *options)
         printf("write = %d   cnt0 = %ld   cnt1 = %ld\n", data.image[ID].md[0].write, data.image[ID].md[0].cnt0, data.image[ID].md[0].cnt1);
 
 
-        if(atype==_DATATYPE_UINT8)
-            sprintf(type,"CHAR");
-        if(atype==_DATATYPE_INT32)
-            sprintf(type,"INT");
-        if(atype==_DATATYPE_FLOAT)
-            sprintf(type,"FLOAT");
-        if(atype==_DATATYPE_DOUBLE)
-            sprintf(type,"DOUBLE");
-        if(atype==_DATATYPE_COMPLEX_FLOAT)
-            sprintf(type,"CFLOAT");
-        if(atype==_DATATYPE_COMPLEX_DOUBLE)
-            sprintf(type,"CDOUBLE");
+
+    switch ( atype ) {
+
+    case _DATATYPE_FLOAT:
+        sprintf(type,"  FLOAT");
+        break;
+
+    case _DATATYPE_INT8:
+        sprintf(type,"   INT8");
+        break;
+
+    case _DATATYPE_UINT8:
+        sprintf(type,"  UINT8");
+        break;
+
+    case _DATATYPE_INT16:
+        sprintf(type,"  INT16");
+        break;
+
+    case _DATATYPE_UINT16:
+        sprintf(type," UINT16");
+        break;
+
+    case _DATATYPE_INT32:
+        sprintf(type,"  INT32");
+        break;
+
+    case _DATATYPE_UINT32:
+        sprintf(type," UINT32");
+        break;
+
+    case _DATATYPE_INT64:
+        sprintf(type,"  INT64");
+        break;
+
+    case _DATATYPE_UINT64:
+        sprintf(type," UINT64");
+        break;
+
+    case _DATATYPE_DOUBLE:
+        sprintf(type," DOUBLE");
+        break;
+
+	case _DATATYPE_COMPLEX_FLOAT:
+		sprintf(type,"CFLOAT");
+		break;
+
+	case _DATATYPE_COMPLEX_DOUBLE:
+		sprintf(type,"CDOUBLE");
+		break;
+
+    default:
+		sprintf(type,"??????");
+        break;
+    }
+
+
+
+
         printf("type:            %s\n",type);
         printf("Memory size:     %ld Kb\n",(long) tmp_long/1024);
         //      printf("Created:         %f\n", data.image[ID].creation_time);
@@ -1195,6 +1247,7 @@ int info_image_stats(const char *ID_name, const char *options)
 
     return(0);
 }
+
 
 
 // mask pixel values are 0 or 1
