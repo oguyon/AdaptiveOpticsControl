@@ -91,9 +91,7 @@ All functions are accessible from the command line interface (CLI). Enter the CL
 ## LICENCE
 
 
-GNU General Public License v3.0
-
-[LICENCE.txt]( https://github.com/oguyon/Cfits/blob/master/LICENCE.txt )
+[GNU General Public License v3.0]( https://github.com/oguyon/Cfits/blob/master/LICENCE.txt )
 
 
 
